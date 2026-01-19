@@ -1,28 +1,57 @@
-import { useTransition } from 'react';
+import { useRouter } from 'next/navigation';
+import { type ReactNode, useTransition } from 'react';
 
 import { logout } from '@/app/actions/auth';
 import { USER_MENU } from '@/features/user/lib/options';
+import { ROUTES } from '@/shared/lib/routes';
 
-export const UserMenuPopup = () => {
-  const [, startTransition] = useTransition();
+interface MenuItem {
+  id: string;
+  title: string;
+  icon?: ReactNode;
+  action: string;
+}
+export function UserMenuPopup({ close }: { close: () => void }) {
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
-  const onLogout = () => {
+  const handleAction = (action: MenuItem['action']) => {
     startTransition(async () => {
       try {
-        await logout();
-      } catch {}
+        switch (action) {
+          case 'logout': {
+            close();
+            await logout();
+            router.push(ROUTES.AUTH.LOGIN);
+            break;
+          }
+
+          case 'settings': {
+            router.push('/settings');
+            close();
+            break;
+          }
+        }
+      } catch (error) {
+        console.error('Action failed:', error);
+      }
     });
   };
 
   return (
-    <div className={'bg-white box-shadow-secondary rounded-[14px] px-6 py-2'}>
-      <div className={'flex flex-col gap-2'}>
+    <div className='bg-white shadow-lg rounded-xl border border-gray-200 overflow-hidden'>
+      <div className='py-1'>
         {USER_MENU.map(menu => (
-          <div onClick={onLogout} key={menu.id} className={'cursor-pointer'}>
-            <p className={'text-primary'}>{menu.title}</p>
-          </div>
+          <button
+            key={menu.id}
+            onClick={() => handleAction(menu.action)}
+            disabled={isPending}
+            className='cursor-pointer w-full px-4 py-2 text-left text-sm hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+          >
+            {menu.title}
+          </button>
         ))}
       </div>
     </div>
   );
-};
+}

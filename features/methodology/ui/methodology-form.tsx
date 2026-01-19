@@ -84,11 +84,6 @@ export default function MethodologyForm({
           }}
         />
       ))}
-      <div className={'mt-auto w-[170px]'}>
-        <Button loading={isPending} disabled={isPending} type='submit'>
-          {BUTTON.SAVE}
-        </Button>
-      </div>
     </form>
   );
 }

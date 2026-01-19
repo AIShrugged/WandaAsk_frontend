@@ -14,15 +14,25 @@ import { VARIANT_MAPPER, type VariantType } from '@/shared/lib/fieldMapper';
 import { ROUTES } from '@/shared/lib/routes';
 import { Button } from '@/shared/ui/button/Button';
 
-import type { OrganizationDTO } from '@/features/organization/model/types';
+import type {
+  OrganizationDTO,
+  OrganizationProps,
+} from '@/features/organization/model/types';
 
-export default function OrganizationForm() {
+export default function OrganizationForm({
+  values,
+}: {
+  values?: OrganizationProps;
+}) {
   const FORM_ID = 'organization-form';
+  const isEdit = Boolean(values?.id);
+
+  console.log('isEdit', isEdit);
 
   const [isPending, startTransition] = useTransition();
 
   const { control, handleSubmit, setError } = useForm<OrganizationDTO>({
-    defaultValues: ORGANIZATION_VALUES,
+    defaultValues: values ?? ORGANIZATION_VALUES,
     mode: 'onBlur',
     reValidateMode: 'onChange',
   });
@@ -44,7 +54,7 @@ export default function OrganizationForm() {
       <form
         id={FORM_ID}
         onSubmit={handleSubmit(onSubmit)}
-        className='w-full flex flex-col gap-[30px]'
+        className='w-full flex flex-col gap-[30px] h-full'
       >
         {ORGANIZATION_FIELDS.map(field => (
           <Controller
@@ -66,21 +76,36 @@ export default function OrganizationForm() {
             }}
           />
         ))}
+
+        {isEdit && (
+          <div className={'mt-auto w-[170px]'}>
+            <Button
+              type={'submit'}
+              form={FORM_ID}
+              loading={isPending}
+              disabled={isPending}
+            >
+              {BUTTON.SAVE}
+            </Button>
+          </div>
+        )}
       </form>
 
-      <div className={'flex flex-col gap-6 mt-12'}>
-        <Button
-          type={'submit'}
-          form={FORM_ID}
-          loading={isPending}
-          disabled={isPending}
-        >
-          {BUTTON.SAVE}
-        </Button>
-        <Link href={ROUTES.AUTH.ORGANIZATION}>
-          <Button variant={'secondary'}>{BUTTON.BACK}</Button>
-        </Link>
-      </div>
+      {!isEdit && (
+        <div className={'flex flex-col gap-6 mt-12'}>
+          <Button
+            type={'submit'}
+            form={FORM_ID}
+            loading={isPending}
+            disabled={isPending}
+          >
+            {BUTTON.SAVE}
+          </Button>
+          <Link href={ROUTES.AUTH.ORGANIZATION}>
+            <Button variant={'secondary'}>{BUTTON.BACK}</Button>
+          </Link>
+        </div>
+      )}
     </>
   );
 }

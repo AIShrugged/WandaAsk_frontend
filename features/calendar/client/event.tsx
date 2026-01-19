@@ -5,20 +5,32 @@ import { Circle, CircleCheckBig } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { useRef } from 'react';
 
-import { EventPopup } from '@/features/event/client/event-popup';
+import { EventPopup } from '@/features/event/ui/event-popup';
 import { useModal } from '@/shared/hooks/use-modal';
 import { formatDate } from '@/shared/lib/dateFormatter';
 import { isEventPast } from '@/shared/lib/isEventPast';
 import { ROUTES } from '@/shared/lib/routes';
 
 import type { EventProps } from '@/features/event/model/types';
+import type {
+  AttendeeProps,
+  GuestProps,
+} from '@/features/participants/model/types';
 
-const Event = ({ event }: { event: EventProps }) => {
+const Event = ({
+  event,
+  attendees,
+  guests,
+}: {
+  event: EventProps;
+  attendees: AttendeeProps[];
+  guests: GuestProps[];
+}) => {
   const { id, title } = event;
 
   const isPast = isEventPast(event.ends_at);
 
-  const router = useRouter();
+  const { push } = useRouter();
   const { open, close } = useModal();
 
   const anchorRef = useRef<HTMLDivElement>(null);
@@ -27,14 +39,21 @@ const Event = ({ event }: { event: EventProps }) => {
     e.stopPropagation();
 
     if (isPast) {
-      router.push(`${ROUTES.DASHBOARD.MEETING}/${id}?tab=summary`);
+      push(`${ROUTES.DASHBOARD.MEETING}/${id}?tab=summary`);
     } else {
       if (!anchorRef.current) {
         return;
       }
 
       if (open) {
-        return open(<EventPopup event={event} close={close} />);
+        return open(
+          <EventPopup
+            attendees={attendees}
+            guests={guests}
+            event={event}
+            close={close}
+          />,
+        );
       }
     }
   };

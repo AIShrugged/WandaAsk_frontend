@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { cache } from 'react';
 
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 import { ROUTES } from '@/shared/lib/routes';
@@ -10,7 +11,7 @@ import type {
   MethodologyDTO,
   MethodologyProps,
 } from '@/features/methodology/model/types';
-import type { ApiResponse, RequestID } from '@/shared/types/common';
+import type { ApiResponse } from '@/shared/types/common';
 
 const API_URL = process.env.API_URL;
 
@@ -93,62 +94,66 @@ export async function updateMethodology(
   redirect(ROUTES.DASHBOARD.METHODOLOGY);
 }
 
-export async function getMethodologies(organization_id: RequestID) {
-  const authHeaders = await getAuthHeaders();
+export const getMethodologies = cache(
+  async (organization_id: string): Promise<ApiResponse<MethodologyProps[]>> => {
+    const authHeaders = await getAuthHeaders();
 
-  const res = await fetch(
-    `${API_URL}/organizations/${organization_id}/methodologies`,
-    {
+    const res = await fetch(
+      `${API_URL}/organizations/${organization_id}/methodologies`,
+      {
+        method: 'GET',
+        headers: {
+          ...authHeaders,
+          'Content-Type': 'application/json',
+        },
+      },
+    );
+
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(
+        `getMethodologies failed: ${res.status} ${res.statusText} — ${text}`,
+      );
+    }
+
+    const json: ApiResponse<MethodologyProps[]> = await res.json();
+
+    if (!json.success || !json.data) {
+      throw new Error(json.error ?? 'Invalid API response');
+    }
+
+    return { data: json.data };
+  },
+);
+
+export const getMethodology = cache(
+  async (methodology_id: string): Promise<ApiResponse<MethodologyProps>> => {
+    const authHeaders = await getAuthHeaders();
+
+    const res = await fetch(`${API_URL}/methodologies/${methodology_id}`, {
       method: 'GET',
       headers: {
         ...authHeaders,
         'Content-Type': 'application/json',
       },
-      cache: 'no-store',
-    },
-  );
+    });
 
-  if (!res.ok) {
-    const text = await res.text();
-    console.error('Events fetch failed:', res.status, text);
-  }
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(
+        `getMethodologies failed: ${res.status} ${res.statusText} — ${text}`,
+      );
+    }
 
-  const json: ApiResponse<MethodologyProps[]> = await res.json();
+    const json: ApiResponse<MethodologyProps> = await res.json();
 
-  if (!json.success || !json.data) {
-    throw new Error(json.error ?? 'Invalid API response');
-  }
+    if (!json.success || !json.data) {
+      throw new Error(json.error ?? 'Invalid API response');
+    }
 
-  return { data: json.data };
-}
-
-export async function getMethodology(id: string): Promise<MethodologyProps> {
-  const authHeaders = await getAuthHeaders();
-
-  const res = await fetch(`${API_URL}/methodologies/${id}`, {
-    method: 'GET',
-    headers: {
-      ...authHeaders,
-      'Content-Type': 'application/json',
-    },
-    cache: 'no-store',
-  });
-
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(
-      `getMethodology failed: ${res.status} ${res.statusText} — ${text}`,
-    );
-  }
-
-  const json: ApiResponse<MethodologyProps> = await res.json();
-
-  if (!json.success || !json.data) {
-    throw new Error(json.error ?? 'Invalid API response');
-  }
-
-  return json.data;
-}
+    return { data: json.data };
+  },
+);
 
 export async function deleteMethodology(id: string): Promise<MethodologyProps> {
   const authHeaders = await getAuthHeaders();

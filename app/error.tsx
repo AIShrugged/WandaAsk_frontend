@@ -13,9 +13,9 @@ import { H2 } from '@/shared/ui/typography/H2';
 
 // eslint-disable-next-line sonarjs/no-globals-shadowing
 export default function Error({
-  error,
-  reset,
-}: {
+                                error,
+                                reset,
+                              }: {
   error: Error & { digest?: string };
   reset: () => void;
 }) {

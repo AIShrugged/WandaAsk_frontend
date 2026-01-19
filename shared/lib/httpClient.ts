@@ -8,7 +8,7 @@ import type { ApiResponse } from '@/shared/types/common';
 export async function httpClient<T>(
   url: string,
   options: RequestInit = {},
-): Promise<T> {
+): Promise<ApiResponse<T>> {
   const authHeaders = await getAuthHeaders();
 
   const res = await fetch(url, {
@@ -33,5 +33,5 @@ export async function httpClient<T>(
     throw new Error(json.error ?? 'Invalid API response');
   }
 
-  return json.data;
+  return { data: json.data };
 }

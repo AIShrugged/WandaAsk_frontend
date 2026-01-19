@@ -78,6 +78,7 @@ export async function register(data: RegisterDTO): Promise<void> {
 
 export async function logout(): Promise<void> {
   const authHeaders = await getAuthHeaders();
+  const cookieStore = await cookies();
 
   const res = await fetch(`${API_URL}/auth/logout`, {
     method: 'POST',
@@ -88,14 +89,10 @@ export async function logout(): Promise<void> {
     cache: 'no-store',
   });
 
-  const json = await res.json();
+  if (res.ok) {
+    cookieStore.delete('token');
+    cookieStore.delete('organization_id');
 
-  if (!res.ok) {
-    throw new Error(json?.message || 'logout failed');
+    redirect(ROUTES.AUTH.LOGIN);
   }
-
-  const cookieStore = await cookies();
-  cookieStore.delete('token');
-
-  redirect(ROUTES.AUTH.LOGIN);
 }

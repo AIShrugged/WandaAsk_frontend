@@ -1,19 +1,19 @@
 'use server';
+import { cache } from 'react';
 
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 
-export async function getUser() {
+export const getUser = cache(async () => {
   const authHeaders = await getAuthHeaders();
 
-  const res = await fetch(process.env.API_URL + '/users/me', {
+  const res = await fetch(`${process.env.API_URL}/users/me`, {
     method: 'GET',
-    cache: 'force-cache',
-    headers: {
-      ...authHeaders,
-    },
+    headers: { ...authHeaders },
+    cache: 'no-store',
   });
 
-  if (!res.ok) return null;
+  if (!res.ok) throw new Error('Failed to fetch user');
 
-  return res.json();
-}
+  const json = await res.json();
+  return { data: json };
+});

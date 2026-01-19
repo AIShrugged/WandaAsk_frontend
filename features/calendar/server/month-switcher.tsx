@@ -1,29 +1,30 @@
-import { addMonths, format, subMonths } from 'date-fns';
+'use client';
+
+import { addMonths, format } from 'date-fns';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import React, { type SetStateAction } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import React from 'react';
 
 import { H2 } from '@/shared/ui/typography/H2';
 
-type MonthShiftFn = (date: Date, amount: number) => Date;
+export const MonthSwitcher = ({ currentMonth }: { currentMonth: string }) => {
+  const { push } = useRouter();
+  const params = useSearchParams();
 
-interface Props {
-  currentMonth: Date;
-  onMonthChange: React.Dispatch<SetStateAction<Date>>;
-}
-
-export const MonthSwitcher = ({ onMonthChange, currentMonth }: Props) => {
-  const switchMonth = (cb: MonthShiftFn) => {
-    onMonthChange(cb(currentMonth, 1));
+  const setMonth = (date: Date) => {
+    const next = new URLSearchParams(params);
+    next.set('month', format(date, 'yyyy-MM-01'));
+    push(`?${next.toString()}`);
   };
 
   const buttons = [
     {
       icon: ChevronLeft,
-      callback: subMonths,
+      callback: -1,
     },
     {
       icon: ChevronRight,
-      callback: addMonths,
+      callback: +1,
     },
   ];
 
@@ -36,13 +37,13 @@ export const MonthSwitcher = ({ onMonthChange, currentMonth }: Props) => {
             <button
               className={'cursor-pointer'}
               key={index}
-              onClick={() => switchMonth(button.callback)}
+              onClick={() => setMonth(addMonths(currentMonth, button.callback))}
             >
               <Icon />
             </button>
           );
         })}
-        <H2>{format(currentMonth, 'MMMM yyyy')}</H2>
+        <H2>{format(currentMonth, 'MMMM, yyyy')}</H2>
       </div>
     </div>
   );

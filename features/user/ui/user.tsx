@@ -3,11 +3,11 @@ import UserErrorBanner from '@/features/user/ui/user-error-banner';
 import UserInfo from '@/features/user/ui/user-info';
 
 export default async function User() {
-  const user = await getUser();
+  const { data: user } = await getUser();
 
   if (!user) {
     return <UserErrorBanner type='notFound' />;
   }
 
-  return <UserInfo {...user} />;
+  return <UserInfo user={user} />;
 }

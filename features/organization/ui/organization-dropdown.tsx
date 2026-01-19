@@ -1,9 +1,12 @@
 'use client';
 
 import { ChevronUp, ChevronDown, Settings } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useState, useActionState, useEffect } from 'react';
 
 import { setActiveOrganization } from '@/app/actions/organization';
+import { BUTTON } from '@/shared/lib/buttons';
+import { ROUTES } from '@/shared/lib/routes';
 
 import type { OrganizationProps } from '@/features/organization/model/types';
 
@@ -18,9 +21,13 @@ export default function OrganizationDropdown({
   const [, action, pending] = useActionState(setActiveOrganization, {
     ok: false,
   });
+  const { push } = useRouter();
   const active = organizations.find(
     o => String(o.id) === String(organizationActiveId),
   );
+  const sortedOrganizations = active
+    ? [active, ...organizations.filter(o => o.id !== active.id)]
+    : organizations;
 
   useEffect(() => {
     if (!organizationActiveId && organizations.length > 0) {
@@ -34,7 +41,7 @@ export default function OrganizationDropdown({
     <div className='relative w-[260px]'>
       <button
         onClick={() => setOpen(prev => !prev)}
-        className='w-full flex items-center justify-between gap-2
+        className='cursor-pointer  w-full flex items-center justify-between gap-2
                    rounded-full bg-green-100 px-4 py-2
                    hover:bg-green-200 transition'
       >
@@ -56,9 +63,9 @@ export default function OrganizationDropdown({
         <div
           className='absolute top-full left-0 mt-2 w-full
                      rounded-2xl bg-white shadow-xl
-                     border border-gray-100 z-50 overflow-hidden'
+                     z-50 overflow-hidden'
         >
-          {organizations.map(organization => (
+          {sortedOrganizations.map(organization => (
             <form
               key={organization.id}
               action={formData => {
@@ -72,42 +79,57 @@ export default function OrganizationDropdown({
                 value={organization.id}
               />
 
-              <button
-                type='submit'
-                disabled={pending}
-                className={`
-                  w-full px-4 py-3 text-left flex items-center justify-between
-                  hover:bg-gray-50 transition
-                  ${
-                    organization.id === organizationActiveId ? 'bg-gray-50' : ''
-                  }
-                `}
-              >
-                <div>
-                  <div className='text-sm font-medium text-gray-900'>
-                    {organization.name}
-                  </div>
-                  <div className='text-xs text-gray-500'>
-                    {organization.pivot.role}
-                  </div>
-                </div>
+              <>
+                {organization.id === organizationActiveId ? (
+                  <div
+                    className={
+                      'px-4 py-2 w-full flex flex-row justify-between items-center border-b-table'
+                    }
+                  >
+                    <div>
+                      <p>{organization.name}</p>
+                      <p className={'text-xs text-secondary'}>
+                        {organization.pivot.role}
+                      </p>
+                    </div>
 
-                {organization.id === organizationActiveId && (
-                  <Settings size={16} className='text-gray-400' />
+                    <button
+                      className={'cursor-pointer'}
+                      onClick={() =>
+                        push(
+                          `${ROUTES.DASHBOARD.ORGANIZATION}/${organization.id}`,
+                        )
+                      }
+                    >
+                      <Settings />
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type='submit'
+                    disabled={pending}
+                    className={
+                      'px-4 py-2 cursor-pointer w-full flex items-center justify-between'
+                    }
+                  >
+                    <p>{organization.name}</p>
+                    <p className={'text-xs text-secondary'}>
+                      {organization.pivot.role}
+                    </p>
+                  </button>
                 )}
-              </button>
+              </>
             </form>
           ))}
 
-          <div className='my-1 h-px bg-gray-100' />
-
           <button
+            onClick={() => push(`${ROUTES.DASHBOARD.ORGANIZATION}/create`)}
             type='button'
             className='w-full px-4 py-3 text-left
                        text-sm font-medium text-green-600
                        hover:bg-green-50 transition'
           >
-            + Create
+            + {BUTTON.CREATE}
           </button>
         </div>
       )}

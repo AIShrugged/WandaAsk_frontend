@@ -4,7 +4,7 @@ import { getOrganizations } from '@/app/actions/organization';
 import OrganizationDropdown from '@/features/organization/ui/organization-dropdown';
 
 export default async function OrganizationSelector() {
-  const organizations = await getOrganizations();
+  const { data: organizations } = await getOrganizations();
 
   const cookieStore = await cookies();
   const organization_id = cookieStore.get('organization_id')?.value;
@@ -12,11 +12,9 @@ export default async function OrganizationSelector() {
   if (!organizations) return null;
 
   return (
-    <div>
-      <OrganizationDropdown
-        organizationActiveId={organization_id ? +organization_id : null}
-        organizations={organizations}
-      />
-    </div>
+    <OrganizationDropdown
+      organizationActiveId={organization_id ? +organization_id : null}
+      organizations={organizations}
+    />
   );
 }

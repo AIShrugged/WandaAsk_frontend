@@ -1,9 +1,10 @@
-import { notFound, redirect } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import React, { Suspense } from 'react';
 
-import { getSummary } from '@/app/actions/calendar-events';
+import { getEvent } from '@/app/actions/calendar-events';
+import { getAttendees, getGuests } from '@/app/actions/participants';
 import Analysis from '@/features/analysis/ui/analysis';
-import EventOverview from '@/features/event/server/event-overview';
+import EventOverview from '@/features/event/ui/event-overview';
 import FollowUp from '@/features/follow-up/ui/follow-up';
 import { available_tabs } from '@/features/meeting/lib/options';
 import MeetingHeader from '@/features/meeting/ui/MeetingHeader';
@@ -20,10 +21,12 @@ export default async function Page({ params, searchParams }: PageProps) {
   const { id } = await params;
   const { tab = available_tabs.summary } = await searchParams;
 
-  const summary = await getSummary(id);
+  const { data: event } = await getEvent(id);
 
-  if (!summary) return notFound();
-  const { data } = summary;
+  const [{ data: attendees }, { data: guests }] = await Promise.all([
+    getAttendees(+id),
+    getGuests(+id),
+  ]);
 
   const validTabs = ['summary', 'followup', 'transcript', 'analysis'] as const;
   const currentTab = validTabs.includes(tab as any) ? tab : 'summary';
@@ -33,7 +36,7 @@ export default async function Page({ params, searchParams }: PageProps) {
 
   return (
     <Card className='h-full flex flex-col'>
-      <MeetingHeader title={data.title} />
+      <MeetingHeader title={event.title} />
 
       <CardBody>
         <div>
@@ -43,7 +46,12 @@ export default async function Page({ params, searchParams }: PageProps) {
         <div className='mt-8'>
           <Suspense fallback={<SpinLoader />} key={currentTab}>
             {currentTab === available_tabs.summary && (
-              <EventOverview id={id} data={data} />
+              <EventOverview
+                id={id}
+                guests={guests}
+                attendees={attendees}
+                event={event}
+              />
             )}
             {currentTab === available_tabs.followup && (
               <FollowUp id={Number(id)} />

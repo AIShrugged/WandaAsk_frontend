@@ -12,5 +12,6 @@ export const ROUTES = {
     METHODOLOGY: '/dashboard/methodology',
     STATISTICS: '/dashboard/statistics',
     FOLLOWUPS: '/dashboard/follow-ups',
+    ORGANIZATION: '/dashboard/organization',
   },
 } as const;

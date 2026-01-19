@@ -1,6 +1,5 @@
 'use server';
 
-import js from '@eslint/js';
 import { revalidatePath } from 'next/cache';
 
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
@@ -8,7 +7,7 @@ import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 import type { EventProps } from '@/features/event/model/types';
 import type { ApiResponse } from '@/shared/types/common';
 
-export async function getSummary(id: string) {
+export async function getEvent(id: string) {
   const authHeaders = await getAuthHeaders();
 
   const res = await fetch(`${process.env.API_URL}/calendar-events/${id}`, {
@@ -20,12 +19,19 @@ export async function getSummary(id: string) {
   });
 
   if (!res.ok) {
-    const text = await res.text();
-    console.error('Summary fetch failed:', res.status, text);
-    return null;
+    throw new Error('Failed to getSummary');
   }
 
-  return res.json();
+  const json: ApiResponse<EventProps> = await res.json();
+
+  if (!json.success || !json.data) {
+    throw new Error(json.error ?? 'Invalid API response');
+  }
+
+  return {
+    data: json.data,
+    status: json.status,
+  };
 }
 
 export async function getEvents() {
@@ -40,8 +46,7 @@ export async function getEvents() {
   });
 
   if (!res.ok) {
-    const text = await res.text();
-    console.error('Events fetch failed:', res.status, text);
+    throw new Error('Failed to getEvents');
   }
 
   const json: ApiResponse<EventProps[]> = await res.json();
@@ -49,8 +54,6 @@ export async function getEvents() {
   if (!json.success || !json.data) {
     throw new Error(json.error ?? 'Invalid API response');
   }
-
-  console.log('json', json);
 
   return {
     data: json.data,
@@ -79,8 +82,7 @@ export async function switchBot(eventId: number, botRequired: boolean) {
   );
 
   if (!res.ok) {
-    const text = await res.text();
-    throw new Error('Failed to require bot');
+    throw new Error('Failed to switchBot');
   }
 
   revalidatePath('/dashboard/calendar');

@@ -2,40 +2,47 @@
 
 import React, { useRef } from 'react';
 
-import { UserMenuPopup } from '@/features/user/ui/user-menu-popup';
-import { usePopup } from '@/shared/hooks/usePopup';
+import { usePopup } from '@/shared/hooks/use-popup';
 import Avatar from '@/shared/ui/common/avatar';
+
+import { UserMenuPopup } from './user-menu-popup';
 
 import type { UserProps } from '@/features/user/model/types';
 
-export default function UserInfo({ name, email }: UserProps) {
-  const anchorRef = useRef<HTMLDivElement>(null);
+interface UserInfoProps {
+  user: UserProps;
+}
 
-  const { open } = usePopup();
+export default function UserInfo({ user }: UserInfoProps) {
+  const anchorRef = useRef<HTMLDivElement>(null);
+  const { open, close } = usePopup();
 
   const handleOpen = (e: React.MouseEvent) => {
     e.stopPropagation();
 
-    if (!anchorRef.current) {
-      return;
-    }
+    if (!anchorRef.current) return;
 
     open(anchorRef.current, {
-      width: 123,
+      width: 200,
       preferredPosition: 'bottom',
-      content: <UserMenuPopup />,
+      offset: 6,
+      content: <UserMenuPopup close={close} />,
     });
   };
 
   return (
-    <div className={'flex gap-[8px] items-center justify-end'}>
-      <div ref={anchorRef} className={'flex flex-col text-right'}>
-        <p className={'text-accent'}>{name}</p>
-        <p className={'text-secondary'}>{email}</p>
+    <div className='flex gap-2 items-center justify-end'>
+      <div ref={anchorRef} className='flex flex-col text-right'>
+        <p className='text-accent font-medium'>{user.name}</p>
+        <p className='text-secondary text-sm'>{user.email}</p>
       </div>
 
-      <button onClick={handleOpen} className={'cursor-pointer'}>
-        <Avatar>{name[0]}</Avatar>
+      <button
+        onClick={handleOpen}
+        className='cursor-pointer rounded-full hover:ring-2 hover:ring-accent/20 transition-all'
+        aria-label='Open user menu'
+      >
+        <Avatar>{user.name[0]}</Avatar>
       </button>
     </div>
   );

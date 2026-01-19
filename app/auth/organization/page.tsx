@@ -7,15 +7,14 @@ import OrganizationListEmpty from '@/features/organization/ui/organization-list-
 import Card from '@/shared/ui/card/Card';
 
 export default async function Page() {
-  const organizations = await getOrganizations();
-  const hasOrganizations = organizations?.length > 0;
+  const { data: organizations } = await getOrganizations();
 
   return (
     <Card>
       <div className={'w-[690px] py-[100px] px-[72px]'}>
         <AuthTitle type={AUTH_TITLE_VARIANT.ORGANIZATION} />
 
-        {hasOrganizations ? (
+        {organizations ? (
           <>
             <OrganizationList organizations={organizations} />
             <OrganizationCreateLink />

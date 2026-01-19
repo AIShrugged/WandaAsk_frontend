@@ -16,14 +16,14 @@ export default async function Page({ params }: PageProps) {
   const cookieStore = await cookies();
   const organization_id = cookieStore.get('organization_id')?.value;
 
-  const methodology = await getMethodology(id);
+  const { data: methodology } = await getMethodology(id);
 
   if (!organization_id) return;
 
   return (
     <Card className='h-full flex flex-col'>
       <ComponentHeader>
-        <ButtonBack /> <H2>{methodology.name}</H2>
+        <ButtonBack /> <H2>{methodology?.name}</H2>
       </ComponentHeader>
 
       <CardBody>

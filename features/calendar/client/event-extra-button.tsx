@@ -1,7 +1,7 @@
-import React, { useRef } from 'react';
+import React from 'react';
 
-import { EventPopupAll } from '@/features/event/server/event-popup-all';
-import { usePopup } from '@/shared/hooks/usePopup';
+import { EventPopupAll } from '@/features/event/ui/event-popup-all';
+import { useModal } from '@/shared/hooks/use-modal';
 
 import type { EventProps } from '@/features/event/model/types';
 
@@ -12,23 +12,18 @@ export default function EventExtraButton({
   count: number;
   dayEvents: EventProps[];
 }) {
-  const { open, close } = usePopup();
-
-  const anchorRef = useRef<HTMLDivElement>(null);
+  const { open, close } = useModal();
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
 
-    open(anchorRef.current, {
-      width: 300,
-      preferredPosition: 'bottom',
-      content: <EventPopupAll list={dayEvents} close={close} />,
-    });
+    if (open) {
+      return open(<EventPopupAll list={dayEvents} close={close} />);
+    }
   };
 
   return (
     <div
-      ref={anchorRef}
       onClick={e => {
         handleClick(e);
         e.stopPropagation();

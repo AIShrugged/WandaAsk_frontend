@@ -1,6 +1,5 @@
 import React from 'react';
 
-import Event from '@/features/calendar/client/event';
 import { getWeekdayAndDay } from '@/features/event/lib/get-weekday-and-day';
 import ButtonClose from '@/shared/ui/button/button-close';
 import { H4 } from '@/shared/ui/typography/H4';
@@ -28,7 +27,7 @@ export const EventPopupAll = ({
 
       <div className={'p-5 flex flex-col gap-1'}>
         {list.map(event => (
-          <Event key={event.id} event={event} />
+          <div key={event.id}></div>
         ))}
       </div>
     </div>

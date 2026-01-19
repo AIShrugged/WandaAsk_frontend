@@ -4,6 +4,12 @@ import { revalidatePath } from 'next/cache';
 
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 
+import type {
+  AttendeeProps,
+  GuestProps,
+} from '@/features/participants/model/types';
+import type { ApiResponse } from '@/shared/types/common';
+
 export async function getAttendees(id: number) {
   const authHeaders = await getAuthHeaders();
 
@@ -18,13 +24,16 @@ export async function getAttendees(id: number) {
     },
   );
 
-  if (!res.ok) {
-    const text = await res.text();
-    console.error('Attendees fetch failed:', res.status, text);
-    return null;
+  const json: ApiResponse<AttendeeProps[]> = await res.json();
+
+  if (!json.success || !json.data) {
+    throw new Error(json.error ?? 'Invalid API response');
   }
 
-  return res.json();
+  return {
+    data: json.data,
+    status: json.status,
+  };
 }
 
 export async function getGuests(id: number) {
@@ -41,13 +50,16 @@ export async function getGuests(id: number) {
     },
   );
 
-  if (!res.ok) {
-    const text = await res.text();
-    console.error('Guests fetch failed:', res.status, text);
-    return null;
+  const json: ApiResponse<GuestProps[]> = await res.json();
+
+  if (!json.success || !json.data) {
+    throw new Error(json.error ?? 'Invalid API response');
   }
 
-  return res.json();
+  return {
+    data: json.data,
+    status: json.status,
+  };
 }
 
 export async function setProfile(

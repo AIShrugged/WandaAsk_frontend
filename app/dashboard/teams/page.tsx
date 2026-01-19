@@ -7,18 +7,20 @@ import { TeamList } from '@/features/teams/ui/team-list';
 import Card from '@/shared/ui/card/Card';
 import CardBody from '@/shared/ui/card/CardBody';
 import ComponentHeader from '@/shared/ui/layout/component-header';
+import { H2 } from '@/shared/ui/typography/H2';
 
 export default async function Page() {
   const cookieStore = await cookies();
   const organization_id = cookieStore.get('organization_id')?.value;
+
   if (!organization_id) return null;
 
-  const teams = await getTeams(organization_id);
+  const { data: teams = [] } = await getTeams(organization_id);
 
   return (
     <Card className='h-full flex flex-col'>
       <ComponentHeader>
-        <h4 className={'text-[36px] font-normal'}>Teams</h4>
+        <H2>Teams</H2>
       </ComponentHeader>
 
       <CardBody>

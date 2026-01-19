@@ -1,8 +1,9 @@
 export interface ApiResponse<T> {
-  success: boolean;
+  success?: boolean;
   data?: T;
   error?: string;
-  status: number;
+  status?: number;
+  message?: string;
 }
 
 export interface PageProps {

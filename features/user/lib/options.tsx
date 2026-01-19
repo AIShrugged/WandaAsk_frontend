@@ -4,6 +4,7 @@ export const USER_MENU = [
   {
     id: 'log-out',
     title: 'Log out',
+    action: 'logout',
   },
 ];
 

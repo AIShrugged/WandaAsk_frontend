@@ -3,8 +3,8 @@
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { cache } from 'react';
 
-import { selectOrganizationAction } from '@/app/actions/select-organization';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 import { ROUTES } from '@/shared/lib/routes';
 
@@ -20,63 +20,63 @@ if (!API_URL) {
   throw new Error('API_URL is not defined');
 }
 
-export async function getOrganizations(): Promise<OrganizationProps[]> {
-  const authHeaders = await getAuthHeaders();
+export const getOrganizations = cache(
+  async (): Promise<ApiResponse<OrganizationProps[]>> => {
+    const authHeaders = await getAuthHeaders();
 
-  const res = await fetch(`${API_URL}/organizations?limit=50&offset=0`, {
-    method: 'GET',
-    headers: {
-      ...authHeaders,
-      'Content-Type': 'application/json',
-    },
-    cache: 'no-store',
-  });
+    const res = await fetch(`${API_URL}/organizations?limit=50&offset=0`, {
+      method: 'GET',
+      headers: {
+        ...authHeaders,
+        'Content-Type': 'application/json',
+      },
+    });
 
-  if (!res.ok) {
-    const text = await res.text();
-    console.error(
-      `getOrganizations failed: ${res.status} ${res.statusText} — ${text}`,
-    );
-  }
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(
+        `getOrganizations failed: ${res.status} ${res.statusText} — ${text}`,
+      );
+    }
 
-  const json: ApiResponse<OrganizationProps[]> = await res.json();
+    const json: ApiResponse<OrganizationProps[]> = await res.json();
 
-  if (!json.success || !json.data) {
-    throw new Error(json.error ?? 'Invalid API response');
-  }
+    if (!json.success || !json.data) {
+      throw new Error(json.error ?? 'Invalid API response');
+    }
 
-  return json.data;
-}
+    return { data: json.data };
+  },
+);
+export const getOrganization = cache(
+  async (organization_id: string): Promise<ApiResponse<OrganizationProps>> => {
+    const authHeaders = await getAuthHeaders();
 
-export async function getOrganization(
-  organization_id: number,
-): Promise<OrganizationProps> {
-  const authHeaders = await getAuthHeaders();
+    const res = await fetch(`${API_URL}/organizations/${organization_id}`, {
+      method: 'GET',
+      headers: {
+        ...authHeaders,
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store',
+    });
 
-  const res = await fetch(`${API_URL}/organizations/${organization_id}`, {
-    method: 'GET',
-    headers: {
-      ...authHeaders,
-      'Content-Type': 'application/json',
-    },
-    cache: 'no-store',
-  });
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(
+        `getOrganization failed: ${res.status} ${res.statusText} — ${text}`,
+      );
+    }
 
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(
-      `getOrganization failed: ${res.status} ${res.statusText} — ${text}`,
-    );
-  }
+    const json: ApiResponse<OrganizationProps> = await res.json();
 
-  const json: ApiResponse<OrganizationProps> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error ?? 'Invalid API response');
+    }
 
-  if (!json.success || !json.data) {
-    throw new Error(json.error ?? 'Invalid API response');
-  }
-
-  return json.data;
-}
+    return { data: json.data };
+  },
+);
 
 export async function createOrganization(
   data: OrganizationDTO,
@@ -130,7 +130,23 @@ export async function setActiveOrganization(
     path: '/',
   });
 
-  revalidatePath('/dashboard');
+  revalidatePath('/dashboard/organization');
 
   return { ok: true };
+}
+
+export async function selectOrganizationAction(formData: FormData) {
+  const id = formData.get('organization_id') as string;
+
+  const store = await cookies();
+
+  store.set({
+    name: 'organization_id',
+    value: id,
+    httpOnly: true,
+    sameSite: 'lax',
+    path: '/',
+  });
+
+  redirect('/dashboard/calendar');
 }

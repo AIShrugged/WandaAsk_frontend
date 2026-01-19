@@ -10,9 +10,11 @@ import type { PageProps } from '@/shared/types/common';
 
 export default async function Page({ params }: PageProps) {
   const { id } = await params;
-  const team = await getTeam(id);
+  const { data: team } = await getTeam(id);
 
   if (!team) return null;
+
+  console.log(team);
 
   return (
     <Card className='min-h-full h-full overflow-x-hidden overflow-y-scroll'>
