@@ -1,5 +1,6 @@
 'use server';
 
+import { API_URL } from '@/app/constants/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 
 export async function loadTranscriptChunk(
@@ -10,7 +11,7 @@ export async function loadTranscriptChunk(
   const authHeaders = await getAuthHeaders();
 
   const res = await fetch(
-    `${process.env.API_URL}/calendar-events/${id}/transcript?offset=${offset}&limit=${limit}`,
+    `${API_URL}/calendar-events/${id}/transcript?offset=${offset}&limit=${limit}`,
     {
       method: 'GET',
       headers: {

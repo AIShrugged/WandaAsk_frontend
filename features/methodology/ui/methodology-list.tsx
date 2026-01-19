@@ -3,13 +3,13 @@ import MethodologyItem from '@/features/methodology/ui/methodology-item';
 import type { MethodologyProps } from '@/features/methodology/model/types';
 
 export default function MethodologyList({
-  data,
+  methodologies,
 }: {
-  data: MethodologyProps[];
+  methodologies: MethodologyProps[];
 }) {
   return (
     <>
-      {data.map(methodology => (
+      {methodologies.map(methodology => (
         <MethodologyItem key={methodology.id} methodology={methodology} />
       ))}
     </>

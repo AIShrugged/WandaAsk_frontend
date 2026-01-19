@@ -1,4 +1,5 @@
-import { meetingFollowUp, getFollowUps } from '@/app/actions/meeting-follow-up';
+import { getFollowUps } from '@/app/actions/calendar-events';
+import { getfollowUp } from '@/app/actions/follow-up';
 import FollowUpDetails from '@/features/follow-up/ui/follow-up-details';
 
 import type {
@@ -14,7 +15,7 @@ export default async function FollowUp({ id }: { id: number }) {
   }
 
   const latestId = Math.max(...followUps.data.map(item => item.id));
-  const followUp: FollowUpResponse = await meetingFollowUp(latestId);
+  const followUp: FollowUpResponse = await getfollowUp(latestId);
 
   return <FollowUpDetails data={followUp.data} />;
 }

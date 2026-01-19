@@ -7,13 +7,13 @@ import Analysis from '@/features/analysis/ui/analysis';
 import EventOverview from '@/features/event/ui/event-overview';
 import FollowUp from '@/features/follow-up/ui/follow-up';
 import { available_tabs } from '@/features/meeting/lib/options';
-import MeetingHeader from '@/features/meeting/ui/MeetingHeader';
 import Transcript from '@/features/transcript/ui/transcript';
 import { ROUTES } from '@/shared/lib/routes';
 import ButtonsRow from '@/shared/ui/button/ButtonsRow';
 import Card from '@/shared/ui/card/Card';
 import CardBody from '@/shared/ui/card/CardBody';
 import SpinLoader from '@/shared/ui/layout/spin-loader';
+import PageHeader from '@/widgets/layout/ui/page-header';
 
 import type { PageProps } from '@/shared/types/common';
 
@@ -23,9 +23,9 @@ export default async function Page({ params, searchParams }: PageProps) {
 
   const { data: event } = await getEvent(id);
 
-  const [{ data: attendees }, { data: guests }] = await Promise.all([
-    getAttendees(+id),
-    getGuests(+id),
+  const [{ data: attendees = [] }, { data: guests = [] }] = await Promise.all([
+    getAttendees(id),
+    getGuests(id),
   ]);
 
   const validTabs = ['summary', 'followup', 'transcript', 'analysis'] as const;
@@ -36,7 +36,7 @@ export default async function Page({ params, searchParams }: PageProps) {
 
   return (
     <Card className='h-full flex flex-col'>
-      <MeetingHeader title={event.title} />
+      <PageHeader hasButtonBack title={event.title} />
 
       <CardBody>
         <div>

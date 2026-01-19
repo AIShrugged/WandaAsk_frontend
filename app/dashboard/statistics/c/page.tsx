@@ -1,17 +1,14 @@
 import React from 'react';
 
-import ButtonBack from '@/shared/ui/button/button-back';
 import Card from '@/shared/ui/card/Card';
 import CardBody from '@/shared/ui/card/CardBody';
-import ComponentHeader from '@/shared/ui/layout/component-header';
-import { H2 } from '@/shared/ui/typography/H2';
+import PageHeader from '@/widgets/layout/ui/page-header';
 
 export default function Page() {
   return (
     <Card className='min-h-full h-full overflow-x-hidden overflow-y-scroll'>
-      <ComponentHeader>
-        <ButtonBack /> <H2>Sasha</H2>
-      </ComponentHeader>
+      <PageHeader hasButtonBack title={'Sasha'}></PageHeader>
+
       <CardBody>
         <svg
           width='1302'

@@ -10,9 +10,9 @@ type Props = {
 };
 
 const EventServer = async ({ event }: Props) => {
-  const [{ data: attendees }, { data: guests }] = await Promise.all([
-    getAttendees(event.id),
-    getGuests(event.id),
+  const [{ data: attendees = [] }, { data: guests = [] }] = await Promise.all([
+    getAttendees(String(event.id)),
+    getGuests(String(event.id)),
   ]);
 
   return <Event guests={guests} attendees={attendees} event={event} />;

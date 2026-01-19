@@ -27,8 +27,6 @@ export default function OrganizationForm({
   const FORM_ID = 'organization-form';
   const isEdit = Boolean(values?.id);
 
-  console.log('isEdit', isEdit);
-
   const [isPending, startTransition] = useTransition();
 
   const { control, handleSubmit, setError } = useForm<OrganizationDTO>({

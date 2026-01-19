@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
+import { API_URL } from '@/app/constants/config';
 import { httpClient } from '@/shared/lib/httpClient';
 import { ROUTES } from '@/shared/lib/routes';
 
@@ -12,9 +13,6 @@ import type {
   TeamCreateDTO,
   TeamProps,
 } from '@/features/teams/model/types';
-
-const API_URL = process.env.API_URL;
-if (!API_URL) throw new Error('API_URL is not defined');
 
 // ------------------------------
 // Teams API

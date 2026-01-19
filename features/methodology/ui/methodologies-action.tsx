@@ -1,9 +1,9 @@
 'use client';
 
 import { Pen, Trash } from 'lucide-react';
-import Link from 'next/link';
 
 import { ROUTES } from '@/shared/lib/routes';
+import { ButtonIcon } from '@/shared/ui/button/button-icon';
 
 import type { MethodologyProps } from '@/features/methodology/model/types';
 
@@ -14,15 +14,16 @@ export function MethodologiesAction({
 }) {
   return (
     <div className='flex items-center gap-2'>
-      <div className={'flex items-center justify-center'}>
-        <Link href={`${ROUTES.DASHBOARD.METHODOLOGY}/${methodology.id}`}>
-          <Pen className='size-[28] text-secondary' />
-        </Link>
-      </div>
-
-      <div className={'flex items-center justify-center'}>
-        <Trash className='size-[28] text-secondary hover:text-error transition-colors' />
-      </div>
+      <ButtonIcon
+        variant='primary'
+        icon={<Pen className='size-[28]' />}
+        href={`${ROUTES.DASHBOARD.METHODOLOGY}/${methodology.id}`}
+      />
+      <ButtonIcon
+        icon={<Trash className='size-[28]' />}
+        variant='danger'
+        onClick={() => console.log('delete')}
+      />
     </div>
   );
 }

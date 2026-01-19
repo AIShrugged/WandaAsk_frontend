@@ -6,8 +6,7 @@ import MethodologyCreate from '@/features/methodology/ui/methodology-create';
 import MethodologyList from '@/features/methodology/ui/methodology-list';
 import Card from '@/shared/ui/card/Card';
 import CardBody from '@/shared/ui/card/CardBody';
-import ComponentHeader from '@/shared/ui/layout/component-header';
-import { H2 } from '@/shared/ui/typography/H2';
+import PageHeader from '@/widgets/layout/ui/page-header';
 
 export default async function Page() {
   const cookieStore = await cookies();
@@ -21,12 +20,10 @@ export default async function Page() {
 
   return (
     <Card className='h-full flex flex-col'>
-      <ComponentHeader>
-        <H2>Methodologies</H2>
-      </ComponentHeader>
+      <PageHeader title={'Methodologies'}></PageHeader>
 
       <CardBody>
-        <MethodologyList data={methodologies} />
+        <MethodologyList methodologies={methodologies} />
         <MethodologyCreate />
       </CardBody>
     </Card>

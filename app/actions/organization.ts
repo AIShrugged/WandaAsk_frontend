@@ -5,6 +5,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { cache } from 'react';
 
+import { API_URL } from '@/app/constants/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 import { ROUTES } from '@/shared/lib/routes';
 
@@ -13,12 +14,6 @@ import type {
   OrganizationProps,
 } from '@/features/organization/model/types';
 import type { ApiResponse } from '@/shared/types/common';
-
-const API_URL = process.env.API_URL;
-
-if (!API_URL) {
-  throw new Error('API_URL is not defined');
-}
 
 export const getOrganizations = cache(
   async (): Promise<ApiResponse<OrganizationProps[]>> => {

@@ -59,7 +59,6 @@ export default async function Page({
   const month = params.month ?? new Date().toISOString().slice(0, 7) + '-01';
 
   const { data: events } = await getEvents();
-  console.log('events', events);
 
   return isCalendarAttached ? (
     <AttachedView currentMonth={month} events={events} />

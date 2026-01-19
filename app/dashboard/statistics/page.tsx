@@ -4,17 +4,15 @@ import React from 'react';
 import { ROUTES } from '@/shared/lib/routes';
 import Card from '@/shared/ui/card/Card';
 import CardBody from '@/shared/ui/card/CardBody';
-import ComponentHeader from '@/shared/ui/layout/component-header';
-import { H2 } from '@/shared/ui/typography/H2';
+import PageHeader from '@/widgets/layout/ui/page-header';
 
 export default function Page() {
   const route = `${ROUTES.DASHBOARD.STATISTICS}/a`;
 
   return (
     <Card className='min-h-full h-full overflow-x-hidden overflow-y-scroll'>
-      <ComponentHeader>
-        <H2>Statistics</H2>
-      </ComponentHeader>
+      <PageHeader title={'Statistics'}></PageHeader>
+
       <CardBody>
         <Link href={route}>
           <svg

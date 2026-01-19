@@ -1,12 +1,14 @@
 'use server';
+
 import { cache } from 'react';
 
+import { API_URL } from '@/app/constants/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 
 export const getUser = cache(async () => {
   const authHeaders = await getAuthHeaders();
 
-  const res = await fetch(`${process.env.API_URL}/users/me`, {
+  const res = await fetch(`${API_URL}/users/me`, {
     method: 'GET',
     headers: { ...authHeaders },
     cache: 'no-store',

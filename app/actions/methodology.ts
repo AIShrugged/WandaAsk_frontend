@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { cache } from 'react';
 
+import { API_URL } from '@/app/constants/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 import { ROUTES } from '@/shared/lib/routes';
 
@@ -13,11 +14,6 @@ import type {
 } from '@/features/methodology/model/types';
 import type { ApiResponse } from '@/shared/types/common';
 
-const API_URL = process.env.API_URL;
-
-if (!API_URL) {
-  throw new Error('API_URL is not defined');
-}
 export async function createMethodology(
   id: number | undefined,
   data: MethodologyDTO,

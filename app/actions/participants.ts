@@ -1,7 +1,9 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { cache } from 'react';
 
+import { API_URL } from '@/app/constants/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 
 import type {
@@ -10,57 +12,63 @@ import type {
 } from '@/features/participants/model/types';
 import type { ApiResponse } from '@/shared/types/common';
 
-export async function getAttendees(id: number) {
-  const authHeaders = await getAuthHeaders();
+export const getAttendees = cache(
+  async (id: string): Promise<ApiResponse<AttendeeProps[]>> => {
+    const authHeaders = await getAuthHeaders();
 
-  const res = await fetch(
-    `${process.env.API_URL}/calendar-events/${id}/participants`,
-    {
+    const res = await fetch(`${API_URL}/calendar-events/${id}/participants`, {
       method: 'GET',
       headers: {
         ...authHeaders,
+        'Content-Type': 'application/json',
       },
-      next: { revalidate: 60 },
-    },
-  );
+    });
 
-  const json: ApiResponse<AttendeeProps[]> = await res.json();
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(
+        `getMethodologies failed: ${res.status} ${res.statusText} — ${text}`,
+      );
+    }
 
-  if (!json.success || !json.data) {
-    throw new Error(json.error ?? 'Invalid API response');
-  }
+    const json: ApiResponse<AttendeeProps[]> = await res.json();
 
-  return {
-    data: json.data,
-    status: json.status,
-  };
-}
+    if (!json.success || !json.data) {
+      throw new Error(json.error ?? 'Invalid API response');
+    }
 
-export async function getGuests(id: number) {
-  const authHeaders = await getAuthHeaders();
+    return { data: json.data };
+  },
+);
 
-  const res = await fetch(
-    `${process.env.API_URL}/calendar-events/${id}/profiles`,
-    {
+export const getGuests = cache(
+  async (id: string): Promise<ApiResponse<GuestProps[]>> => {
+    const authHeaders = await getAuthHeaders();
+
+    const res = await fetch(`${API_URL}/calendar-events/${id}/profiles`, {
       method: 'GET',
       headers: {
         ...authHeaders,
+        'Content-Type': 'application/json',
       },
-      next: { revalidate: 60 },
-    },
-  );
+    });
 
-  const json: ApiResponse<GuestProps[]> = await res.json();
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(
+        `getMethodologies failed: ${res.status} ${res.statusText} — ${text}`,
+      );
+    }
 
-  if (!json.success || !json.data) {
-    throw new Error(json.error ?? 'Invalid API response');
-  }
+    const json: ApiResponse<GuestProps[]> = await res.json();
 
-  return {
-    data: json.data,
-    status: json.status,
-  };
-}
+    if (!json.success || !json.data) {
+      throw new Error(json.error ?? 'Invalid API response');
+    }
+
+    return { data: json.data };
+  },
+);
 
 export async function setProfile(
   eventId: number,
@@ -76,7 +84,7 @@ export async function setProfile(
   };
 
   const res = await fetch(
-    `${process.env.API_URL}/calendar-events/${eventId}/participants/${participantId}/set-profile`,
+    `${API_URL}/calendar-events/${eventId}/participants/${participantId}/set-profile`,
     {
       method: 'POST',
       headers: {

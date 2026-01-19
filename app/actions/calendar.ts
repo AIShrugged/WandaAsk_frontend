@@ -1,11 +1,12 @@
 'use server';
 
+import { API_URL } from '@/app/constants/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 
 export async function attachCalendar() {
   const authHeaders = await getAuthHeaders();
 
-  const res = await fetch(process.env.API_URL + '/google/oauth', {
+  const res = await fetch(`${API_URL} /google/oauth`, {
     method: 'POST',
     headers: {
       ...authHeaders,

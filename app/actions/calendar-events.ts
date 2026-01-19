@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 
+import { API_URL } from '@/app/constants/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 
 import type { EventProps } from '@/features/event/model/types';
@@ -10,7 +11,7 @@ import type { ApiResponse } from '@/shared/types/common';
 export async function getEvent(id: string) {
   const authHeaders = await getAuthHeaders();
 
-  const res = await fetch(`${process.env.API_URL}/calendar-events/${id}`, {
+  const res = await fetch(`${API_URL}/calendar-events/${id}`, {
     method: 'GET',
     headers: {
       ...authHeaders,
@@ -37,7 +38,7 @@ export async function getEvent(id: string) {
 export async function getEvents() {
   const authHeaders = await getAuthHeaders();
 
-  const res = await fetch(`${process.env.API_URL}/calendar-events?limit=50`, {
+  const res = await fetch(`${API_URL}/calendar-events?limit=50`, {
     method: 'GET',
     headers: {
       ...authHeaders,
@@ -69,17 +70,14 @@ export async function switchBot(eventId: number, botRequired: boolean) {
     required_bot: botRequired,
   };
 
-  const res = await fetch(
-    `${process.env.API_URL}/calendar-events/${eventId}/bot/require`,
-    {
-      method: 'POST',
-      cache: 'no-store',
-      headers: {
-        ...authHeaders,
-      },
-      body: JSON.stringify(payload),
+  const res = await fetch(`${API_URL}/calendar-events/${eventId}/bot/require`, {
+    method: 'POST',
+    cache: 'no-store',
+    headers: {
+      ...authHeaders,
     },
-  );
+    body: JSON.stringify(payload),
+  });
 
   if (!res.ok) {
     throw new Error('Failed to switchBot');
@@ -88,4 +86,27 @@ export async function switchBot(eventId: number, botRequired: boolean) {
   revalidatePath('/dashboard/calendar');
 
   return await res.json();
+}
+
+export async function getFollowUps(id: number) {
+  const authHeaders = await getAuthHeaders();
+
+  const res = await fetch(
+    `${API_URL}/calendar-events/${id}/followups?limit=50`,
+    {
+      method: 'GET',
+      headers: {
+        ...authHeaders,
+      },
+      next: { revalidate: 60 },
+    },
+  );
+
+  if (!res.ok) {
+    const text = await res.text();
+    console.error('FollowUp fetch failed:', res.status, text);
+    return null;
+  }
+
+  return res.json();
 }

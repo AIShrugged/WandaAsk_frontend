@@ -3,16 +3,11 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
+import { API_URL } from '@/app/constants/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 import { ROUTES } from '@/shared/lib/routes';
 
 import type { LoginDTO, RegisterDTO } from '@/features/auth/model/types';
-
-const API_URL = process.env.API_URL;
-
-if (!API_URL) {
-  throw new Error('API_URL is not defined on server');
-}
 
 export async function login(data: LoginDTO): Promise<void> {
   const res = await fetch(`${API_URL}/auth/login`, {

@@ -2,20 +2,17 @@ import Link from 'next/link';
 import React from 'react';
 
 import { ROUTES } from '@/shared/lib/routes';
-import ButtonBack from '@/shared/ui/button/button-back';
 import Card from '@/shared/ui/card/Card';
 import CardBody from '@/shared/ui/card/CardBody';
-import ComponentHeader from '@/shared/ui/layout/component-header';
-import { H2 } from '@/shared/ui/typography/H2';
+import PageHeader from '@/widgets/layout/ui/page-header';
 
 export default function Page() {
   const route = `${ROUTES.DASHBOARD.STATISTICS}/b`;
 
   return (
     <Card className='min-h-full h-full overflow-x-hidden overflow-y-scroll'>
-      <ComponentHeader>
-        <ButtonBack /> <H2>Strategy Department</H2>
-      </ComponentHeader>
+      <PageHeader hasButtonBack title={'Strategy Department'}></PageHeader>
+
       <CardBody>
         <Link href={route}>
           <svg
