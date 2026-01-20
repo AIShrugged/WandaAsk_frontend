@@ -151,7 +151,7 @@ export const getMethodology = cache(
   },
 );
 
-export async function deleteMethodology(id: string): Promise<MethodologyProps> {
+export async function deleteMethodology(id: number) {
   const authHeaders = await getAuthHeaders();
 
   const res = await fetch(`${API_URL}/methodologies/${id}`, {
@@ -164,18 +164,8 @@ export async function deleteMethodology(id: string): Promise<MethodologyProps> {
   });
 
   if (!res.ok) {
-    const text = await res.text();
-    throw new Error(
-      `deleteMethodology failed: ${res.status} ${res.statusText} — ${text}`,
-    );
+    return await res.text();
   }
 
-  const json: ApiResponse<MethodologyProps> = await res.json();
-
-  if (!json.success || !json.data) {
-    throw new Error(json.error ?? 'Invalid API response');
-  }
   revalidatePath('METHODOLOGY');
-
-  return json.data;
 }

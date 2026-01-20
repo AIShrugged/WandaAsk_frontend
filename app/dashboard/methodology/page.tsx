@@ -18,6 +18,8 @@ export default async function Page() {
 
   if (!methodologies) return null;
 
+  console.log('methodologies', methodologies);
+
   return (
     <Card className='h-full flex flex-col'>
       <PageHeader title={'Methodologies'}></PageHeader>

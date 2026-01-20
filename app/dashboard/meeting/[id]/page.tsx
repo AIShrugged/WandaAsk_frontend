@@ -35,7 +35,7 @@ export default async function Page({ params, searchParams }: PageProps) {
     redirect(`${ROUTES.DASHBOARD.MEETING}/${id}?tab=${currentTab}`);
 
   return (
-    <Card className='h-full flex flex-col'>
+    <Card className='h-full flex flex-col overflow-y-scroll'>
       <PageHeader hasButtonBack title={event.title} />
 
       <CardBody>

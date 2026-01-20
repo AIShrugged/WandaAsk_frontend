@@ -1,24 +1,18 @@
-import { METRIC_MAX_SCORE } from '@/features/analysis/lib/options';
-
-import type { ComponentProps } from 'react';
-
-interface LinearProgressProps extends ComponentProps<'div'> {
-  value: number; // 0–4
-  height?: number; // высота полосы
-}
+import type { MetricItem } from '@/features/analysis/model/types';
 
 export default function LinearProgress({
-  value,
-  height = 10,
-  className = '',
+  current_value,
+  max_value,
   ...props
-}: LinearProgressProps) {
+}: MetricItem) {
   const normalized =
-    (Math.max(0, Math.min(METRIC_MAX_SCORE, value)) / METRIC_MAX_SCORE) * 100;
+    (Math.max(0, Math.min(max_value, current_value)) / max_value) * 100;
+
+  const height = 10;
 
   return (
     <div
-      className={`relative w-full bg-scheduled rounded-full overflow-hidden ${className}`}
+      className={`relative w-full bg-scheduled rounded-full overflow-hidden`}
       style={{ height }}
       {...props}
     >

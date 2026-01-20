@@ -1,16 +1,15 @@
-import { METRIC_MAX_SCORE } from '@/features/analysis/lib/options';
-
 export default function MinMax({
-  minValue,
-  maxValue = METRIC_MAX_SCORE,
+  max_value,
+  current_value,
 }: {
-  minValue: number;
-  maxValue?: number;
+  max_value: number;
+  min_value?: number;
+  current_value: number;
 }) {
   return (
     <span>
       <p className={'text-[14px]'}>
-        {minValue} out of {maxValue}
+        {current_value} out of {max_value}
       </p>
     </span>
   );

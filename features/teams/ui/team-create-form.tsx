@@ -2,7 +2,6 @@
 
 import React, { useTransition } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { toast } from 'react-toastify';
 
 import { createTeam, updateTeam } from '@/app/actions/team';
 import { TEAM_CREATE_FIELDS } from '@/features/teams/model/fields';
@@ -24,7 +23,7 @@ export default function TeamCreateForm({
 
   const [isPending, startTransition] = useTransition();
 
-  const { control, handleSubmit, setError, reset } = useForm<TeamCreateDTO>({
+  const { control, handleSubmit, setError } = useForm<TeamCreateDTO>({
     defaultValues: values,
     mode: 'onBlur',
     reValidateMode: 'onChange',
@@ -33,14 +32,9 @@ export default function TeamCreateForm({
   const onSubmit = (data: TeamCreateDTO) => {
     startTransition(async () => {
       try {
-        if (isEdit) {
-          await updateTeam(values.id, data);
-          toast.success('Team updated');
-        } else {
-          await createTeam(organization_id, data);
-          toast.success('Team created');
-          reset();
-        }
+        await (isEdit
+          ? updateTeam(values.id, data)
+          : createTeam(organization_id, data));
       } catch (error) {
         setError('name', {
           message: (error as Error).message,

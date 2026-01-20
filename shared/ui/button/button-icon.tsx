@@ -22,7 +22,8 @@ export function ButtonIcon({
   variant = 'primary',
   className,
 }: IconActionProps) {
-  const baseClasses = 'flex items-center justify-center transition-colors';
+  const baseClasses =
+    'cursor-pointer flex items-center justify-center transition-colors';
 
   const stateClasses = clsx(
     !disabled && variant === 'primary' && 'text-secondary hover:text-primary',
