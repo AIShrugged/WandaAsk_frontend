@@ -1,20 +1,16 @@
-import { cookies } from 'next/headers';
 import React from 'react';
 
 import { getTeams } from '@/app/actions/team';
 import TeamCreate from '@/features/teams/ui/team-create';
 import { TeamList } from '@/features/teams/ui/team-list';
+import { getOrganizationId } from '@/shared/lib/getOrganizationId';
 import Card from '@/shared/ui/card/Card';
 import CardBody from '@/shared/ui/card/CardBody';
 import PageHeader from '@/widgets/layout/ui/page-header';
 
 export default async function Page() {
-  const cookieStore = await cookies();
-  const organization_id = cookieStore.get('organization_id')?.value;
-
-  if (!organization_id) return null;
-
-  const { data: teams = [] } = await getTeams(organization_id);
+  const organizationId = await getOrganizationId();
+  const { data: teams = [] } = await getTeams(organizationId);
 
   return (
     <Card className='h-full flex flex-col'>

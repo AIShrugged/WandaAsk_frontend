@@ -1,50 +1,47 @@
 'use client';
 
+import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useTransition } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 
 import { login } from '@/app/actions/auth';
 import { SIGN_IN_FIELDS, SIGN_IN_VALUES } from '@/features/auth/lib/fields';
 import { BUTTON_TEXT } from '@/features/auth/lib/options';
+import {
+  LoginSchema,
+  type LoginInput,
+} from '@/features/auth/model/schemas';
 import { VARIANT_MAPPER, type VariantType } from '@/shared/lib/fieldMapper';
+import { handleFormError } from '@/shared/lib/formErrors';
 import { ROUTES } from '@/shared/lib/routes';
 import AuthFormFooter from '@/widgets/auth/ui/auth-form-footer';
 
-import type { LoginDTO } from '@/features/auth/model/types';
+const FORM_ID = 'login-form';
 
 export default function LoginForm() {
   const [isPending, startTransition] = useTransition();
 
-  const { control, handleSubmit, setError } = useForm<LoginDTO>({
+  const {
+    control,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm<LoginInput>({
     defaultValues: SIGN_IN_VALUES,
+    resolver: zodResolver(LoginSchema),
     mode: 'onBlur',
     reValidateMode: 'onChange',
   });
 
-  const onSubmit = (data: LoginDTO) => {
+  const onSubmit = (data: LoginInput) => {
     startTransition(async () => {
       try {
         await login(data);
       } catch (error) {
-        const err = error as {
-          fieldErrors?: Partial<Record<keyof LoginDTO, string>>;
-          message?: string;
-        };
-
-        if (err.fieldErrors) {
-          for (const [field, message] of Object.entries(err.fieldErrors) as [
-            keyof LoginDTO,
-            string,
-          ][]) {
-            setError(field, { message });
-          }
-          return;
-        }
+        handleFormError(error, setError, 'Login failed. Please try again.');
       }
     });
   };
-
-  const FORM_ID = 'login-form';
 
   return (
     <>
@@ -52,13 +49,23 @@ export default function LoginForm() {
         id={FORM_ID}
         onSubmit={handleSubmit(onSubmit)}
         className='w-full flex flex-col gap-[30px]'
+        aria-describedby={errors.root ? 'form-error' : undefined}
       >
+        {errors.root?.message && (
+          <p
+            id='form-error'
+            role='alert'
+            aria-live='polite'
+            className='text-sm text-red-700 text-center'
+          >
+            {errors.root.message}
+          </p>
+        )}
         {SIGN_IN_FIELDS.map(field => (
           <Controller
             key={field.name}
-            name={field.name as keyof LoginDTO}
+            name={field.name as keyof LoginInput}
             control={control}
-            rules={field.rules}
             render={({ field: hookField, fieldState }) => {
               const variant: VariantType = field.variant;
               const Component = VARIANT_MAPPER[variant];
@@ -74,7 +81,6 @@ export default function LoginForm() {
           />
         ))}
       </form>
-
       <AuthFormFooter
         loading={isPending}
         formId={FORM_ID}

@@ -96,8 +96,6 @@ export async function setProfile(
   );
 
   if (!res.ok) {
-    const errorText = await res.text();
-    console.error('setProfile failed:', res.status, errorText);
     throw new Error('Не удалось сохранить сопоставление');
   }
 

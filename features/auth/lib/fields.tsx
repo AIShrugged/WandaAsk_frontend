@@ -2,18 +2,24 @@ import Link from 'next/link';
 
 import { emailField } from '@/shared/lib/fields';
 
+import type { RegisterDTO } from '@/features/auth/model/types';
+
 const passwordField = {
   variant: 'inputPassword' as const,
   name: 'password',
   label: 'Password',
   type: 'input',
-  placeholder: 'Введите пароль',
+  placeholder: 'Enter password',
   rules: {
     required: 'Password is required',
     minLength: {
       value: 6,
       message: 'The minimum password length is 6 characters',
     },
+    /*   pattern: {
+      value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+      message: 'Must contain uppercase, lowercase and number',
+    },*/
   },
 };
 
@@ -57,8 +63,9 @@ export const REGISTER_FIELDS = [
   },
 ];
 
-export const REGISTER_FIELDS_VALUES = {
+export const REGISTER_FIELDS_VALUES: RegisterDTO = {
   name: '',
   email: '',
   password: '',
+  acceptTerms: false,
 };

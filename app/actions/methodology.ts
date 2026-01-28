@@ -48,7 +48,7 @@ export async function createMethodology(
     throw new Error(json.error);
   }
 
-  revalidatePath('METHODOLOGY');
+  revalidatePath('/dashboard/methodology');
   redirect(ROUTES.DASHBOARD.METHODOLOGY);
 }
 
@@ -63,8 +63,6 @@ export async function updateMethodology(
     ...data,
   };
 
-  console.log('payload', payload);
-
   await fetch(`${API_URL}/methodologies/${id}`, {
     method: 'PUT',
     headers: {
@@ -75,7 +73,7 @@ export async function updateMethodology(
     cache: 'no-store',
   });
 
-  revalidatePath('METHODOLOGY');
+  revalidatePath('/dashboard/methodology');
   redirect(ROUTES.DASHBOARD.METHODOLOGY);
 }
 
@@ -156,5 +154,5 @@ export async function deleteMethodology(id: number) {
     return await res.text();
   }
 
-  revalidatePath('METHODOLOGY');
+  revalidatePath('/dashboard/methodology');
 }

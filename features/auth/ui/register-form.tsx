@@ -1,5 +1,6 @@
 'use client';
 
+import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useTransition } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 
@@ -9,45 +10,45 @@ import {
   REGISTER_FIELDS_VALUES,
 } from '@/features/auth/lib/fields';
 import { BUTTON_TEXT } from '@/features/auth/lib/options';
+import {
+  RegisterSchema,
+  type RegisterInput,
+} from '@/features/auth/model/schemas';
 import { VARIANT_MAPPER, type VariantType } from '@/shared/lib/fieldMapper';
+import { handleFormError } from '@/shared/lib/formErrors';
 import { ROUTES } from '@/shared/lib/routes';
 import AuthFormFooter from '@/widgets/auth/ui/auth-form-footer';
 
-import type { RegisterDTO } from '@/features/auth/model/types';
+const FORM_ID = 'register-form';
 
 export default function RegisterForm() {
   const [isPending, startTransition] = useTransition();
 
-  const { control, handleSubmit, setError } = useForm<RegisterDTO>({
+  const {
+    control,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm<RegisterInput>({
     defaultValues: REGISTER_FIELDS_VALUES,
+    resolver: zodResolver(RegisterSchema),
     mode: 'onBlur',
     reValidateMode: 'onChange',
   });
 
-  const onSubmit = (data: RegisterDTO) => {
+  const onSubmit = (data: RegisterInput) => {
     startTransition(async () => {
       try {
         await register(data);
       } catch (error) {
-        const err = error as {
-          fieldErrors?: Partial<Record<keyof RegisterDTO, string>>;
-          message?: string;
-        };
-
-        if (err.fieldErrors) {
-          for (const [field, message] of Object.entries(err.fieldErrors) as [
-            keyof RegisterDTO,
-            string,
-          ][]) {
-            setError(field, { message });
-          }
-          return;
-        }
+        handleFormError(
+          error,
+          setError,
+          'Registration failed. Please try again.',
+        );
       }
     });
   };
-
-  const FORM_ID = 'register-form';
 
   return (
     <>
@@ -55,13 +56,23 @@ export default function RegisterForm() {
         id={FORM_ID}
         onSubmit={handleSubmit(onSubmit)}
         className='w-full flex flex-col gap-[30px]'
+        aria-describedby={errors.root ? 'form-error' : undefined}
       >
+        {errors.root?.message && (
+          <p
+            id='form-error'
+            role='alert'
+            aria-live='polite'
+            className='text-sm text-red-700 text-center'
+          >
+            {errors.root.message}
+          </p>
+        )}
         {REGISTER_FIELDS.map(field => (
           <Controller
             key={field.name}
-            name={field.name as keyof RegisterDTO}
+            name={field.name as keyof RegisterInput}
             control={control}
-            rules={field.rules}
             render={({ field: hookField, fieldState }) => {
               const variant: VariantType = field.variant;
               const Component = VARIANT_MAPPER[variant];
