@@ -4,18 +4,24 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 import { API_URL } from '@/app/constants/config';
+import {
+  LoginSchema,
+  RegisterSchema,
+  type LoginInput,
+  type RegisterInput,
+} from '@/features/auth/model/schemas';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 import { ROUTES } from '@/shared/lib/routes';
 
-import type { LoginDTO, RegisterDTO } from '@/features/auth/model/types';
+export async function login(data: LoginInput): Promise<void> {
+  const validated = LoginSchema.parse(data);
 
-export async function login(data: LoginDTO): Promise<void> {
   const res = await fetch(`${API_URL}/auth/login`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify(validated),
     cache: 'no-store',
   });
 
@@ -41,11 +47,13 @@ export async function login(data: LoginDTO): Promise<void> {
   redirect(ROUTES.AUTH.ORGANIZATION);
 }
 
-export async function register(data: RegisterDTO): Promise<void> {
+export async function register(data: RegisterInput): Promise<void> {
+  const validated = RegisterSchema.parse(data);
+
   const res = await fetch(`${API_URL}/auth/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
+    body: JSON.stringify(validated),
     cache: 'no-store',
   });
 

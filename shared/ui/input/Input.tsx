@@ -38,6 +38,7 @@ const Input = forwardRef<HTMLInputElement, Props>(function Input(
 ) {
   const autoId = useId();
   const inputId = id ?? `input-${autoId}`;
+  const errorId = `${inputId}-error`;
 
   // local state to track focus and (when uncontrolled) value
   const [isFocused, setIsFocused] = useState(false);
@@ -106,6 +107,7 @@ const Input = forwardRef<HTMLInputElement, Props>(function Input(
             className ?? '',
           )}
           aria-invalid={!!error}
+          aria-describedby={error ? errorId : undefined}
         />
 
         {endAdornment ? (
@@ -137,7 +139,7 @@ const Input = forwardRef<HTMLInputElement, Props>(function Input(
         ) : null}
       </div>
 
-      {typeof error === 'string' ? <Error>{error}</Error> : null}
+      {typeof error === 'string' ? <Error id={errorId}>{error}</Error> : null}
     </div>
   );
 });

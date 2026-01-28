@@ -103,8 +103,6 @@ export async function getFollowUps(id: number) {
   );
 
   if (!res.ok) {
-    const text = await res.text();
-    console.error('FollowUp fetch failed:', res.status, text);
     return null;
   }
 
