@@ -1,32 +1,20 @@
 'use client';
 
+import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useTransition } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 
 import { login } from '@/app/actions/auth';
 import { SIGN_IN_FIELDS, SIGN_IN_VALUES } from '@/features/auth/lib/fields';
 import { BUTTON_TEXT } from '@/features/auth/lib/options';
+import {
+  LoginSchema,
+  type LoginInput,
+} from '@/features/auth/model/schemas';
 import { VARIANT_MAPPER, type VariantType } from '@/shared/lib/fieldMapper';
+import { handleFormError } from '@/shared/lib/formErrors';
 import { ROUTES } from '@/shared/lib/routes';
 import AuthFormFooter from '@/widgets/auth/ui/auth-form-footer';
-
-import type { LoginDTO } from '@/features/auth/model/types';
-
-type FieldErrors = {
-  fieldErrors: Partial<Record<keyof LoginDTO, string>>;
-};
-
-const isFieldError = (error: unknown): error is FieldErrors =>
-  typeof error === 'object' &&
-  error !== null &&
-  'fieldErrors' in error &&
-  typeof (error as FieldErrors).fieldErrors === 'object';
-
-const getErrorMessage = (error: unknown): string => {
-  if (error instanceof Error) return error.message;
-  if (typeof error === 'string') return error;
-  return 'Login failed. Please try again.';
-};
 
 const FORM_ID = 'login-form';
 
@@ -38,28 +26,19 @@ export default function LoginForm() {
     handleSubmit,
     setError,
     formState: { errors },
-  } = useForm<LoginDTO>({
+  } = useForm<LoginInput>({
     defaultValues: SIGN_IN_VALUES,
+    resolver: zodResolver(LoginSchema),
     mode: 'onBlur',
     reValidateMode: 'onChange',
   });
 
-  const onSubmit = (data: LoginDTO) => {
+  const onSubmit = (data: LoginInput) => {
     startTransition(async () => {
       try {
         await login(data);
       } catch (error) {
-        if (isFieldError(error)) {
-          for (const [field, message] of Object.entries(error.fieldErrors) as [
-            keyof LoginDTO,
-            string,
-          ][]) {
-            setError(field, { message });
-          }
-          return;
-        }
-
-        setError('root', { message: getErrorMessage(error) });
+        handleFormError(error, setError, 'Login failed. Please try again.');
       }
     });
   };
@@ -85,9 +64,8 @@ export default function LoginForm() {
         {SIGN_IN_FIELDS.map(field => (
           <Controller
             key={field.name}
-            name={field.name as keyof LoginDTO}
+            name={field.name as keyof LoginInput}
             control={control}
-            rules={field.rules}
             render={({ field: hookField, fieldState }) => {
               const variant: VariantType = field.variant;
               const Component = VARIANT_MAPPER[variant];

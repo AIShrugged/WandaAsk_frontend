@@ -17,12 +17,11 @@ export async function loadTranscriptChunk(
       headers: {
         ...authHeaders,
       },
+      cache: 'no-store',
     },
   );
 
   if (!res.ok) {
-    const text = await res.text();
-    console.error('Transcript chunk fetch failed:', res.status, text);
     throw new Error('Failed to load transcript chunk');
   }
 

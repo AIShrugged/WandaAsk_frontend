@@ -1,5 +1,3 @@
-import { cookies } from 'next/headers';
-
 import { AUTH_TITLE_VARIANT } from '@/features/auth/lib/options';
 import AuthTitle from '@/features/auth/ui/auth-title';
 import LoginForm from '@/features/auth/ui/login-form';

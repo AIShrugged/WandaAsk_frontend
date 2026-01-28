@@ -1,5 +1,6 @@
 'use client';
 
+import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useTransition } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 
@@ -9,27 +10,14 @@ import {
   REGISTER_FIELDS_VALUES,
 } from '@/features/auth/lib/fields';
 import { BUTTON_TEXT } from '@/features/auth/lib/options';
+import {
+  RegisterSchema,
+  type RegisterInput,
+} from '@/features/auth/model/schemas';
 import { VARIANT_MAPPER, type VariantType } from '@/shared/lib/fieldMapper';
+import { handleFormError } from '@/shared/lib/formErrors';
 import { ROUTES } from '@/shared/lib/routes';
 import AuthFormFooter from '@/widgets/auth/ui/auth-form-footer';
-
-import type { RegisterDTO } from '@/features/auth/model/types';
-
-type FieldErrors = {
-  fieldErrors: Partial<Record<keyof RegisterDTO, string>>;
-};
-
-const isFieldError = (error: unknown): error is FieldErrors =>
-  typeof error === 'object' &&
-  error !== null &&
-  'fieldErrors' in error &&
-  typeof (error as FieldErrors).fieldErrors === 'object';
-
-const getErrorMessage = (error: unknown): string => {
-  if (error instanceof Error) return error.message;
-  if (typeof error === 'string') return error;
-  return 'Registration failed. Please try again.';
-};
 
 const FORM_ID = 'register-form';
 
@@ -41,28 +29,23 @@ export default function RegisterForm() {
     handleSubmit,
     setError,
     formState: { errors },
-  } = useForm<RegisterDTO>({
+  } = useForm<RegisterInput>({
     defaultValues: REGISTER_FIELDS_VALUES,
+    resolver: zodResolver(RegisterSchema),
     mode: 'onBlur',
     reValidateMode: 'onChange',
   });
 
-  const onSubmit = (data: RegisterDTO) => {
+  const onSubmit = (data: RegisterInput) => {
     startTransition(async () => {
       try {
         await register(data);
       } catch (error) {
-        if (isFieldError(error)) {
-          for (const [field, message] of Object.entries(error.fieldErrors) as [
-            keyof RegisterDTO,
-            string,
-          ][]) {
-            setError(field, { message });
-          }
-          return;
-        }
-
-        setError('root', { message: getErrorMessage(error) });
+        handleFormError(
+          error,
+          setError,
+          'Registration failed. Please try again.',
+        );
       }
     });
   };
@@ -88,9 +71,8 @@ export default function RegisterForm() {
         {REGISTER_FIELDS.map(field => (
           <Controller
             key={field.name}
-            name={field.name as keyof RegisterDTO}
+            name={field.name as keyof RegisterInput}
             control={control}
-            rules={field.rules}
             render={({ field: hookField, fieldState }) => {
               const variant: VariantType = field.variant;
               const Component = VARIANT_MAPPER[variant];
