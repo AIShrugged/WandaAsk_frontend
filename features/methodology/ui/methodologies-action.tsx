@@ -2,6 +2,7 @@
 
 import { Pen, Trash } from 'lucide-react';
 import { useTransition } from 'react';
+import { toast } from 'react-toastify';
 
 import { deleteMethodology } from '@/app/actions/methodology';
 import { ROUTES } from '@/shared/lib/routes';
@@ -19,8 +20,15 @@ export function MethodologiesAction({
   const handleDelete = () => {
     startTransition(async () => {
       try {
-        await deleteMethodology(methodology.id);
-      } catch {}
+        const error = await deleteMethodology(methodology.id);
+        if (error) {
+          toast.error('Не удалось удалить методологию');
+        } else {
+          toast.success('Методология успешно удалена');
+        }
+      } catch {
+        toast.error('Произошла ошибка при удалении методологии');
+      }
     });
   };
 

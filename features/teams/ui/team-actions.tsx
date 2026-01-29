@@ -2,6 +2,7 @@
 
 import { Trash, UserPlus } from 'lucide-react';
 import { useTransition } from 'react';
+import { toast } from 'react-toastify';
 
 import { deleteTeam } from '@/app/actions/team';
 import TeamMemberAddModal from '@/features/teams/ui/team-member-add-modal';
@@ -22,8 +23,15 @@ export function TeamActions({ id }: Pick<TeamProps, 'id'>) {
   const handleDelete = () => {
     startTransition(async () => {
       try {
-        await deleteTeam(id);
-      } catch {}
+        const error = await deleteTeam(id);
+        if (error) {
+          toast.error('Не удалось удалить команду');
+        } else {
+          toast.success('Команда успешно удалена');
+        }
+      } catch {
+        toast.error('Произошла ошибка при удалении команды');
+      }
     });
   };
 
