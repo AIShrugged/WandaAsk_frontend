@@ -1,9 +1,11 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useCallback } from 'react';
 
 import { loadTeamsChunk } from '@/app/actions/team';
 import { TeamItem } from '@/features/teams/ui/team-item';
+import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
+import { InfiniteScrollStatus } from '@/shared/ui/layout/infinite-scroll-status';
 import SpinLoader from '@/shared/ui/layout/spin-loader';
 
 import type { TeamProps } from '@/features/teams/model/types';
@@ -17,48 +19,24 @@ type Props = {
 };
 
 export function TeamList({ initialTeams, totalCount, organizationId }: Props) {
-  const [items, setItems] = useState<TeamProps[]>(initialTeams);
-  const [offset, setOffset] = useState(initialTeams.length);
-  const [hasMore, setHasMore] = useState(initialTeams.length < totalCount);
-  const [isLoading, setIsLoading] = useState(false);
-  const sentinelRef = useRef<HTMLDivElement>(null);
-
-  const loadMore = useCallback(async () => {
-    if (isLoading || !hasMore) return;
-    setIsLoading(true);
-
-    try {
-      const { data, hasMore: more } = await loadTeamsChunk(
+  const fetchMore = useCallback(
+    async (offset: number) => {
+      const { data, hasMore } = await loadTeamsChunk(
         organizationId,
         offset,
         LIMIT,
       );
+      return { items: data as TeamProps[], hasMore };
+    },
+    [organizationId],
+  );
 
-      setItems(prev => [...prev, ...data]);
-      setOffset(prev => prev + data.length);
-      setHasMore(more);
-    } catch {
-      // silently fail
-    } finally {
-      setIsLoading(false);
-    }
-  }, [organizationId, offset, isLoading, hasMore]);
-
-  useEffect(() => {
-    if (!sentinelRef.current) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && hasMore && !isLoading) {
-          void loadMore();
-        }
-      },
-      { rootMargin: '20px' },
-    );
-
-    observer.observe(sentinelRef.current);
-    return () => observer.disconnect();
-  }, [hasMore, isLoading, loadMore]);
+  const { items, isLoading, hasMore, sentinelRef } =
+    useInfiniteScroll<TeamProps>({
+      fetchMore,
+      initialItems: initialTeams,
+      initialHasMore: initialTeams.length < totalCount,
+    });
 
   if (!items) return null;
 
@@ -69,8 +47,8 @@ export function TeamList({ initialTeams, totalCount, organizationId }: Props) {
       ))}
 
       {!hasMore && items.length > 0 ? (
-        <div className='text-center text-gray-500 py-4'>
-          Loaded: {items.length} items
+        <div className='py-4'>
+          <InfiniteScrollStatus itemCount={items.length} />
         </div>
       ) : (
         <div ref={sentinelRef} className='h-10' />
