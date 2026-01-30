@@ -29,7 +29,12 @@ export default function OrganizationForm({
 
   const [isPending, startTransition] = useTransition();
 
-  const { control, handleSubmit, setError, formState: { isDirty } } = useForm<OrganizationDTO>({
+  const {
+    control,
+    handleSubmit,
+    setError,
+    formState: { isDirty },
+  } = useForm<OrganizationDTO>({
     defaultValues: values ?? ORGANIZATION_VALUES,
     mode: 'onBlur',
     reValidateMode: 'onChange',
@@ -52,7 +57,7 @@ export default function OrganizationForm({
       <form
         id={FORM_ID}
         onSubmit={handleSubmit(onSubmit)}
-        className='w-full flex flex-col gap-[30px] h-full'
+        className='w-full flex flex-col gap-8 h-full'
       >
         {ORGANIZATION_FIELDS.map(field => (
           <Controller

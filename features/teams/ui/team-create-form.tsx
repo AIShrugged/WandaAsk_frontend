@@ -61,7 +61,7 @@ export default function TeamCreateForm({
     <form
       id={FORM_ID}
       onSubmit={handleSubmit(onSubmit)}
-      className='flex flex-col flex-1 gap-4'
+      className='flex flex-col flex-1 gap-8'
     >
       {TEAM_CREATE_FIELDS.map(field => (
         <Controller

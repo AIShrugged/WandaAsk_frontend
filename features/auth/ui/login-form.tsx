@@ -7,10 +7,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { login } from '@/app/actions/auth';
 import { SIGN_IN_FIELDS, SIGN_IN_VALUES } from '@/features/auth/lib/fields';
 import { BUTTON_TEXT } from '@/features/auth/lib/options';
-import {
-  LoginSchema,
-  type LoginInput,
-} from '@/features/auth/model/schemas';
+import { LoginSchema, type LoginInput } from '@/features/auth/model/schemas';
 import { VARIANT_MAPPER, type VariantType } from '@/shared/lib/fieldMapper';
 import { handleFormError } from '@/shared/lib/formErrors';
 import { ROUTES } from '@/shared/lib/routes';
@@ -48,7 +45,7 @@ export default function LoginForm() {
       <form
         id={FORM_ID}
         onSubmit={handleSubmit(onSubmit)}
-        className='w-full flex flex-col gap-[30px]'
+        className='w-full flex flex-col gap-8'
         aria-describedby={errors.root ? 'form-error' : undefined}
       >
         {errors.root?.message && (
