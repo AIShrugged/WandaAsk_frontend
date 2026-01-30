@@ -11,8 +11,6 @@ export default async function Page() {
   const organizationId = await getOrganizationId();
   const { data: followUps } = await getTeamFollowUps(organizationId);
 
-  console.log('followUps', followUps);
-
   return (
     <Card className='h-full flex flex-col'>
       <PageHeader title={'Follow ups'} />
