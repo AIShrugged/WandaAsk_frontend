@@ -1,12 +1,10 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
 
 import { API_URL } from '@/app/constants/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 import { httpClient } from '@/shared/lib/httpClient';
-import { ROUTES } from '@/shared/lib/routes';
 
 import type { OrganizationProps } from '@/features/organization/model/types';
 import type {
@@ -21,14 +19,26 @@ import type { ApiResponse } from '@/shared/types/common';
 // Teams API
 // ------------------------------
 export const getTeams = async (organizationId: number | string) => {
+  const { data, totalCount } = await loadTeamsChunk(organizationId, 0, 10);
+  return { data, totalCount };
+};
+
+export async function loadTeamsChunk(
+  organizationId: number | string,
+  offset: number,
+  limit: number,
+) {
   const authHeaders = await getAuthHeaders();
 
-  const res = await fetch(`${API_URL}/organizations/${organizationId}/teams`, {
-    headers: {
-      ...authHeaders,
+  const res = await fetch(
+    `${API_URL}/organizations/${organizationId}/teams?offset=${offset}&limit=${limit}`,
+    {
+      headers: {
+        ...authHeaders,
+      },
+      cache: 'no-store',
     },
-    cache: 'no-store',
-  });
+  );
 
   if (!res.ok) {
     const text = await res.text();
@@ -41,8 +51,10 @@ export const getTeams = async (organizationId: number | string) => {
     throw new Error(json.error ?? 'Invalid API response');
   }
 
-  return { data: json.data };
-};
+  const totalCount = Number(res.headers.get('Items-Count') || '0');
+
+  return { data: json.data, totalCount, hasMore: offset + limit < totalCount };
+}
 
 export const getTeam = async (teamId: string) =>
   httpClient<TeamProps>(`${API_URL}/teams/${teamId}`);
@@ -68,16 +80,27 @@ export async function deleteTeam(teamId: number) {
 // Create / Update
 // ------------------------------
 export async function createTeam(organizationId: string, data: TeamCreateDTO) {
-  await httpClient<TeamProps>(`${API_URL}/teams`, {
+  const authHeaders = await getAuthHeaders();
+
+  const res = await fetch(`${API_URL}/teams`, {
     method: 'POST',
+    headers: {
+      ...authHeaders,
+    },
     body: JSON.stringify({
       organization_id: organizationId,
       ...data,
     }),
+    cache: 'no-store',
   });
 
+  if (!res.ok) {
+    const text = await res.text();
+    return { error: text || 'Failed to create team' };
+  }
+
   revalidatePath('/team');
-  redirect(ROUTES.DASHBOARD.TEAMS);
+  return { error: null };
 }
 
 export async function updateTeam(id: number, data: TeamCreateDTO) {
@@ -87,7 +110,6 @@ export async function updateTeam(id: number, data: TeamCreateDTO) {
   });
 
   revalidatePath('/team');
-  redirect(ROUTES.DASHBOARD.TEAMS);
 }
 
 // ------------------------------

@@ -7,7 +7,6 @@ import { cache } from 'react';
 
 import { API_URL } from '@/app/constants/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
-import { ROUTES } from '@/shared/lib/routes';
 
 import type {
   OrganizationDTO,
@@ -73,9 +72,7 @@ export const getOrganization = cache(
   },
 );
 
-export async function createOrganization(
-  data: OrganizationDTO,
-): Promise<OrganizationProps> {
+export async function createOrganization(data: OrganizationDTO) {
   const authHeaders = await getAuthHeaders();
 
   const res = await fetch(`${API_URL}/organizations`, {
@@ -106,7 +103,6 @@ export async function createOrganization(
 
   await selectOrganizationAction(formData);
   revalidatePath('/organizations');
-  redirect(ROUTES.DASHBOARD.CALENDAR);
 }
 
 export async function setActiveOrganization(

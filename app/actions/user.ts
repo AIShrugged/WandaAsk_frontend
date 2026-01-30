@@ -5,6 +5,8 @@ import { cache } from 'react';
 import { API_URL } from '@/app/constants/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 
+import type { UserProps } from '@/features/user/model/types';
+
 export const getUser = cache(async () => {
   const authHeaders = await getAuthHeaders();
 
@@ -14,8 +16,7 @@ export const getUser = cache(async () => {
     cache: 'no-store',
   });
 
-  if (!res.ok) throw new Error('Failed to fetch user');
+  const json: UserProps = await res.json();
 
-  const json = await res.json();
   return { data: json };
 });
