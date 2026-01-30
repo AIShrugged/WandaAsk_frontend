@@ -4,7 +4,6 @@ import { type PropsWithChildren, Suspense } from 'react';
 import { getEvents } from '@/app/actions/calendar-events';
 import { getSources } from '@/app/actions/source';
 import Calendar from '@/features/calendar/client/calendar';
-import OAuthPopupClose from '@/features/calendar/client/oauth-popup-close';
 import OnboardingTrigger from '@/features/calendar/client/onboarding-trigger';
 import Card from '@/shared/ui/card/Card';
 
@@ -42,7 +41,7 @@ export default async function Page({
   const params = await searchParams;
 
   if (params?.attached === '1') {
-    return <OAuthPopupClose />;
+    redirect('/dashboard/calendar');
   }
 
   const { data } = await getSources();

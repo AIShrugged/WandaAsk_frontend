@@ -21,14 +21,10 @@ export function MethodologiesAction({
   const handleDelete = () => {
     startTransition(async () => {
       try {
-        const error = await deleteMethodology(methodology.id);
-        if (error) {
-          toast.error('Не удалось удалить методологию');
-        } else {
-          toast.success('Методология успешно удалена');
-        }
+        await deleteMethodology(methodology.id);
+        toast.success('Методология успешно удалена');
       } catch {
-        toast.error('Произошла ошибка при удалении методологии');
+        toast.error('Не удалось удалить методологию');
       }
     });
   };
