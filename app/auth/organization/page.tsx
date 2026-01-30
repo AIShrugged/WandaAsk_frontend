@@ -9,19 +9,23 @@ import Card from '@/shared/ui/card/Card';
 export default async function Page() {
   const { data: organizations } = await getOrganizations();
 
+  if (!organizations?.length) {
+    return (
+      <Card>
+        <div className={'w-[690px] py-[100px] px-[72px]'}>
+          <AuthTitle type={AUTH_TITLE_VARIANT.ORGANIZATION} />
+          <OrganizationListEmpty />
+        </div>
+      </Card>
+    );
+  }
+
   return (
     <Card>
       <div className={'w-[690px] py-[100px] px-[72px]'}>
         <AuthTitle type={AUTH_TITLE_VARIANT.ORGANIZATION} />
-
-        {organizations ? (
-          <>
-            <OrganizationList organizations={organizations} />
-            <OrganizationCreateLink />
-          </>
-        ) : (
-          <OrganizationListEmpty />
-        )}
+        <OrganizationList organizations={organizations} />
+        <OrganizationCreateLink />
       </div>
     </Card>
   );

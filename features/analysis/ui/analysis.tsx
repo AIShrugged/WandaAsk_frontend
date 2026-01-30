@@ -30,8 +30,6 @@ export default async function Analysis({ id }: { id: number }) {
 
   if (!parsed) return;
 
-  console.log('parsed', parsed);
-
   return (
     <div className={'flex flex-col gap-10'}>
       {parsed.total && <Total total={parsed.total} />}

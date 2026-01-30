@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useTransition } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { attachCalendar } from '@/app/actions/calendar';
 import { H1 } from '@/shared/ui/typography/H1';
@@ -9,32 +9,57 @@ import { H1 } from '@/shared/ui/typography/H1';
 import OnboardingImage from '../server/onboarding-image';
 
 export default function OnboardingTrigger() {
-  const [isPending, startTransition] = useTransition();
   const router = useRouter();
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const channelRef = useRef<BroadcastChannel | null>(null);
 
-  const handleAttach = () => {
-    startTransition(async () => {
-      const url = await attachCalendar();
+  useEffect(() => {
+    const channel = new BroadcastChannel('calendar_oauth');
+    channelRef.current = channel;
 
-      const popup = window.open(
-        url,
-        'google_oauth',
-        'width=700,height=700,left=' +
-          (screen.width / 2 - 350) +
-          ',top=100,scrollbars=yes',
-      );
+    channel.onmessage = (event) => {
+      if (event.data?.type !== 'CALENDAR_CONNECTED') return;
 
-      if (!popup) {
-        return;
+      if (event.data.success) {
+        router.refresh();
+      } else {
+        setError(event.data.error ?? 'Failed to connect calendar');
+        setIsPending(false);
       }
+    };
 
-      const checkClosed = setInterval(() => {
-        if (popup.closed) {
-          clearInterval(checkClosed);
-          router.refresh();
-        }
-      }, 500);
-    });
+    return () => {
+      channel.close();
+      channelRef.current = null;
+    };
+  }, [router]);
+
+  const handleAttach = async () => {
+    setError(null);
+    setIsPending(true);
+
+    let url: string;
+    try {
+      url = await attachCalendar();
+    } catch (error_) {
+      setError((error_ as Error).message);
+      setIsPending(false);
+      return;
+    }
+
+    const popup = globalThis.open(
+      url,
+      'google_oauth',
+      `width=700,height=700,left=${screen.width / 2 - 350},top=100,scrollbars=yes`,
+    );
+
+    if (!popup) {
+      setError(
+        'Popup was blocked by the browser. Please allow popups and try again.',
+      );
+      setIsPending(false);
+    }
   };
 
   return (
@@ -47,12 +72,13 @@ export default function OnboardingTrigger() {
         className='cursor-pointer focus:outline-none'
       >
         <OnboardingImage />
-        {isPending && (
-          <p className='text-sm mt-4 text-muted-foreground'>
-            Waiting Google...
-          </p>
-        )}
       </button>
+      {isPending && (
+        <p className='text-sm mt-4 text-muted-foreground'>
+          Waiting for Google...
+        </p>
+      )}
+      {error && <p className='text-sm mt-4 text-red-500'>{error}</p>}
     </div>
   );
 }

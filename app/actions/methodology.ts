@@ -14,10 +14,16 @@ import type {
 } from '@/features/methodology/model/types';
 import type { ApiResponse } from '@/shared/types/common';
 
+const afterMethodologyMutate = (): never => {
+  const path = ROUTES.DASHBOARD.METHODOLOGY;
+  revalidatePath(path);
+  redirect(path);
+};
+
 export async function createMethodology(
   id: number | undefined,
   data: MethodologyDTO,
-): Promise<MethodologyProps> {
+): Promise<void> {
   const authHeaders = await getAuthHeaders();
 
   const payload = {
@@ -48,22 +54,22 @@ export async function createMethodology(
     throw new Error(json.error);
   }
 
-  revalidatePath('/dashboard/methodology');
-  redirect(ROUTES.DASHBOARD.METHODOLOGY);
+  afterMethodologyMutate();
 }
 
 export async function updateMethodology(
-  id: number | undefined,
+  organization_id: number | undefined,
+  methodology_id: number,
   data: MethodologyDTO,
-): Promise<MethodologyProps> {
+): Promise<void> {
   const authHeaders = await getAuthHeaders();
 
   const payload = {
-    organization_id: id,
+    organization_id,
     ...data,
   };
 
-  await fetch(`${API_URL}/methodologies/${id}`, {
+  const res = await fetch(`${API_URL}/methodologies/${methodology_id}`, {
     method: 'PUT',
     headers: {
       ...authHeaders,
@@ -73,8 +79,14 @@ export async function updateMethodology(
     cache: 'no-store',
   });
 
-  revalidatePath('/dashboard/methodology');
-  redirect(ROUTES.DASHBOARD.METHODOLOGY);
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(
+      `updateMethodology failed: ${res.status} ${res.statusText} — ${text}`,
+    );
+  }
+
+  afterMethodologyMutate();
 }
 
 export const getMethodologies = cache(
@@ -151,8 +163,11 @@ export async function deleteMethodology(id: number) {
   });
 
   if (!res.ok) {
-    return await res.text();
+    const text = await res.text();
+    throw new Error(
+      `deleteMethodology failed: ${res.status} ${res.statusText} — ${text}`,
+    );
   }
 
-  revalidatePath('/dashboard/methodology');
+  revalidatePath(ROUTES.DASHBOARD.METHODOLOGY);
 }

@@ -12,7 +12,7 @@ export default async function OrganizationList({
 }: {
   organizations: OrganizationProps[];
 }) {
-  if (!organizations) return null;
+  if (!organizations) return 'still no organizations';
 
   return (
     <div className={'h-[280px] overflow-y-scroll'}>

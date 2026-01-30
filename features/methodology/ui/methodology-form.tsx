@@ -42,8 +42,8 @@ export default function MethodologyForm({
   const onSubmit = (data: MethodologyDTO) => {
     startTransition(async () => {
       try {
-        if (isEdit) {
-          await updateMethodology(organization_id, data);
+        if (isEdit && values) {
+          await updateMethodology(organization_id, values.id, data);
         } else {
           await createMethodology(organization_id, data);
           reset();
@@ -83,18 +83,18 @@ export default function MethodologyForm({
             }}
           />
         ))}
+        <div className={'mt-auto w-[170px]'}>
+          <Button
+            form={FORM_ID}
+            loading={isPending}
+            disabled={isPending}
+            type={'submit'}
+            variant={BUTTON_VARIANT.primary}
+          >
+            {BUTTON.SAVE}
+          </Button>
+        </div>
       </form>
-      <div className={'mt-auto w-[170px]'}>
-        <Button
-          form={FORM_ID}
-          loading={isPending}
-          disabled={isPending}
-          type={'submit'}
-          variant={BUTTON_VARIANT.primary}
-        >
-          {BUTTON.SAVE}
-        </Button>
-      </div>
     </>
   );
 }
