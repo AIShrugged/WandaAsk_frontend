@@ -10,6 +10,7 @@ interface AuthActionsFooterProps {
   secondaryRoute: string;
   formId: string;
   loading: boolean;
+  disabled?: boolean;
 }
 
 export default function AuthFormFooter({
@@ -19,11 +20,12 @@ export default function AuthFormFooter({
   secondaryRoute,
   formId,
   loading,
+  disabled,
 }: AuthActionsFooterProps) {
   return (
     <div className={'flex flex-col gap-6 mt-12'}>
       <Button
-        disabled={loading}
+        disabled={disabled ?? loading}
         loading={loading}
         type={'submit'}
         form={formId}

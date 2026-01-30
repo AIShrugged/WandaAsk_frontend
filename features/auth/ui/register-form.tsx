@@ -28,7 +28,7 @@ export default function RegisterForm() {
     control,
     handleSubmit,
     setError,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm<RegisterInput>({
     defaultValues: REGISTER_FIELDS_VALUES,
     resolver: zodResolver(RegisterSchema),
@@ -91,6 +91,7 @@ export default function RegisterForm() {
 
       <AuthFormFooter
         loading={isPending}
+        disabled={isPending || !isDirty}
         formId={FORM_ID}
         primaryButton={BUTTON_TEXT.GET_STARTED}
         primaryText={`${BUTTON_TEXT.LOGIN} here`}

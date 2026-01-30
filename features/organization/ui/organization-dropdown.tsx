@@ -3,6 +3,7 @@
 import { ChevronUp, ChevronDown, Settings } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState, useActionState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 
 import { setActiveOrganization } from '@/app/actions/organization';
 import { BUTTON } from '@/shared/lib/buttons';
@@ -71,6 +72,7 @@ export default function OrganizationDropdown({
               action={formData => {
                 action(formData);
                 setOpen(false);
+                toast.success(`Organization changed to: ${organization.name}`);
               }}
             >
               <input
@@ -95,11 +97,12 @@ export default function OrganizationDropdown({
 
                     <button
                       className={'cursor-pointer'}
-                      onClick={() =>
+                      onClick={() => {
+                        setOpen(false);
                         push(
                           `${ROUTES.DASHBOARD.ORGANIZATION}/${organization.id}`,
-                        )
-                      }
+                        );
+                      }}
                     >
                       <Settings />
                     </button>
@@ -123,7 +126,10 @@ export default function OrganizationDropdown({
           ))}
 
           <button
-            onClick={() => push(`${ROUTES.DASHBOARD.ORGANIZATION}/create`)}
+            onClick={() => {
+              setOpen(false);
+              push(`${ROUTES.DASHBOARD.ORGANIZATION}/create`);
+            }}
             type='button'
             className='w-full px-4 py-3 text-left
                        text-sm font-medium text-green-600

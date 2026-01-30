@@ -10,3 +10,13 @@ export interface TeamCreateDTO {
 export interface TeamAddMemberDTO {
   email: string;
 }
+
+export interface TeamFollowUpDTO {
+  id: number;
+  calendar_event_id: number;
+  team_id: number;
+  text: string;
+  status: string;
+  created_at: Date;
+  updated_at: Date;
+}
