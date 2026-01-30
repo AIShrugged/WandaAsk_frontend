@@ -1,12 +1,15 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import React, { useTransition } from 'react';
 import { useForm, Controller } from 'react-hook-form';
+import { toast } from 'react-toastify';
 
 import { createTeam, updateTeam } from '@/app/actions/team';
 import { TEAM_CREATE_FIELDS } from '@/features/teams/model/fields';
 import { BUTTON } from '@/shared/lib/buttons';
 import { VARIANT_MAPPER, type VariantType } from '@/shared/lib/fieldMapper';
+import { ROUTES } from '@/shared/lib/routes';
 import { Button } from '@/shared/ui/button/Button';
 
 import type { TeamCreateDTO, TeamProps } from '@/features/teams/model/types';
@@ -20,10 +23,15 @@ export default function TeamCreateForm({
 }) {
   const FORM_ID = 'team-create-form';
   const isEdit = Boolean(values?.id);
+  const router = useRouter();
 
   const [isPending, startTransition] = useTransition();
 
-  const { control, handleSubmit, setError, formState: { isDirty } } = useForm<TeamCreateDTO>({
+  const {
+    control,
+    handleSubmit,
+    formState: { isDirty },
+  } = useForm<TeamCreateDTO>({
     defaultValues: values,
     mode: 'onBlur',
     reValidateMode: 'onChange',
@@ -32,13 +40,19 @@ export default function TeamCreateForm({
   const onSubmit = (data: TeamCreateDTO) => {
     startTransition(async () => {
       try {
-        await (isEdit
-          ? updateTeam(values.id, data)
-          : createTeam(organization_id, data));
+        if (isEdit) {
+          await updateTeam(values.id, data);
+        } else {
+          const result = await createTeam(organization_id, data);
+          if (result.error) {
+            toast.error(result.error);
+            return;
+          }
+        }
+
+        router.push(ROUTES.DASHBOARD.TEAMS);
       } catch (error) {
-        setError('name', {
-          message: (error as Error).message,
-        });
+        toast.error((error as Error).message);
       }
     });
   };
@@ -70,7 +84,11 @@ export default function TeamCreateForm({
         />
       ))}
       <div className={'mt-auto w-[170px]'}>
-        <Button loading={isPending} disabled={isPending || !isDirty} type='submit'>
+        <Button
+          loading={isPending}
+          disabled={isPending || !isDirty}
+          type='submit'
+        >
           {BUTTON.SAVE}
         </Button>
       </div>
