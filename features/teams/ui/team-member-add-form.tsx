@@ -19,7 +19,12 @@ export default function TeamMemberAddForm() {
 
   const [isPending, startTransition] = useTransition();
 
-  const { control, handleSubmit, setError, formState: { isDirty } } = useForm<TeamAddMemberDTO>({
+  const {
+    control,
+    handleSubmit,
+    setError,
+    formState: { isDirty },
+  } = useForm<TeamAddMemberDTO>({
     defaultValues: TEAM_MEMBER_ADD_VALUES,
     mode: 'onBlur',
     reValidateMode: 'onChange',
@@ -41,7 +46,7 @@ export default function TeamMemberAddForm() {
     <form
       id={FORM_ID}
       onSubmit={handleSubmit(onSubmit)}
-      className='w-full flex flex-col gap-[30px]'
+      className='w-full flex flex-col gap-8'
     >
       {TEAM_MEMBER_ADD_FIELDS.map(field => (
         <Controller

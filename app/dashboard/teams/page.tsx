@@ -10,21 +10,28 @@ import PageHeader from '@/widgets/layout/ui/page-header';
 
 export default async function Page() {
   const organizationId = await getOrganizationId();
-  const { data: teams = [] } = await getTeams(organizationId);
+  const { data: teams = [], totalCount = 0 } = await getTeams(organizationId);
 
   return (
-    <Card className='h-full flex flex-col'>
+    <Card className='h-full flex flex-col  '>
       <PageHeader title={'Teams'} />
 
-      <CardBody>
-        {teams.length > 0 ? (
-          <TeamList teams={teams} />
-        ) : (
-          'No team in this organization'
-        )}
-
-        <TeamCreate />
-      </CardBody>
+      <div className={'h-full overflow-x-hidden overflow-y-scroll'}>
+        <CardBody>
+          {teams.length > 0 ? (
+            <div className={''}>
+              <TeamList
+                initialTeams={teams}
+                totalCount={totalCount}
+                organizationId={organizationId}
+              />
+            </div>
+          ) : (
+            'No team in this organization'
+          )}
+        </CardBody>
+      </div>
+      <TeamCreate />
     </Card>
   );
 }
