@@ -16,6 +16,7 @@ export function MethodologiesAction({
   methodology: MethodologyProps;
 }) {
   const [isPending, startTransition] = useTransition();
+  const isDefault = methodology.id === 1;
 
   const handleDelete = () => {
     startTransition(async () => {
@@ -36,11 +37,12 @@ export function MethodologiesAction({
     <div className='flex items-center gap-2'>
       <ButtonIcon
         variant='primary'
+        disabled={isDefault}
         icon={<Pen className='size-[28]' />}
         href={`${ROUTES.DASHBOARD.METHODOLOGY}/${methodology.id}`}
       />
       <ButtonIcon
-        disabled={isPending}
+        disabled={isPending || isDefault}
         icon={<Trash className='size-[28]' />}
         variant='danger'
         onClick={handleDelete}

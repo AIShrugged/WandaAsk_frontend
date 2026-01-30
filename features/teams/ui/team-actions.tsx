@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 import { deleteTeam } from '@/app/actions/team';
 import TeamMemberAddModal from '@/features/teams/ui/team-member-add-modal';
 import { useModal } from '@/shared/hooks/use-modal';
+import { ButtonIcon } from '@/shared/ui/button/button-icon';
 
 import type { TeamProps } from '@/features/teams/model/types';
 
@@ -37,25 +38,18 @@ export function TeamActions({ id }: Pick<TeamProps, 'id'>) {
 
   return (
     <div className='flex items-center gap-2'>
-      <button
+      <ButtonIcon
+        disabled={isPending}
+        icon={<UserPlus className='size-[28]' />}
+        variant='primary'
         onClick={handleOpenModal}
+      />
+      <ButtonIcon
         disabled={isPending}
-        className='group rounded-lg transition-colors hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
-        aria-label='Add team member'
-        type='button'
-      >
-        <UserPlus className='size-7 text-neutral-400 transition-colors group-hover:enabled:text-accent group-disabled:text-neutral-300' />
-      </button>
-
-      <button
+        icon={<Trash className='size-[28]' />}
+        variant='danger'
         onClick={handleDelete}
-        disabled={isPending}
-        className='group rounded-lg transition-colors hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
-        aria-label='Add team member'
-        type='button'
-      >
-        <Trash className='size-7 text-neutral-400 transition-colors group-hover:enabled:text-accent group-disabled:text-neutral-300' />
-      </button>
+      />
     </div>
   );
 }
