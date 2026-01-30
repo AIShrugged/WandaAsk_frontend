@@ -1,7 +1,6 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
 import { cache } from 'react';
 
 import { API_URL } from '@/app/constants/config';
@@ -14,10 +13,9 @@ import type {
 } from '@/features/methodology/model/types';
 import type { ApiResponse } from '@/shared/types/common';
 
-const afterMethodologyMutate = (): never => {
+const afterMethodologyMutate = () => {
   const path = ROUTES.DASHBOARD.METHODOLOGY;
   revalidatePath(path);
-  redirect(path);
 };
 
 export async function createMethodology(

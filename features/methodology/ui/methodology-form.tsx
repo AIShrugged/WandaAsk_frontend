@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import React, { useTransition } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
@@ -13,6 +14,7 @@ import {
 } from '@/features/methodology/lib/options';
 import { BUTTON } from '@/shared/lib/buttons';
 import { VARIANT_MAPPER, type VariantType } from '@/shared/lib/fieldMapper';
+import { ROUTES } from '@/shared/lib/routes';
 import { BUTTON_VARIANT } from '@/shared/types/button';
 import { Button } from '@/shared/ui/button/Button';
 
@@ -32,8 +34,15 @@ export default function MethodologyForm({
   const isEdit = Boolean(values?.id);
 
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
-  const { control, handleSubmit, reset, setError } = useForm<MethodologyDTO>({
+  const {
+    control,
+    handleSubmit,
+    reset,
+    setError,
+    formState: { isDirty },
+  } = useForm<MethodologyDTO>({
     defaultValues: values ?? METHODOLOGY_FIELDS,
     mode: 'onBlur',
     reValidateMode: 'onChange',
@@ -48,6 +57,7 @@ export default function MethodologyForm({
           await createMethodology(organization_id, data);
           reset();
         }
+        router.push(ROUTES.DASHBOARD.METHODOLOGY);
       } catch (error) {
         setError('name', {
           message: (error as Error).message,
@@ -87,7 +97,7 @@ export default function MethodologyForm({
           <Button
             form={FORM_ID}
             loading={isPending}
-            disabled={isPending}
+            disabled={isPending || !isDirty}
             type={'submit'}
             variant={BUTTON_VARIANT.primary}
           >

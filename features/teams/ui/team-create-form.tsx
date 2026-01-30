@@ -23,7 +23,7 @@ export default function TeamCreateForm({
 
   const [isPending, startTransition] = useTransition();
 
-  const { control, handleSubmit, setError } = useForm<TeamCreateDTO>({
+  const { control, handleSubmit, setError, formState: { isDirty } } = useForm<TeamCreateDTO>({
     defaultValues: values,
     mode: 'onBlur',
     reValidateMode: 'onChange',
@@ -70,7 +70,7 @@ export default function TeamCreateForm({
         />
       ))}
       <div className={'mt-auto w-[170px]'}>
-        <Button loading={isPending} disabled={isPending} type='submit'>
+        <Button loading={isPending} disabled={isPending || !isDirty} type='submit'>
           {BUTTON.SAVE}
         </Button>
       </div>

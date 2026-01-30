@@ -19,7 +19,7 @@ export default function TeamMemberAddForm() {
 
   const [isPending, startTransition] = useTransition();
 
-  const { control, handleSubmit, setError } = useForm<TeamAddMemberDTO>({
+  const { control, handleSubmit, setError, formState: { isDirty } } = useForm<TeamAddMemberDTO>({
     defaultValues: TEAM_MEMBER_ADD_VALUES,
     mode: 'onBlur',
     reValidateMode: 'onChange',
@@ -64,7 +64,7 @@ export default function TeamMemberAddForm() {
         />
       ))}
       <div className={'flex flex-col gap-3'}>
-        <Button loading={isPending} disabled={isPending}>
+        <Button loading={isPending} disabled={isPending || !isDirty}>
           {BUTTON.INVITE}
         </Button>
       </div>

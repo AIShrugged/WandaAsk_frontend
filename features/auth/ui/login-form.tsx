@@ -25,7 +25,7 @@ export default function LoginForm() {
     control,
     handleSubmit,
     setError,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm<LoginInput>({
     defaultValues: SIGN_IN_VALUES,
     resolver: zodResolver(LoginSchema),
@@ -83,6 +83,7 @@ export default function LoginForm() {
       </form>
       <AuthFormFooter
         loading={isPending}
+        disabled={isPending || !isDirty}
         formId={FORM_ID}
         primaryButton={BUTTON_TEXT.LOGIN}
         primaryText={`${BUTTON_TEXT.REGISTER}`}
