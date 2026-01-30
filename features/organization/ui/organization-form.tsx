@@ -29,7 +29,7 @@ export default function OrganizationForm({
 
   const [isPending, startTransition] = useTransition();
 
-  const { control, handleSubmit, setError } = useForm<OrganizationDTO>({
+  const { control, handleSubmit, setError, formState: { isDirty } } = useForm<OrganizationDTO>({
     defaultValues: values ?? ORGANIZATION_VALUES,
     mode: 'onBlur',
     reValidateMode: 'onChange',
@@ -81,7 +81,7 @@ export default function OrganizationForm({
               type={'submit'}
               form={FORM_ID}
               loading={isPending}
-              disabled={isPending}
+              disabled={isPending || !isDirty}
             >
               {BUTTON.SAVE}
             </Button>
@@ -95,7 +95,7 @@ export default function OrganizationForm({
             type={'submit'}
             form={FORM_ID}
             loading={isPending}
-            disabled={isPending}
+            disabled={isPending || !isDirty}
           >
             {BUTTON.SAVE}
           </Button>

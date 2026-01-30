@@ -12,6 +12,7 @@ import type { OrganizationProps } from '@/features/organization/model/types';
 import type {
   TeamAddMemberDTO,
   TeamCreateDTO,
+  TeamFollowUpDTO,
   TeamProps,
 } from '@/features/teams/model/types';
 import type { ApiResponse } from '@/shared/types/common';
@@ -100,3 +101,29 @@ export async function createInviteTeamMember(data: TeamAddMemberDTO) {
 
   revalidatePath('/team');
 }
+
+export const getTeamFollowUps = async (
+  organizationId: number | string,
+): Promise<{ data: TeamFollowUpDTO[] }> => {
+  const authHeaders = await getAuthHeaders();
+
+  const res = await fetch(`${API_URL}/organizations/${organizationId}/teams`, {
+    headers: {
+      ...authHeaders,
+    },
+    cache: 'no-store',
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`${text}`);
+  }
+
+  const json: ApiResponse<TeamFollowUpDTO[]> = await res.json();
+
+  if (!json.success || !json.data) {
+    throw new Error(json.error ?? 'Invalid API response');
+  }
+
+  return { data: json.data };
+};
