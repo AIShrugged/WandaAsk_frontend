@@ -7,7 +7,6 @@ import { getSources } from '@/app/actions/source';
 import Calendar from '@/features/calendar/client/calendar';
 import OnboardingTrigger from '@/features/calendar/client/onboarding-trigger';
 import Card from '@/shared/ui/card/Card';
-import SpinLoader from '@/shared/ui/layout/spin-loader';
 
 import type { EventProps } from '@/features/event/model/types';
 
@@ -29,7 +28,7 @@ const AttachedView = ({
   currentMonth: string;
 }) => (
   <Wrapper>
-    <Suspense fallback={<SpinLoader />}>
+    <Suspense>
       <Calendar currentMonth={currentMonth} events={events} />
     </Suspense>
   </Wrapper>
