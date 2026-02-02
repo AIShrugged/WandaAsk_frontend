@@ -1,21 +1,18 @@
-import { getFollowUps } from '@/app/actions/calendar-events';
-import { getfollowUp } from '@/app/actions/follow-up';
-import FollowUpDetails from '@/features/follow-up/ui/follow-up-details';
-
-import type {
-  FollowUpResponse,
-  FollowUpsResponse,
-} from '@/features/follow-up/model/types';
-
-export default async function FollowUp({ id }: { id: number }) {
-  const followUps: FollowUpsResponse = await getFollowUps(id);
-
-  if (!followUps?.data || followUps.data.length === 0) {
-    return <div>No follow up</div>;
+export default async function FollowUp({ data }: { data: string }) {
+  if (!data) {
+    return <div>No data</div>;
   }
 
-  const latestId = Math.max(...followUps.data.map(item => item.id));
-  const followUp: FollowUpResponse = await getfollowUp(latestId);
+  let parsed;
+  try {
+    parsed = JSON.parse(data);
+  } catch {
+    return <div>Error</div>;
+  }
 
-  return <FollowUpDetails data={followUp.data} />;
+  return (
+    <pre className='bg-scheduled p-4 rounded-lg overflow-x-auto text-sm font-mono whitespace-pre-wrap break-words'>
+      {JSON.stringify(parsed, null, 2)}
+    </pre>
+  );
 }

@@ -1,20 +1,30 @@
+'use server';
+
 import { API_URL } from '@/app/constants/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 
-export async function getfollowUp(id: number) {
+export async function getFollowUp(id: number) {
   const authHeaders = await getAuthHeaders();
 
   const res = await fetch(`${API_URL}/followups/${id}`, {
-    method: 'GET',
     headers: {
       ...authHeaders,
     },
-    next: { revalidate: 60 },
+    cache: 'no-store',
   });
 
   if (!res.ok) {
-    return null;
+    const text = await res.text();
+    throw new Error(`${text}`);
   }
 
-  return res.json();
+  const json = await res.json();
+
+  if (!json.success || !json.data) {
+    throw new Error(json.error ?? 'Invalid API response');
+  }
+
+  console.log('json', json);
+
+  return { data: json.data };
 }

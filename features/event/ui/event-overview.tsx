@@ -2,22 +2,22 @@ import EventSummary from '@/features/event/ui/event-summary';
 import ParticipantData from '@/features/participants/ui/participant-data';
 
 import type { EventProps } from '@/features/event/model/types';
-import type {
-  AttendeeProps,
-  GuestProps,
-} from '@/features/participants/model/types';
+import { getAttendees, getGuests } from '@/app/actions/participants';
 
-export default function EventOverview({
+export default async function EventOverview({
   id,
   event,
-  guests,
-  attendees,
 }: {
   id: string;
   event: EventProps;
-  guests: GuestProps[];
-  attendees: AttendeeProps[];
 }) {
+  const [{ data: attendees = [] }, { data: guests = [] }] = await Promise.all([
+    getAttendees(id),
+    getGuests(id),
+  ]);
+
+  if (!event) return;
+
   return (
     <div className='flex flex-col gap-7'>
       <EventSummary event={event} />
