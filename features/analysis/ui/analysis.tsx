@@ -5,7 +5,7 @@ import Total from '@/features/analysis/widgets/total';
 
 import type { AnalysisProps } from '@/features/analysis/model/types';
 
-export default async function Analysis({ data }: { id: number }) {
+export default async function Analysis({ data }: { data: string }) {
   let parsed: AnalysisProps;
   try {
     parsed = JSON.parse(data) as AnalysisProps;

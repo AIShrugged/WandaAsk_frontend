@@ -33,14 +33,14 @@ export default async function Page({ params, searchParams }: PageProps) {
     getGuests(id),
   ]);
 
-  const followUps: FollowUpsResponse = await getFollowUps(id);
+  const followUps: FollowUpsResponse = await getFollowUps(+id);
 
   if (!followUps?.data || followUps.data.length === 0) {
     return <div>No analysis</div>;
   }
 
   const latestId = Math.max(...followUps.data.map(item => item.id));
-  const followUp: FollowUpResponse = await getfollowUp(latestId);
+  const followUp = await getfollowUp(+latestId);
 
   const validTabs = ['summary', 'followup', 'transcript', 'analysis'] as const;
   const currentTab = validTabs.includes(tab as any) ? tab : 'summary';
