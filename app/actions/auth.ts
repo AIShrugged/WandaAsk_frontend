@@ -79,6 +79,14 @@ export async function register(data: RegisterInput): Promise<void> {
   redirect(ROUTES.AUTH.ORGANIZATION);
 }
 
+export async function clearSession(): Promise<void> {
+  const cookieStore = await cookies();
+  cookieStore.delete('token');
+  cookieStore.delete('organization_id');
+
+  redirect(ROUTES.AUTH.LOGIN);
+}
+
 export async function logout(): Promise<void> {
   const authHeaders = await getAuthHeaders();
   const cookieStore = await cookies();

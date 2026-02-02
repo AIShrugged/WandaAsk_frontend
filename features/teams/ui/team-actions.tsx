@@ -1,18 +1,25 @@
 'use client';
 
-import { Trash, UserPlus } from 'lucide-react';
-import { useTransition } from 'react';
+import { ChevronRightIcon, Trash, UserPlus } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { type ReactNode, useTransition } from 'react';
 import { toast } from 'react-toastify';
 
 import { deleteTeam } from '@/app/actions/team';
 import TeamMemberAddModal from '@/features/teams/ui/team-member-add-modal';
 import { useModal } from '@/shared/hooks/use-modal';
+import { ROUTES } from '@/shared/lib/routes';
 import { ButtonIcon } from '@/shared/ui/button/button-icon';
 
-import type { TeamProps } from '@/features/teams/model/types';
+import type { TeamActionType, TeamProps } from '@/features/teams/model/types';
 
-export function TeamActions({ id }: Pick<TeamProps, 'id'>) {
+type Props = Pick<TeamProps, 'id'> & {
+  actions: TeamActionType[];
+};
+
+export function TeamActions({ id, actions }: Props) {
   const [isPending, startTransition] = useTransition();
+  const { push } = useRouter();
   const { open, close } = useModal();
 
   const handleOpenModal = () => {
@@ -36,20 +43,43 @@ export function TeamActions({ id }: Pick<TeamProps, 'id'>) {
     });
   };
 
-  return (
-    <div className='flex items-center gap-2'>
+  const handleViewTeamFollowUp = () => {
+    push(`${ROUTES.DASHBOARD.FOLLOWUPS}/${String(id)}`);
+  };
+
+  const actionMap: Record<TeamActionType, ReactNode> = {
+    'add-member': (
       <ButtonIcon
+        key='add-member'
         disabled={isPending}
         icon={<UserPlus className='size-[28]' />}
         variant='primary'
         onClick={handleOpenModal}
       />
+    ),
+    delete: (
       <ButtonIcon
+        key='delete'
         disabled={isPending}
         icon={<Trash className='size-[28]' />}
         variant='danger'
         onClick={handleDelete}
       />
+    ),
+    view: (
+      <ButtonIcon
+        key='view'
+        disabled={isPending}
+        icon={<ChevronRightIcon className='size-[28]' />}
+        variant='primary'
+        onClick={handleViewTeamFollowUp}
+      />
+    ),
+  };
+
+  return (
+    <div className='flex items-center gap-2'>
+      {actions.map(action => actionMap[action])}
     </div>
   );
 }

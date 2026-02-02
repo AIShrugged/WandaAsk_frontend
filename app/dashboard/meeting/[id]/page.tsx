@@ -1,7 +1,8 @@
 import { redirect } from 'next/navigation';
 import React, { Suspense } from 'react';
 
-import { getEvent } from '@/app/actions/calendar-events';
+import { getEvent, getFollowUps } from '@/app/actions/calendar-events';
+import { getfollowUp } from '@/app/actions/follow-up';
 import { getAttendees, getGuests } from '@/app/actions/participants';
 import Analysis from '@/features/analysis/ui/analysis';
 import EventOverview from '@/features/event/ui/event-overview';
@@ -15,6 +16,10 @@ import CardBody from '@/shared/ui/card/CardBody';
 import SpinLoader from '@/shared/ui/layout/spin-loader';
 import PageHeader from '@/widgets/layout/ui/page-header';
 
+import type {
+  FollowUpResponse,
+  FollowUpsResponse,
+} from '@/features/follow-up/model/types';
 import type { PageProps } from '@/shared/types/common';
 
 export default async function Page({ params, searchParams }: PageProps) {
@@ -27,6 +32,15 @@ export default async function Page({ params, searchParams }: PageProps) {
     getAttendees(id),
     getGuests(id),
   ]);
+
+  const followUps: FollowUpsResponse = await getFollowUps(id);
+
+  if (!followUps?.data || followUps.data.length === 0) {
+    return <div>No analysis</div>;
+  }
+
+  const latestId = Math.max(...followUps.data.map(item => item.id));
+  const followUp: FollowUpResponse = await getfollowUp(latestId);
 
   const validTabs = ['summary', 'followup', 'transcript', 'analysis'] as const;
   const currentTab = validTabs.includes(tab as any) ? tab : 'summary';
@@ -58,7 +72,7 @@ export default async function Page({ params, searchParams }: PageProps) {
             )}
             {currentTab === available_tabs.transcript && <Transcript id={id} />}
             {currentTab === available_tabs.analysis && (
-              <Analysis id={Number(id)} />
+              <Analysis data={followUp?.data?.text} />
             )}
           </Suspense>
         </div>
