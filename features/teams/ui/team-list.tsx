@@ -8,7 +8,7 @@ import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
 import { InfiniteScrollStatus } from '@/shared/ui/layout/infinite-scroll-status';
 import SpinLoader from '@/shared/ui/layout/spin-loader';
 
-import type { TeamProps } from '@/features/teams/model/types';
+import type { TeamActionType, TeamProps } from '@/features/teams/model/types';
 
 const LIMIT = 10;
 
@@ -16,9 +16,15 @@ type Props = {
   initialTeams: TeamProps[];
   totalCount: number;
   organizationId: number | string;
+  actions: TeamActionType[];
 };
 
-export function TeamList({ initialTeams, totalCount, organizationId }: Props) {
+export function TeamList({
+  initialTeams,
+  totalCount,
+  organizationId,
+  actions,
+}: Props) {
   const fetchMore = useCallback(
     async (offset: number) => {
       const { data, hasMore } = await loadTeamsChunk(
@@ -43,7 +49,7 @@ export function TeamList({ initialTeams, totalCount, organizationId }: Props) {
   return (
     <div className='flex flex-col h-full'>
       {items.map(team => (
-        <TeamItem key={team.id} team={team} />
+        <TeamItem key={team.id} team={team} actions={actions} />
       ))}
 
       {!hasMore && items.length > 0 ? (

@@ -16,9 +16,9 @@ export default defineConfig([
     },
     rules: {
       ...securityPlugin.configs.recommended.rules,
-      "security/detect-object-injection": "off",
-      "security/detect-non-literal-regexp": "warn",
-      "security/detect-eval-with-expression": "error",
+      'security/detect-object-injection': 'off',
+      'security/detect-non-literal-regexp': 'warn',
+      'security/detect-eval-with-expression': 'error',
     },
   },
 
@@ -31,14 +31,14 @@ export default defineConfig([
       ...unicornPlugin.configs.recommended.rules,
       ...sonarjsPlugin.configs.recommended.rules,
 
-      "unicorn/prevent-abbreviations": "off",
-      "unicorn/filename-case": "off",
-      "unicorn/no-null": "off",
-      "unicorn/prefer-top-level-await": "off",
-      "unicorn/no-console-spaces": "warn",
-      "unicorn/no-useless-undefined": "warn",
-      "sonarjs/no-duplicate-string": ["warn", { threshold: 4 }],
-      "sonarjs/cognitive-complexity": ["warn", 15],
+      'unicorn/prevent-abbreviations': 'off',
+      'unicorn/filename-case': 'off',
+      'unicorn/no-null': 'off',
+      'unicorn/prefer-top-level-await': 'off',
+      'unicorn/no-console-spaces': 'warn',
+      'unicorn/no-useless-undefined': 'warn',
+      'sonarjs/no-duplicate-string': ['warn', { threshold: 4 }],
+      'sonarjs/cognitive-complexity': ['warn', 15],
     },
   },
 
@@ -47,7 +47,7 @@ export default defineConfig([
       import: importPlugin,
     },
     settings: {
-      "import/resolver": {
+      'import/resolver': {
         typescript: {
           project: './tsconfig.json',
         },
@@ -56,48 +56,48 @@ export default defineConfig([
     },
 
     rules: {
-      "import/no-unresolved": "error",
-      "import/order": [
-        "warn",
+      'import/no-unresolved': 'error',
+      'import/order': [
+        'warn',
         {
           groups: [
-            "builtin",
-            "external",
-            "internal",
-            "parent",
-            "sibling",
-            "index",
-            "object",
-            "type",
+            'builtin',
+            'external',
+            'internal',
+            'parent',
+            'sibling',
+            'index',
+            'object',
+            'type',
           ],
-          "newlines-between": "always",
-          alphabetize: { order: "asc", caseInsensitive: true },
+          'newlines-between': 'always',
+          alphabetize: { order: 'asc', caseInsensitive: true },
         },
       ],
-      "import/no-duplicates": "warn",
+      'import/no-duplicates': 'warn',
     },
   },
 
   {
-    files: ["**/*.{js,ts,tsx}"],
+    files: ['**/*.{js,ts,tsx}'],
     rules: {
-      "no-console": "warn",
-      "no-debugger": "error",
-      "no-alert": "error",
-      "no-constant-condition": "error",
-      "@next/next/no-sync-scripts": "error",
-      "@next/next/no-css-tags": "warn",
-      "@next/next/no-title-in-document-head": "warn",
+      'no-console': 'warn',
+      'no-debugger': 'error',
+      'no-alert': 'error',
+      'no-constant-condition': 'error',
+      '@next/next/no-sync-scripts': 'error',
+      '@next/next/no-css-tags': 'warn',
+      '@next/next/no-title-in-document-head': 'warn',
     },
   },
 
   {
     rules: {
-      "react-hooks/exhaustive-deps": "off",
-      "react/no-unescaped-entities": "off",
-      "@next/next/no-page-custom-font": "off",
-      "@typescript-eslint/ban-ts-comment": "off",
-      "@typescript-eslint/no-explicit-any": "off",
+      'react-hooks/exhaustive-deps': 'off',
+      'react/no-unescaped-entities': 'off',
+      '@next/next/no-page-custom-font': 'off',
+      '@typescript-eslint/ban-ts-comment': 'off',
+      '@typescript-eslint/no-explicit-any': 'on',
     },
   },
 

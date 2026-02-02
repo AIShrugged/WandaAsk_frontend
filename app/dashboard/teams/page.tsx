@@ -24,6 +24,7 @@ export default async function Page() {
                 initialTeams={teams}
                 totalCount={totalCount}
                 organizationId={organizationId}
+                actions={['add-member', 'delete']}
               />
             </div>
           ) : (

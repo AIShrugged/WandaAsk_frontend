@@ -1,10 +1,14 @@
 'use client';
 
-import { useEffect } from 'react';
+import { AlertCircle } from 'lucide-react';
+import Image from 'next/image';
 
-import { ROUTES } from '@/shared/lib/routes';
+import { BUTTON_VARIANT } from '@/shared/types/button';
 import { Button } from '@/shared/ui/button/Button';
+import ButtonCopy from '@/shared/ui/button/button-copy';
 import Card from '@/shared/ui/card/Card';
+import CardBody from '@/shared/ui/card/CardBody';
+import { H2 } from '@/shared/ui/typography/H2';
 
 interface ErrorPageProps {
   error: globalThis.Error & { digest?: string };
@@ -12,34 +16,27 @@ interface ErrorPageProps {
 }
 
 export default function ErrorPage({ error, reset }: ErrorPageProps) {
-  useEffect(() => {
-    // eslint-disable-next-line no-console
-    console.error('Dashboard error:', error);
-  }, [error]);
-
   return (
-    <Card className='h-full flex flex-col items-center justify-center'>
-      <div className='flex flex-col items-center gap-6 text-center px-8 py-6'>
-        <div className='text-6xl'>⚠️</div>
-        <h2 className='text-2xl font-semibold text-dark'>
-          Something went wrong
-        </h2>
-        <p className='text-secondary max-w-md'>
-          {error.message || 'An unexpected error occurred. Please try again.'}
-        </p>
-        <div className='flex gap-4'>
-          <Button onClick={reset}>Try again</Button>
-          <Button
-            variant='secondary'
-            onClick={() => (globalThis.location.href = ROUTES.DASHBOARD.CALENDAR)}
-          >
-            Go to Calendar
-          </Button>
+    <Card className='h-full flex flex-col items-center  overflow-y-scroll'>
+      <CardBody>
+        <div className={'flex flex-col justify-center'}>
+          <AlertCircle className='h-12 w-12 text-destructive mb-4' />
+          <H2>An error occurred</H2>
+          <p>Please email (info@spodial.com) us the error</p>
+
+          <Image
+            alt={'error'}
+            height={320}
+            width={320}
+            src={'/images/icons/error.png'}
+          />
+
+          <div className={'flex flex-row gap-2 mt-2'}>
+            <p>Copy error text</p>
+            <ButtonCopy copyText={error.message} />
+          </div>
         </div>
-        {error.digest && (
-          <p className='text-xs text-tertiary'>Error ID: {error.digest}</p>
-        )}
-      </div>
+      </CardBody>
     </Card>
   );
 }

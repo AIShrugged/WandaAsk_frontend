@@ -125,11 +125,11 @@ export async function createInviteTeamMember(data: TeamAddMemberDTO) {
 }
 
 export const getTeamFollowUps = async (
-  organizationId: number | string,
+  teamId: number | string,
 ): Promise<{ data: TeamFollowUpDTO[] }> => {
   const authHeaders = await getAuthHeaders();
 
-  const res = await fetch(`${API_URL}/organizations/${organizationId}/teams`, {
+  const res = await fetch(`${API_URL}/teams/${teamId}/followups`, {
     headers: {
       ...authHeaders,
     },
@@ -142,6 +142,33 @@ export const getTeamFollowUps = async (
   }
 
   const json: ApiResponse<TeamFollowUpDTO[]> = await res.json();
+
+  if (!json.success || !json.data) {
+    throw new Error(json.error ?? 'Invalid API response');
+  }
+
+  return { data: json.data };
+};
+
+export const getTeamFollowUp = async (calendarEventId: number | string) => {
+  const authHeaders = await getAuthHeaders();
+
+  const res = await fetch(
+    `${API_URL}/calendar-events/${calendarEventId}/followup`,
+    {
+      headers: {
+        ...authHeaders,
+      },
+      cache: 'no-store',
+    },
+  );
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`${text}`);
+  }
+
+  const json = await res.json();
 
   if (!json.success || !json.data) {
     throw new Error(json.error ?? 'Invalid API response');
