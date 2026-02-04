@@ -23,6 +23,8 @@ import type {
   MethodologyProps,
 } from '@/features/methodology/model/types';
 
+const FORM_ID = 'methodology-form';
+
 export default function MethodologyForm({
   values,
   organization_id,
@@ -30,8 +32,8 @@ export default function MethodologyForm({
   organization_id: number;
   values?: MethodologyProps;
 }) {
-  const FORM_ID = 'methodology-form';
   const isEdit = Boolean(values?.id);
+  const disabled = values?.id === 1;
 
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
@@ -75,6 +77,7 @@ export default function MethodologyForm({
       >
         {FORM_FIELDS.map(field => (
           <Controller
+            disabled={disabled}
             key={field.name}
             name={field.name as keyof MethodologyDTO}
             control={control}

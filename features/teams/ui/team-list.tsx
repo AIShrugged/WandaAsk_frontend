@@ -3,14 +3,13 @@
 import { useCallback } from 'react';
 
 import { loadTeamsChunk } from '@/app/actions/team';
+import { useTeamsStore } from '@/features/teams/model/teams-store';
+import { useCachedInfiniteScroll } from '@/shared/hooks/use-cached-infinite-scroll';
 import { TeamItem } from '@/features/teams/ui/team-item';
-import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
 import { InfiniteScrollStatus } from '@/shared/ui/layout/infinite-scroll-status';
 import SpinLoader from '@/shared/ui/layout/spin-loader';
 
 import type { TeamActionType, TeamProps } from '@/features/teams/model/types';
-
-const LIMIT = 10;
 
 type Props = {
   initialTeams: TeamProps[];
@@ -25,23 +24,25 @@ export function TeamList({
   organizationId,
   actions,
 }: Props) {
-  const fetchMore = useCallback(
-    async (offset: number) => {
+  const fetchChunk = useCallback(
+    async (offset: number, limit: number) => {
       const { data, hasMore } = await loadTeamsChunk(
         organizationId,
         offset,
-        LIMIT,
+        limit,
       );
-      return { items: data as TeamProps[], hasMore };
+      return { data: data as TeamProps[], hasMore };
     },
     [organizationId],
   );
 
   const { items, isLoading, hasMore, sentinelRef } =
-    useInfiniteScroll<TeamProps>({
-      fetchMore,
+    useCachedInfiniteScroll<TeamProps>({
+      store: useTeamsStore,
+      fetchChunk,
+      cacheKey: organizationId,
       initialItems: initialTeams,
-      initialHasMore: initialTeams.length < totalCount,
+      totalCount,
     });
 
   if (!items) return null;

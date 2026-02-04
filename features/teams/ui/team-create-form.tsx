@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 
 import { createTeam, updateTeam } from '@/app/actions/team';
 import { TEAM_CREATE_FIELDS } from '@/features/teams/model/fields';
+import { useTeamsStore } from '@/features/teams/model/teams-store';
 import { BUTTON } from '@/shared/lib/buttons';
 import { VARIANT_MAPPER, type VariantType } from '@/shared/lib/fieldMapper';
 import { ROUTES } from '@/shared/lib/routes';
@@ -50,6 +51,7 @@ export default function TeamCreateForm({
           }
         }
 
+        useTeamsStore.getState().invalidate();
         router.push(ROUTES.DASHBOARD.TEAMS);
       } catch (error) {
         toast.error((error as Error).message);
