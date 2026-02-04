@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import { attachCalendar } from '@/app/actions/calendar';
+import { attachCalendar } from '@/features/calendar/api/calendar';
 import { H1 } from '@/shared/ui/typography/H1';
 
 import OnboardingImage from '../server/onboarding-image';

@@ -1,4 +1,4 @@
-import { loadTranscriptChunk } from '@/app/actions/transcript';
+import { loadTranscriptChunk } from '@/features/transcript/api/transcript';
 import { filters } from '@/features/transcript/lib/options';
 import TranscriptHistory from '@/features/transcript/ui/transcript-history';
 

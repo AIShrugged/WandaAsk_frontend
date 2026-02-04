@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useTransition } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 
-import { register } from '@/app/actions/auth';
+import { register } from '@/features/auth/api/auth';
 import {
   REGISTER_FIELDS,
   REGISTER_FIELDS_VALUES,

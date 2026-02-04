@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { getTeamFollowUps } from '@/app/actions/team';
+import { getTeamFollowUps } from '@/features/teams/api/team';
 import { FollowUpList } from '@/features/follow-up/ui/follow-up-list';
 import Card from '@/shared/ui/card/Card';
 import CardBody from '@/shared/ui/card/CardBody';

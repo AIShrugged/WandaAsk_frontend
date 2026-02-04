@@ -1,6 +1,6 @@
 'use server';
 
-import { getAttendees, getGuests } from '@/app/actions/participants';
+import { getAttendees, getGuests } from '@/features/participants/api/participants';
 import Event from '@/features/calendar/client/event';
 
 import type { EventProps } from '@/features/event/model/types';

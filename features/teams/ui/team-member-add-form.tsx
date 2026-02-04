@@ -3,7 +3,7 @@
 import React, { useTransition } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 
-import { createInviteTeamMember } from '@/app/actions/team';
+import { createInviteTeamMember } from '@/features/teams/api/team';
 import {
   TEAM_MEMBER_ADD_FIELDS,
   TEAM_MEMBER_ADD_VALUES,

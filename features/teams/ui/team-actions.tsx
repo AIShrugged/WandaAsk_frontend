@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { type ReactNode, useTransition } from 'react';
 import { toast } from 'react-toastify';
 
-import { deleteTeam } from '@/app/actions/team';
+import { deleteTeam } from '@/features/teams/api/team';
 import { useTeamsStore } from '@/features/teams/model/teams-store';
 import TeamMemberAddModal from '@/features/teams/ui/team-member-add-modal';
 import { useModal } from '@/shared/hooks/use-modal';

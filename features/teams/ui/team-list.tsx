@@ -2,7 +2,7 @@
 
 import { useCallback } from 'react';
 
-import { loadTeamsChunk } from '@/app/actions/team';
+import { loadTeamsChunk } from '@/features/teams/api/team';
 import { useTeamsStore } from '@/features/teams/model/teams-store';
 import { useCachedInfiniteScroll } from '@/shared/hooks/use-cached-infinite-scroll';
 import { TeamItem } from '@/features/teams/ui/team-item';

@@ -2,7 +2,7 @@
 
 import { ChevronRight } from 'lucide-react';
 
-import { selectOrganizationAction } from '@/app/actions/organization';
+import { selectOrganizationAction } from '@/features/organization/api/organization';
 import { H3 } from '@/shared/ui/typography/H3';
 
 import type { OrganizationProps } from '@/features/organization/model/types';

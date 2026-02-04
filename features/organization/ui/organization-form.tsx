@@ -4,7 +4,7 @@ import Link from 'next/link';
 import React, { useTransition } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 
-import { createOrganization } from '@/app/actions/organization';
+import { createOrganization } from '@/features/organization/api/organization';
 import {
   ORGANIZATION_FIELDS,
   ORGANIZATION_VALUES,

@@ -1,4 +1,4 @@
-import { getOrganizations } from '@/app/actions/organization';
+import { getOrganizations } from '@/features/organization/api/organization';
 import { AUTH_TITLE_VARIANT } from '@/features/auth/lib/options';
 import AuthTitle from '@/features/auth/ui/auth-title';
 import OrganizationCreateLink from '@/features/organization/ui/organization-create-link';

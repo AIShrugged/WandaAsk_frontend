@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 
-import { getOrganizations } from '@/app/actions/organization';
+import { getOrganizations } from '@/features/organization/api/organization';
 import OrganizationDropdown from '@/features/organization/ui/organization-dropdown';
 
 export default async function OrganizationSelector() {

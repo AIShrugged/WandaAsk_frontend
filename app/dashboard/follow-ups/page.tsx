@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { getTeamFollowUps, getTeams } from '@/app/actions/team';
+import { getTeamFollowUps, getTeams } from '@/features/teams/api/team';
 import { FollowUpList } from '@/features/follow-up/ui/follow-up-list';
 import { TeamList } from '@/features/teams/ui/team-list';
 import { getOrganizationId } from '@/shared/lib/getOrganizationId';

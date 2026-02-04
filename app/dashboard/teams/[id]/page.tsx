@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { getTeam } from '@/app/actions/team';
+import { getTeam } from '@/features/teams/api/team';
 import TeamMembers from '@/features/teams/ui/team-members';
 import Card from '@/shared/ui/card/Card';
 import PageHeader from '@/widgets/layout/ui/page-header';

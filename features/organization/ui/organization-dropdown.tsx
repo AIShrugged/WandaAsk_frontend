@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useState, useActionState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 
-import { setActiveOrganization } from '@/app/actions/organization';
+import { setActiveOrganization } from '@/features/organization/api/organization';
 import { BUTTON } from '@/shared/lib/buttons';
 import { ROUTES } from '@/shared/lib/routes';
 

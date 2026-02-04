@@ -7,7 +7,7 @@ import { Controller, useForm } from 'react-hook-form';
 import {
   createMethodology,
   updateMethodology,
-} from '@/app/actions/methodology';
+} from '@/features/methodology/api/methodology';
 import {
   FORM_FIELDS,
   METHODOLOGY_FIELDS,
