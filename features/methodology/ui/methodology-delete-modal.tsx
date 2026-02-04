@@ -1,6 +1,6 @@
 import { useActionState } from 'react';
 
-import { deleteMethodology } from '@/app/actions/methodology';
+import { deleteMethodology } from '@/features/methodology/api/methodology';
 import { BUTTON } from '@/shared/lib/buttons';
 import { BUTTON_VARIANT } from '@/shared/types/button';
 import { Button } from '@/shared/ui/button/Button';

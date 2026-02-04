@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { getOrganization } from '@/app/actions/organization';
+import { getOrganization } from '@/features/organization/api/organization';
 import OrganizationForm from '@/features/organization/ui/organization-form';
 import Card from '@/shared/ui/card/Card';
 import CardBody from '@/shared/ui/card/CardBody';

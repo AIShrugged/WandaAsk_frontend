@@ -2,7 +2,7 @@
 
 import { useCallback } from 'react';
 
-import { loadTranscriptChunk } from '@/app/actions/transcript';
+import { loadTranscriptChunk } from '@/features/transcript/api/transcript';
 import { filters } from '@/features/transcript/lib/options';
 import TranscriptList from '@/features/transcript/ui/transcript-list';
 import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';

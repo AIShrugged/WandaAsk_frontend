@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { getTeams } from '@/app/actions/team';
+import { getTeams } from '@/features/teams/api/team';
 import TeamCreate from '@/features/teams/ui/team-create';
 import { TeamList } from '@/features/teams/ui/team-list';
 import { getOrganizationId } from '@/shared/lib/getOrganizationId';

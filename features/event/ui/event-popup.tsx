@@ -1,7 +1,7 @@
 import { Minus, Plus } from 'lucide-react';
 import React, { type JSX, useTransition } from 'react';
 
-import { switchBot } from '@/app/actions/calendar-events';
+import { switchBot } from '@/features/event/api/calendar-events';
 import EventSummary from '@/features/event/ui/event-summary';
 import { participants } from '@/features/participants/lib/options';
 import { Button } from '@/shared/ui/button/Button';

@@ -1,4 +1,4 @@
-import { getUser } from '@/app/actions/user';
+import { getUser } from '@/features/user/api/user';
 import UserErrorBanner from '@/features/user/ui/user-error-banner';
 import UserInfo from '@/features/user/ui/user-info';
 

@@ -3,7 +3,7 @@
 import { ArrowRight, Loader2 } from 'lucide-react';
 import { useOptimistic, useTransition } from 'react';
 
-import { setProfile } from '@/app/actions/participants';
+import { setProfile } from '@/features/participants/api/participants';
 import InputDropdown from '@/shared/ui/input/InputDropdown';
 
 import type {

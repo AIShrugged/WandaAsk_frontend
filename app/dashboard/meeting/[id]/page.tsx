@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import React, { Suspense } from 'react';
 
-import { getEvent } from '@/app/actions/calendar-events';
+import { getEvent } from '@/features/event/api/calendar-events';
 import EventOverview from '@/features/event/ui/event-overview';
 import {
   available_tabs,

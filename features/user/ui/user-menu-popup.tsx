@@ -1,7 +1,7 @@
 import { useRouter } from 'next/navigation';
 import { type ReactNode, useTransition } from 'react';
 
-import { logout } from '@/app/actions/auth';
+import { logout } from '@/features/auth/api/auth';
 import { USER_MENU } from '@/features/user/lib/options';
 import { ROUTES } from '@/shared/lib/routes';
 

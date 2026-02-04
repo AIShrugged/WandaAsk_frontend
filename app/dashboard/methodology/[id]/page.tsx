@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { getMethodology } from '@/app/actions/methodology';
+import { getMethodology } from '@/features/methodology/api/methodology';
 import MethodologyForm from '@/features/methodology/ui/methodology-form';
 import { getOrganizationId } from '@/shared/lib/getOrganizationId';
 import Card from '@/shared/ui/card/Card';

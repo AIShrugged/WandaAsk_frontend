@@ -4,7 +4,7 @@ import { Pen, Trash } from 'lucide-react';
 import { useTransition } from 'react';
 import { toast } from 'react-toastify';
 
-import { deleteMethodology } from '@/app/actions/methodology';
+import { deleteMethodology } from '@/features/methodology/api/methodology';
 import { ROUTES } from '@/shared/lib/routes';
 import { ButtonIcon } from '@/shared/ui/button/button-icon';
 
