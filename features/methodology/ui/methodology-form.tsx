@@ -9,7 +9,7 @@ import {
   updateMethodology,
 } from '@/features/methodology/api/methodology';
 import {
-  FORM_FIELDS,
+  getFormFields,
   METHODOLOGY_FIELDS,
 } from '@/features/methodology/lib/options';
 import { BUTTON } from '@/shared/lib/buttons';
@@ -22,14 +22,18 @@ import type {
   MethodologyDTO,
   MethodologyProps,
 } from '@/features/methodology/model/types';
+import type { OrganizationProps } from '@/features/organization/model/types';
+import { toast } from 'react-toastify';
 
 const FORM_ID = 'methodology-form';
 
 export default function MethodologyForm({
   values,
   organization_id,
+  organizations,
 }: {
-  organization_id: number;
+  organization_id: string;
+  organizations: OrganizationProps[];
   values?: MethodologyProps;
 }) {
   const isEdit = Boolean(values?.id);
@@ -38,6 +42,10 @@ export default function MethodologyForm({
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
+  const formFields = getFormFields(
+    organizations.map(org => ({ value: String(org.id), label: org.name })),
+  );
+
   const {
     control,
     handleSubmit,
@@ -45,7 +53,9 @@ export default function MethodologyForm({
     setError,
     formState: { isDirty },
   } = useForm<MethodologyDTO>({
-    defaultValues: values ?? METHODOLOGY_FIELDS,
+    defaultValues: values
+      ? { ...values, organization_id }
+      : { ...METHODOLOGY_FIELDS, organization_id },
     mode: 'onBlur',
     reValidateMode: 'onChange',
   });
@@ -54,9 +64,11 @@ export default function MethodologyForm({
     startTransition(async () => {
       try {
         if (isEdit && values) {
-          await updateMethodology(organization_id, values.id, data);
+          await updateMethodology(values.id, data);
+          toast.success(`Methodology updated`);
         } else {
-          await createMethodology(organization_id, data);
+          await createMethodology(data);
+          toast.success(`Methodology created`);
           reset();
         }
         router.push(ROUTES.DASHBOARD.METHODOLOGY);
@@ -75,7 +87,7 @@ export default function MethodologyForm({
         onSubmit={handleSubmit(onSubmit)}
         className='flex flex-col flex-1 gap-8'
       >
-        {FORM_FIELDS.map(field => (
+        {formFields.map(field => (
           <Controller
             disabled={disabled}
             key={field.name}

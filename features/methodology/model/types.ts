@@ -1,4 +1,5 @@
 export interface MethodologyDTO {
+  organization_id: string;
   name: string;
   text: string;
 }

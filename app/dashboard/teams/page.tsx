@@ -13,20 +13,18 @@ export default async function Page() {
   const { data: teams = [], totalCount = 0 } = await getTeams(organizationId);
 
   return (
-    <Card className='h-full flex flex-col  '>
+    <Card className='h-full flex flex-col'>
       <PageHeader title={'Teams'} />
 
       <div className={'h-full overflow-x-hidden overflow-y-scroll'}>
         <CardBody>
           {teams.length > 0 ? (
-            <div className={''}>
-              <TeamList
-                initialTeams={teams}
-                totalCount={totalCount}
-                organizationId={organizationId}
-                actions={['add-member', 'delete']}
-              />
-            </div>
+            <TeamList
+              initialTeams={teams}
+              totalCount={totalCount}
+              organizationId={organizationId}
+              actions={['add-member', 'delete']}
+            />
           ) : (
             'No team in this organization'
           )}

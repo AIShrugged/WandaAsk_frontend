@@ -2,8 +2,9 @@
 
 import React, { useTransition } from 'react';
 import { useForm, Controller } from 'react-hook-form';
+import { toast } from 'react-toastify';
 
-import { createInviteTeamMember } from '@/features/teams/api/team';
+import { sendInvite } from '@/features/teams/api/team';
 import {
   TEAM_MEMBER_ADD_FIELDS,
   TEAM_MEMBER_ADD_VALUES,
@@ -13,9 +14,14 @@ import { VARIANT_MAPPER, type VariantType } from '@/shared/lib/fieldMapper';
 import { Button } from '@/shared/ui/button/Button';
 
 import type { TeamAddMemberDTO } from '@/features/teams/model/types';
+import { useSearchParams } from 'next/navigation';
+import type { ModalContextValue } from '@/shared/types/modal';
 
-export default function TeamMemberAddForm() {
-  const FORM_ID = 'team-member-add-form';
+const FORM_ID = 'team-member-add-form';
+
+export default function TeamMemberAddForm({ close }: ModalContextValue) {
+  const searchParams = useSearchParams();
+  const currentTeamId = searchParams.get('team_id');
 
   const [isPending, startTransition] = useTransition();
 
@@ -33,7 +39,9 @@ export default function TeamMemberAddForm() {
   const onSubmit = (data: TeamAddMemberDTO) => {
     startTransition(async () => {
       try {
-        await createInviteTeamMember(data);
+        const result = await sendInvite(Number(currentTeamId), data);
+        toast.success(result.message);
+        close();
       } catch (error) {
         setError('email', {
           message: (error as Error).message,

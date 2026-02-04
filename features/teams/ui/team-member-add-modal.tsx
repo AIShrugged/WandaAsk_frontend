@@ -15,7 +15,7 @@ export default function TeamMemberAddModal({ close }: ModalContextValue) {
           team
         </p>
 
-        <TeamMemberAddForm />
+        <TeamMemberAddForm close={close} />
       </ModalBody>
     </>
   );
