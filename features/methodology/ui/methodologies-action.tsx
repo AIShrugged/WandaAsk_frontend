@@ -22,9 +22,9 @@ export function MethodologiesAction({
     startTransition(async () => {
       try {
         await deleteMethodology(methodology.id);
-        toast.success('Методология успешно удалена');
+        toast.success(`Methodology ${methodology.name} deleted`);
       } catch {
-        toast.error('Не удалось удалить методологию');
+        toast.error(`Cant delete ${methodology.name}`);
       }
     });
   };

@@ -24,7 +24,5 @@ export async function getFollowUp(id: number) {
     throw new Error(json.error ?? 'Invalid API response');
   }
 
-  console.log('json', json);
-
   return { data: json.data };
 }

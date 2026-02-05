@@ -1,8 +1,8 @@
 'use client';
 
 import { ChevronRightIcon, Trash, UserPlus } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { type ReactNode, useTransition } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { type ReactNode, useCallback, useTransition } from 'react';
 import { toast } from 'react-toastify';
 
 import { deleteTeam } from '@/features/teams/api/team';
@@ -20,12 +20,24 @@ type Props = Pick<TeamProps, 'id'> & {
 
 export function TeamActions({ id, actions }: Props) {
   const [isPending, startTransition] = useTransition();
-  const { push } = useRouter();
+  const { push, replace } = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { open, close } = useModal();
+
+  const handleClose = useCallback(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete('team_id');
+    replace(`${pathname}?${params.toString()}`);
+    close();
+  }, [close, pathname, replace, searchParams]);
 
   const handleOpenModal = () => {
     if (open) {
-      open(<TeamMemberAddModal close={close} />);
+      const params = new URLSearchParams(searchParams.toString());
+      params.set('team_id', String(id));
+      replace(`${pathname}?${params.toString()}`);
+      open(<TeamMemberAddModal close={handleClose} />);
     }
   };
 

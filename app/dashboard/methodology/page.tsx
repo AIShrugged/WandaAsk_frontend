@@ -10,18 +10,27 @@ import PageHeader from '@/widgets/layout/ui/page-header';
 
 export default async function Page() {
   const organizationId = await getOrganizationId();
-  const { data: methodologies } = await getMethodologies(organizationId);
-
-  if (!methodologies) return null;
+  const { data: methodologies = [], totalCount = 0 } =
+    await getMethodologies(organizationId);
 
   return (
     <Card className='h-full flex flex-col'>
-      <PageHeader title={'Methodologies'}></PageHeader>
+      <PageHeader title={'Methodologies'} />
 
-      <CardBody>
-        <MethodologyList methodologies={methodologies} />
-        <MethodologyCreate />
-      </CardBody>
+      <div className={'h-full overflow-x-hidden overflow-y-scroll'}>
+        <CardBody>
+          {methodologies.length > 0 ? (
+            <MethodologyList
+              initialMethodologies={methodologies}
+              totalCount={totalCount}
+              organizationId={organizationId}
+            />
+          ) : (
+            'No methodologies in this organization'
+          )}
+        </CardBody>
+      </div>
+      <MethodologyCreate />
     </Card>
   );
 }

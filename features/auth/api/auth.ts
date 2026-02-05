@@ -76,6 +76,19 @@ export async function register(data: RegisterInput): Promise<void> {
     });
   }
 
+  if (json.organization_id) {
+    const cookieStore = await cookies();
+    cookieStore.set({
+      name: 'organization_id',
+      value: json.organization_id,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7,
+    });
+  }
+
   redirect(ROUTES.AUTH.ORGANIZATION);
 }
 

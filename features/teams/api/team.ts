@@ -112,18 +112,6 @@ export async function updateTeam(id: number, data: TeamCreateDTO) {
   revalidatePath('/team');
 }
 
-// ------------------------------
-// Invite member
-// ------------------------------
-export async function createInviteTeamMember(data: TeamAddMemberDTO) {
-  await httpClient<OrganizationProps>(`${API_URL}/teams/invite`, {
-    method: 'POST',
-    body: JSON.stringify(data),
-  });
-
-  revalidatePath('/team');
-}
-
 export const getTeamFollowUps = async (
   teamId: number | string,
 ): Promise<{ data: TeamFollowUpDTO[] }> => {
@@ -175,4 +163,25 @@ export const getTeamFollowUp = async (calendarEventId: number | string) => {
   }
 
   return { data: json.data };
+};
+
+export const sendInvite = async (teamId: number, data: TeamAddMemberDTO) => {
+  const authHeaders = await getAuthHeaders();
+
+  const res = await fetch(`${API_URL}/teams/${teamId}/invites`, {
+    method: 'POST',
+    headers: {
+      ...authHeaders,
+    },
+    body: JSON.stringify(data),
+    cache: 'no-store',
+  });
+
+  const json = await res.json();
+
+  if (!res.ok || !json.success) {
+    throw new Error(json.message ?? 'Failed to send invite');
+  }
+
+  return { data: json.data, message: json.message as string };
 };

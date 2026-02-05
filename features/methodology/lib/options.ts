@@ -1,6 +1,18 @@
 import type { MethodologyDTO } from '@/features/methodology/model/types';
+import type { DropdownOption } from '@/shared/ui/input/InputDropdown';
 
-export const FORM_FIELDS = [
+export const getFormFields = (organizationOptions: DropdownOption[]) => [
+  {
+    variant: 'select' as const,
+    name: 'organization_id',
+    label: 'Organization',
+    type: 'text',
+    placeholder: 'Select organization',
+    options: organizationOptions,
+    rules: {
+      required: 'Organization is required',
+    },
+  },
   {
     variant: 'input' as const,
     name: 'name',
@@ -37,6 +49,7 @@ export const FORM_FIELDS = [
 ];
 
 export const METHODOLOGY_FIELDS: MethodologyDTO = {
+  organization_id: '',
   name: '',
   text: '',
 };

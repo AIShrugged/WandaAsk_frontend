@@ -15,19 +15,11 @@ import type { ApiResponse } from '@/shared/types/common';
 
 const afterMethodologyMutate = () => {
   const path = ROUTES.DASHBOARD.METHODOLOGY;
-  revalidatePath(path);
+  revalidatePath('/methodology');
 };
 
-export async function createMethodology(
-  id: number | undefined,
-  data: MethodologyDTO,
-): Promise<void> {
+export async function createMethodology(data: MethodologyDTO): Promise<void> {
   const authHeaders = await getAuthHeaders();
-
-  const payload = {
-    organization_id: id,
-    ...data,
-  };
 
   const res = await fetch(`${API_URL}/methodologies`, {
     method: 'POST',
@@ -35,7 +27,7 @@ export async function createMethodology(
       ...authHeaders,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(payload),
+    body: JSON.stringify(data),
     cache: 'no-store',
   });
 
@@ -46,26 +38,14 @@ export async function createMethodology(
     );
   }
 
-  const json: ApiResponse<MethodologyProps> = await res.json();
-
-  if (!json.success || !json.data) {
-    throw new Error(json.error);
-  }
-
   afterMethodologyMutate();
 }
 
 export async function updateMethodology(
-  organization_id: number | undefined,
   methodology_id: number,
   data: MethodologyDTO,
 ): Promise<void> {
   const authHeaders = await getAuthHeaders();
-
-  const payload = {
-    organization_id,
-    ...data,
-  };
 
   const res = await fetch(`${API_URL}/methodologies/${methodology_id}`, {
     method: 'PUT',
@@ -73,7 +53,7 @@ export async function updateMethodology(
       ...authHeaders,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(payload),
+    body: JSON.stringify(data),
     cache: 'no-store',
   });
 
@@ -87,37 +67,51 @@ export async function updateMethodology(
   afterMethodologyMutate();
 }
 
-export const getMethodologies = cache(
-  async (organization_id: string): Promise<ApiResponse<MethodologyProps[]>> => {
-    const authHeaders = await getAuthHeaders();
+export async function loadMethodologiesChunk(
+  organizationId: string,
+  offset: number,
+  limit: number,
+) {
+  const authHeaders = await getAuthHeaders();
 
-    const res = await fetch(
-      `${API_URL}/organizations/${organization_id}/methodologies`,
-      {
-        method: 'GET',
-        headers: {
-          ...authHeaders,
-          'Content-Type': 'application/json',
-        },
+  const res = await fetch(
+    `${API_URL}/organizations/${organizationId}/methodologies?offset=${offset}&limit=${limit}`,
+    {
+      method: 'GET',
+      headers: {
+        ...authHeaders,
+        'Content-Type': 'application/json',
       },
+      cache: 'no-store',
+    },
+  );
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(
+      `getMethodologies failed: ${res.status} ${res.statusText} — ${text}`,
     );
+  }
 
-    if (!res.ok) {
-      const text = await res.text();
-      throw new Error(
-        `getMethodologies failed: ${res.status} ${res.statusText} — ${text}`,
-      );
-    }
+  const json: ApiResponse<MethodologyProps[]> = await res.json();
 
-    const json: ApiResponse<MethodologyProps[]> = await res.json();
+  if (!json.success || !json.data) {
+    throw new Error(json.error ?? 'Invalid API response');
+  }
 
-    if (!json.success || !json.data) {
-      throw new Error(json.error ?? 'Invalid API response');
-    }
+  const totalCount = Number(res.headers.get('Items-Count') || '0');
 
-    return { data: json.data };
-  },
-);
+  return { data: json.data, totalCount, hasMore: offset + limit < totalCount };
+}
+
+export const getMethodologies = async (organizationId: string) => {
+  const { data, totalCount } = await loadMethodologiesChunk(
+    organizationId,
+    0,
+    10,
+  );
+  return { data, totalCount };
+};
 
 export const getMethodology = cache(
   async (methodology_id: string): Promise<ApiResponse<MethodologyProps>> => {
@@ -167,5 +161,5 @@ export async function deleteMethodology(id: number) {
     );
   }
 
-  revalidatePath(ROUTES.DASHBOARD.METHODOLOGY);
+  revalidatePath('/methodology');
 }
