@@ -5,6 +5,7 @@ import { useTransition } from 'react';
 import { toast } from 'react-toastify';
 
 import { deleteMethodology } from '@/features/methodology/api/methodology';
+import { useMethodologyStore } from '@/features/methodology/model/methodology-store';
 import { ROUTES } from '@/shared/lib/routes';
 import { ButtonIcon } from '@/shared/ui/button/button-icon';
 
@@ -16,12 +17,14 @@ export function MethodologiesAction({
   methodology: MethodologyProps;
 }) {
   const [isPending, startTransition] = useTransition();
+  const removeItem = useMethodologyStore(state => state.removeItem);
   const isDefault = methodology.id === 1;
 
   const handleDelete = () => {
     startTransition(async () => {
       try {
         await deleteMethodology(methodology.id);
+        removeItem(methodology.id);
         toast.success(`Methodology ${methodology.name} deleted`);
       } catch {
         toast.error(`Cant delete ${methodology.name}`);

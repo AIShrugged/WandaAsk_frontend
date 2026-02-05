@@ -22,7 +22,7 @@ import type {
   MethodologyDTO,
   MethodologyProps,
 } from '@/features/methodology/model/types';
-import type { OrganizationProps } from '@/features/organization/model/types';
+import type { TeamProps } from '@/features/teams/model/types';
 import { toast } from 'react-toastify';
 
 const FORM_ID = 'methodology-form';
@@ -30,21 +30,23 @@ const FORM_ID = 'methodology-form';
 export default function MethodologyForm({
   values,
   organization_id,
-  organizations,
+  teams,
 }: {
   organization_id: string;
-  organizations: OrganizationProps[];
+  teams: TeamProps[];
   values?: MethodologyProps;
 }) {
   const isEdit = Boolean(values?.id);
   const disabled = values?.id === 1;
 
   const [isPending, startTransition] = useTransition();
-  const router = useRouter();
+  const { push } = useRouter();
 
   const formFields = getFormFields(
-    organizations.map(org => ({ value: String(org.id), label: org.name })),
+    teams.map(team => ({ value: String(team.id), label: team.name })),
   );
+
+  const initialTeamIds = values?.teams?.map(team => String(team.id)) ?? [];
 
   const {
     control,
@@ -54,7 +56,7 @@ export default function MethodologyForm({
     formState: { isDirty },
   } = useForm<MethodologyDTO>({
     defaultValues: values
-      ? { ...values, organization_id }
+      ? { ...values, organization_id, team_ids: initialTeamIds }
       : { ...METHODOLOGY_FIELDS, organization_id },
     mode: 'onBlur',
     reValidateMode: 'onChange',
@@ -64,14 +66,16 @@ export default function MethodologyForm({
     startTransition(async () => {
       try {
         if (isEdit && values) {
-          await updateMethodology(values.id, data);
+          const existingTeamIds = values.teams?.map(team => String(team.id)) ?? [];
+          const mergedTeamIds = [...new Set([...existingTeamIds, ...data.team_ids])];
+          await updateMethodology(values.id, { ...data, team_ids: mergedTeamIds });
           toast.success(`Methodology updated`);
         } else {
           await createMethodology(data);
           toast.success(`Methodology created`);
           reset();
         }
-        router.push(ROUTES.DASHBOARD.METHODOLOGY);
+        push(ROUTES.DASHBOARD.METHODOLOGY);
       } catch (error) {
         setError('name', {
           message: (error as Error).message,
@@ -81,45 +85,43 @@ export default function MethodologyForm({
   };
 
   return (
-    <>
-      <form
-        id={FORM_ID}
-        onSubmit={handleSubmit(onSubmit)}
-        className='flex flex-col flex-1 gap-8'
-      >
-        {formFields.map(field => (
-          <Controller
-            disabled={disabled}
-            key={field.name}
-            name={field.name as keyof MethodologyDTO}
-            control={control}
-            rules={field.rules}
-            render={({ field: hookField, fieldState }) => {
-              const variant: VariantType = field.variant;
-              const Component = VARIANT_MAPPER[variant];
+    <form
+      id={FORM_ID}
+      onSubmit={handleSubmit(onSubmit)}
+      className='flex flex-col flex-1 gap-8'
+    >
+      {formFields.map(field => (
+        <Controller
+          disabled={disabled}
+          key={field.name}
+          name={field.name as keyof MethodologyDTO}
+          control={control}
+          rules={field.rules}
+          render={({ field: hookField, fieldState }) => {
+            const variant: VariantType = field.variant;
+            const Component = VARIANT_MAPPER[variant];
 
-              return (
-                <Component
-                  field={hookField}
-                  fieldState={fieldState}
-                  config={field}
-                />
-              );
-            }}
-          />
-        ))}
-        <div className={'mt-auto w-[170px]'}>
-          <Button
-            form={FORM_ID}
-            loading={isPending}
-            disabled={isPending || !isDirty}
-            type={'submit'}
-            variant={BUTTON_VARIANT.primary}
-          >
-            {BUTTON.SAVE}
-          </Button>
-        </div>
-      </form>
-    </>
+            return (
+              <Component
+                field={hookField}
+                fieldState={fieldState}
+                config={field}
+              />
+            );
+          }}
+        />
+      ))}
+      <div className={'mt-auto w-[170px]'}>
+        <Button
+          form={FORM_ID}
+          loading={isPending}
+          disabled={isPending || !isDirty}
+          type={'submit'}
+          variant={BUTTON_VARIANT.primary}
+        >
+          {BUTTON.SAVE}
+        </Button>
+      </div>
+    </form>
   );
 }

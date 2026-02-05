@@ -91,6 +91,25 @@ export const VARIANT_MAPPER = {
       />
     );
   },
+  multiselect: function MultiselectVariant({
+    field,
+    fieldState,
+    config,
+  }: VariantProps) {
+    return (
+      <InputDropdown
+        label={config.label}
+        placeholder={config.placeholder}
+        options={config.options ?? []}
+        value={field.value}
+        onChange={val => field.onChange(val as string[])}
+        disabled={field.disabled}
+        error={fieldState.error?.message}
+        searchable={config.searchable ?? false}
+        multiple
+      />
+    );
+  },
 } as const;
 
 export type VariantType =
@@ -98,4 +117,5 @@ export type VariantType =
   | 'checkbox'
   | 'inputPassword'
   | 'inputTextarea'
-  | 'select';
+  | 'select'
+  | 'multiselect';

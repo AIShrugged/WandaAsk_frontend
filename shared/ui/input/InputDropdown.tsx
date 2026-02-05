@@ -75,11 +75,15 @@ const InputDropdown = forwardRef<
     .map(val => options.find(opt => opt.value === val)?.label)
     .filter(Boolean);
 
+  const getMultipleDisplayLabel = (): string => {
+    if (selectedLabels.length === 0) return '';
+    if (selectedLabels.length === 1) return selectedLabels[0] ?? '';
+    return `${selectedLabels[0]} +${selectedLabels.length - 1}`;
+  };
+
   const displayedLabel = multiple
-    ? selectedLabels.length > 0
-      ? `${selectedLabels.length} selected`
-      : ''
-    : selectedLabels[0] || '';
+    ? getMultipleDisplayLabel()
+    : (selectedLabels[0] ?? '');
 
   const hasValue = displayedLabel.length > 0;
   const floatingActive = isOpen || hasValue;
@@ -268,9 +272,7 @@ const InputDropdown = forwardRef<
 
           <ul className='py-1'>
             {filteredOptions.length === 0 ? (
-              <li className='px-4 py-3 text-sm text-gray-500'>
-                Nothing found
-              </li>
+              <li className='px-4 py-3 text-sm text-gray-500'>Nothing found</li>
             ) : (
               filteredOptions.map((option, index) => {
                 const isSelected = selectedValues.includes(option.value);
@@ -291,7 +293,7 @@ const InputDropdown = forwardRef<
                     )}
                   >
                     <span>{option.label}</span>
-                    {isSelected && <Check className='w-4 h-4 text-blue-600' />}
+                    {isSelected && <Check className='w-4 h-4 text=accent ' />}
                   </li>
                 );
               })
