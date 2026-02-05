@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { ROUTES } from '@/shared/lib/routes';
 
 export default function Page() {
-  const router = useRouter();
+  const { push } = useRouter();
 
   return (
     <div className='w-full h-screen flex items-center justify-center'>
@@ -15,7 +15,7 @@ export default function Page() {
         <CardBody>
           <div className={'flex flex-col gap-4'}>
             <p>Email verification successful. You can login</p>
-            <Button onClick={() => router.push(ROUTES.AUTH.LOGIN)}>
+            <Button onClick={() => push(ROUTES.AUTH.LOGIN)}>
               Go to login page
             </Button>
           </div>

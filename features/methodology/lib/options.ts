@@ -1,16 +1,17 @@
 import type { MethodologyDTO } from '@/features/methodology/model/types';
 import type { DropdownOption } from '@/shared/ui/input/InputDropdown';
 
-export const getFormFields = (organizationOptions: DropdownOption[]) => [
+export const getFormFields = (teamOptions: DropdownOption[]) => [
   {
-    variant: 'select' as const,
-    name: 'organization_id',
-    label: 'Organization',
+    variant: 'multiselect' as const,
+    name: 'team_ids',
+    label: 'Teams',
     type: 'text',
-    placeholder: 'Select organization',
-    options: organizationOptions,
+    placeholder: 'Select teams',
+    options: teamOptions,
+    searchable: true,
     rules: {
-      required: 'Organization is required',
+      required: 'At least one team is required',
     },
   },
   {
@@ -27,7 +28,7 @@ export const getFormFields = (organizationOptions: DropdownOption[]) => [
       },
       maxLength: {
         value: 255,
-        message: 'The minimum name length is 255 characters',
+        message: 'The maximum name length is 255 characters',
       },
     },
   },
@@ -42,7 +43,7 @@ export const getFormFields = (organizationOptions: DropdownOption[]) => [
       required: 'Methodology is required',
       minLength: {
         value: 3,
-        message: 'The minimum name length is 3 characters',
+        message: 'The minimum length is 3 characters',
       },
     },
   },
@@ -52,4 +53,5 @@ export const METHODOLOGY_FIELDS: MethodologyDTO = {
   organization_id: '',
   name: '',
   text: '',
+  team_ids: [],
 };

@@ -14,12 +14,16 @@ import type {
 import type { ApiResponse } from '@/shared/types/common';
 
 const afterMethodologyMutate = () => {
-  const path = ROUTES.DASHBOARD.METHODOLOGY;
   revalidatePath('/methodology');
 };
 
 export async function createMethodology(data: MethodologyDTO): Promise<void> {
   const authHeaders = await getAuthHeaders();
+
+  const payload = {
+    ...data,
+    teams_ids: data.team_ids.map(id => Number(id)),
+  };
 
   const res = await fetch(`${API_URL}/methodologies`, {
     method: 'POST',
@@ -27,7 +31,7 @@ export async function createMethodology(data: MethodologyDTO): Promise<void> {
       ...authHeaders,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify(payload),
     cache: 'no-store',
   });
 
@@ -47,13 +51,18 @@ export async function updateMethodology(
 ): Promise<void> {
   const authHeaders = await getAuthHeaders();
 
+  const payload = {
+    ...data,
+    teams_ids: data.team_ids.map(id => Number(id)) || [],
+  };
+
   const res = await fetch(`${API_URL}/methodologies/${methodology_id}`, {
     method: 'PUT',
     headers: {
       ...authHeaders,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify(payload),
     cache: 'no-store',
   });
 
@@ -153,6 +162,7 @@ export async function deleteMethodology(id: number) {
     },
     cache: 'no-store',
   });
+  afterMethodologyMutate();
 
   if (!res.ok) {
     const text = await res.text();
@@ -160,6 +170,4 @@ export async function deleteMethodology(id: number) {
       `deleteMethodology failed: ${res.status} ${res.statusText} — ${text}`,
     );
   }
-
-  revalidatePath('/methodology');
 }

@@ -12,6 +12,7 @@ export type CachedListStore<T> = {
   appendChunk: (newItems: T[], hasMore: boolean) => void;
   setLoading: (loading: boolean) => void;
   invalidate: () => void;
+  removeItem: (id: number) => void;
 };
 
 export function createCachedListStore<T>() {
@@ -63,6 +64,13 @@ export function createCachedListStore<T>() {
 
     invalidate: () => {
       set({ ...initialState });
+    },
+
+    removeItem: (id: number) => {
+      set(state => ({
+        items: state.items.filter((item: any) => item.id !== id),
+        totalCount: state.totalCount - 1,
+      }));
     },
   }));
 }

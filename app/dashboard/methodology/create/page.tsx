@@ -1,7 +1,7 @@
 import React from 'react';
 
 import MethodologyForm from '@/features/methodology/ui/methodology-form';
-import { getOrganizations } from '@/features/organization/api/organization';
+import { getTeams } from '@/features/teams/api/team';
 import { getOrganizationId } from '@/shared/lib/getOrganizationId';
 import Card from '@/shared/ui/card/Card';
 import CardBody from '@/shared/ui/card/CardBody';
@@ -9,7 +9,7 @@ import PageHeader from '@/widgets/layout/ui/page-header';
 
 export default async function Page() {
   const organizationId = await getOrganizationId();
-  const { data: organizations } = await getOrganizations();
+  const { data: teams } = await getTeams(organizationId);
 
   return (
     <Card className='h-full flex flex-col'>
@@ -18,7 +18,7 @@ export default async function Page() {
       <CardBody>
         <MethodologyForm
           organization_id={organizationId}
-          organizations={organizations ?? []}
+          teams={teams ?? []}
         />
       </CardBody>
     </Card>
