@@ -15,7 +15,7 @@ export default function MethodologyItem({
 
   return (
     <div className='border-b-table'>
-      <div className='py-4 flex items-center justify-between group'>
+      <div className='py-6 flex items-center justify-between group'>
         <Link className={'flex-1'} href={route}>
           <H3>{methodology.name}</H3>
         </Link>

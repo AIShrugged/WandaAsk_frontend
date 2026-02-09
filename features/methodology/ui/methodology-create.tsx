@@ -11,7 +11,7 @@ export default function MethodologyCreate() {
   const route = `${ROUTES.DASHBOARD.METHODOLOGY}/create`;
 
   return (
-    <div className={'mt-auto ml-8 mr-8 mb-6 w-[240px]'}>
+    <div className={'mt-auto ml-6 mr-8 mb-6 w-[240px]'}>
       <Link href={route}>
         <Button type='submit'>
           <Plus /> {BUTTON.ADD} methodology
