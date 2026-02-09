@@ -1,3 +1,5 @@
+import { Suspense } from 'react';
+
 import { AUTH_TITLE_VARIANT } from '@/features/auth/lib/options';
 import AuthTitle from '@/features/auth/ui/auth-title';
 import RegisterForm from '@/features/auth/ui/register-form';
@@ -8,7 +10,9 @@ export default function Page() {
     <Card>
       <div className={'w-[690px] py-[100px] px-[72px]'}>
         <AuthTitle type={AUTH_TITLE_VARIANT.REGISTER} />
-        <RegisterForm />
+        <Suspense>
+          <RegisterForm />
+        </Suspense>
       </div>
     </Card>
   );

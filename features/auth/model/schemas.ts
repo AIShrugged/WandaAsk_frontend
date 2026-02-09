@@ -25,6 +25,7 @@ export const RegisterSchema = z.object({
     .string()
     .min(1, 'Password is required')
     .min(6, 'The minimum password length is 6 characters'),
+  invite: z.string().optional(),
 });
 
 export type LoginInput = z.infer<typeof LoginSchema>;

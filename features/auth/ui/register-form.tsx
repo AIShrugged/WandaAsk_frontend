@@ -1,6 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useSearchParams } from 'next/navigation';
 import React, { useTransition } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 
@@ -23,6 +24,8 @@ const FORM_ID = 'register-form';
 
 export default function RegisterForm() {
   const [isPending, startTransition] = useTransition();
+  const searchParams = useSearchParams();
+  const invite = searchParams.get('invite');
 
   const {
     control,
@@ -39,7 +42,7 @@ export default function RegisterForm() {
   const onSubmit = (data: RegisterInput) => {
     startTransition(async () => {
       try {
-        await register(data);
+        await register({ ...data, invite: invite || undefined });
       } catch (error) {
         handleFormError(
           error,
