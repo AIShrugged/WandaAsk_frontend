@@ -10,7 +10,7 @@ import {
 
 import EventExtraButton from '@/features/calendar/client/event-extra-button';
 import Day from '@/features/calendar/server/day';
-import EventData from '@/features/event/ui/event-data';
+import EventData from '@/features/calendar/server/event-data';
 
 import type { EventProps } from '@/entities/event';
 
