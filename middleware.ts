@@ -3,9 +3,8 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 const PUBLIC_ROUTES = ['/auth/login', '/auth/register'];
-const AUTH_ROUTES = ['/auth'];
 
-export function proxy(request: NextRequest) {
+export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get('token')?.value;
 
