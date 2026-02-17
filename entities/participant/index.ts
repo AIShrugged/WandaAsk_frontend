@@ -3,4 +3,4 @@ export type {
   AttendeeProps,
   GuestProps,
   GuestCore,
-} from '@/entities/participant';
+} from './model/types';

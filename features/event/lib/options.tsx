@@ -4,7 +4,7 @@ import { Clock4, Dot, TextAlignJustify, Video } from 'lucide-react';
 
 import ButtonCopy from '@/shared/ui/button/button-copy';
 
-import type { EventProps } from '@/features/event/model/types';
+import type { EventProps } from '@/entities/event';
 
 function formatDate(dateString: string) {
   const date = new Date(dateString.replace(' ', 'T'));

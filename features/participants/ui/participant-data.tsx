@@ -4,10 +4,7 @@ import { participants } from '@/features/participants/lib/options';
 import ParticipantMatcher from '@/widgets/event/ui/participant-matcher';
 import Participants from '@/widgets/event/ui/participants';
 
-import type {
-  AttendeeProps,
-  GuestProps,
-} from '@/features/participants/model/types';
+import type { AttendeeProps, GuestProps } from '@/entities/participant';
 
 export default async function ParticipantData({
   eventId,

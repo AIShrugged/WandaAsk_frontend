@@ -6,10 +6,7 @@ import { useOptimistic, useTransition } from 'react';
 import { setProfile } from '@/features/participants/api/participants';
 import InputDropdown from '@/shared/ui/input/InputDropdown';
 
-import type {
-  AttendeeProps,
-  GuestProps,
-} from '@/features/participants/model/types';
+import type { AttendeeProps, GuestProps } from '@/entities/participant';
 
 export default function ParticipantMatching({
   eventId,

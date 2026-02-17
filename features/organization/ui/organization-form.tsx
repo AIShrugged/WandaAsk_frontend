@@ -17,7 +17,7 @@ import { Button } from '@/shared/ui/button/Button';
 import type {
   OrganizationDTO,
   OrganizationProps,
-} from '@/features/organization/model/types';
+} from '@/entities/organization';
 
 export default function OrganizationForm({
   values,

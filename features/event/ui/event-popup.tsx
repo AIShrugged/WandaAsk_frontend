@@ -10,11 +10,8 @@ import ModalFooter from '@/shared/ui/modal/modal-footer';
 import ModalHeader from '@/shared/ui/modal/modal-header';
 import Participants from '@/widgets/event/ui/participants';
 
-import type { EventProps } from '@/features/event/model/types';
-import type {
-  AttendeeProps,
-  GuestProps,
-} from '@/features/participants/model/types';
+import type { EventProps } from '@/entities/event';
+import type { AttendeeProps, GuestProps } from '@/entities/participant';
 
 export function EventPopup({
   event,

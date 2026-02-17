@@ -1,4 +1,4 @@
-import type { OrganizationDTO } from '@/features/organization/model/types';
+import type { OrganizationDTO } from '@/entities/organization';
 
 const NAME_VALIDATION_RULES = {
   required: {

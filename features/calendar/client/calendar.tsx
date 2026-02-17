@@ -3,7 +3,7 @@ import DayOfWeek from '@/features/calendar/server/day-of-week';
 import { MonthSwitcher } from '@/features/calendar/client/month-switcher';
 import ComponentHeader from '@/shared/ui/layout/component-header';
 
-import type { EventProps } from '@/features/event/model/types';
+import type { EventProps } from '@/entities/event';
 
 export default function Calendar({
   events,

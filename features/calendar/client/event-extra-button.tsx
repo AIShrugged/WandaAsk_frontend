@@ -3,7 +3,7 @@ import React from 'react';
 import { EventPopupAll } from '@/features/event/ui/event-popup-all';
 import { useModal } from '@/shared/hooks/use-modal';
 
-import type { EventProps } from '@/features/event/model/types';
+import type { EventProps } from '@/entities/event';
 
 export default function EventExtraButton({
   count,

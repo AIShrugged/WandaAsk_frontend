@@ -11,7 +11,7 @@ import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 import type {
   OrganizationDTO,
   OrganizationProps,
-} from '@/features/organization/model/types';
+} from '@/entities/organization';
 import type { ApiResponse } from '@/shared/types/common';
 
 export const getOrganizations = cache(

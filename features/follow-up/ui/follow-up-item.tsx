@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { ROUTES } from '@/shared/lib/routes';
 import { H3 } from '@/shared/ui/typography/H3';
 
-import type { TeamFollowUpDTO } from '@/features/teams/model/types';
+import type { TeamFollowUpDTO } from '@/entities/team';
 
 export function FollowUpItem({ followUp }: { followUp: TeamFollowUpDTO }) {
   const route = `${ROUTES.DASHBOARD.FOLLOWUPS}/analysis/${followUp.calendar_event.id}`;

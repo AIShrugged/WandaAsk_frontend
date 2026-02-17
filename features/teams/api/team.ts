@@ -6,13 +6,13 @@ import { API_URL } from '@/app/constants/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 import { httpClient } from '@/shared/lib/httpClient';
 
-import type { OrganizationProps } from '@/features/organization/model/types';
+import type { OrganizationProps } from '@/entities/organization';
 import type {
   TeamAddMemberDTO,
   TeamCreateDTO,
   TeamFollowUpDTO,
   TeamProps,
-} from '@/features/teams/model/types';
+} from '@/entities/team';
 import type { ApiResponse } from '@/shared/types/common';
 
 // ------------------------------

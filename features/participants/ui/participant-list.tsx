@@ -2,10 +2,7 @@ import React from 'react';
 
 import Avatar from '@/shared/ui/common/avatar';
 
-import type {
-  AttendeeProps,
-  GuestProps,
-} from '@/features/participants/model/types';
+import type { AttendeeProps, GuestProps } from '@/entities/participant';
 
 export const ParticipantList = ({
   data = [],

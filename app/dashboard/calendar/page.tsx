@@ -7,7 +7,7 @@ import Calendar from '@/features/calendar/client/calendar';
 import OnboardingTrigger from '@/features/calendar/client/onboarding-trigger';
 import Card from '@/shared/ui/card/Card';
 
-import type { EventProps } from '@/features/event/model/types';
+import type { EventProps } from '@/entities/event';
 
 const Wrapper = ({ children }: PropsWithChildren) => (
   <Card className='h-full flex flex-col overflow-hidden'>{children}</Card>

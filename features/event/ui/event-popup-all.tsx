@@ -4,7 +4,7 @@ import { getWeekdayAndDay } from '@/features/event/lib/get-weekday-and-day';
 import ButtonClose from '@/shared/ui/button/button-close';
 import { H4 } from '@/shared/ui/typography/H4';
 
-import type { EventProps } from '@/features/event/model/types';
+import type { EventProps } from '@/entities/event';
 
 export const EventPopupAll = ({
   list,

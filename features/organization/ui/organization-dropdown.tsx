@@ -9,7 +9,7 @@ import { setActiveOrganization } from '@/features/organization/api/organization'
 import { BUTTON } from '@/shared/lib/buttons';
 import { ROUTES } from '@/shared/lib/routes';
 
-import type { OrganizationProps } from '@/features/organization/model/types';
+import type { OrganizationProps } from '@/entities/organization';
 
 export default function OrganizationDropdown({
   organizations,

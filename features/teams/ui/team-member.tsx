@@ -1,6 +1,6 @@
 import { ArrowLeftRight, Trash } from 'lucide-react';
 
-import type { TeamProps } from '@/features/teams/model/types';
+import type { TeamProps } from '@/entities/team';
 
 export default function TeamMember({ member }: { member: TeamProps }) {
   return (

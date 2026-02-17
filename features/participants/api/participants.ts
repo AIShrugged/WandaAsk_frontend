@@ -6,10 +6,7 @@ import { cache } from 'react';
 import { API_URL } from '@/app/constants/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 
-import type {
-  AttendeeProps,
-  GuestProps,
-} from '@/features/participants/model/types';
+import type { AttendeeProps, GuestProps } from '@/entities/participant';
 import type { ApiResponse } from '@/shared/types/common';
 
 export const getAttendees = cache(

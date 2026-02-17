@@ -22,7 +22,7 @@ import type {
   MethodologyDTO,
   MethodologyProps,
 } from '@/features/methodology/model/types';
-import type { TeamProps } from '@/features/teams/model/types';
+import type { TeamProps } from '@/entities/team';
 import { toast } from 'react-toastify';
 
 const FORM_ID = 'methodology-form';

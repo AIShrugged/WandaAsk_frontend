@@ -1,7 +1,7 @@
 import EventSummary from '@/features/event/ui/event-summary';
 import ParticipantData from '@/features/participants/ui/participant-data';
 
-import type { EventProps } from '@/features/event/model/types';
+import type { EventProps } from '@/entities/event';
 import { getAttendees, getGuests } from '@/features/participants/api/participants';
 
 export default async function EventOverview({

@@ -12,7 +12,7 @@ import { useModal } from '@/shared/hooks/use-modal';
 import { ROUTES } from '@/shared/lib/routes';
 import { ButtonIcon } from '@/shared/ui/button/button-icon';
 
-import type { TeamActionType, TeamProps } from '@/features/teams/model/types';
+import type { TeamActionType, TeamProps } from '@/entities/team';
 
 type Props = Pick<TeamProps, 'id'> & {
   actions: TeamActionType[];

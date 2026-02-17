@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { API_URL } from '@/app/constants/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 
-import type { EventProps } from '@/features/event/model/types';
+import type { EventProps } from '@/entities/event';
 import type { ApiResponse } from '@/shared/types/common';
 
 export async function getEvent(id: string) {

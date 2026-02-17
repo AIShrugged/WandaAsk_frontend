@@ -9,7 +9,7 @@ import { TeamItem } from '@/features/teams/ui/team-item';
 import { InfiniteScrollStatus } from '@/shared/ui/layout/infinite-scroll-status';
 import SpinLoader from '@/shared/ui/layout/spin-loader';
 
-import type { TeamActionType, TeamProps } from '@/features/teams/model/types';
+import type { TeamActionType, TeamProps } from '@/entities/team';
 
 type Props = {
   initialTeams: TeamProps[];

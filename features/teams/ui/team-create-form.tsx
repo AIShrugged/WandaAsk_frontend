@@ -13,7 +13,7 @@ import { VARIANT_MAPPER, type VariantType } from '@/shared/lib/fieldMapper';
 import { ROUTES } from '@/shared/lib/routes';
 import { Button } from '@/shared/ui/button/Button';
 
-import type { TeamCreateDTO, TeamProps } from '@/features/teams/model/types';
+import type { TeamCreateDTO, TeamProps } from '@/entities/team';
 
 export default function TeamCreateForm({
   values,

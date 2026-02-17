@@ -5,7 +5,7 @@ import { ChevronRight } from 'lucide-react';
 import { selectOrganizationAction } from '@/features/organization/api/organization';
 import { H3 } from '@/shared/ui/typography/H3';
 
-import type { OrganizationProps } from '@/features/organization/model/types';
+import type { OrganizationProps } from '@/entities/organization';
 
 export default async function OrganizationList({
   organizations,

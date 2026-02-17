@@ -13,7 +13,7 @@ import { BUTTON } from '@/shared/lib/buttons';
 import { VARIANT_MAPPER, type VariantType } from '@/shared/lib/fieldMapper';
 import { Button } from '@/shared/ui/button/Button';
 
-import type { TeamAddMemberDTO } from '@/features/teams/model/types';
+import type { TeamAddMemberDTO } from '@/entities/team';
 import { useSearchParams } from 'next/navigation';
 import type { ModalContextValue } from '@/shared/types/modal';
 

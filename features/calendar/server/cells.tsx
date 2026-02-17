@@ -12,7 +12,7 @@ import EventExtraButton from '@/features/calendar/client/event-extra-button';
 import Day from '@/features/calendar/server/day';
 import EventData from '@/features/event/ui/event-data';
 
-import type { EventProps } from '@/features/event/model/types';
+import type { EventProps } from '@/entities/event';
 
 export default function Cells({
   currentMonth,

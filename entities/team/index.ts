@@ -4,4 +4,4 @@ export type {
   TeamAddMemberDTO,
   TeamActionType,
   TeamFollowUpDTO,
-} from '@/entities/team';
+} from './model/types';

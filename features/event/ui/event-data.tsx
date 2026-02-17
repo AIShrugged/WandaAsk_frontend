@@ -3,7 +3,7 @@
 import { getAttendees, getGuests } from '@/features/participants/api/participants';
 import Event from '@/features/calendar/client/event';
 
-import type { EventProps } from '@/features/event/model/types';
+import type { EventProps } from '@/entities/event';
 
 type Props = {
   event: EventProps;

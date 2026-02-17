@@ -11,11 +11,8 @@ import { formatDate } from '@/shared/lib/dateFormatter';
 import { isEventPast } from '@/shared/lib/isEventPast';
 import { ROUTES } from '@/shared/lib/routes';
 
-import type { EventProps } from '@/features/event/model/types';
-import type {
-  AttendeeProps,
-  GuestProps,
-} from '@/features/participants/model/types';
+import type { EventProps } from '@/entities/event';
+import type { AttendeeProps, GuestProps } from '@/entities/participant';
 
 const Event = ({
   event,

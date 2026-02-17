@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { TeamActions } from '@/features/teams/ui/team-actions';
 import { H3 } from '@/shared/ui/typography/H3';
 
-import type { TeamActionType, TeamProps } from '@/features/teams/model/types';
+import type { TeamActionType, TeamProps } from '@/entities/team';
 import { ROUTES } from '@/shared/lib/routes';
 
 type Props = {

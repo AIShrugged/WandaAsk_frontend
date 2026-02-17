@@ -1,6 +1,6 @@
 import TeamMember from '@/features/teams/ui/team-member';
 
-import type { TeamProps } from '@/features/teams/model/types';
+import type { TeamProps } from '@/entities/team';
 
 export default function TeamMembers({ data }: { data: TeamProps }) {
   return (

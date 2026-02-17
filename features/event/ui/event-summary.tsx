@@ -2,7 +2,7 @@ import { Fragment } from 'react';
 
 import { items } from '@/features/event/lib/options';
 
-import type { EventProps } from '@/features/event/model/types';
+import type { EventProps } from '@/entities/event';
 
 export default function EventSummary({ event }: { event: EventProps }) {
   const iconClass = 'w-6 h-6 shrink-0';

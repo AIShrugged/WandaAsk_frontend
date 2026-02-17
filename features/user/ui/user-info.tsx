@@ -7,7 +7,7 @@ import Avatar from '@/shared/ui/common/avatar';
 
 import { UserMenuPopup } from './user-menu-popup';
 
-import type { UserProps } from '@/features/user/model/types';
+import type { UserProps } from '@/entities/user';
 
 interface UserInfoProps {
   user: UserProps;
