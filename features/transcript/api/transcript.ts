@@ -1,6 +1,6 @@
 'use server';
 
-import { API_URL } from '@/app/constants/config';
+import { API_URL } from '@/shared/lib/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 
 export async function loadTranscriptChunk(

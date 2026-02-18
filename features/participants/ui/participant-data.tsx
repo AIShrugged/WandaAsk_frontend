@@ -1,8 +1,8 @@
 import React from 'react';
 
 import { participants } from '@/features/participants/lib/options';
-import ParticipantMatcher from '@/widgets/event/ui/participant-matcher';
-import Participants from '@/widgets/event/ui/participants';
+import ParticipantMatcher from '@/features/participants/ui/participant-matcher';
+import Participants from '@/features/participants/ui/participants';
 
 import type { AttendeeProps, GuestProps } from '@/entities/participant';
 

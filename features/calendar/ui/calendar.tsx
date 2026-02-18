@@ -1,6 +1,6 @@
-import Cells from '@/features/calendar/server/cells';
-import DayOfWeek from '@/features/calendar/server/day-of-week';
-import { MonthSwitcher } from '@/features/calendar/client/month-switcher';
+import Cells from '@/features/calendar/ui/cells';
+import DayOfWeek from '@/features/calendar/ui/day-of-week';
+import { MonthSwitcher } from '@/features/calendar/ui/month-switcher';
 import ComponentHeader from '@/shared/ui/layout/component-header';
 
 import type { EventProps } from '@/entities/event';

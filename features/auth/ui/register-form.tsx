@@ -18,7 +18,7 @@ import {
 import { VARIANT_MAPPER, type VariantType } from '@/shared/lib/fieldMapper';
 import { handleFormError } from '@/shared/lib/formErrors';
 import { ROUTES } from '@/shared/lib/routes';
-import AuthFormFooter from '@/widgets/auth/ui/auth-form-footer';
+import AuthFormFooter from '@/features/auth/ui/auth-form-footer';
 
 const FORM_ID = 'register-form';
 

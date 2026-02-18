@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation';
 import React, { Suspense } from 'react';
 
 import { getEvent } from '@/features/event/api/calendar-events';
-import EventOverview from '@/features/event/ui/event-overview';
+import EventOverview from '@/widgets/meeting/ui/event-overview';
 import {
   available_tabs,
   type Tab,
@@ -10,7 +10,7 @@ import {
 } from '@/features/meeting/lib/options';
 import Transcript from '@/features/transcript/ui/transcript';
 import { ROUTES } from '@/shared/lib/routes';
-import ButtonsRow from '@/shared/ui/button/ButtonsRow';
+import ButtonsRow from '@/features/meeting/ui/buttons-row';
 import Card from '@/shared/ui/card/Card';
 import CardBody from '@/shared/ui/card/CardBody';
 import SpinLoader from '@/shared/ui/layout/spin-loader';
@@ -18,7 +18,7 @@ import PageHeader from '@/widgets/layout/ui/page-header';
 
 import type { PageProps } from '@/shared/types/common';
 import FollowUpData from '@/features/follow-up/ui/follow-up-data';
-import AnalysisData from '@/features/analysis/ui/AnalysisData';
+import AnalysisData from '@/widgets/meeting/ui/analysis-data';
 
 export default async function Page({ params, searchParams }: PageProps) {
   const { id } = await params;

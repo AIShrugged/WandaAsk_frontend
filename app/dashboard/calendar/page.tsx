@@ -3,8 +3,8 @@ import { type PropsWithChildren, Suspense } from 'react';
 
 import { getEvents } from '@/features/event/api/calendar-events';
 import { getSources } from '@/features/calendar/api/source';
-import Calendar from '@/features/calendar/client/calendar';
-import OnboardingTrigger from '@/features/calendar/client/onboarding-trigger';
+import Calendar from '@/features/calendar/ui/calendar';
+import OnboardingTrigger from '@/features/calendar/ui/onboarding-trigger';
 import Card from '@/shared/ui/card/Card';
 
 import type { EventProps } from '@/entities/event';

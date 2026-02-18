@@ -1,26 +1,17 @@
 'use client';
 
-import React, { createContext, useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-interface PopupConfig {
-  width?: number;
-  preferredPosition?: 'top' | 'bottom' | 'left' | 'right';
-  offset?: number;
-  content: React.ReactNode;
-}
+import {
+  PopupContext,
+  type PopupConfig,
+} from '@/shared/ui/popup/popup-context';
 
 interface PopupPosition {
   top: number;
   left: number;
 }
-
-interface PopupContextValue {
-  open: (anchor: HTMLElement, config: PopupConfig) => void;
-  close: () => void;
-}
-
-export const PopupContext = createContext<PopupContextValue | null>(null);
 
 export function PopupProvider({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);

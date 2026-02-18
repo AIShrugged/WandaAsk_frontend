@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { attachCalendar } from '@/features/calendar/api/calendar';
 import { H1 } from '@/shared/ui/typography/H1';
 
-import OnboardingImage from '../server/onboarding-image';
+import OnboardingImage from './onboarding-image';
 
 export default function OnboardingTrigger() {
   const [isPending, setIsPending] = useState(false);
@@ -16,8 +16,7 @@ export default function OnboardingTrigger() {
     setIsPending(true);
 
     try {
-      const url = await attachCalendar();
-      globalThis.location.href = url;
+      globalThis.location.href = await attachCalendar();
     } catch (error_) {
       setError((error_ as Error).message);
       setIsPending(false);

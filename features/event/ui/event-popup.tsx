@@ -8,7 +8,7 @@ import { Button } from '@/shared/ui/button/Button';
 import ModalBody from '@/shared/ui/modal/modal-body';
 import ModalFooter from '@/shared/ui/modal/modal-footer';
 import ModalHeader from '@/shared/ui/modal/modal-header';
-import Participants from '@/widgets/event/ui/participants';
+import Participants from '@/features/participants/ui/participants';
 
 import type { EventProps } from '@/entities/event';
 import type { AttendeeProps, GuestProps } from '@/entities/participant';
