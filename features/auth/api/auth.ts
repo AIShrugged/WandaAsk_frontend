@@ -92,4 +92,3 @@ export async function register(data: RegisterInput): Promise<void> {
   redirect(ROUTES.AUTH.ORGANIZATION);
 }
 
-export { clearSession, logout } from '@/shared/api/session';
