@@ -32,7 +32,7 @@ export default function UserInfo({ user }: UserInfoProps) {
 
   return (
     <div className='flex gap-2 items-center justify-end'>
-      <div ref={anchorRef} className='flex flex-col text-right'>
+      <div ref={anchorRef} className='hidden xs:flex flex-col text-right'>
         <p className='text-accent font-medium'>{user.name}</p>
         <p className='text-secondary text-sm'>{user.email}</p>
       </div>

@@ -85,7 +85,7 @@ export default function TeamCreateForm({
           }}
         />
       ))}
-      <div className={'mt-auto w-[170px]'}>
+      <div className={'mt-auto w-full md:w-[170px]'}>
         <Button
           loading={isPending}
           disabled={isPending || !isDirty}
