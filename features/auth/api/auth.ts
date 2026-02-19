@@ -43,7 +43,9 @@ export async function login(data: LoginInput): Promise<void> {
   const json = await parseJsonResponse(res);
 
   if (!res.ok) {
-    throw new Error(typeof json.message === 'string' ? json.message : 'Login failed');
+    if (res.status === 401) throw new Error('Invalid credentials');
+    if (res.status === 422) throw new Error('Please check your input');
+    throw new Error('Login failed');
   }
 
   if (typeof json.token !== 'string') {
@@ -70,7 +72,9 @@ export async function register(data: RegisterInput): Promise<void> {
   const json = await parseJsonResponse(res);
 
   if (!res.ok) {
-    throw new Error(typeof json.message === 'string' ? json.message : 'Registration failed');
+    if (res.status === 409) throw new Error('An account with this email already exists');
+    if (res.status === 422) throw new Error('Please check your input');
+    throw new Error('Registration failed');
   }
 
   if (typeof json.token !== 'string') {

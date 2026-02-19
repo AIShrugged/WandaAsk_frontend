@@ -1,16 +1,26 @@
 'use client';
 
 import { Menu, X } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import type { ReactNode } from 'react';
 
 interface MobileSidebarProps {
+  logo?: ReactNode;
   children: ReactNode;
 }
 
-export default function MobileSidebar({ children }: MobileSidebarProps) {
+export default function MobileSidebar({ logo, children }: MobileSidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsOpen(false);
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen]);
 
   return (
     <>
@@ -37,14 +47,17 @@ export default function MobileSidebar({ children }: MobileSidebarProps) {
       {/* Drawer */}
       <aside
         id='mobile-sidebar'
+        role='dialog'
+        aria-modal={isOpen}
+        aria-hidden={!isOpen}
+        aria-label='Navigation'
         className={`fixed inset-y-0 left-0 z-50 w-[238px] bg-gradient-primary flex flex-col py-4 pl-4 pr-0 transition-transform duration-300 ease-in-out md:hidden ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
-        aria-label='Navigation'
       >
         <div className='flex items-center justify-between pl-4 pr-4 mb-4'>
           <div className='h-[50px] flex items-center text-primary font-medium'>
-            logo
+            {logo}
           </div>
           <button
             className='flex items-center justify-center w-11 h-11 rounded-lg hover:bg-hover-light transition-colors'

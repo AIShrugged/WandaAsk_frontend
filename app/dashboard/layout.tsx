@@ -1,9 +1,9 @@
 import React, { type PropsWithChildren } from 'react';
 
-import MenuSidebar from '@/features/menu/ui/menu-sidebar';
+import { MenuSidebar } from '@/features/menu';
 import OrganizationSelector from '@/features/organization/ui/organization-selector';
 import User from '@/features/user/ui/user';
-import MobileSidebar from '@/shared/ui/layout/mobile-sidebar';
+import MobileSidebar from '@/widgets/layout/ui/mobile-sidebar';
 
 export default async function Layout({ children }: PropsWithChildren) {
   return (
@@ -27,7 +27,7 @@ export default async function Layout({ children }: PropsWithChildren) {
         <header className='flex-shrink-0 mb-4 flex flex-row justify-between items-center'>
           <div className='flex items-center gap-2'>
             {/* Mobile sidebar drawer trigger */}
-            <MobileSidebar>
+            <MobileSidebar logo={<div className='w-full h-[50px] rounded-full flex justify-center items-center border-primary text-primary'>logo</div>}>
               <MenuSidebar />
             </MobileSidebar>
             <OrganizationSelector />

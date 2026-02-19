@@ -28,9 +28,9 @@ export const getOrganizations = cache(
 
     if (!res.ok) {
       const text = await res.text();
-      throw new Error(
-        `getOrganizations failed: ${res.status} ${res.statusText} — ${text}`,
-      );
+      // eslint-disable-next-line no-console
+      console.error(`[org] getOrganizations → ${res.status} ${res.statusText}: ${text}`);
+      throw new Error('Failed to load organizations. Please try again.');
     }
 
     const json: ApiResponse<OrganizationProps[]> = await res.json();
@@ -57,9 +57,9 @@ export const getOrganization = cache(
 
     if (!res.ok) {
       const text = await res.text();
-      throw new Error(
-        `getOrganization failed: ${res.status} ${res.statusText} — ${text}`,
-      );
+      // eslint-disable-next-line no-console
+      console.error(`[org] getOrganization → ${res.status} ${res.statusText}: ${text}`);
+      throw new Error('Failed to load organization. Please try again.');
     }
 
     const json: ApiResponse<OrganizationProps> = await res.json();
@@ -87,9 +87,9 @@ export async function createOrganization(data: OrganizationDTO) {
 
   if (!res.ok) {
     const text = await res.text();
-    throw new Error(
-      `createOrganization failed: ${res.status} ${res.statusText} — ${text}`,
-    );
+    // eslint-disable-next-line no-console
+    console.error(`[org] createOrganization → ${res.status} ${res.statusText}: ${text}`);
+    throw new Error('Failed to create organization. Please try again.');
   }
 
   const json: ApiResponse<OrganizationProps> = await res.json();
