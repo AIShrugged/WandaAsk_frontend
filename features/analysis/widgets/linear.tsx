@@ -17,7 +17,7 @@ export default function Linear({
     <div className={'flex flex-col gap-2'}>
       <LinearProgressTitle title={display_name} />
 
-      <div className={`grid gap-4 grid-cols-1 sm:grid-cols-2 ${lgCols}`}>
+      <div className={`grid gap-4 grid-cols-1 phone:grid-cols-2 ${lgCols}`}>
         {submetrics.map(v => (
           <ComponentCard key={v.display_name}>
             <LinearProgressAgenda {...v} />

@@ -17,20 +17,13 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Protect dashboard routes
-  if (pathname.startsWith('/dashboard')) {
-    if (!token) {
-      const loginUrl = new URL('/auth/login', request.url);
-      loginUrl.searchParams.set('callbackUrl', pathname);
-      return NextResponse.redirect(loginUrl);
-    }
+  // Protect dashboard and auth/organization routes
+  if (pathname.startsWith('/dashboard') && !token) {
+    return NextResponse.redirect(new URL('/auth/login', request.url));
   }
 
-  // Protect auth organization route (requires token but no org)
-  if (pathname.startsWith('/auth/organization')) {
-    if (!token) {
-      return NextResponse.redirect(new URL('/auth/login', request.url));
-    }
+  if (pathname.startsWith('/auth/organization') && !token) {
+    return NextResponse.redirect(new URL('/auth/login', request.url));
   }
 
   return NextResponse.next();

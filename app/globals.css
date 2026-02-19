@@ -1,13 +1,14 @@
 @import "tailwindcss";
 
 @theme {
-  /* Custom breakpoints — mobile-first */
-  --breakpoint-xs: 375px;   /* iPhone SE / standard phone */
-  --breakpoint-sm: 425px;   /* large phone */
-  --breakpoint-md: 768px;   /* tablet */
-  --breakpoint-lg: 1024px;  /* laptop */
-  --breakpoint-xl: 1280px;  /* desktop */
-  --breakpoint-2xl: 1440px; /* wide desktop */
+  /* Custom breakpoints — mobile-first.
+     NOTE: sm is NOT overridden here, so it keeps the Tailwind default (640px).
+     Use `phone:` for the 425px large-phone breakpoint. */
+  --breakpoint-xs: 375px;    /* iPhone SE / standard phone */
+  --breakpoint-phone: 425px; /* large phone (Samsung Galaxy, etc.) */
+  --breakpoint-md: 768px;    /* tablet */
+  --breakpoint-lg: 1024px;   /* laptop */
+  --breakpoint-xl: 1280px;   /* desktop */
 }
 
 @layer base {
@@ -86,13 +87,6 @@
   }
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
-  }
-  .scrollbar-default {
-    -ms-overflow-style: auto;
-    scrollbar-width: auto;
-  }
-  .scrollbar-default::-webkit-scrollbar {
-    display: block;
   }
 }
 
