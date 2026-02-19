@@ -42,7 +42,7 @@ export function ModalRoot({ open, onClose, children }: ModalRootProps) {
           onClick={onClose}
         >
           <motion.div
-            className='bg-white rounded-[40px] min-w-[320px] w-[700px]'
+            className='bg-white rounded-3xl md:rounded-[40px] w-full max-w-[700px] mx-4'
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.95, opacity: 0 }}

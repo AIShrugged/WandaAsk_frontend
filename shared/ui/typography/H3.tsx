@@ -6,7 +6,7 @@ interface Props {
 }
 export function H3({ children, className }: Props) {
   return (
-    <h1 className={`text-[20px] text-accent font-bold ${className}`}>
+    <h1 className={`text-base md:text-lg lg:text-[20px] text-accent font-bold ${className}`}>
       {children}
     </h1>
   );
