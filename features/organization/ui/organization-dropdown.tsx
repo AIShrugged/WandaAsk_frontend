@@ -39,7 +39,7 @@ export default function OrganizationDropdown({
   }, []);
 
   return (
-    <div className='relative w-[260px]'>
+    <div className='relative w-full max-w-[260px]'>
       <button
         onClick={() => setOpen(prev => !prev)}
         className='cursor-pointer  w-full flex items-center justify-between gap-2

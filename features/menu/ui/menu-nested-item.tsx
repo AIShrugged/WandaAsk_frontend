@@ -34,7 +34,7 @@ export function NestedMenuItem({
   const Content = (
     <div
       className={`
-        flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer
+        flex items-center gap-3 px-4 py-3 min-h-[44px] rounded-lg cursor-pointer
         transition-all duration-200 group
         ${
           isActive
