@@ -1,3 +1,6 @@
+// NOTE: This file is a legacy Tailwind v3 config. The project uses Tailwind v4
+// (via @tailwindcss/postcss), which does not read this file. Configuration is
+// handled via @theme in app/globals.css. Kept only as reference.
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
   content: [
@@ -5,6 +8,9 @@ export default {
     './components/**/*.{js,ts,jsx,tsx}',
     './app/**/*.{js,ts,jsx,tsx}',
     './widgets/**/*.{js,ts,jsx,tsx}',
+    './features/**/*.{js,ts,jsx,tsx}',
+    './shared/**/*.{js,ts,jsx,tsx}',
+    './entities/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
     extend: {

@@ -12,7 +12,7 @@ export default async function Page() {
   if (!organizations?.length) {
     return (
       <Card>
-        <div className={'w-[690px] py-[100px] px-[72px]'}>
+        <div className={'w-full max-w-[690px] py-8 px-4 md:py-[100px] md:px-[72px]'}>
           <AuthTitle type={AUTH_TITLE_VARIANT.ORGANIZATION} />
           <OrganizationListEmpty />
         </div>
