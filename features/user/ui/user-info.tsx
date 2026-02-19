@@ -39,7 +39,7 @@ export default function UserInfo({ user }: UserInfoProps) {
 
       <button
         onClick={handleOpen}
-        className='cursor-pointer rounded-full hover:ring-2 hover:ring-accent/20 transition-all'
+        className='cursor-pointer rounded-full hover:ring-2 hover:ring-accent/20 transition-all flex items-center justify-center min-w-[44px] min-h-[44px]'
         aria-label='Open user menu'
       >
         <Avatar>{user.name[0]}</Avatar>
