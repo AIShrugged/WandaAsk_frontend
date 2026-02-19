@@ -117,8 +117,10 @@ export async function setActiveOrganization(
     name: 'organization_id',
     value: id,
     httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
     path: '/',
+    maxAge: 60 * 60 * 24 * 7,
   });
 
   revalidatePath('/dashboard/organization');
@@ -135,8 +137,10 @@ export async function selectOrganizationAction(formData: FormData) {
     name: 'organization_id',
     value: id,
     httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
     path: '/',
+    maxAge: 60 * 60 * 24 * 7,
   });
 
   redirect('/dashboard/calendar');
