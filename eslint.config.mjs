@@ -97,7 +97,7 @@ export default defineConfig([
       'react/no-unescaped-entities': 'off',
       '@next/next/no-page-custom-font': 'off',
       '@typescript-eslint/ban-ts-comment': 'off',
-      '@typescript-eslint/no-explicit-any': 'on',
+      '@typescript-eslint/no-explicit-any': 'error',
     },
   },
 

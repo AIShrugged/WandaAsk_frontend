@@ -13,9 +13,9 @@ export default function CalendarAgenda({
 
   const monthEvents = events
     .filter(ev => isSameMonth(parseISO(ev.starts_at.split(' ')[0]), monthStart))
-    .sort((a, b) => a.starts_at.localeCompare(b.starts_at));
+    .toSorted((a, b) => a.starts_at.localeCompare(b.starts_at));
 
-  if (!monthEvents.length) {
+  if (monthEvents.length === 0) {
     return (
       <p className='text-secondary text-sm py-4 text-center'>
         No events this month
@@ -32,7 +32,7 @@ export default function CalendarAgenda({
 
   return (
     <div className='flex flex-col gap-4 py-2'>
-      {Array.from(grouped.entries()).map(([date, dayEvents]) => (
+      {[...grouped.entries()].map(([date, dayEvents]) => (
         <div key={date}>
           <p className='text-xs font-medium text-secondary mb-1'>
             {format(parseISO(date), 'EEE, d MMM')}
