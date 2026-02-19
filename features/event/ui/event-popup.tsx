@@ -57,7 +57,7 @@ export function EventPopup({
       </ModalBody>
 
       <ModalFooter>
-        <div className={'ml-auto w-[250px]'}>
+        <div className={'w-full md:w-[250px] md:ml-auto'}>
           <Button
             onClick={handleSwitchBot}
             disabled={isPending}

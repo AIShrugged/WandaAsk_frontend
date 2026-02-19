@@ -22,9 +22,9 @@ export async function httpClient<T>(
 
   if (!res.ok) {
     const text = await res.text();
-    throw new Error(
-      `${options.method ?? 'GET'} ${url} failed: ${res.status} ${res.statusText} — ${text}`,
-    );
+    // eslint-disable-next-line no-console
+    console.error(`[httpClient] ${options.method ?? 'GET'} ${url} → ${res.status} ${res.statusText}: ${text}`);
+    throw new Error('A server error occurred. Please try again.');
   }
 
   const json: ApiResponse<T> = await res.json();

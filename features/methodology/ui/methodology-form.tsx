@@ -111,7 +111,7 @@ export default function MethodologyForm({
           }}
         />
       ))}
-      <div className={'mt-auto w-[170px]'}>
+      <div className={'mt-auto w-full md:w-[170px]'}>
         <Button
           form={FORM_ID}
           loading={isPending}

@@ -27,6 +27,7 @@ export default function Error({
           height={320}
           width={320}
           src={'/images/icons/error.png'}
+          sizes='(max-width: 640px) 240px, 320px'
         />
 
         <div className={'flex flex-row gap-2 mt-2'}>

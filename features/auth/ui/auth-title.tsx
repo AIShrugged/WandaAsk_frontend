@@ -12,7 +12,7 @@ export default function AuthTitle({ type }: { type: AuthTitleVariant }) {
   };
 
   return (
-    <div className={'flex justify-center mb-[70px]'}>
+    <div className={'flex justify-center mb-8 md:mb-[70px]'}>
       <H1>{titleVariant[type]}</H1>
     </div>
   );

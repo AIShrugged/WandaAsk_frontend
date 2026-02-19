@@ -32,14 +32,14 @@ export default function UserInfo({ user }: UserInfoProps) {
 
   return (
     <div className='flex gap-2 items-center justify-end'>
-      <div ref={anchorRef} className='flex flex-col text-right'>
+      <div ref={anchorRef} className='hidden xs:flex flex-col text-right'>
         <p className='text-accent font-medium'>{user.name}</p>
         <p className='text-secondary text-sm'>{user.email}</p>
       </div>
 
       <button
         onClick={handleOpen}
-        className='cursor-pointer rounded-full hover:ring-2 hover:ring-accent/20 transition-all'
+        className='cursor-pointer rounded-full hover:ring-2 hover:ring-accent/20 transition-all flex items-center justify-center min-w-[44px] min-h-[44px]'
         aria-label='Open user menu'
       >
         <Avatar>{user.name[0]}</Avatar>

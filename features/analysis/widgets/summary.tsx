@@ -20,7 +20,7 @@ const Summary = memo(function Summary({
   }
 
   return (
-    <div className='grid grid-cols-2 gap-4'>
+    <div className='grid grid-cols-1 xs:grid-cols-2 gap-4'>
       {maxItem && (
         <ComponentCard>
           <p className='font-medium text-[20px] mb-2'>Maximum contribution</p>

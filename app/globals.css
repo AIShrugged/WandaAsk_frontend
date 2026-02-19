@@ -1,5 +1,16 @@
 @import "tailwindcss";
 
+@theme {
+  /* Custom breakpoints — mobile-first.
+     NOTE: sm is NOT overridden here, so it keeps the Tailwind default (640px).
+     Use `phone:` for the 425px large-phone breakpoint. */
+  --breakpoint-xs: 375px;    /* iPhone SE / standard phone */
+  --breakpoint-phone: 425px; /* large phone (Samsung Galaxy, etc.) */
+  --breakpoint-md: 768px;    /* tablet */
+  --breakpoint-lg: 1024px;   /* laptop */
+  --breakpoint-xl: 1280px;   /* desktop */
+}
+
 @layer base {
   :root {
     --color-primary: #4fb268;
@@ -68,13 +79,26 @@
   .shadow-primary {
     box-shadow: 15px 13px 21.6px 0 rgba(10, 66, 30, 0.04);
   }
+
+  /* Scrollbar utilities */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 /* Шрифт */
 body {
-  font-family: Inter, system-ui, sans-serif;
+  font-family: var(--font-inter-sans), system-ui, sans-serif;
 }
 
-html, body, #__next {
+html {
   height: 100%;
+}
+
+body {
+  min-height: 100%;
 }

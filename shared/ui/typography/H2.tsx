@@ -12,7 +12,7 @@ export function H2({ children, className = '' }: Props) {
         style={{
           lineHeight: 'normal',
         }}
-        className={`text-[36px] font-normal text-[#344137] font-inter  ${className}`}
+        className={`text-2xl md:text-3xl lg:text-[36px] font-normal text-[#344137] font-inter  ${className}`}
       >
         {children}
       </h2>

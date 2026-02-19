@@ -37,3 +37,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# environment variables (keep only .env.example tracked)
+.env.local
+.env.development
+.env.production

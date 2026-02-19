@@ -81,7 +81,7 @@ export default function OrganizationForm({
         ))}
 
         {isEdit && (
-          <div className={'mt-auto w-[170px]'}>
+          <div className={'mt-auto w-full md:w-[170px]'}>
             <Button
               type={'submit'}
               form={FORM_ID}

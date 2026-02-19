@@ -7,19 +7,17 @@ import type { MetricGroup } from '@/features/analysis/model/types';
 
 export default function Linear({
   display_name,
-  current_value,
   submetrics,
 }: MetricGroup) {
+  const lgCols = (
+    ['lg:grid-cols-1', 'lg:grid-cols-2', 'lg:grid-cols-3', 'lg:grid-cols-4'] as const
+  )[Math.min(submetrics.length, 4) - 1];
+
   return (
     <div className={'flex flex-col gap-2'}>
       <LinearProgressTitle title={display_name} />
 
-      <div
-        className='grid gap-4'
-        style={{
-          gridTemplateColumns: `repeat(${Math.min(submetrics.length, 4)}, minmax(0, 1fr))`,
-        }}
-      >
+      <div className={`grid gap-4 grid-cols-1 phone:grid-cols-2 ${lgCols}`}>
         {submetrics.map(v => (
           <ComponentCard key={v.display_name}>
             <LinearProgressAgenda {...v} />
