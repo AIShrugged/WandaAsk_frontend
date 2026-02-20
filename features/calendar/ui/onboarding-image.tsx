@@ -6,7 +6,7 @@ export default function OnboardingImage() {
   return (
     <div className={'flex flex-row gap-[22px] items-center'}>
       <Image {...onboardingImageOptions} />
-      <p className={'text-[#818F85] text-[24px]'}>Sign In</p>
+      <p className={'text-xl text-muted-foreground'}>Sign In</p>
     </div>
   );
 }

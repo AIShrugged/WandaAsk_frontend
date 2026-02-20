@@ -1,16 +1,15 @@
-import { motion } from 'framer-motion';
+import * as motion from 'motion/react-client';
 
 import type { PropsWithChildren } from 'react';
 
 export default function Border({ children }: PropsWithChildren) {
   return (
     <motion.div
-      className={'rounded-full'}
       initial={{
         boxShadow: 'none',
       }}
       whileHover={{
-        boxShadow: '15px 13px 21.6px 0 rgba(10, 66, 30, 0.2)',
+        boxShadow: '0 4px 12px 0 rgba(0,0,0,0.12)',
       }}
       transition={{
         duration: 0.3,

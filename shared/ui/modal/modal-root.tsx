@@ -29,7 +29,7 @@ export function ModalRoot({ open, onClose, children }: ModalRootProps) {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [open, onClose]);
 
-  if (!mounted) return null; // ⬅ дождаться client-side монтирования
+  if (!mounted) return null;
 
   return createPortal(
     <AnimatePresence>
@@ -42,7 +42,7 @@ export function ModalRoot({ open, onClose, children }: ModalRootProps) {
           onClick={onClose}
         >
           <motion.div
-            className='bg-white rounded-3xl md:rounded-[40px] w-full max-w-[700px] mx-4'
+            className='bg-card border border-border rounded-[var(--radius-card)] w-full max-w-[700px] mx-4 shadow-card'
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.95, opacity: 0 }}

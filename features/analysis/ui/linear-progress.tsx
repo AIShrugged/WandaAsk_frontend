@@ -12,7 +12,7 @@ export default function LinearProgress({
 
   return (
     <div
-      className={`relative w-full bg-scheduled rounded-full overflow-hidden`}
+      className={`relative w-full bg-muted rounded-full overflow-hidden`}
       style={{ height }}
       {...props}
     >

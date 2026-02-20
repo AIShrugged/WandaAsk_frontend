@@ -52,7 +52,7 @@ export default function GlobalPopup() {
   };
 
   return createPortal(
-    <div ref={popupRef} style={style} className='shadow-2xl rounded-full'>
+    <div ref={popupRef} style={style} className='shadow-card rounded-[var(--radius-card)]'>
       {state.content}
     </div>,
     document.body,

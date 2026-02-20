@@ -22,8 +22,8 @@ export default function PasswordInput(props: Props) {
             <button
               type='button'
               onClick={() => setVisible(prevState => !prevState)}
-              aria-label={visible ? 'Show password' : 'Hide password'}
-              className='cursor-pointer text-accent'
+              aria-label={visible ? 'Hide password' : 'Show password'}
+              className='cursor-pointer text-primary'
             >
               {visible ? (
                 <EyeOff aria-hidden='true' />

@@ -64,17 +64,19 @@ const Event = ({
       }}
       className={clsx(
         'flex flex-row items-center gap-2 rounded-full p-[6px] mb-1 transition-colors cursor-pointer select-none',
-        isPast ? 'bg-scheduled text-primary' : 'bg-primary text-white ',
+        isPast
+          ? 'bg-muted text-muted-foreground'
+          : 'bg-primary text-primary-foreground',
       )}
     >
       <div className='flex flex-row items-center gap-2 flex-shrink-0'>
         {isPast ? (
-          <CircleCheckBig className={'text-accent'} size={14} />
+          <CircleCheckBig className='text-primary' size={14} />
         ) : (
           <Circle size={14} />
         )}
         {isPast && (
-          <p className='text-xs text-secondary line-through whitespace-nowrap'>
+          <p className='text-xs text-muted-foreground line-through whitespace-nowrap'>
             {formatDate(event.starts_at)}
           </p>
         )}

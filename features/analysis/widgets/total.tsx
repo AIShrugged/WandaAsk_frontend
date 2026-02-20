@@ -26,7 +26,7 @@ export default function Total({ total }: Pick<AnalysisProps, 'total'>) {
         </H3>
 
         {total.max_value && (
-          <p className={'text-secondary'}>
+          <p className='text-muted-foreground'>
             {renderScoreDescription(+total.current_value, +total.max_value)}
           </p>
         )}

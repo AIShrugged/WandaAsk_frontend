@@ -11,7 +11,7 @@ export default async function FollowUp({ data }: { data: string }) {
   }
 
   return (
-    <pre className='bg-scheduled p-4 rounded-lg overflow-x-auto text-sm font-mono whitespace-pre-wrap break-words'>
+    <pre className='bg-muted p-4 rounded-[var(--radius-card)] overflow-x-auto text-sm font-mono whitespace-pre-wrap break-words text-foreground'>
       {JSON.stringify(parsed, null, 2)}
     </pre>
   );

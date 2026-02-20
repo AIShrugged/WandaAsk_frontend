@@ -50,7 +50,7 @@ export default function ParticipantMatching({
       updateOptimistic({ attendeeId, guestId });
 
       setProfile(eventId, attendeeId, guestId).catch(error => {
-        console.error('Ошибка сохранения:', error);
+        console.error('Failed to save profile:', error);
       });
     });
   };
@@ -62,7 +62,7 @@ export default function ParticipantMatching({
 
         return (
           <div key={attendee.id} className='flex items-center gap-3 relative'>
-            <div className='text-gray-400'>
+            <div className='text-muted-foreground'>
               <ArrowRight className='w-5 h-5' />
             </div>
 

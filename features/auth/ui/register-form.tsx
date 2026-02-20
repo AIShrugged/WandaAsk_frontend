@@ -66,7 +66,7 @@ export default function RegisterForm() {
             id='form-error'
             role='alert'
             aria-live='polite'
-            className='text-sm text-red-700 text-center'
+            className='text-sm text-destructive text-center'
           >
             {errors.root.message}
           </p>

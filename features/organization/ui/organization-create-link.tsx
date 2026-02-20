@@ -6,7 +6,7 @@ export default function OrganizationCreateLink() {
   return (
     <p className={'text-[20px] mt-[30px]'}>
       I want to create a{' '}
-      <Link className={'text-accent font-bold'} href={route}>
+      <Link className={'text-primary font-bold'} href={route}>
         new organization
       </Link>
     </p>

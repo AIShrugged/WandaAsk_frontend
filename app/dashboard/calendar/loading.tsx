@@ -6,7 +6,7 @@ export default function Loading() {
     <Card className='h-full flex flex-col items-center justify-center'>
       <div className='flex flex-col items-center gap-4 px-8 py-6'>
         <SpinLoader />
-        <p className='text-secondary'>Loading calendar...</p>
+        <p className='text-muted-foreground'>Loading calendar...</p>
       </div>
     </Card>
   );

@@ -35,7 +35,7 @@ export default function AuthFormFooter({
 
       <div className={'flex gap-1'}>
         <p>{secondaryText}</p>
-        <Link className={'text-accent font-bold'} href={secondaryRoute}>
+        <Link className={'text-primary font-bold'} href={secondaryRoute}>
           {primaryText}
         </Link>
       </div>

@@ -11,19 +11,19 @@ export function FollowUpItem({ followUp }: { followUp: TeamFollowUpDTO }) {
   const route = `${ROUTES.DASHBOARD.FOLLOWUPS}/analysis/${followUp.calendar_event.id}`;
 
   return (
-    <div className='border-b-table'>
+    <div className='border-b border-border'>
       <Link href={route} className='py-4 flex items-center justify-between'>
         <div className='flex-1'>
           <H3>{followUp?.calendar_event.title}</H3>
-          <p className='text-sm text-secondary'>
+          <p className='text-sm text-muted-foreground'>
             Organizer: {followUp?.user.name}
           </p>
-          <p className='text-sm text-secondary'>
+          <p className='text-sm text-muted-foreground'>
             {format(new Date(followUp.created_at), 'dd.MM.yyyy')}
           </p>
         </div>
 
-        <ChevronRight className='text-accent size-[36px]' />
+        <ChevronRight className='text-primary size-5' />
       </Link>
     </div>
   );

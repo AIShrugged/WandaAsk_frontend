@@ -199,18 +199,18 @@ const InputDropdown = forwardRef<
           }
         }}
         className={cn(
-          'px-6 flex items-center rounded-full h-[54px] w-full',
-          'border bg-white transition-colors cursor-pointer',
-          'focus:border-primary focus:ring-2 focus:ring-offset-0 focus:ring-[#4FB268] outline-none',
-          error ? 'border-red-700' : 'border-secondary',
-          disabled && 'bg-gray-100 cursor-not-allowed opacity-60',
+          'px-4 flex items-center rounded-[var(--radius-button)] h-10 w-full',
+          'border border-input bg-background transition-colors cursor-pointer',
+          'focus:border-ring focus:ring-2 focus:ring-ring/30 focus:ring-offset-0 outline-none',
+          error ? 'border-destructive' : '',
+          disabled && 'opacity-60 cursor-not-allowed',
           'relative',
         )}
       >
         <span
           className={cn(
-            'flex-1 truncate py-2.5',
-            hasValue ? '' : 'text-transparent',
+            'flex-1 truncate py-2 text-sm',
+            hasValue ? 'text-foreground' : 'text-muted-foreground/50',
           )}
         >
           {hasValue ? displayedLabel : placeholder}
@@ -218,7 +218,7 @@ const InputDropdown = forwardRef<
 
         <ChevronDown
           className={cn(
-            'w-5 h-5 text-gray-500 transition-transform ml-2 shrink-0',
+            'w-4 h-4 text-muted-foreground transition-transform ml-2 shrink-0',
             isOpen && 'rotate-180',
           )}
         />
@@ -227,16 +227,16 @@ const InputDropdown = forwardRef<
           <label
             htmlFor={inputId}
             className={cn(
-              'absolute left-8 transition-all pointer-events-none select-none',
+              'absolute left-4 transition-all pointer-events-none select-none text-sm',
               floatingActive
-                ? '-translate-y-4 scale-100 px-[4px] bg-white text-xs text-tertiary'
-                : 'translate-y-0 scale-100 text-secondary',
-              error ? 'text-red-600' : '',
+                ? '-translate-y-5 scale-90 px-[4px] bg-background text-xs text-muted-foreground'
+                : 'translate-y-0 scale-100 text-muted-foreground',
+              error ? 'text-destructive' : '',
             )}
             style={
               {
                 zIndex: 10,
-                top: floatingActive ? -10 : '50%',
+                top: floatingActive ? -2 : '50%',
                 transformOrigin: 'left center',
                 translate: floatingActive ? '0' : '0 -50%',
               } as React.CSSProperties
@@ -251,10 +251,10 @@ const InputDropdown = forwardRef<
         <div
           ref={dropdownRef}
           role='listbox'
-          className='absolute z-50 w-full top-[58px] bg-white border border-gray-200 rounded-lg shadow-lg max-h-80 overflow-auto'
+          className='absolute z-50 w-full top-[44px] bg-popover border border-border rounded-[var(--radius-card)] shadow-card max-h-80 overflow-auto'
         >
           {searchable && (
-            <div className='p-2 border-b border-gray-200 sticky top-0 bg-white'>
+            <div className='p-2 border-b border-border sticky top-0 bg-popover'>
               <input
                 ref={searchInputRef}
                 type='text'
@@ -264,7 +264,7 @@ const InputDropdown = forwardRef<
                   setHighlightedIndex(-1);
                 }}
                 placeholder='Search'
-                className='w-full px-4 h-[40px] text-sm border border-secondary rounded-full bg-transparent outline-none focus:border-primary focus:ring-2 focus:ring-offset-0 focus:ring-[#4FB268]'
+                className='w-full px-3 h-8 text-sm border border-input rounded-[var(--radius-button)] bg-transparent outline-none focus:border-ring focus:ring-2 focus:ring-ring/30 focus:ring-offset-0'
                 onClick={e => e.stopPropagation()}
               />
             </div>
@@ -272,7 +272,7 @@ const InputDropdown = forwardRef<
 
           <ul className='py-1'>
             {filteredOptions.length === 0 ? (
-              <li className='px-4 py-3 text-sm text-gray-500'>Nothing found</li>
+              <li className='px-4 py-3 text-sm text-muted-foreground'>Nothing found</li>
             ) : (
               filteredOptions.map((option, index) => {
                 const isSelected = selectedValues.includes(option.value);
@@ -286,14 +286,14 @@ const InputDropdown = forwardRef<
                     onClick={() => selectOption(option)}
                     onMouseEnter={() => setHighlightedIndex(index)}
                     className={cn(
-                      'px-4 py-3 flex items-center justify-between cursor-pointer transition-colors text-sm',
-                      isHighlighted && 'bg-blue-50',
-                      isSelected && 'bg-blue-100 font-medium',
+                      'px-4 py-2.5 flex items-center justify-between cursor-pointer transition-colors text-sm',
+                      isHighlighted && 'bg-accent',
+                      isSelected && 'bg-accent font-medium',
                       option.disabled && 'opacity-50 cursor-not-allowed',
                     )}
                   >
                     <span>{option.label}</span>
-                    {isSelected && <Check className='w-4 h-4 text=accent ' />}
+                    {isSelected && <Check className='w-4 h-4 text-primary' />}
                   </li>
                 );
               })
