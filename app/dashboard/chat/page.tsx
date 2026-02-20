@@ -1,0 +1,19 @@
+import { MessageSquare } from 'lucide-react';
+
+import { getChats, ChatList } from '@/features/chat';
+
+export default async function ChatPage() {
+  const { chats, totalCount } = await getChats(0, 20);
+
+  return (
+    <div className='flex h-full rounded-2xl overflow-hidden border-primary bg-white shadow-primary'>
+      <ChatList initialChats={chats} totalCount={totalCount} />
+
+      {/* Empty state */}
+      <div className='flex-1 flex flex-col items-center justify-center gap-3 text-secondary'>
+        <MessageSquare className='w-12 h-12 text-tertiary' />
+        <p className='text-sm'>Select a chat or create a new one</p>
+      </div>
+    </div>
+  );
+}
