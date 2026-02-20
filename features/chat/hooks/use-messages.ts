@@ -6,20 +6,28 @@ import { getMessages } from '@/features/chat/api/messages';
 
 import type { Message } from '@/features/chat/types';
 
-const PAGE_SIZE = 50;
+const PAGE_SIZE = 10;
 
 export function useMessages(
   chatId: number,
   initialMessages: Message[],
-  initialTotal: number,
+  totalCount: number,
+  // The offset from which initialMessages were loaded.
+  // 0 means we already have the oldest messages.
+  // >0 means there are older messages available above.
+  startOffset: number,
 ) {
-  // Messages stored in chronological order (oldest first, newest last)
+  // Messages stored in chronological order (oldest first, newest last).
+  // API returns oldest-first, so no reversal needed.
   const [messages, setMessages] = useState<Message[]>(initialMessages);
-  const [offset, setOffset] = useState(initialMessages.length);
-  const [hasMore, setHasMore] = useState(initialMessages.length < initialTotal);
+  // Tracks the beginning offset of what we've loaded so far.
+  const [loadedStartOffset, setLoadedStartOffset] = useState(startOffset);
   const [isLoading, setIsLoading] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // There are older messages if we haven't loaded from offset 0 yet.
+  const hasMore = loadedStartOffset > 0;
 
   const loadOlder = useCallback(async () => {
     if (isLoading || !hasMore) return;
@@ -29,21 +37,19 @@ export function useMessages(
 
     setIsLoading(true);
     try {
-      const { messages: older, totalCount } = await getMessages(
-        chatId,
-        offset,
-        PAGE_SIZE,
-      );
+      const fetchOffset = Math.max(0, loadedStartOffset - PAGE_SIZE);
+      const fetchCount = loadedStartOffset - fetchOffset;
 
-      setMessages(prev => [...older.toReversed(), ...prev]);
-      setOffset(prev => prev + older.length);
-      setHasMore(offset + older.length < totalCount);
+      const { messages: older } = await getMessages(chatId, fetchOffset, fetchCount);
 
-      // Restore scroll position after prepend
+      // Prepend older messages (they're already in chronological order)
+      setMessages(prev => [...older, ...prev]);
+      setLoadedStartOffset(fetchOffset);
+
+      // Restore scroll position so viewport doesn't jump
       requestAnimationFrame(() => {
         if (container) {
-          container.scrollTop =
-            container.scrollHeight - prevScrollHeight;
+          container.scrollTop = container.scrollHeight - prevScrollHeight;
         }
       });
     } catch {
@@ -51,9 +57,9 @@ export function useMessages(
     } finally {
       setIsLoading(false);
     }
-  }, [chatId, offset, isLoading, hasMore]);
+  }, [chatId, loadedStartOffset, isLoading, hasMore]);
 
-  // Intersection observer on the top sentinel
+  // Intersection observer on the top sentinel — fires when user scrolls up
   useEffect(() => {
     if (!sentinelRef.current) return;
 

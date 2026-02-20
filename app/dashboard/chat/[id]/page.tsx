@@ -10,14 +10,24 @@ export default async function ChatRoomPage({ params }: PageProps) {
 
   if (!Number.isFinite(chatId) || chatId <= 0) notFound();
 
-  const [{ chats, totalCount }, { messages, totalCount: msgTotal }] =
+  const INITIAL_LIMIT = 20;
+
+  const [{ chats, totalCount }, { messages: oldest, totalCount: msgTotal }] =
     await Promise.all([
       getChats(0, 20),
-      getMessages(chatId, 0, 50),
+      getMessages(chatId, 0, INITIAL_LIMIT),
     ]);
 
-  // The API returns messages newest-first; reverse to show oldest at top
-  const chronological = messages.toReversed();
+  // API returns messages oldest-first (ASC by created_at).
+  // If there are more messages than INITIAL_LIMIT, fetch from the end
+  // so the user sees the newest messages on open.
+  let initialMessages = oldest;
+  let startOffset = 0;
+  if (msgTotal > INITIAL_LIMIT) {
+    startOffset = msgTotal - INITIAL_LIMIT;
+    const { messages: newest } = await getMessages(chatId, startOffset, INITIAL_LIMIT);
+    initialMessages = newest;
+  }
 
   return (
     <div className='flex h-full rounded-2xl overflow-hidden border-primary bg-white shadow-primary'>
@@ -29,8 +39,9 @@ export default async function ChatRoomPage({ params }: PageProps) {
 
       <ChatWindow
         chatId={chatId}
-        initialMessages={chronological}
+        initialMessages={initialMessages}
         totalCount={msgTotal}
+        startOffset={startOffset}
       />
     </div>
   );

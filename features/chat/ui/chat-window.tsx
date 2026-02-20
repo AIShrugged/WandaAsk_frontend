@@ -15,15 +15,17 @@ interface ChatWindowProps {
   chatId: number;
   initialMessages: Message[];
   totalCount: number;
+  startOffset: number;
 }
 
 export function ChatWindow({
   chatId,
   initialMessages,
   totalCount,
+  startOffset,
 }: ChatWindowProps) {
   const { messages, isLoading, hasMore, sentinelRef, containerRef, addMessage, addMessages } =
-    useMessages(chatId, initialMessages, totalCount);
+    useMessages(chatId, initialMessages, totalCount, startOffset);
 
   const [isSending, setIsSending] = useState(false);
 
