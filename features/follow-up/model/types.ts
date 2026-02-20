@@ -1,4 +1,4 @@
-import type { GuestCore } from '@/entities/participant';
+import type { EventProps } from '@/entities/event';
 
 export interface FollowUpResponse {
   data: FollowUpDetailProps;
@@ -8,12 +8,15 @@ export interface FollowUpsResponse {
   data: FollowUpDetailProps[];
 }
 
+/** Matches backend FollowupResource */
 export interface FollowUpDetailProps {
-  calendar_event_id: number;
   id: number;
-  participant_id: null | GuestCore;
-  score: string;
-  status: string;
-  type: string;
+  calendar_event: EventProps;
+  team_id: number;
+  user: { id: number; name: string; email: string };
+  methodology_id: number | null;
   text: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
 }

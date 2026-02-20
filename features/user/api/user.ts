@@ -1,6 +1,7 @@
 'use server';
 
 import { cache } from 'react';
+import { redirect } from 'next/navigation';
 
 import { API_URL } from '@/shared/lib/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
@@ -15,6 +16,13 @@ export const getUser = cache(async () => {
     headers: { ...authHeaders },
     cache: 'no-store',
   });
+
+  if (!res.ok) {
+    if (res.status === 401) {
+      redirect('/api/auth/clear-session');
+    }
+    return { data: null };
+  }
 
   const json: UserProps = await res.json();
 

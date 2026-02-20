@@ -3,4 +3,5 @@ export type {
   AttendeeProps,
   GuestProps,
   GuestCore,
+  ProfileCore,
 } from './model/types';

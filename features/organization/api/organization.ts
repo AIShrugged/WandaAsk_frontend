@@ -18,14 +18,13 @@ export const getOrganizations = cache(
   async (): Promise<ApiResponse<OrganizationProps[]>> => {
     const authHeaders = await getAuthHeaders();
 
-    console.log('API_URL',API_URL);
-
     const res = await fetch(`${API_URL}/organizations?limit=50&offset=0`, {
       method: 'GET',
       headers: {
         ...authHeaders,
         'Content-Type': 'application/json',
       },
+      cache: 'no-store',
     });
 
     if (!res.ok) {

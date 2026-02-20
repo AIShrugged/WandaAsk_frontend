@@ -9,6 +9,7 @@ export const ParticipantList = ({
 }: {
   data: AttendeeProps[] | GuestProps[];
 }) => {
+
   return (
     <div className='flex flex-col gap-4'>
       {data.map(item => (
@@ -16,13 +17,13 @@ export const ParticipantList = ({
           <Avatar>
             {'name' in item && item.name
               ? item.name[0]
-              : (item as GuestProps).email[0]}
+              : (item as GuestProps).channel_identifier?.[0]}
           </Avatar>
 
           <div className='flex items-center gap-4'>
             {'name' in item && item.name
               ? item.name
-              : (item as GuestProps).email}
+              : (item as GuestProps).channel_identifier}
           </div>
         </div>
       ))}

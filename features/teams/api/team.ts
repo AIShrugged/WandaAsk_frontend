@@ -19,6 +19,7 @@ import type { ApiResponse } from '@/shared/types/common';
 // ------------------------------
 export const getTeams = async (organizationId: number | string) => {
   const { data, totalCount } = await loadTeamsChunk(organizationId, 0, 10);
+  console.log('data',data);
   return { data, totalCount };
 };
 
@@ -38,6 +39,8 @@ export async function loadTeamsChunk(
       cache: 'no-store',
     },
   );
+
+  console.log('res',res);
 
   if (!res.ok) {
     const text = await res.text();

@@ -3,6 +3,7 @@ import type { UserProps } from '@/entities/user';
 
 export interface TeamProps extends TeamCreateDTO {
   id: number;
+  slug: string;
   employee_count: number;
 }
 
@@ -18,8 +19,8 @@ export type TeamActionType = 'add-member' | 'delete' | 'view';
 
 export interface TeamFollowUpDTO {
   id: number;
-  calendar_event_id: number;
   team_id: number;
+  methodology_id: number | null;
   text: string;
   status: string;
   created_at: Date;

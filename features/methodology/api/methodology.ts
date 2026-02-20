@@ -13,7 +13,7 @@ import type {
 import type { ApiResponse } from '@/shared/types/common';
 
 const afterMethodologyMutate = () => {
-  revalidatePath('/methodology');
+  revalidatePath('/dashboard/methodology');
 };
 
 export async function createMethodology(data: MethodologyDTO): Promise<void> {
@@ -41,7 +41,10 @@ export async function createMethodology(data: MethodologyDTO): Promise<void> {
     );
   }
 
-  afterMethodologyMutate();
+  revalidatePath('/methodology');
+
+
+  //afterMethodologyMutate();
 }
 
 export async function updateMethodology(
