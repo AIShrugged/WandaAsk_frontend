@@ -32,6 +32,9 @@ async function parseJsonResponse(res: Response): Promise<Record<string, unknown>
 export async function login(data: LoginInput): Promise<void> {
   const validated = LoginSchema.parse(data);
 
+  console.log('API_URL',API_URL);
+
+
   const res = await fetch(`${API_URL}/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
