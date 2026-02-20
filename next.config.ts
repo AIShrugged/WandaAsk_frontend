@@ -1,5 +1,9 @@
 import type { NextConfig } from 'next';
 
+// Allow self-signed / untrusted TLS certificates when calling the backend API.
+// Remove this once the backend has a valid certificate.
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
 const nextConfig: NextConfig = {
   reactCompiler: true,
   devIndicators: false,
@@ -68,10 +72,6 @@ const nextConfig: NextConfig = {
 
   productionBrowserSourceMaps: false,
 
-  env: {
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
-    NEXT_PUBLIC_WS_URL: process.env.NEXT_PUBLIC_WS_URL,
-  },
 };
 
 export default nextConfig;
