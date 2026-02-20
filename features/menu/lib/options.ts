@@ -1,6 +1,7 @@
 import {
   Calendar,
   BookOpen,
+  MessageSquare,
   SquareKanban,
   File,
   UsersRound,
@@ -11,6 +12,12 @@ import { ROUTES } from '@/shared/lib/routes';
 import type { MenuProps } from '@/features/menu/model/types';
 
 export const MENU_ITEMS: MenuProps[] = [
+  {
+    id: 'chat',
+    label: 'AI Chat',
+    icon: 'messageSquare',
+    href: ROUTES.DASHBOARD.CHAT,
+  },
   {
     id: 'teams',
     label: 'Teams',
@@ -50,4 +57,5 @@ export const ICONS_MAP = {
   calendar: Calendar,
   file: File,
   kanban: SquareKanban,
+  messageSquare: MessageSquare,
 } as const;

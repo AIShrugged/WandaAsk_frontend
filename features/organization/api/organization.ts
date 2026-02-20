@@ -27,6 +27,10 @@ export const getOrganizations = cache(
     });
 
     if (!res.ok) {
+      if (res.status === 401) {
+        redirect('/api/auth/clear-session');
+      }
+
       const text = await res.text();
       // eslint-disable-next-line no-console
       console.error(`[org] getOrganizations → ${res.status} ${res.statusText}: ${text}`);
