@@ -1,7 +1,7 @@
 ---
 title: "feat: Full Design Redesign — Professional Light Theme (shadcn/Vercel/Linear Style)"
 type: feat
-status: active
+status: completed
 date: 2026-02-20
 ---
 

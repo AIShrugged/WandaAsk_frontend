@@ -76,29 +76,25 @@ export function useMessages(
     return () => observer.disconnect();
   }, [hasMore, isLoading, loadOlder]);
 
-  const scrollToBottom = useCallback(() => {
-    requestAnimationFrame(() => {
-      if (containerRef.current) {
-        containerRef.current.scrollTop = containerRef.current.scrollHeight;
-      }
-    });
+  const shouldScrollToBottom = useRef(false);
+
+  // Scroll after React commits the DOM update
+  useEffect(() => {
+    if (shouldScrollToBottom.current && containerRef.current) {
+      shouldScrollToBottom.current = false;
+      containerRef.current.scrollTop = containerRef.current.scrollHeight;
+    }
+  }, [messages]);
+
+  const addMessage = useCallback((message: Message) => {
+    shouldScrollToBottom.current = true;
+    setMessages(prev => [...prev, message]);
   }, []);
 
-  const addMessage = useCallback(
-    (message: Message) => {
-      setMessages(prev => [...prev, message]);
-      scrollToBottom();
-    },
-    [scrollToBottom],
-  );
-
-  const addMessages = useCallback(
-    (incoming: Message[]) => {
-      setMessages(prev => [...prev, ...incoming]);
-      scrollToBottom();
-    },
-    [scrollToBottom],
-  );
+  const addMessages = useCallback((incoming: Message[]) => {
+    shouldScrollToBottom.current = true;
+    setMessages(prev => [...prev, ...incoming]);
+  }, []);
 
   return { messages, isLoading, hasMore, sentinelRef, containerRef, addMessage, addMessages };
 }

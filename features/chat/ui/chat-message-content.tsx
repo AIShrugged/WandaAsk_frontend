@@ -1,17 +1,34 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface ChatMessageContentProps {
   content: string;
 }
 
 /**
- * Renders HTML content from AI responses.
- * Uses innerHTML to support tables, charts (canvas + scripts), and other visuals.
- * Scripts are re-created to trigger execution (Chart.js initialization etc.).
+ * Renders AI message content.
+ *
+ * - Plain text / markdown → react-markdown (handles \n, lists, bold, tables, code, etc.)
+ * - Raw HTML (starts with "<") → innerHTML + script re-execution (Chart.js, canvas, etc.)
  */
 export function ChatMessageContent({ content }: ChatMessageContentProps) {
+  const isHtml = content.trimStart().startsWith('<');
+
+  if (!isHtml) {
+    return (
+      <div className='chat-html-content'>
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+      </div>
+    );
+  }
+
+  return <HtmlContent content={content} />;
+}
+
+function HtmlContent({ content }: { content: string }) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
