@@ -72,12 +72,12 @@ export function ChatWindow({
 
         {isLoading && (
           <div className='flex justify-center py-2'>
-            <Loader2 className='w-4 h-4 text-accent animate-spin' />
+            <Loader2 className='w-4 h-4 text-primary animate-spin' />
           </div>
         )}
 
         {!hasMore && messages.length === 0 && !isSending && (
-          <div className='flex-1 flex items-center justify-center text-secondary text-sm'>
+          <div className='flex-1 flex items-center justify-center text-muted-foreground text-sm'>
             No messages yet. Say hello!
           </div>
         )}
@@ -89,21 +89,21 @@ export function ChatWindow({
         {/* Typing indicator — shown while waiting for assistant response */}
         {isSending && (
           <div className='flex gap-3'>
-            <div className='flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold bg-secondary border-primary text-accent'>
+            <div className='flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold bg-secondary text-secondary-foreground'>
               AI
             </div>
-            <div className='rounded-2xl rounded-tl-sm px-4 py-3 bg-white border-primary shadow-primary'>
+            <div className='rounded-lg rounded-tl-sm px-4 py-3 bg-card border border-border shadow-card'>
               <div className='flex items-center gap-1'>
                 <span
-                  className='block w-2 h-2 rounded-full bg-[var(--text-tertiary)] animate-bounce'
+                  className='block w-2 h-2 rounded-full bg-muted-foreground/40 animate-bounce'
                   style={{ animationDelay: '0ms' }}
                 />
                 <span
-                  className='block w-2 h-2 rounded-full bg-[var(--text-tertiary)] animate-bounce'
+                  className='block w-2 h-2 rounded-full bg-muted-foreground/40 animate-bounce'
                   style={{ animationDelay: '160ms' }}
                 />
                 <span
-                  className='block w-2 h-2 rounded-full bg-[var(--text-tertiary)] animate-bounce'
+                  className='block w-2 h-2 rounded-full bg-muted-foreground/40 animate-bounce'
                   style={{ animationDelay: '320ms' }}
                 />
               </div>

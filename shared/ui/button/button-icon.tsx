@@ -26,9 +26,9 @@ export function ButtonIcon({
     'cursor-pointer flex items-center justify-center transition-colors';
 
   const stateClasses = clsx(
-    !disabled && variant === 'primary' && 'text-secondary hover:text-accent',
-    !disabled && variant === 'danger' && 'text-secondary hover:text-error',
-    disabled && 'text-tertiary opacity-40 cursor-not-allowed pointer-events-none',
+    !disabled && variant === 'primary' && 'text-muted-foreground hover:text-primary',
+    !disabled && variant === 'danger' && 'text-muted-foreground hover:text-destructive',
+    disabled && 'text-muted-foreground/40 opacity-40 cursor-not-allowed pointer-events-none',
   );
 
   const content = (

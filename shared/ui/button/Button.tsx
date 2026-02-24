@@ -14,13 +14,13 @@ interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const Loader = ({ text }: { text: string }) => (
   <div className='flex items-center justify-center gap-2'>
-    <div className='animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent' />
+    <div className='animate-spin rounded-full h-5 w-5 border-2 border-primary-foreground border-t-transparent' />
     <p>{text}</p>
   </div>
 );
 
 export function Button({
-  loadingText = 'Please, wait',
+  loadingText = 'Please wait',
   children,
   variant = BUTTON_VARIANT.primary,
   className,
@@ -32,22 +32,22 @@ export function Button({
   const isDisabled = disabled || loading;
 
   const base =
-    'relative h-[56px] w-full px-6 py-3 rounded-full font-inter text-base font-medium transition-all duration-200 flex items-center justify-center gap-3';
+    'relative h-10 w-full px-6 py-2 rounded-[var(--radius-button)] font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2';
 
   const variants = {
     [BUTTON_VARIANT.primary]: clsx(
-      'bg-[#4FB268] cursor-pointer text-white hover:bg-[#45a05a] active:bg-[#3d8f50]',
-      disabled && 'bg-[#A0D9B0] text-white/70 cursor-not-allowed',
+      'bg-primary text-primary-foreground cursor-pointer hover:bg-primary/90 active:bg-primary/80',
+      isDisabled && 'opacity-50 cursor-not-allowed',
       loading && 'cursor-wait',
     ),
     [BUTTON_VARIANT.secondary]: clsx(
-      'border-2 cursor-pointer border-button-secondary text-secondary bg-transparent hover:bg-[#4FB268]/5 active:bg-[#4FB268]/10',
-      disabled && 'border-[#A0D9B0] text-[#A0D9B0] cursor-not-allowed',
+      'border border-input bg-background text-foreground cursor-pointer hover:bg-accent hover:text-accent-foreground active:bg-accent/80',
+      isDisabled && 'opacity-50 cursor-not-allowed',
       loading && 'cursor-wait',
     ),
     [BUTTON_VARIANT.danger]: clsx(
-      'bg-error cursor-pointer text-white ',
-      disabled && 'bg-[#A0D9B0] text-white/70 cursor-not-allowed',
+      'bg-destructive text-destructive-foreground cursor-pointer hover:bg-destructive/90 active:bg-destructive/80',
+      isDisabled && 'opacity-50 cursor-not-allowed',
       loading && 'cursor-wait',
     ),
   };

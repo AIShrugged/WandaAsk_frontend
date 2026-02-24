@@ -3,8 +3,6 @@
 import { AlertCircle } from 'lucide-react';
 import Image from 'next/image';
 
-import { BUTTON_VARIANT } from '@/shared/types/button';
-import { Button } from '@/shared/ui/button/Button';
 import ButtonCopy from '@/shared/ui/button/button-copy';
 import Card from '@/shared/ui/card/Card';
 import CardBody from '@/shared/ui/card/CardBody';

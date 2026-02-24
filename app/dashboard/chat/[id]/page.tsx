@@ -30,7 +30,7 @@ export default async function ChatRoomPage({ params }: PageProps) {
   }
 
   return (
-    <div className='flex h-full rounded-2xl overflow-hidden border-primary bg-white shadow-primary'>
+    <div className='flex h-full rounded-[var(--radius-card)] overflow-hidden border border-border bg-card shadow-card'>
       <ChatList
         initialChats={chats}
         totalCount={totalCount}

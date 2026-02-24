@@ -52,8 +52,8 @@ export default function Cells({
       <div
         key={day.toISOString()}
         className={`
-          relative border border-gray-200 flex flex-col h-full px-1
-          ${isCurrentMonth ? 'bg-white' : 'bg-layout text-secondary'}
+          relative border border-border flex flex-col h-full px-1
+          ${isCurrentMonth ? 'bg-background' : 'bg-muted text-muted-foreground'}
         `}
       >
         <Day currentDay={day} />
@@ -76,7 +76,7 @@ export default function Cells({
 
   return (
     <div
-      className='grid grid-cols-7 border-t border-l border-gray-200 h-full'
+      className='grid grid-cols-7 border-t border-l border-border h-full'
       style={{ gridTemplateRows: `repeat(${weeksCount}, 1fr)` }}
     >
       {cells}

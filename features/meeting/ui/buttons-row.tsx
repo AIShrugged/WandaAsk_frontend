@@ -31,14 +31,14 @@ export default function ButtonsRow({ currentTab }: Props) {
     return (
       <TabLink key={index} tab={item.link}>
         <button
-          className={`border-table border-1 cursor-pointer px-2.5 p-2 text-center text-sm  transition-all
-  ${isActive ? 'bg-primary text-white' : ''}
-  ${index === 0 ? 'rounded-l-full ' : ''}
-  ${index === items.length - 1 ? 'rounded-r-full' : ''}
-  ${index > 0 && index < items.length - 1 ? 'border-l border-r ' : ''}`}
+          className={`border border-border cursor-pointer px-3 py-1.5 text-center text-sm transition-all
+  ${isActive ? 'bg-primary text-primary-foreground border-primary' : 'bg-background hover:bg-accent'}
+  ${index === 0 ? 'rounded-l-[var(--radius-button)]' : ''}
+  ${index === items.length - 1 ? 'rounded-r-[var(--radius-button)]' : ''}
+  ${index > 0 ? '-ml-px' : ''}`}
           type='button'
         >
-          <p className={isActive ? 'text-white' : 'text-accent'}>
+          <p className={isActive ? 'text-primary-foreground' : 'text-foreground'}>
             {item.title}
           </p>
         </button>

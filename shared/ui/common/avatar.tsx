@@ -25,7 +25,7 @@ export default function Avatar({
   return (
     <div
       className={clsx(
-        'flex items-center shrink-0 justify-center rounded-full bg-primary text-white capitalize font-medium',
+        'flex items-center shrink-0 justify-center rounded-full bg-primary text-primary-foreground capitalize font-medium',
         sizeClasses[size],
         className,
       )}

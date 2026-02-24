@@ -20,7 +20,7 @@ export default function ButtonCopy({ copyText }: { copyText: string }) {
 
   return (
     <button onClick={copy}>
-      <Copy className={'w-4 h-4 text-accent cursor-pointer'} />
+      <Copy className='w-4 h-4 text-primary cursor-pointer' />
     </button>
   );
 }

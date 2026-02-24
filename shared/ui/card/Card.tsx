@@ -9,7 +9,10 @@ interface Props extends PropsWithChildren {
 export default function Card({ children, className = '' }: Props) {
   return (
     <div
-      className={clsx('rounded-2xl md:rounded-[40px] bg-white box-shadow-primary', className)}
+      className={clsx(
+        'rounded-[var(--radius-card)] bg-card border border-border shadow-card',
+        className,
+      )}
     >
       {children}
     </div>

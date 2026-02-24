@@ -11,7 +11,7 @@ export function ConclusionItem({ title, items }: Props) {
       <ul className='space-y-4 text-sm leading-relaxed'>
         {items?.map((item, i) => (
           <li key={i} className='flex'>
-            <span className='text-accent mr-2'>•</span>
+            <span className='text-primary mr-2'>•</span>
             <p>{item}</p>
           </li>
         ))}

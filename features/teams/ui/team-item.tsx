@@ -15,15 +15,15 @@ export function TeamItem({ team, actions }: Props) {
   const route = `${ROUTES.DASHBOARD.TEAMS}/${team.id}`;
 
   return (
-    <div className='border-b-table'>
+    <div className='border-b border-border'>
       <div className='flex items-center justify-between py-4'>
-        <Link className={'flex-1'} href={route}>
-          <div className={'flex-1'}>
+        <Link className='flex-1' href={route}>
+          <div className='flex-1'>
             <H3>{team.name}</H3>
-            <p className='text-sm text-secondary'>
+            <p className='text-sm text-muted-foreground'>
               {team.employee_count < 1
-                ? `no employee in ${team.name}`
-                : `${team.employee_count} employee`}
+                ? `No employees in ${team.name}`
+                : `${team.employee_count} employee${team.employee_count === 1 ? '' : 's'}`}
             </p>
           </div>
         </Link>

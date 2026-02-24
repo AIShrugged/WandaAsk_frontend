@@ -1,6 +1,7 @@
-import { motion } from 'framer-motion';
+import * as motion from 'motion/react-client';
 
 import type { PropsWithChildren } from 'react';
+
 export default function Opacity({ children }: PropsWithChildren) {
   return (
     <motion.div

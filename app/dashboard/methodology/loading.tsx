@@ -6,7 +6,7 @@ export default function Loading() {
     <Card className='h-full flex flex-col items-center justify-center'>
       <div className='flex flex-col items-center gap-4 px-8 py-6'>
         <SpinLoader />
-        <p className='text-secondary'>Loading methodologies...</p>
+        <p className='text-muted-foreground'>Loading methodologies...</p>
       </div>
     </Card>
   );

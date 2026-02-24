@@ -28,7 +28,7 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
   };
 
   return (
-    <div className='flex items-end gap-2 border-primary rounded-2xl bg-white px-4 py-3 shadow-primary'>
+    <div className='flex items-end gap-2 border border-border rounded-[var(--radius-card)] bg-background px-4 py-3 shadow-card focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/20 transition-colors'>
       <textarea
         ref={textareaRef}
         value={value}
@@ -37,14 +37,14 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
         placeholder='Type a message… (Enter to send, Shift+Enter for new line)'
         disabled={disabled}
         onKeyDown={handleKeyDown}
-        className='flex-1 resize-none bg-transparent text-sm text-primary placeholder:text-placeholder outline-none leading-relaxed max-h-40 overflow-y-auto disabled:opacity-50'
+        className='flex-1 resize-none bg-transparent text-sm text-foreground placeholder:text-muted-foreground/50 outline-none leading-relaxed max-h-40 overflow-y-auto disabled:opacity-50'
         style={{ fieldSizing: 'content' } as React.CSSProperties}
       />
       <button
         type='button'
         onClick={submit}
         disabled={disabled || !value.trim()}
-        className='flex-shrink-0 w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-white transition-opacity hover:opacity-80 disabled:opacity-40'
+        className='flex-shrink-0 w-8 h-8 rounded-[var(--radius-button)] bg-primary flex items-center justify-center text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-40'
         aria-label='Send message'
       >
         <SendHorizontal className='w-4 h-4' />

@@ -85,14 +85,14 @@ export function ChatList({
   };
 
   return (
-    <div className='flex flex-col h-full w-[260px] flex-shrink-0 border-r border-primary bg-white/60 backdrop-blur-sm'>
+    <div className='flex flex-col h-full w-[260px] flex-shrink-0 border-r border-border bg-sidebar'>
       {/* Header */}
-      <div className='flex items-center justify-between px-4 py-3 border-b border-primary'>
-        <span className='text-sm font-semibold text-primary'>Chats</span>
+      <div className='flex items-center justify-between px-4 py-3 border-b border-border'>
+        <span className='text-sm font-semibold text-foreground'>Chats</span>
         <button
           onClick={handleCreateChat}
           disabled={isCreating}
-          className='flex items-center gap-1 text-xs text-accent hover:opacity-70 disabled:opacity-40 transition-opacity'
+          className='flex items-center gap-1 text-xs text-primary hover:opacity-70 disabled:opacity-40 transition-opacity'
           aria-label='New chat'
         >
           {isCreating ? (
@@ -107,7 +107,7 @@ export function ChatList({
       {/* List */}
       <div className='flex-1 overflow-y-auto py-2 px-2 flex flex-col gap-0.5'>
         {chats.length === 0 && !isLoading && (
-          <p className='text-xs text-secondary text-center py-8'>
+          <p className='text-xs text-muted-foreground text-center py-8'>
             No chats yet. Create your first one!
           </p>
         )}
@@ -126,7 +126,7 @@ export function ChatList({
 
         {isLoading && (
           <div className='flex justify-center py-2'>
-            <Loader2 className='w-4 h-4 text-accent animate-spin' />
+            <Loader2 className='w-4 h-4 text-primary animate-spin' />
           </div>
         )}
       </div>

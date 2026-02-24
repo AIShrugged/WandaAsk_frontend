@@ -8,7 +8,7 @@ interface Props {
 export function H1({ children, className }: Props) {
   return (
     <h1
-      className={`text-4xl md:text-5xl lg:text-[64px] font-normal leading-normal text-[#344137] font-inter ${className}`}
+      className={`text-3xl font-bold tracking-tight text-foreground ${className ?? ''}`}
     >
       {children}
     </h1>

@@ -62,8 +62,8 @@ export function ChatListItem({ chat, isActive, onUpdate }: ChatListItemProps) {
 
   return (
     <div
-      className={`group flex items-center gap-2 rounded-xl px-3 py-2.5 transition-colors ${
-        isActive ? 'bg-selected' : 'hover:bg-hover-light'
+      className={`group flex items-center gap-2 rounded-md px-3 py-2 transition-colors ${
+        isActive ? 'bg-sidebar-accent text-sidebar-accent-foreground' : 'hover:bg-sidebar-accent/50'
       }`}
     >
       {isEditing ? (
@@ -74,19 +74,19 @@ export function ChatListItem({ chat, isActive, onUpdate }: ChatListItemProps) {
             onChange={e => setEditValue(e.target.value)}
             onKeyDown={handleKeyDown}
             disabled={isPending}
-            className='flex-1 min-w-0 text-sm bg-transparent outline-none border-b border-primary text-primary'
+            className='flex-1 min-w-0 text-sm bg-transparent outline-none border-b border-border text-foreground'
           />
           <button
             onClick={saveTitle}
             disabled={isPending}
-            className='p-0.5 text-accent hover:opacity-70 disabled:opacity-40'
+            className='p-0.5 text-primary hover:opacity-70 disabled:opacity-40'
             aria-label='Save'
           >
             <Check className='w-3.5 h-3.5' />
           </button>
           <button
             onClick={cancelEditing}
-            className='p-0.5 text-secondary hover:text-error'
+            className='p-0.5 text-muted-foreground hover:text-destructive'
             aria-label='Cancel'
           >
             <X className='w-3.5 h-3.5' />
@@ -96,13 +96,13 @@ export function ChatListItem({ chat, isActive, onUpdate }: ChatListItemProps) {
         <>
           <Link
             href={href}
-            className='flex-1 min-w-0 text-sm text-primary truncate'
+            className='flex-1 min-w-0 text-sm text-foreground truncate'
           >
             {displayTitle}
           </Link>
           <button
             onClick={startEditing}
-            className='hidden group-hover:flex p-0.5 text-secondary hover:text-accent flex-shrink-0'
+            className='hidden group-hover:flex p-0.5 text-muted-foreground hover:text-primary flex-shrink-0'
             aria-label='Edit title'
           >
             <Pencil className='w-3.5 h-3.5' />

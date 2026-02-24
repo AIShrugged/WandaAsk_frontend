@@ -1,0 +1,1 @@
+export { WandaLogo } from './WandaLogo';

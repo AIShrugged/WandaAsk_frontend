@@ -12,15 +12,13 @@ export function ChatMessage({ message }: ChatMessageProps) {
   const isUser = message.role === 'user';
 
   return (
-    <div
-      className={`flex gap-3 ${isUser ? 'flex-row-reverse' : 'flex-row'}`}
-    >
+    <div className={`flex gap-3 ${isUser ? 'flex-row-reverse' : 'flex-row'}`}>
       {/* Avatar */}
       <div
         className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold ${
           isUser
-            ? 'bg-primary text-white'
-            : 'bg-secondary border-primary text-accent'
+            ? 'bg-primary text-primary-foreground'
+            : 'bg-secondary text-secondary-foreground'
         }`}
       >
         {isUser ? 'You' : 'AI'}
@@ -33,10 +31,10 @@ export function ChatMessage({ message }: ChatMessageProps) {
         }`}
       >
         <div
-          className={`rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+          className={`rounded-lg px-4 py-3 text-sm leading-relaxed ${
             isUser
-              ? 'bg-primary text-white rounded-tr-sm'
-              : 'bg-white border-primary shadow-primary rounded-tl-sm text-primary'
+              ? 'bg-primary text-primary-foreground rounded-tr-sm'
+              : 'bg-card border border-border rounded-tl-sm text-foreground'
           }`}
         >
           {isUser ? (
@@ -45,7 +43,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
             <ChatMessageContent content={message.content} />
           )}
         </div>
-        <time className='text-xs text-tertiary px-1'>
+        <time className='text-xs text-muted-foreground px-1'>
           {format(new Date(message.created_at), 'HH:mm')}
         </time>
       </div>

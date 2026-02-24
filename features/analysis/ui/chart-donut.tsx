@@ -32,11 +32,12 @@ export default function ChartDonut({
         viewBox={`0 0 ${size} ${size}`}
         className='absolute rotate-[-90deg]'
       >
+        {/* Track circle — uses currentColor-based approach */}
         <circle
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke='#e0fad8'
+          className='stroke-accent'
           strokeWidth={strokeWidth}
           fill='none'
         />
@@ -45,18 +46,18 @@ export default function ChartDonut({
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke='#4FB268'
+          className='stroke-primary'
           strokeWidth={strokeWidth}
           fill='none'
           strokeDasharray={circumference}
           strokeDashoffset={offset}
           strokeLinecap='round'
-          className='transition-all duration-1000 ease-out'
+          style={{ transition: 'stroke-dashoffset 1s ease-out' }}
         />
       </svg>
 
       <div
-        className={`absolute font-bold text-accent select-none ${textClassName}`}
+        className={`absolute font-bold text-primary select-none ${textClassName}`}
         style={{ fontSize: size * 0.28 }}
       >
         {Math.round(normalizedValue)}

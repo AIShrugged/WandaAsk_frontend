@@ -40,10 +40,10 @@ const Checkbox = forwardRef<HTMLInputElement, Props>(function Checkbox(
 ) {
   const isChecked = value;
 
-  const baseBorder = error ? 'border-red-500' : 'border-primary';
+  const baseBorder = error ? 'border-destructive' : 'border-border';
   const checkedStyles = isChecked
-    ? 'bg-primary border-primary text-white'
-    : 'bg-white';
+    ? 'bg-primary border-primary text-primary-foreground'
+    : 'bg-background';
 
   return (
     <label

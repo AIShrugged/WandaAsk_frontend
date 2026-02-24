@@ -9,7 +9,7 @@ export default function ButtonBack() {
   return (
     <button
       onClick={() => router.back()}
-      className='cursor-pointer text-accent'
+      className='cursor-pointer text-primary'
       aria-label='Back'
     >
       <ChevronLeft size={36} />

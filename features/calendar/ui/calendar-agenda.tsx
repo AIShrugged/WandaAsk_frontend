@@ -17,7 +17,7 @@ export default function CalendarAgenda({
 
   if (monthEvents.length === 0) {
     return (
-      <p className='text-secondary text-sm py-4 text-center'>
+      <p className='text-muted-foreground text-sm py-4 text-center'>
         No events this month
       </p>
     );
@@ -34,14 +34,14 @@ export default function CalendarAgenda({
     <div className='flex flex-col gap-4 py-2'>
       {[...grouped.entries()].map(([date, dayEvents]) => (
         <div key={date}>
-          <p className='text-xs font-medium text-secondary mb-1'>
+          <p className='text-xs font-medium text-muted-foreground mb-1'>
             {format(parseISO(date), 'EEE, d MMM')}
           </p>
           <div className='flex flex-col gap-1'>
             {dayEvents.map(ev => (
               <div
                 key={ev.id}
-                className='px-3 py-2 rounded-lg bg-secondary text-sm text-primary truncate'
+                className='px-3 py-2 rounded-md bg-muted text-sm text-foreground truncate'
               >
                 {ev.title}
               </div>

@@ -4,9 +4,10 @@ interface Props {
   children: ReactNode;
   className?: string;
 }
+
 export function H3({ children, className }: Props) {
   return (
-    <h3 className={`text-base md:text-lg lg:text-[20px] text-accent font-bold ${className}`}>
+    <h3 className={`text-xl font-semibold text-foreground ${className ?? ''}`}>
       {children}
     </h3>
   );

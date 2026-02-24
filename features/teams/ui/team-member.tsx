@@ -4,7 +4,7 @@ import type { TeamProps } from '@/entities/team';
 
 export default function TeamMember({ member }: { member: TeamProps }) {
   return (
-    <div className={'w-full bg-secondary rounded-[16px] gap-5 px-4 py-5'}>
+    <div className={'w-full bg-muted rounded-[var(--radius-card)] gap-5 px-4 py-5'}>
       <div className={'flex flex-row justify-between'}>
         <p> {member?.name}</p>
 

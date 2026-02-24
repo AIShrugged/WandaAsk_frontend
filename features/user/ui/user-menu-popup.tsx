@@ -39,14 +39,14 @@ export function UserMenuPopup({ close }: { close: () => void }) {
   };
 
   return (
-    <div className='bg-white shadow-lg rounded-xl border border-gray-200 overflow-hidden'>
+    <div className='bg-popover shadow-card rounded-[var(--radius-card)] border border-border overflow-hidden'>
       <div className='py-1'>
         {USER_MENU.map(menu => (
           <button
             key={menu.id}
             onClick={() => handleAction(menu.action)}
             disabled={isPending}
-            className='cursor-pointer w-full px-4 py-2 text-left text-sm hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+            className='cursor-pointer w-full px-4 py-2 text-left text-sm text-foreground hover:bg-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
           >
             {menu.title}
           </button>
