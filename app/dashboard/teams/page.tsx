@@ -12,8 +12,6 @@ export default async function Page() {
   const organizationId = await getOrganizationId();
   const { data: teams = [], totalCount = 0 } = await getTeams(organizationId);
 
-  console.log('teams',teams);
-
   return (
     <Card className='h-full flex flex-col'>
       <PageHeader title={'Teams'} />

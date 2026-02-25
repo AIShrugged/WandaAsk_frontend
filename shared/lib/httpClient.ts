@@ -4,6 +4,7 @@
 import { redirect } from 'next/navigation';
 
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
+import { logApiError } from '@/shared/lib/logger';
 
 import type { ApiResponse } from '@/shared/types/common';
 
@@ -28,8 +29,7 @@ export async function httpClient<T>(
     }
 
     const text = await res.text();
-    // eslint-disable-next-line no-console
-    console.error(`[httpClient] ${options.method ?? 'GET'} ${url} → ${res.status} ${res.statusText}: ${text}`);
+    logApiError({ method: options.method, url, status: res.status, statusText: res.statusText, body: text });
     throw new Error('A server error occurred. Please try again.');
   }
 
