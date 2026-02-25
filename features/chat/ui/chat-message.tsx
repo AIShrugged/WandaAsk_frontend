@@ -1,4 +1,8 @@
+'use client';
+
 import { format } from 'date-fns';
+import { Check, Copy } from 'lucide-react';
+import { useState } from 'react';
 
 import { ChatMessageContent } from '@/features/chat/ui/chat-message-content';
 
@@ -10,26 +14,22 @@ interface ChatMessageProps {
 
 export function ChatMessage({ message }: ChatMessageProps) {
   const isUser = message.role === 'user';
+  const [copied, setCopied] = useState(false);
+
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(message.content);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // clipboard not available (e.g. non-secure context) — silently ignore
+    }
+  };
 
   return (
-    <div className={`flex gap-3 ${isUser ? 'flex-row-reverse' : 'flex-row'}`}>
-      {/* Avatar */}
-      <div
-        className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold ${
-          isUser
-            ? 'bg-primary text-primary-foreground'
-            : 'bg-secondary text-secondary-foreground'
-        }`}
-      >
-        {isUser ? 'You' : 'AI'}
-      </div>
-
-      {/* Bubble */}
-      <div
-        className={`flex flex-col gap-1 max-w-[75%] ${
-          isUser ? 'items-end' : 'items-start'
-        }`}
-      >
+    <div className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
+      <div className={`flex flex-col gap-1 max-w-[85%] ${isUser ? 'items-end' : 'items-start'}`}>
+        {/* Bubble */}
         <div
           className={`rounded-lg px-4 py-3 text-sm leading-relaxed ${
             isUser
@@ -43,9 +43,25 @@ export function ChatMessage({ message }: ChatMessageProps) {
             <ChatMessageContent content={message.content} />
           )}
         </div>
-        <time className='text-xs text-muted-foreground px-1'>
-          {format(new Date(message.created_at), 'HH:mm')}
-        </time>
+
+        {/* Meta row: time + copy */}
+        <div className={`flex items-center gap-2 px-1 ${isUser ? 'flex-row-reverse' : 'flex-row'}`}>
+          <time className='text-xs text-muted-foreground'>
+            {format(new Date(message.created_at), 'HH:mm')}
+          </time>
+          <button
+            onClick={copyToClipboard}
+            className='text-muted-foreground hover:text-foreground transition-colors'
+            aria-label='Copy message'
+            title='Copy message'
+          >
+            {copied ? (
+              <Check className='w-3.5 h-3.5 text-primary' />
+            ) : (
+              <Copy className='w-3.5 h-3.5' />
+            )}
+          </button>
+        </div>
       </div>
     </div>
   );
