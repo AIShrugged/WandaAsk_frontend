@@ -88,10 +88,7 @@ export function ChatWindow({
 
         {/* Typing indicator — shown while waiting for assistant response */}
         {isSending && (
-          <div className='flex gap-3'>
-            <div className='flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold bg-secondary text-secondary-foreground'>
-              AI
-            </div>
+          <div className='flex justify-start'>
             <div className='rounded-lg rounded-tl-sm px-4 py-3 bg-card border border-border shadow-card'>
               <div className='flex items-center gap-1'>
                 <span

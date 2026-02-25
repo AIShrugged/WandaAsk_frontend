@@ -78,3 +78,20 @@ export async function updateChatTitle(
     );
   }
 }
+
+export async function deleteChat(id: number): Promise<void> {
+  const authHeaders = await getAuthHeaders();
+
+  const res = await fetch(`${API_URL}/chats/${id}`, {
+    method: 'DELETE',
+    headers: { ...authHeaders },
+    cache: 'no-store',
+  });
+
+  if (!res.ok) {
+    const json = await res.json().catch(() => ({}));
+    throw new Error(
+      (json as { message?: string }).message ?? 'Failed to delete chat',
+    );
+  }
+}

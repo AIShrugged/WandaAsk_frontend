@@ -84,6 +84,13 @@ export function ChatList({
     setChats(prev => prev.map(c => (c.id === updated.id ? updated : c)));
   };
 
+  const handleDelete = (id: number) => {
+    setChats(prev => prev.filter(c => c.id !== id));
+    if (id === activeChatId) {
+      router.push(ROUTES.DASHBOARD.CHAT);
+    }
+  };
+
   return (
     <div className='flex flex-col h-full w-[260px] flex-shrink-0 border-r border-border bg-sidebar'>
       {/* Header */}
@@ -92,7 +99,7 @@ export function ChatList({
         <button
           onClick={handleCreateChat}
           disabled={isCreating}
-          className='flex items-center gap-1 text-xs text-primary hover:opacity-70 disabled:opacity-40 transition-opacity'
+          className='flex items-center gap-1 text-xs text-primary hover:opacity-70 disabled:opacity-40 transition-opacity cursor-pointer disabled:cursor-default'
           aria-label='New chat'
         >
           {isCreating ? (
@@ -118,6 +125,7 @@ export function ChatList({
             chat={chat}
             isActive={chat.id === activeChatId}
             onUpdate={handleUpdate}
+            onDelete={handleDelete}
           />
         ))}
 
