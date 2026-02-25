@@ -8,6 +8,7 @@ import { sendMessage } from '@/features/chat/api/messages';
 import { useMessages } from '@/features/chat/hooks/use-messages';
 import { ChatInput } from '@/features/chat/ui/chat-input';
 import { ChatMessage } from '@/features/chat/ui/chat-message';
+import { ThinkingIndicator } from '@/features/chat/ui/thinking-indicator';
 
 import type { Message } from '@/features/chat/types';
 
@@ -86,27 +87,8 @@ export function ChatWindow({
           <ChatMessage key={msg.id} message={msg} />
         ))}
 
-        {/* Typing indicator — shown while waiting for assistant response */}
-        {isSending && (
-          <div className='flex justify-start'>
-            <div className='rounded-lg rounded-tl-sm px-4 py-3 bg-card border border-border shadow-card'>
-              <div className='flex items-center gap-1'>
-                <span
-                  className='block w-2 h-2 rounded-full bg-muted-foreground/40 animate-bounce'
-                  style={{ animationDelay: '0ms' }}
-                />
-                <span
-                  className='block w-2 h-2 rounded-full bg-muted-foreground/40 animate-bounce'
-                  style={{ animationDelay: '160ms' }}
-                />
-                <span
-                  className='block w-2 h-2 rounded-full bg-muted-foreground/40 animate-bounce'
-                  style={{ animationDelay: '320ms' }}
-                />
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Thinking indicator — shown while waiting for assistant response */}
+        {isSending && <ThinkingIndicator />}
       </div>
 
       {/* Input area */}
