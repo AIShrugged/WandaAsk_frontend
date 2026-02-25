@@ -16,8 +16,6 @@ export default async function Page({ params }: PageProps) {
   const { data: methodology } = await getMethodology(id);
   const { data: teams } = await getTeams(organizationId);
 
-  console.log(methodology);
-
   return (
     <Card className='h-full flex flex-col'>
       <PageHeader hasButtonBack title={methodology?.name || ''}></PageHeader>

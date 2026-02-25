@@ -1,7 +1,10 @@
 'use server';
 
+import { redirect } from 'next/navigation';
+
 import { API_URL } from '@/shared/lib/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
+import { logApiError } from '@/shared/lib/logger';
 
 import type { Chat } from '@/features/chat/types';
 import type { ApiResponse } from '@/shared/types/common';
@@ -18,7 +21,9 @@ export async function getChats(
   );
 
   if (!res.ok) {
+    if (res.status === 401) redirect('/api/auth/clear-session');
     const text = await res.text();
+    logApiError({ url: res.url, status: res.status, statusText: res.statusText, body: text });
     throw new Error(text || 'Failed to load chats');
   }
 
@@ -48,10 +53,10 @@ export async function createChat(title: string | null = null): Promise<Chat> {
   });
 
   if (!res.ok) {
-    const json = await res.json().catch(() => ({}));
-    throw new Error(
-      (json as { message?: string }).message ?? 'Failed to create chat',
-    );
+    if (res.status === 401) redirect('/api/auth/clear-session');
+    const text = await res.text();
+    logApiError({ method: 'POST', url: res.url, status: res.status, statusText: res.statusText, body: text });
+    throw new Error((JSON.parse(text) as { message?: string })?.message ?? 'Failed to create chat');
   }
 
   const json: ApiResponse<Chat> = await res.json();
@@ -72,10 +77,10 @@ export async function updateChatTitle(
   });
 
   if (!res.ok) {
-    const json = await res.json().catch(() => ({}));
-    throw new Error(
-      (json as { message?: string }).message ?? 'Failed to update chat title',
-    );
+    if (res.status === 401) redirect('/api/auth/clear-session');
+    const text = await res.text();
+    logApiError({ method: 'PUT', url: res.url, status: res.status, statusText: res.statusText, body: text });
+    throw new Error((JSON.parse(text) as { message?: string })?.message ?? 'Failed to update chat title');
   }
 }
 
@@ -89,9 +94,9 @@ export async function deleteChat(id: number): Promise<void> {
   });
 
   if (!res.ok) {
-    const json = await res.json().catch(() => ({}));
-    throw new Error(
-      (json as { message?: string }).message ?? 'Failed to delete chat',
-    );
+    if (res.status === 401) redirect('/api/auth/clear-session');
+    const text = await res.text();
+    logApiError({ method: 'DELETE', url: res.url, status: res.status, statusText: res.statusText, body: text });
+    throw new Error((JSON.parse(text) as { message?: string })?.message ?? 'Failed to delete chat');
   }
 }
