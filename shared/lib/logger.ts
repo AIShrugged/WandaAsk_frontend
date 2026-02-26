@@ -3,7 +3,10 @@
  * In production all error details stay server-side only (not exposed to the client).
  */
 
-const isDev = process.env.NODE_ENV === 'development';
+export const isDev =
+  process.env.NODE_ENV === 'development' ||
+  process.env.APP_ENV === 'development' ||
+  process.env.APP_ENV === 'local';
 
 // ── ANSI colour palette (Unicode escapes required by unicorn/no-hex-escape) ─
 const ESC = '\u001B[';
