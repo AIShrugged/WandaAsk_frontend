@@ -9,8 +9,8 @@
 
 const isDev =
   process.env.NODE_ENV === 'development' ||
-  process.env.APP_ENV === 'development' ||
-  process.env.APP_ENV === 'local';
+  process.env.NEXT_PUBLIC_APP_ENV === 'development' ||
+  process.env.NEXT_PUBLIC_APP_ENV === 'local';
 
 export async function register(): Promise<void> {
   // Guard 1: non-debug environment — exit immediately, zero overhead.

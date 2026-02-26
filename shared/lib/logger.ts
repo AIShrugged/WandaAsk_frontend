@@ -5,8 +5,8 @@
 
 export const isDev =
   process.env.NODE_ENV === 'development' ||
-  process.env.APP_ENV === 'development' ||
-  process.env.APP_ENV === 'local';
+  process.env.NEXT_PUBLIC_APP_ENV === 'development' ||
+  process.env.NEXT_PUBLIC_APP_ENV === 'local';
 
 // ── ANSI colour palette (Unicode escapes required by unicorn/no-hex-escape) ─
 const ESC = '\u001B[';
