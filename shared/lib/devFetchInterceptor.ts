@@ -25,7 +25,6 @@ import {
   captureCallerStack,
   formatBytes,
   formatTimestamp,
-  isDev,
 } from '@/shared/lib/logger';
 
 // ── URL tag resolution (client-side) ───────────────────────────────────────
@@ -263,7 +262,7 @@ async function logResGroup(
 // ── Public API ─────────────────────────────────────────────────────────────
 
 export function installClientFetchDebugger(): () => void {
-  if (!isDev) return () => {};
+  if (process.env.NODE_ENV !== 'development') return () => {};
   if (globalThis.window === undefined) return () => {};
 
   const g = globalThis as typeof globalThis & { [PATCHED_KEY]?: boolean };
