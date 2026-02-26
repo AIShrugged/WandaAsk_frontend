@@ -13,6 +13,7 @@ import {
   createRequestId,
   formatBytes,
   formatTimestamp,
+  isDev,
   logApiError,
   logRequest,
   logResponse,
@@ -126,7 +127,7 @@ function withDebugHeader(init: RequestInit, id: string): RequestInit {
  * Safe to call multiple times — subsequent calls are no-ops.
  */
 export function patchServerFetch(): void {
-  if (process.env.NODE_ENV !== 'development') return;
+  if (!isDev) return;
 
   // Detect double-patch via a Symbol property on globalThis.
   const g = globalThis as typeof globalThis & { [PATCHED_SYM]?: true };
