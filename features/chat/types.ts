@@ -55,8 +55,13 @@ interface ArtifactBase {
 export interface TaskTableArtifact extends ArtifactBase {
   type: 'task_table';
   data: {
-    columns: string[];
-    rows: Record<string, string>[];
+    tasks: {
+      title: string;
+      status: string;
+      due_date: string | null;
+      description: string;
+      assignee_name: string;
+    }[];
   };
 }
 

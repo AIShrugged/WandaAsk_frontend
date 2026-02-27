@@ -12,6 +12,7 @@ export default async function Page({ params }: PageProps) {
   const { data: team } = await getTeam(id);
 
   if (!team) return null;
+  console.log('team',team);
 
   return (
     <Card className='min-h-full h-full overflow-x-hidden overflow-y-scroll'>
