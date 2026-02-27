@@ -1,6 +1,13 @@
 import { notFound } from 'next/navigation';
 
-import { getChats, getMessages, ChatList, ChatWindow } from '@/features/chat';
+import {
+  ArtifactPanel,
+  ChatList,
+  ChatWindow,
+  getArtifacts,
+  getChats,
+  getMessages,
+} from '@/features/chat';
 
 import type { PageProps } from '@/shared/types/common';
 
@@ -12,10 +19,11 @@ export default async function ChatRoomPage({ params }: PageProps) {
 
   const INITIAL_LIMIT = 20;
 
-  const [{ chats, totalCount }, { messages: oldest, totalCount: msgTotal }] =
+  const [{ chats, totalCount }, { messages: oldest, totalCount: msgTotal }, artifacts] =
     await Promise.all([
       getChats(0, 20),
       getMessages(chatId, 0, INITIAL_LIMIT),
+      getArtifacts(chatId).catch(() => null),
     ]);
 
   // API returns messages oldest-first (ASC by created_at).
@@ -37,12 +45,19 @@ export default async function ChatRoomPage({ params }: PageProps) {
         activeChatId={chatId}
       />
 
-      <ChatWindow
+      <ArtifactPanel
         chatId={chatId}
-        initialMessages={initialMessages}
-        totalCount={msgTotal}
-        startOffset={startOffset}
+        initialArtifacts={artifacts}
       />
+
+      <div className='w-[380px] flex-shrink-0 flex flex-col'>
+        <ChatWindow
+          chatId={chatId}
+          initialMessages={initialMessages}
+          totalCount={msgTotal}
+          startOffset={startOffset}
+        />
+      </div>
     </div>
   );
 }

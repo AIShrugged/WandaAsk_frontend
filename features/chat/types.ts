@@ -34,3 +34,101 @@ export interface SingleResponse<T> {
   message: string;
   status: number;
 }
+
+// ─── Artifacts ────────────────────────────────────────────────────────────────
+
+export type ArtifactStatus = 'ready' | 'generating' | 'failed';
+export type ArtifactType =
+  | 'task_table'
+  | 'meeting_card'
+  | 'people_list'
+  | 'insight_card'
+  | 'chart'
+  | 'transcript_view';
+
+interface ArtifactBase {
+  id: string;
+  title: string;
+  status: ArtifactStatus;
+}
+
+export interface TaskTableArtifact extends ArtifactBase {
+  type: 'task_table';
+  data: {
+    columns: string[];
+    rows: Record<string, string>[];
+  };
+}
+
+export interface MeetingCardArtifact extends ArtifactBase {
+  type: 'meeting_card';
+  data: {
+    title: string;
+    starts_at: string;
+    ends_at: string;
+    summary: string;
+    decisions: string[];
+    key_points: string[];
+    participants: string[];
+  };
+}
+
+export interface PeopleListArtifact extends ArtifactBase {
+  type: 'people_list';
+  data: {
+    members: {
+      name: string;
+      role: string;
+      user_id: number;
+      profile_id: number;
+    }[];
+  };
+}
+
+export interface InsightCardArtifact extends ArtifactBase {
+  type: 'insight_card';
+  data: {
+    person: { name: string; profile_id: number };
+    insights: {
+      category: string;
+      content: Record<string, unknown>;
+    }[];
+  };
+}
+
+export type ChartType = 'bar' | 'line' | 'area';
+
+export interface ChartArtifact extends ArtifactBase {
+  type: 'chart';
+  data: {
+    title: string;
+    chart_type: ChartType;
+    labels: string[];
+    datasets: { label: string; data: number[] }[];
+  };
+}
+
+export interface TranscriptArtifact extends ArtifactBase {
+  type: 'transcript_view';
+  data: {
+    meeting_title: string;
+    entries: {
+      speaker: string;
+      timestamp: string;
+      text: string;
+    }[];
+  };
+}
+
+export type Artifact =
+  | TaskTableArtifact
+  | MeetingCardArtifact
+  | PeopleListArtifact
+  | InsightCardArtifact
+  | ChartArtifact
+  | TranscriptArtifact;
+
+export interface ArtifactsResponse {
+  artifacts: Record<string, Artifact>;
+  layout: { items: { id: string }[] };
+}
