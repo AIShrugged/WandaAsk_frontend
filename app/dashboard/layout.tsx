@@ -1,6 +1,7 @@
 import React, { type PropsWithChildren } from 'react';
 
 import { MenuSidebar } from '@/features/menu';
+import DemoSeedButton from '@/features/demo/ui/demo-seed-button';
 import OrganizationSelector from '@/features/organization/ui/organization-selector';
 import User from '@/features/user/ui/user';
 import { WandaLogo } from '@/shared/ui/brand';
@@ -32,7 +33,10 @@ export default async function Layout({ children }: PropsWithChildren) {
             </MobileSidebar>
             <OrganizationSelector />
           </div>
-          <User />
+          <div className='flex items-center gap-2'>
+            <DemoSeedButton />
+            <User />
+          </div>
         </header>
 
         {/* Scrollable content */}
