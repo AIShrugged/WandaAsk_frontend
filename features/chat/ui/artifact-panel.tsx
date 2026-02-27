@@ -60,11 +60,17 @@ function ArtifactContent({ artifact }: { artifact: Artifact }) {
       return <ChartArtifactView data={(artifact as ChartArtifact).data} />;
     case 'transcript_view':
       return <TranscriptView data={(artifact as TranscriptArtifact).data} />;
+    default:
+      return (
+        <p className='text-xs text-muted-foreground py-4 text-center'>
+          Unknown artifact type: {(artifact as Artifact & { type: string }).type}
+        </p>
+      );
   }
 }
 
 function ArtifactCard({ artifact }: { artifact: Artifact }) {
-  const meta = TYPE_META[artifact.type];
+  const meta = TYPE_META[artifact.type] ?? { label: artifact.type, icon: null };
   const isGenerating = artifact.status === 'generating';
   const isFailed = artifact.status === 'failed';
 
@@ -155,10 +161,9 @@ export function ArtifactPanel({ chatId, initialArtifacts }: ArtifactPanelProps) 
     }
   };
 
-  const items =
-    artifacts?.layout.items
-      .map(item => artifacts.artifacts[item.id])
-      .filter(Boolean) ?? [];
+  const items = (artifacts?.layout?.items ?? [])
+    .map(item => artifacts!.artifacts[item.id])
+    .filter(Boolean) as Artifact[];
 
   // ── Collapsed state ──────────────────────────────────────────────────────────
   if (isCollapsed) {

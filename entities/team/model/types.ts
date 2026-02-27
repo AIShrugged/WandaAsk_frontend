@@ -5,6 +5,11 @@ export interface TeamProps extends TeamCreateDTO {
   id: number;
   slug: string;
   employee_count: number;
+  members: TeamMember[]
+}
+
+interface TeamMember {
+  id: number; name: string; email: string;
 }
 
 export interface TeamCreateDTO {

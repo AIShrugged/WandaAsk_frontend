@@ -1,63 +1,63 @@
-import { format, parseISO, isValid } from 'date-fns';
+import { format, isValid, parseISO } from 'date-fns';
 
 import type { TaskTableArtifact } from '@/features/chat/types';
 
-const COLUMN_LABELS: Record<string, string> = {
-  task: 'Task',
-  assignee: 'Assignee',
-  due_date: 'Due date',
+const STATUS_STYLES: Record<string, string> = {
+  open: 'bg-amber-100 text-amber-700',
+  in_progress: 'bg-blue-100 text-blue-700',
+  done: 'bg-green-100 text-green-700',
+  closed: 'bg-muted text-muted-foreground',
 };
 
-function formatCell(col: string, value: string): string {
-  if (col === 'due_date' && value) {
-    try {
-      const date = parseISO(value);
-      if (isValid(date)) return format(date, 'MMM d, yyyy');
-    } catch { /* keep raw */ }
-  }
-  return value ?? '—';
+const STATUS_LABELS: Record<string, string> = {
+  open: 'Open',
+  in_progress: 'In progress',
+  done: 'Done',
+  closed: 'Closed',
+};
+
+function formatDueDate(value: string | null): string {
+  if (!value) return '—';
+  try {
+    const date = parseISO(value);
+    if (isValid(date)) return format(date, 'MMM d, yyyy');
+  } catch { /* keep raw */ }
+  return value;
 }
 
 export function TaskTable({ data }: { data: TaskTableArtifact['data'] }) {
-  const columns = data.columns ?? [];
-  const rows = data.rows ?? [];
+  const tasks = data.tasks ?? [];
 
-  if (rows.length === 0) {
-    return (
-      <p className='text-sm text-muted-foreground text-center py-6'>No tasks yet</p>
-    );
+  if (tasks.length === 0) {
+    return <p className='text-sm text-muted-foreground text-center py-6'>No tasks yet</p>;
   }
 
   return (
-    <div className='overflow-x-auto -mx-1'>
-      <table className='w-full text-sm border-collapse'>
-        <thead>
-          <tr className='border-b border-border'>
-            {columns.map(col => (
-              <th
-                key={col}
-                className='text-left text-xs font-semibold text-muted-foreground py-2 px-3 whitespace-nowrap'
-              >
-                {COLUMN_LABELS[col] ?? col}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row, i) => (
-            <tr
-              key={i}
-              className='border-b border-border/50 last:border-0 hover:bg-accent/40 transition-colors'
+    <div className='flex flex-col gap-2'>
+      {tasks.map((task, i) => (
+        <div
+          key={i}
+          className='flex flex-col gap-1 p-3 rounded-[var(--radius-button)] bg-accent/30 hover:bg-accent/50 transition-colors'
+        >
+          <div className='flex items-start justify-between gap-2'>
+            <p className='text-sm font-medium text-foreground leading-snug flex-1'>{task.title}</p>
+            <span
+              className={`flex-shrink-0 text-xs px-2 py-0.5 rounded-full font-medium ${STATUS_STYLES[task.status] ?? 'bg-muted text-muted-foreground'}`}
             >
-              {columns.map(col => (
-                <td key={col} className='py-2.5 px-3 text-foreground'>
-                  {formatCell(col, row[col] ?? '')}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+              {STATUS_LABELS[task.status] ?? task.status}
+            </span>
+          </div>
+          {task.description && (
+            <p className='text-xs text-muted-foreground leading-relaxed line-clamp-2'>
+              {task.description}
+            </p>
+          )}
+          <div className='flex items-center gap-3 mt-0.5 text-xs text-muted-foreground'>
+            {task.assignee_name && <span>{task.assignee_name}</span>}
+            {task.due_date && <span>{formatDueDate(task.due_date)}</span>}
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
