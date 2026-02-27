@@ -1,21 +1,8 @@
-import { Brain, Target, Zap } from 'lucide-react';
-
 import type { InsightCardArtifact } from '@/features/chat/types';
 
-const CATEGORY_META: Record<string, { label: string; icon: React.ReactNode }> = {
-  communication: {
-    label: 'Communication',
-    icon: <Brain className='w-3.5 h-3.5' />,
-  },
-  strengths: {
-    label: 'Strengths',
-    icon: <Zap className='w-3.5 h-3.5' />,
-  },
-  focus_areas: {
-    label: 'Focus areas',
-    icon: <Target className='w-3.5 h-3.5' />,
-  },
-};
+function formatKey(key: string): string {
+  return key.replace(/_/g, ' ');
+}
 
 function InsightSection({
   category,
@@ -24,36 +11,41 @@ function InsightSection({
   category: string;
   content: Record<string, unknown>;
 }) {
-  const meta = CATEGORY_META[category] ?? { label: category, icon: null };
-
-  const note = content['note'] as string | undefined;
-  const items = content['items'] as string[] | undefined;
+  const entries = Object.entries(content);
 
   return (
-    <div className='flex flex-col gap-1.5'>
-      <p className='flex items-center gap-1.5 text-xs font-semibold text-muted-foreground'>
-        {meta.icon}
-        {meta.label}
-      </p>
+    <div className='flex flex-col gap-2'>
+      <p className='text-xs font-semibold text-muted-foreground'>{category}</p>
 
-      {note && (
-        <p className='text-sm text-foreground bg-accent/40 rounded-[var(--radius-button)] px-3 py-2'>
-          {note}
-        </p>
-      )}
+      {entries.map(([key, value]) => {
+        if (Array.isArray(value) && value.length > 0) {
+          return (
+            <div key={key} className='flex flex-wrap gap-1.5'>
+              {(value as string[]).map((item, i) => (
+                <span
+                  key={i}
+                  className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary'
+                >
+                  {item}
+                </span>
+              ))}
+            </div>
+          );
+        }
 
-      {items && items.length > 0 && (
-        <div className='flex flex-wrap gap-1.5'>
-          {items.map((item, i) => (
-            <span
-              key={i}
-              className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary'
-            >
-              {item}
-            </span>
-          ))}
-        </div>
-      )}
+        if (typeof value === 'string' && value.length > 0) {
+          return (
+            <div key={key} className='flex flex-col gap-0.5'>
+              <span className='text-xs text-muted-foreground capitalize'>{formatKey(key)}</span>
+              <p className='text-sm text-foreground bg-accent/40 rounded-[var(--radius-button)] px-3 py-2'>
+                {value}
+              </p>
+            </div>
+          );
+        }
+
+        return null;
+      })}
     </div>
   );
 }
@@ -66,7 +58,12 @@ export function InsightCard({ data }: { data: InsightCardArtifact['data'] }) {
       {data.person && (
         <div className='flex items-center gap-2'>
           <div className='w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary'>
-            {data.person.name.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase()}
+            {data.person.name
+              .split(' ')
+              .slice(0, 2)
+              .map(w => w[0])
+              .join('')
+              .toUpperCase()}
           </div>
           <p className='text-sm font-semibold text-foreground'>{data.person.name}</p>
         </div>

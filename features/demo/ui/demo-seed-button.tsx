@@ -192,7 +192,7 @@ export default function DemoSeedButton() {
               position: 'top-center',
               autoClose: 3000,
             });
-            router.refresh();
+            router.push('/auth/organization');
           }, 600);
           return;
         }

@@ -38,7 +38,7 @@ export function PeopleList({ data }: { data: PeopleListArtifact['data'] }) {
     <div className='flex flex-col gap-2'>
       {members.map(member => (
         <div
-          key={member.profile_id}
+          key={member.user_id}
           className='flex items-center gap-3 p-2 rounded-[var(--radius-button)] hover:bg-accent/40 transition-colors'
         >
           <div

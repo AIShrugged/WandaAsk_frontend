@@ -85,7 +85,6 @@ export interface PeopleListArtifact extends ArtifactBase {
       name: string;
       role: string;
       user_id: number;
-      profile_id: number;
     }[];
   };
 }
