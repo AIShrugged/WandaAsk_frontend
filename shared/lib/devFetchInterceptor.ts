@@ -45,7 +45,7 @@ function resolveClientTag(url: string): ClientTag | undefined {
 }
 
 // Flag to prevent double-patching on React StrictMode double-invoke / HMR.
-const PATCHED_KEY = '__wanda_fetch_debug_patched';
+const PATCHED_KEY = '__tribes_fetch_debug_patched';
 
 const SKIP_PATTERNS = [
   '/_next/',

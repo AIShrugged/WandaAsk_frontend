@@ -50,7 +50,9 @@ export default function OrganizationDropdown({
           <div className='text-sm font-medium text-accent-foreground'>
             {active?.name ?? 'Select organization'}
           </div>
-          <div className='text-xs text-accent-foreground/70'>{active?.pivot?.role}</div>
+          <div className='text-xs text-accent-foreground/70'>
+            {active?.pivot?.role}
+          </div>
         </div>
 
         {open ? (
@@ -62,7 +64,7 @@ export default function OrganizationDropdown({
 
       {open && (
         <div
-          className='absolute top-full left-0 mt-2 w-full
+          className='absolute top-full left-0 mt-2 min-w-full w-max max-w-xs
                      rounded-[var(--radius-card)] bg-popover border border-border shadow-card
                      z-50 overflow-hidden'
         >
@@ -85,7 +87,9 @@ export default function OrganizationDropdown({
                 {organization.id === organizationActiveId ? (
                   <div className='px-4 py-2.5 w-full flex flex-row justify-between items-center border-b border-border bg-accent/30'>
                     <div>
-                      <p className='text-sm font-medium text-foreground'>{organization.name}</p>
+                      <p className='text-sm font-medium text-foreground'>
+                        {organization.name}
+                      </p>
                       <p className='text-xs text-muted-foreground'>
                         {organization.pivot.role}
                       </p>
@@ -107,9 +111,11 @@ export default function OrganizationDropdown({
                   <button
                     type='submit'
                     disabled={pending}
-                    className='px-4 py-2.5 cursor-pointer w-full flex items-center justify-between hover:bg-accent transition-colors'
+                    className='flex flex-row gap-5 px-4 py-2.5 cursor-pointer w-full items-center justify-between hover:bg-accent transition-colors'
                   >
-                    <p className='text-sm text-foreground'>{organization.name}</p>
+                    <p className='text-sm text-foreground'>
+                      {organization.name}
+                    </p>
                     <p className='text-xs text-muted-foreground'>
                       {organization.pivot.role}
                     </p>

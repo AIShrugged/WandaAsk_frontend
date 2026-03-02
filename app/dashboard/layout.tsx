@@ -4,7 +4,7 @@ import { MenuSidebar } from '@/features/menu';
 import DemoSeedButton from '@/features/demo/ui/demo-seed-button';
 import OrganizationSelector from '@/features/organization/ui/organization-selector';
 import User from '@/features/user/ui/user';
-import { WandaLogo } from '@/shared/ui/brand';
+import { TribesLogo } from '@/shared/ui/brand';
 import MobileSidebar from '@/widgets/layout/ui/mobile-sidebar';
 
 export default async function Layout({ children }: PropsWithChildren) {
@@ -14,7 +14,7 @@ export default async function Layout({ children }: PropsWithChildren) {
       <aside className='hidden lg:flex flex-col sidebar-width flex-shrink-0 bg-sidebar border-r border-sidebar-border'>
         {/* Logo slot */}
         <div className='flex items-center h-[var(--topbar-height)] px-6 border-b border-sidebar-border flex-shrink-0'>
-          <WandaLogo />
+          <TribesLogo />
         </div>
         {/* Navigation */}
         <div className='flex-1 overflow-y-auto py-3 px-3'>

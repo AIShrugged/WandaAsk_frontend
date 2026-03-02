@@ -1,6 +1,8 @@
 import { Inter } from 'next/font/google';
 import { PublicEnvScript } from 'next-runtime-env';
 
+import { APP_NAME } from '@/shared/lib/app-name';
+
 import './globals.css';
 
 import Providers from './Providers';
@@ -14,7 +16,7 @@ const getFont = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Ask Wanda',
+  title: APP_NAME,
   description: 'Best App',
 };
 

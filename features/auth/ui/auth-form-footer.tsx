@@ -23,22 +23,22 @@ export default function AuthFormFooter({
   disabled,
 }: AuthActionsFooterProps) {
   return (
-    <div className={'flex flex-col gap-6 mt-12'}>
+    <div className='flex flex-col gap-4 mt-8'>
       <Button
         disabled={disabled ?? loading}
         loading={loading}
-        type={'submit'}
+        type='submit'
         form={formId}
       >
         {primaryButton}
       </Button>
 
-      <div className={'flex gap-1'}>
-        <p>{secondaryText}</p>
-        <Link className={'text-primary font-bold'} href={secondaryRoute}>
+      <p className='text-sm text-center text-muted-foreground'>
+        {secondaryText}{' '}
+        <Link className='text-foreground font-medium hover:underline underline-offset-4' href={secondaryRoute}>
           {primaryText}
         </Link>
-      </div>
+      </p>
     </div>
   );
 }

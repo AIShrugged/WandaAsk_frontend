@@ -1,7 +1,10 @@
 'use server';
 
-import { getAttendees, getGuests } from '@/features/participants/api/participants';
 import Event from '@/features/calendar/ui/event';
+import {
+  getAttendees,
+  getGuests,
+} from '@/features/participants/api/participants';
 
 import type { EventProps } from '@/entities/event';
 

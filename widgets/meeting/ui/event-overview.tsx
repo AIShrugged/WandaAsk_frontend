@@ -1,15 +1,20 @@
 import EventSummary from '@/features/event/ui/event-summary';
+import {
+  getAttendees,
+  getGuests,
+} from '@/features/participants/api/participants';
 import ParticipantData from '@/features/participants/ui/participant-data';
 
 import type { EventProps } from '@/entities/event';
-import { getAttendees, getGuests } from '@/features/participants/api/participants';
 
 export default async function EventOverview({
   id,
   event,
+  withoutMatcher,
 }: {
   id: string;
   event: EventProps;
+  withoutMatcher?: boolean;
 }) {
   const [{ data: attendees = [] }, { data: guests = [] }] = await Promise.all([
     getAttendees(id),
@@ -25,6 +30,7 @@ export default async function EventOverview({
         guests={guests}
         attendees={attendees}
         eventId={Number(id)}
+        withoutMatcher={withoutMatcher}
       />
     </div>
   );

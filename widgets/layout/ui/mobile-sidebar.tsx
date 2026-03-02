@@ -3,7 +3,7 @@
 import { Menu, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-import { WandaLogo } from '@/shared/ui/brand';
+import { TribesLogo } from '@/shared/ui/brand';
 
 import type { ReactNode } from 'react';
 
@@ -57,7 +57,7 @@ export default function MobileSidebar({ children }: MobileSidebarProps) {
         }`}
       >
         <div className='flex items-center justify-between h-[var(--topbar-height)] px-6 border-b border-sidebar-border flex-shrink-0'>
-          <WandaLogo />
+          <TribesLogo />
           <button
             className='flex items-center justify-center w-8 h-8 rounded-md hover:bg-accent transition-colors'
             onClick={() => setIsOpen(false)}

@@ -8,9 +8,9 @@ import {
   startOfWeek,
 } from 'date-fns';
 
-import EventExtraButton from '@/features/calendar/ui/event-extra-button';
 import Day from '@/features/calendar/ui/day';
 import EventData from '@/features/calendar/ui/event-data';
+import EventExtraButton from '@/features/calendar/ui/event-extra-button';
 
 import type { EventProps } from '@/entities/event';
 

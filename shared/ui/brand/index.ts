@@ -1,1 +1,1 @@
-export { WandaLogo } from './WandaLogo';
+export { TribesLogo } from './TribesLogo';

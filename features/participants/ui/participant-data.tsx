@@ -10,21 +10,25 @@ export default async function ParticipantData({
   eventId,
   guests,
   attendees,
+  withoutMatcher,
 }: {
   eventId: number;
   guests: GuestProps[];
   attendees: AttendeeProps[];
+  withoutMatcher?: boolean;
 }) {
   return (
     <div className='flex flex-row gap-16'>
       <Participants list={guests} title={participants.guest} />
       <Participants list={attendees} title={participants.attendee} />
 
-      <ParticipantMatcher
-        eventId={eventId}
-        guests={guests}
-        attendees={attendees}
-      />
+      {!withoutMatcher && (
+        <ParticipantMatcher
+          eventId={eventId}
+          guests={guests}
+          attendees={attendees}
+        />
+      )}
     </div>
   );
 }

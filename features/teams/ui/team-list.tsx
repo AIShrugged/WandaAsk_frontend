@@ -4,8 +4,8 @@ import { useCallback } from 'react';
 
 import { loadTeamsChunk } from '@/features/teams/api/team';
 import { useTeamsStore } from '@/features/teams/model/teams-store';
-import { useCachedInfiniteScroll } from '@/shared/hooks/use-cached-infinite-scroll';
 import { TeamItem } from '@/features/teams/ui/team-item';
+import { useCachedInfiniteScroll } from '@/shared/hooks/use-cached-infinite-scroll';
 import { InfiniteScrollStatus } from '@/shared/ui/layout/infinite-scroll-status';
 import SpinLoader from '@/shared/ui/layout/spin-loader';
 
@@ -16,6 +16,7 @@ type Props = {
   totalCount: number;
   organizationId: number | string;
   actions: TeamActionType[];
+  href: string;
 };
 
 export function TeamList({
@@ -23,6 +24,7 @@ export function TeamList({
   totalCount,
   organizationId,
   actions,
+  href,
 }: Props) {
   const fetchChunk = useCallback(
     async (offset: number, limit: number) => {
@@ -50,7 +52,7 @@ export function TeamList({
   return (
     <div className='flex flex-col h-full'>
       {items.map(team => (
-        <TeamItem key={team.id} team={team} actions={actions} />
+        <TeamItem href={href} key={team.id} team={team} actions={actions} />
       ))}
 
       {!hasMore && items.length > 0 ? (

@@ -4,15 +4,15 @@ import { TeamActions } from '@/features/teams/ui/team-actions';
 import { H3 } from '@/shared/ui/typography/H3';
 
 import type { TeamActionType, TeamProps } from '@/entities/team';
-import { ROUTES } from '@/shared/lib/routes';
 
 type Props = {
   team: TeamProps;
   actions: TeamActionType[];
+  href?: string;
 };
 
-export function TeamItem({ team, actions }: Props) {
-  const route = `${ROUTES.DASHBOARD.TEAMS}/${team.id}`;
+export function TeamItem({ team, actions, href }: Props) {
+  const route = `${href}/${team.id}`;
 
   return (
     <div className='border-b border-border'>

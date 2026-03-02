@@ -36,7 +36,7 @@ const Event = ({
     e.stopPropagation();
 
     if (isPast) {
-      push(`${ROUTES.DASHBOARD.MEETING}/${id}?tab=summary`);
+      push(`${ROUTES.DASHBOARD.MEETING}/${event.id}?tab=summary`);
     } else {
       if (!anchorRef.current) {
         return;
