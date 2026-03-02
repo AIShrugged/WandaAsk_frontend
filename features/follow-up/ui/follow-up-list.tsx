@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { FollowUpItem } from '@/features/follow-up/ui/follow-up-item';
 
 import type { TeamFollowUpDTO } from '@/entities/team';

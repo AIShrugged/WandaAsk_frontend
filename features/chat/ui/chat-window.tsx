@@ -1,6 +1,6 @@
 'use client';
 
-import { Loader2 } from 'lucide-react';
+import { ChevronRight, Loader2, MessageSquare } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
@@ -17,6 +17,7 @@ interface ChatWindowProps {
   initialMessages: Message[];
   totalCount: number;
   startOffset: number;
+  onCollapse?: () => void;
 }
 
 export function ChatWindow({
@@ -24,6 +25,7 @@ export function ChatWindow({
   initialMessages,
   totalCount,
   startOffset,
+  onCollapse,
 }: ChatWindowProps) {
   const { messages, isLoading, hasMore, sentinelRef, containerRef, addMessage, addMessages } =
     useMessages(chatId, initialMessages, totalCount, startOffset);
@@ -63,6 +65,22 @@ export function ChatWindow({
 
   return (
     <div className='flex flex-col flex-1 min-h-0'>
+      {/* Header */}
+      {onCollapse && (
+        <div className='flex items-center justify-between px-4 h-[var(--topbar-height)] border-b border-border flex-shrink-0'>
+          <div className='flex items-center gap-2'>
+            <MessageSquare className='w-4 h-4 text-primary' />
+            <span className='text-sm font-semibold text-foreground'>Chat</span>
+          </div>
+          <button
+            onClick={onCollapse}
+            className='p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer'
+            aria-label='Collapse chat panel'
+          >
+            <ChevronRight className='w-4 h-4' />
+          </button>
+        </div>
+      )}
       {/* Messages area */}
       <div
         ref={containerRef}

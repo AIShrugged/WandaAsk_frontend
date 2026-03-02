@@ -1,4 +1,4 @@
-import React from 'react';
+'use client';
 
 import { EventPopupAll } from '@/features/event/ui/event-popup-all';
 import { useModal } from '@/shared/hooks/use-modal';
@@ -16,18 +16,12 @@ export default function EventExtraButton({
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-
-    if (open) {
-      return open(<EventPopupAll list={dayEvents} close={close} />);
-    }
+    if (open) open(<EventPopupAll list={dayEvents} close={close} />);
   };
 
   return (
     <div
-      onClick={e => {
-        handleClick(e);
-        e.stopPropagation();
-      }}
+      onClick={handleClick}
       className='cursor-pointer text-xs text-gray-500 text-center'
     >
       +{count} more

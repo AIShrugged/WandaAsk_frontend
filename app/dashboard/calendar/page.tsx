@@ -1,11 +1,12 @@
 import { redirect } from 'next/navigation';
 import { type PropsWithChildren, Suspense } from 'react';
 
-import { getEvents } from '@/features/event/api/calendar-events';
 import { getSources } from '@/features/calendar/api/source';
 import Calendar from '@/features/calendar/ui/calendar';
 import OnboardingTrigger from '@/features/calendar/ui/onboarding-trigger';
+import { getEvents } from '@/features/event/api/calendar-events';
 import Card from '@/shared/ui/card/Card';
+import SpinLoader from '@/shared/ui/layout/spin-loader';
 
 import type { EventProps } from '@/entities/event';
 
@@ -27,7 +28,13 @@ const AttachedView = ({
   currentMonth: string;
 }) => (
   <Wrapper>
-    <Suspense>
+    <Suspense
+      fallback={
+        <div className='flex flex-1 items-center justify-center'>
+          <SpinLoader />
+        </div>
+      }
+    >
       <Calendar currentMonth={currentMonth} events={events} />
     </Suspense>
   </Wrapper>
@@ -47,19 +54,17 @@ export default async function Page({
   const { data } = await getSources();
   const isCalendarAttached = data?.length > 0;
 
-  // Redirect to canonical URL with current month if month is not in URL
   if (isCalendarAttached && !params.month) {
     const currentMonth = new Date().toISOString().slice(0, 7) + '-01';
     redirect(`/dashboard/calendar?month=${currentMonth}`);
   }
 
-  const month = params.month ?? new Date().toISOString().slice(0, 7) + '-01';
+  if (!isCalendarAttached) {
+    return <UnattachedView />;
+  }
 
+  const month = params.month ?? new Date().toISOString().slice(0, 7) + '-01';
   const { data: events } = await getEvents();
 
-  return isCalendarAttached ? (
-    <AttachedView currentMonth={month} events={events} />
-  ) : (
-    <UnattachedView />
-  );
+  return <AttachedView currentMonth={month} events={events} />;
 }

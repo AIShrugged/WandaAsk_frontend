@@ -4,6 +4,7 @@ import { getTeams } from '@/features/teams/api/team';
 import TeamCreate from '@/features/teams/ui/team-create';
 import { TeamList } from '@/features/teams/ui/team-list';
 import { getOrganizationId } from '@/shared/lib/getOrganizationId';
+import { ROUTES } from '@/shared/lib/routes';
 import Card from '@/shared/ui/card/Card';
 import CardBody from '@/shared/ui/card/CardBody';
 import PageHeader from '@/widgets/layout/ui/page-header';
@@ -20,6 +21,7 @@ export default async function Page() {
         <CardBody>
           {teams.length > 0 ? (
             <TeamList
+              href={ROUTES.DASHBOARD.TEAMS}
               initialTeams={teams}
               totalCount={totalCount}
               organizationId={organizationId}

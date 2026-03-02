@@ -58,7 +58,7 @@ export default function RegisterForm() {
       <form
         id={FORM_ID}
         onSubmit={handleSubmit(onSubmit)}
-        className='w-full flex flex-col gap-8'
+        className='w-full flex flex-col gap-4'
         aria-describedby={errors.root ? 'form-error' : undefined}
       >
         {errors.root?.message && (

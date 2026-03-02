@@ -2,6 +2,9 @@ import { format, isSameMonth, parseISO } from 'date-fns';
 
 import type { EventProps } from '@/entities/event';
 
+// currentMonth is always "yyyy-MM-dd" (e.g. "2026-03-01")
+const eventDateKey = (ev: EventProps) => ev.starts_at.slice(0, 10);
+
 export default function CalendarAgenda({
   events,
   currentMonth,
@@ -9,10 +12,11 @@ export default function CalendarAgenda({
   events: EventProps[];
   currentMonth: string;
 }) {
-  const monthStart = parseISO(currentMonth + '-01');
+  // Fix: currentMonth is already a full date string ("2026-03-01"), no need to append "-01"
+  const monthStart = parseISO(currentMonth);
 
   const monthEvents = events
-    .filter(ev => isSameMonth(parseISO(ev.starts_at.split(' ')[0]), monthStart))
+    .filter(ev => isSameMonth(parseISO(eventDateKey(ev)), monthStart))
     .toSorted((a, b) => a.starts_at.localeCompare(b.starts_at));
 
   if (monthEvents.length === 0) {
@@ -25,9 +29,13 @@ export default function CalendarAgenda({
 
   const grouped = new Map<string, EventProps[]>();
   for (const ev of monthEvents) {
-    const key = ev.starts_at.split(' ')[0];
-    if (!grouped.has(key)) grouped.set(key, []);
-    grouped.get(key)!.push(ev);
+    const key = eventDateKey(ev);
+    const existing = grouped.get(key);
+    if (existing) {
+      existing.push(ev);
+    } else {
+      grouped.set(key, [ev]);
+    }
   }
 
   return (

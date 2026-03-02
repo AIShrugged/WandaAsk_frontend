@@ -40,7 +40,7 @@ function logDebugBanner(): void {
   // eslint-disable-next-line no-console
   console.log(
     '\n' + line + '\n' +
-    B.magenta + B.bold + '  \u25C6 Wanda Fetch Debugger' + B.reset + '\n' +
+    B.magenta + B.bold + '  \u25C6 Tribes Fetch Debugger' + B.reset + '\n' +
     '  ' + B.dim + 'Backend  ' + B.reset + B.cyan + backendUrl + B.reset + '\n' +
     '  ' + B.dim + 'Slow \u2265  ' + B.reset + threshold + '\n' +
     line + '\n',
@@ -63,7 +63,7 @@ function resolveTag(url: string): RequestTag | undefined {
 }
 
 // Symbol used to mark the fetch wrapper so double-patching is detected.
-const PATCHED_SYM = Symbol.for('__wanda_fetch_debug_patched');
+const PATCHED_SYM = Symbol.for('__tribes_fetch_debug_patched');
 
 // URL substrings that should NOT be logged (internal Next.js plumbing).
 const SKIP_PATTERNS = [
