@@ -9,6 +9,7 @@ Next.js frontend for the AI Ask Wanda application. Communicates with a separate 
 - **Zod v4** + **react-hook-form** — form validation
 - **Zustand** — client state
 - **React Compiler** enabled
+- **Jest 30** + **@testing-library/react** — unit and component tests
 
 ## Requirements
 
@@ -47,7 +48,10 @@ npm run start      # Run production build
 npm run lint       # ESLint check
 npm run lint:fix   # ESLint autofix
 npm run format     # Prettier format
-npm run test       # Jest tests
+npm test           # Jest tests
+npm test -- --watch          # Watch mode
+npm test -- --coverage       # With coverage report
+npm test -- schemas          # Filter by file name
 ```
 
 > **Note:** `npm run build` uses Webpack (same as production). Run it locally to catch issues that Turbopack may not surface.
@@ -72,6 +76,31 @@ shared/
   api/        # API client, session
   lib/        # Utilities, config, routes
 ```
+
+## Testing
+
+Tests live in `__tests__/` directories next to the files they cover. `*.test.ts` for pure logic, `*.test.tsx` for components.
+
+**Tools:**
+
+| Package | Role |
+|---|---|
+| `jest` | Test runner |
+| `@testing-library/react` | Component rendering |
+| `@testing-library/user-event` | User interaction simulation |
+| `@testing-library/jest-dom` | DOM matchers (`toBeInTheDocument`, etc.) |
+| `@types/jest` | TypeScript types for Jest globals |
+
+**What is covered:**
+
+- Zod schemas (`features/chat/model/__tests__/`)
+- UI components: `CollapsedSidePanel`, `ThinkingIndicator`, `ChatMessage`, `ChatList`
+
+**Conventions:**
+
+- No `any` in tests; all props and mocks are fully typed
+- External dependencies (`next/navigation`, API modules) are mocked with `jest.mock()`
+- Browser APIs absent in jsdom (e.g. `IntersectionObserver`) are stubbed in `beforeAll`
 
 ## Production deployment
 

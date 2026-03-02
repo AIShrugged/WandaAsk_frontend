@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronRight, Loader2, MessageSquare } from 'lucide-react';
+import { ChevronLeft, Loader2, MessageSquare } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
@@ -27,8 +27,15 @@ export function ChatWindow({
   startOffset,
   onCollapse,
 }: ChatWindowProps) {
-  const { messages, isLoading, hasMore, sentinelRef, containerRef, addMessage, addMessages } =
-    useMessages(chatId, initialMessages, totalCount, startOffset);
+  const {
+    messages,
+    isLoading,
+    hasMore,
+    sentinelRef,
+    containerRef,
+    addMessage,
+    addMessages,
+  } = useMessages(chatId, initialMessages, totalCount, startOffset);
 
   const [isSending, setIsSending] = useState(false);
 
@@ -77,7 +84,7 @@ export function ChatWindow({
             className='p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer'
             aria-label='Collapse chat panel'
           >
-            <ChevronRight className='w-4 h-4' />
+            <ChevronLeft className='w-4 h-4' />
           </button>
         </div>
       )}

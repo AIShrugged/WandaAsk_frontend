@@ -8,10 +8,10 @@ import { login } from '@/features/auth/api/auth';
 import { SIGN_IN_FIELDS, SIGN_IN_VALUES } from '@/features/auth/lib/fields';
 import { BUTTON_TEXT } from '@/features/auth/lib/options';
 import { LoginSchema, type LoginInput } from '@/features/auth/model/schemas';
+import AuthFormFooter from '@/features/auth/ui/auth-form-footer';
 import { VARIANT_MAPPER, type VariantType } from '@/shared/lib/fieldMapper';
 import { handleFormError } from '@/shared/lib/formErrors';
 import { ROUTES } from '@/shared/lib/routes';
-import AuthFormFooter from '@/features/auth/ui/auth-form-footer';
 
 const FORM_ID = 'login-form';
 

@@ -40,17 +40,12 @@ export function ChatLayout({
         activeChatId={activeChatId}
       />
 
-      <ArtifactPanel
-        chatId={chatId}
-        initialArtifacts={initialArtifacts}
-      />
+      <ArtifactPanel chatId={chatId} initialArtifacts={initialArtifacts} />
 
       {isChatCollapsed ? (
         <CollapsedSidePanel
           label='Chat'
-          icon='left'
           onExpand={() => setIsChatCollapsed(false)}
-          className=''
         />
       ) : (
         <div className='flex-1 min-w-0 flex flex-col'>
