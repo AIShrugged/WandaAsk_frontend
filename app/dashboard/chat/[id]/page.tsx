@@ -1,9 +1,7 @@
 import { notFound } from 'next/navigation';
 
 import {
-  ArtifactPanel,
-  ChatList,
-  ChatWindow,
+  ChatLayout,
   getArtifacts,
   getChats,
   getMessages,
@@ -38,26 +36,15 @@ export default async function ChatRoomPage({ params }: PageProps) {
   }
 
   return (
-    <div className='flex h-full rounded-[var(--radius-card)] overflow-hidden border border-border bg-card shadow-card'>
-      <ChatList
-        initialChats={chats}
-        totalCount={totalCount}
-        activeChatId={chatId}
-      />
-
-      <ArtifactPanel
-        chatId={chatId}
-        initialArtifacts={artifacts}
-      />
-
-      <div className='w-[380px] flex-shrink-0 flex flex-col'>
-        <ChatWindow
-          chatId={chatId}
-          initialMessages={initialMessages}
-          totalCount={msgTotal}
-          startOffset={startOffset}
-        />
-      </div>
-    </div>
+    <ChatLayout
+      initialChats={chats}
+      totalCount={totalCount}
+      activeChatId={chatId}
+      chatId={chatId}
+      initialArtifacts={artifacts}
+      initialMessages={initialMessages}
+      totalMessagesCount={msgTotal}
+      startOffset={startOffset}
+    />
   );
 }

@@ -85,7 +85,7 @@ export default function OrganizationDropdown({
 
               <>
                 {organization.id === organizationActiveId ? (
-                  <div className='px-4 py-2.5 w-full flex flex-row justify-between items-center border-b border-border bg-accent/30'>
+                  <div className='gap-5 px-4 py-2.5 w-full flex flex-row justify-between items-center border-b border-border bg-accent/30'>
                     <div>
                       <p className='text-sm font-medium text-foreground'>
                         {organization.name}

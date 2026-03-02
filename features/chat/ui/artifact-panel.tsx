@@ -1,10 +1,8 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
 import {
   BarChart2,
   ChevronLeft,
-  ChevronRight,
   ClipboardList,
   FileText,
   Loader2,
@@ -14,6 +12,7 @@ import {
   Video,
   Zap,
 } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { getArtifacts } from '@/features/chat/api/artifacts';
 import { ChartArtifactView } from '@/features/chat/ui/artifacts/chart-artifact';
@@ -22,6 +21,7 @@ import { MeetingCard } from '@/features/chat/ui/artifacts/meeting-card';
 import { PeopleList } from '@/features/chat/ui/artifacts/people-list';
 import { TaskTable } from '@/features/chat/ui/artifacts/task-table';
 import { TranscriptView } from '@/features/chat/ui/artifacts/transcript-view';
+import { CollapsedSidePanel } from '@/shared/ui/layout/collapsed-side-panel';
 
 import type {
   Artifact,
@@ -37,35 +37,52 @@ import type {
 
 const POLLING_INTERVAL_MS = 5000;
 
-const TYPE_META: Record<ArtifactType, { label: string; icon: React.ReactNode }> = {
-  task_table: { label: 'Tasks', icon: <ClipboardList className='w-3.5 h-3.5' /> },
+const TYPE_META: Record<
+  ArtifactType,
+  { label: string; icon: React.ReactNode }
+> = {
+  task_table: {
+    label: 'Tasks',
+    icon: <ClipboardList className='w-3.5 h-3.5' />,
+  },
   meeting_card: { label: 'Meeting', icon: <Video className='w-3.5 h-3.5' /> },
   people_list: { label: 'People', icon: <Users className='w-3.5 h-3.5' /> },
   insight_card: { label: 'Insight', icon: <Zap className='w-3.5 h-3.5' /> },
   chart: { label: 'Chart', icon: <BarChart2 className='w-3.5 h-3.5' /> },
-  transcript_view: { label: 'Transcript', icon: <FileText className='w-3.5 h-3.5' /> },
+  transcript_view: {
+    label: 'Transcript',
+    icon: <FileText className='w-3.5 h-3.5' />,
+  },
 };
 
 function ArtifactContent({ artifact }: { artifact: Artifact }) {
   switch (artifact.type) {
-    case 'task_table':
+    case 'task_table': {
       return <TaskTable data={(artifact as TaskTableArtifact).data} />;
-    case 'meeting_card':
+    }
+    case 'meeting_card': {
       return <MeetingCard data={(artifact as MeetingCardArtifact).data} />;
-    case 'people_list':
+    }
+    case 'people_list': {
       return <PeopleList data={(artifact as PeopleListArtifact).data} />;
-    case 'insight_card':
+    }
+    case 'insight_card': {
       return <InsightCard data={(artifact as InsightCardArtifact).data} />;
-    case 'chart':
+    }
+    case 'chart': {
       return <ChartArtifactView data={(artifact as ChartArtifact).data} />;
-    case 'transcript_view':
+    }
+    case 'transcript_view': {
       return <TranscriptView data={(artifact as TranscriptArtifact).data} />;
-    default:
+    }
+    default: {
       return (
         <p className='text-xs text-muted-foreground py-4 text-center'>
-          Unknown artifact type: {(artifact as Artifact & { type: string }).type}
+          Unknown artifact type:{' '}
+          {(artifact as Artifact & { type: string }).type}
         </p>
       );
+    }
   }
 }
 
@@ -79,8 +96,12 @@ function ArtifactCard({ artifact }: { artifact: Artifact }) {
       {/* Card header */}
       <div className='flex items-center justify-between px-4 py-3 border-b border-border/60'>
         <div className='flex items-center gap-2 min-w-0'>
-          <span className='text-muted-foreground flex-shrink-0'>{meta.icon}</span>
-          <span className='text-sm font-semibold text-foreground truncate'>{artifact.title}</span>
+          <span className='text-muted-foreground flex-shrink-0'>
+            {meta.icon}
+          </span>
+          <span className='text-sm font-semibold text-foreground truncate'>
+            {artifact.title}
+          </span>
         </div>
         <span
           className={`flex-shrink-0 ml-2 text-xs px-2 py-0.5 rounded-full font-medium ${
@@ -103,7 +124,9 @@ function ArtifactCard({ artifact }: { artifact: Artifact }) {
             Generating\u2026
           </div>
         ) : isFailed ? (
-          <p className='text-sm text-destructive text-center py-4'>Failed to generate</p>
+          <p className='text-sm text-destructive text-center py-4'>
+            Failed to generate
+          </p>
         ) : (
           <ArtifactContent artifact={artifact} />
         )}
@@ -117,8 +140,13 @@ interface ArtifactPanelProps {
   initialArtifacts: ArtifactsResponse | null;
 }
 
-export function ArtifactPanel({ chatId, initialArtifacts }: ArtifactPanelProps) {
-  const [artifacts, setArtifacts] = useState<ArtifactsResponse | null>(initialArtifacts);
+export function ArtifactPanel({
+  chatId,
+  initialArtifacts,
+}: ArtifactPanelProps) {
+  const [artifacts, setArtifacts] = useState<ArtifactsResponse | null>(
+    initialArtifacts,
+  );
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -134,7 +162,9 @@ export function ArtifactPanel({ chatId, initialArtifacts }: ArtifactPanelProps) 
       try {
         const data = await getArtifacts(chatId);
         if (mountedRef.current) setArtifacts(data);
-      } catch { /* keep previous data */ }
+      } catch {
+        /* keep previous data */
+      }
 
       if (pollingRef.current && mountedRef.current) {
         setTimeout(poll, POLLING_INTERVAL_MS);
@@ -148,7 +178,6 @@ export function ArtifactPanel({ chatId, initialArtifacts }: ArtifactPanelProps) 
       pollingRef.current = false;
       clearTimeout(timerId);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chatId]);
 
   const handleRefresh = async () => {
@@ -156,7 +185,9 @@ export function ArtifactPanel({ chatId, initialArtifacts }: ArtifactPanelProps) 
     try {
       const data = await getArtifacts(chatId);
       if (mountedRef.current) setArtifacts(data);
-    } catch { /* keep */ } finally {
+    } catch {
+      /* keep */
+    } finally {
       if (mountedRef.current) setIsRefreshing(false);
     }
   };
@@ -168,21 +199,10 @@ export function ArtifactPanel({ chatId, initialArtifacts }: ArtifactPanelProps) 
   // ── Collapsed state ──────────────────────────────────────────────────────────
   if (isCollapsed) {
     return (
-      <div className='w-10 flex-shrink-0 border-r border-border flex flex-col items-center justify-center bg-sidebar'>
-        <button
-          onClick={() => setIsCollapsed(false)}
-          className='flex flex-col items-center gap-1 p-2 text-muted-foreground hover:text-foreground transition-colors cursor-pointer'
-          aria-label='Expand artifacts panel'
-        >
-          <ChevronRight className='w-4 h-4' />
-          <span
-            className='text-xs font-medium tracking-wide'
-            style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
-          >
-            Artifacts
-          </span>
-        </button>
-      </div>
+      <CollapsedSidePanel
+        label='Artifacts'
+        onExpand={() => setIsCollapsed(false)}
+      />
     );
   }
 
@@ -193,7 +213,9 @@ export function ArtifactPanel({ chatId, initialArtifacts }: ArtifactPanelProps) 
       <div className='flex items-center justify-between px-4 h-[var(--topbar-height)] border-b border-border flex-shrink-0'>
         <div className='flex items-center gap-2'>
           <Sparkles className='w-4 h-4 text-primary' />
-          <span className='text-sm font-semibold text-foreground'>Artifacts</span>
+          <span className='text-sm font-semibold text-foreground'>
+            Artifacts
+          </span>
           {items.length > 0 && (
             <span className='text-xs bg-primary/10 text-primary font-medium px-1.5 py-0.5 rounded-full'>
               {items.length}
@@ -207,7 +229,9 @@ export function ArtifactPanel({ chatId, initialArtifacts }: ArtifactPanelProps) 
             className='p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors disabled:opacity-50 cursor-pointer'
             aria-label='Refresh artifacts'
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
+            <RefreshCw
+              className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : ''}`}
+            />
           </button>
           <button
             onClick={() => setIsCollapsed(true)}
@@ -227,7 +251,9 @@ export function ArtifactPanel({ chatId, initialArtifacts }: ArtifactPanelProps) 
               <Sparkles className='w-5 h-5 text-primary' />
             </div>
             <div>
-              <p className='text-sm font-medium text-foreground'>No artifacts yet</p>
+              <p className='text-sm font-medium text-foreground'>
+                No artifacts yet
+              </p>
               <p className='text-xs text-muted-foreground mt-1 leading-relaxed'>
                 Artifacts will appear here as the AI analyzes the conversation
               </p>

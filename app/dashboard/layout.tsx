@@ -1,7 +1,7 @@
 import React, { type PropsWithChildren } from 'react';
 
-import { MenuSidebar } from '@/features/menu';
 import DemoSeedButton from '@/features/demo/ui/demo-seed-button';
+import { MenuSidebar } from '@/features/menu';
 import OrganizationSelector from '@/features/organization/ui/organization-selector';
 import User from '@/features/user/ui/user';
 import { TribesLogo } from '@/shared/ui/brand';
@@ -40,9 +40,7 @@ export default async function Layout({ children }: PropsWithChildren) {
         </header>
 
         {/* Scrollable content */}
-        <main className='flex-1 overflow-y-auto p-6 min-h-0'>
-          {children}
-        </main>
+        <main className='flex-1 overflow-y-auto p-2 min-h-0'>{children}</main>
       </div>
     </div>
   );

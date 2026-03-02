@@ -18,7 +18,7 @@ export default function OnboardingTrigger() {
     try {
       globalThis.location.href = await attachCalendar();
     } catch (error_) {
-      setError((error_ as Error).message);
+      setError(error_ instanceof Error ? error_.message : 'Something went wrong');
       setIsPending(false);
     }
   };

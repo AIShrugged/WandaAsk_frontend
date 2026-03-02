@@ -1,6 +1,6 @@
 'use client';
 
-import { Loader2, Plus } from 'lucide-react';
+import { ChevronLeft, Loader2, MessageSquare, Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import {
   useCallback,
@@ -14,6 +14,7 @@ import { toast } from 'react-toastify';
 import { createChat, getChats } from '@/features/chat/api/chats';
 import { ChatListItem } from '@/features/chat/ui/chat-list-item';
 import { ROUTES } from '@/shared/lib/routes';
+import { CollapsedSidePanel } from '@/shared/ui/layout/collapsed-side-panel';
 
 import type { Chat } from '@/features/chat/types';
 
@@ -36,6 +37,7 @@ export function ChatList({
   const [hasMore, setHasMore] = useState(initialChats.length < totalCount);
   const [isLoading, setIsLoading] = useState(false);
   const [isCreating, startCreateTransition] = useTransition();
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
 
   const loadMore = useCallback(async () => {
@@ -91,24 +93,42 @@ export function ChatList({
     }
   };
 
+  // ── Collapsed state ──────────────────────────────────────────────────────────
+  if (isCollapsed) {
+    return <CollapsedSidePanel label='Chats' onExpand={() => setIsCollapsed(false)} />;
+  }
+
+  // ── Open state ───────────────────────────────────────────────────────────────
   return (
     <div className='flex flex-col h-full w-[260px] flex-shrink-0 border-r border-border bg-sidebar'>
       {/* Header */}
-      <div className='flex items-center justify-between px-4 py-3 border-b border-border'>
-        <span className='text-sm font-semibold text-foreground'>Chats</span>
-        <button
-          onClick={handleCreateChat}
-          disabled={isCreating}
-          className='flex items-center gap-1 text-xs text-primary hover:opacity-70 disabled:opacity-40 transition-opacity cursor-pointer disabled:cursor-default'
-          aria-label='New chat'
-        >
-          {isCreating ? (
-            <Loader2 className='w-3.5 h-3.5 animate-spin' />
-          ) : (
-            <Plus className='w-3.5 h-3.5' />
-          )}
-          New
-        </button>
+      <div className='flex items-center justify-between px-4 h-[var(--topbar-height)] border-b border-border flex-shrink-0'>
+        <div className='flex items-center gap-2'>
+          <MessageSquare className='w-4 h-4 text-primary' />
+          <span className='text-sm font-semibold text-foreground'>Chats</span>
+        </div>
+        <div className='flex items-center gap-1'>
+          <button
+            onClick={handleCreateChat}
+            disabled={isCreating}
+            className='flex items-center gap-1 text-xs text-primary hover:opacity-70 disabled:opacity-40 transition-opacity cursor-pointer disabled:cursor-default'
+            aria-label='New chat'
+          >
+            {isCreating ? (
+              <Loader2 className='w-3.5 h-3.5 animate-spin' />
+            ) : (
+              <Plus className='w-3.5 h-3.5' />
+            )}
+            New
+          </button>
+          <button
+            onClick={() => setIsCollapsed(true)}
+            className='p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer'
+            aria-label='Collapse chats panel'
+          >
+            <ChevronLeft className='w-4 h-4' />
+          </button>
+        </div>
       </div>
 
       {/* List */}
