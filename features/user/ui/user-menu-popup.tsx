@@ -1,8 +1,8 @@
 import { useRouter } from 'next/navigation';
 import { type ReactNode, useTransition } from 'react';
 
-import { logout } from '@/shared/api/session';
 import { USER_MENU } from '@/features/user/lib/options';
+import { logout } from '@/shared/api/session';
 import { ROUTES } from '@/shared/lib/routes';
 
 interface MenuItem {
@@ -26,14 +26,14 @@ export function UserMenuPopup({ close }: { close: () => void }) {
             break;
           }
 
-          case 'settings': {
-            router.push('/settings');
+          case 'profile': {
+            router.push(ROUTES.DASHBOARD.PROFILE);
             close();
             break;
           }
         }
-      } catch (error) {
-        console.error('Action failed:', error);
+      } catch {
+        // silently fail — action errors should not crash the UI
       }
     });
   };

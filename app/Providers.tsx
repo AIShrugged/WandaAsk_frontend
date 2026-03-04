@@ -1,7 +1,7 @@
 'use client';
 
 import React, { type PropsWithChildren } from 'react';
-import { ToastContainer } from 'react-toastify';
+import { Toaster } from 'sonner';
 
 import { DevDebugProvider } from '@/app/providers/DevDebugProvider';
 import { ModalProvider } from '@/app/providers/ModalProvider';
@@ -13,7 +13,7 @@ export default function Providers({ children }: PropsWithChildren) {
     <>
       <DevDebugProvider />
       <GlobalPopup />
-      <ToastContainer />
+      <Toaster position='top-center' richColors />
       <ModalProvider>
         <PopupProvider>{children}</PopupProvider>
       </ModalProvider>

@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import React, { useTransition } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 
 import { createTeam, updateTeam } from '@/features/teams/api/team';
 import { TEAM_CREATE_FIELDS } from '@/features/teams/model/fields';

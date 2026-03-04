@@ -3,7 +3,7 @@
 import { ChevronUp, ChevronDown, Settings } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState, useActionState, useEffect } from 'react';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 
 import { setActiveOrganization } from '@/features/organization/api/organization';
 import { BUTTON } from '@/shared/lib/buttons';

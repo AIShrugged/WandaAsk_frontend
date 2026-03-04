@@ -3,7 +3,7 @@
 import { ChevronRightIcon, Trash, UserPlus } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { type ReactNode, useCallback, useTransition } from 'react';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 
 import { deleteTeam } from '@/features/teams/api/team';
 import { useTeamsStore } from '@/features/teams/model/teams-store';

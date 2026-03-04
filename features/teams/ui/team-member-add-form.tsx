@@ -1,8 +1,9 @@
 'use client';
 
+import { useSearchParams } from 'next/navigation';
 import React, { useTransition } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { toast } from 'react-toastify';
+import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 import { sendInvite } from '@/features/teams/api/team';
 import {
@@ -14,7 +15,6 @@ import { VARIANT_MAPPER, type VariantType } from '@/shared/lib/fieldMapper';
 import { Button } from '@/shared/ui/button/Button';
 
 import type { TeamAddMemberDTO } from '@/entities/team';
-import { useSearchParams } from 'next/navigation';
 import type { ModalContextValue } from '@/shared/types/modal';
 
 const FORM_ID = 'team-member-add-form';

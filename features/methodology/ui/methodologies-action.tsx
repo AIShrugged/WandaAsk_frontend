@@ -2,7 +2,7 @@
 
 import { Pen, Trash } from 'lucide-react';
 import { useTransition } from 'react';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 
 import { deleteMethodology } from '@/features/methodology/api/methodology';
 import { useMethodologyStore } from '@/features/methodology/model/methodology-store';

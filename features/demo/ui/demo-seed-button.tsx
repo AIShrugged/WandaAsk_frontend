@@ -1,11 +1,11 @@
 'use client';
 
-import { createPortal } from 'react-dom';
-import React, { useEffect, useRef, useState } from 'react';
+import clsx from 'clsx';
 import { Minus, Plus, Sparkles } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { toast } from 'react-toastify';
-import clsx from 'clsx';
+import React, { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { toast } from 'sonner';
 
 import { getDemoStatus } from '@/features/demo/api/get-demo-status';
 import { seedDemo } from '@/features/demo/api/seed-demo';
@@ -101,45 +101,6 @@ export default function DemoSeedButton() {
   const mountedRef = useRef(true);
   const router = useRouter();
 
-  useEffect(() => {
-    const checkInitialStatus = async () => {
-      try {
-        const status = await getDemoStatus();
-        if (!mountedRef.current) return;
-
-        if (status !== null && (status.status === 'generating' || status.status === 'pending')) {
-          setProgressPercent(status.progress_percent);
-          setStepLabel(status.current_step_label);
-          setIsPending(true);
-          startPolling();
-        }
-      } catch {
-        // silently ignore — just show the normal button
-      }
-    };
-
-    checkInitialStatus();
-
-    return () => {
-      mountedRef.current = false;
-      pollingRef.current = false;
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const handleClickOutside = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isOpen]);
-
   const stopPolling = () => {
     pollingRef.current = false;
     if (mountedRef.current) {
@@ -158,10 +119,7 @@ export default function DemoSeedButton() {
 
       if (pollCountRef.current >= MAX_POLL_RETRIES) {
         stopPolling();
-        toast.error('Demo generation timed out. Please try again.', {
-          position: 'top-center',
-          autoClose: 4000,
-        });
+        toast.error('Demo generation timed out. Please try again.');
         return;
       }
 
@@ -188,10 +146,7 @@ export default function DemoSeedButton() {
             setIsPending(false);
             setProgressPercent(null);
             setStepLabel(null);
-            toast.success('Demo data is ready!', {
-              position: 'top-center',
-              autoClose: 3000,
-            });
+            toast.success('Demo data is ready!');
             router.push('/auth/organization');
           }, 600);
           return;
@@ -199,10 +154,7 @@ export default function DemoSeedButton() {
 
         if (status.status === 'failed') {
           stopPolling();
-          toast.error(status.error ?? 'Demo generation failed.', {
-            position: 'top-center',
-            autoClose: 4000,
-          });
+          toast.error(status.error ?? 'Demo generation failed.');
           return;
         }
 
@@ -213,13 +165,50 @@ export default function DemoSeedButton() {
         stopPolling();
         toast.error(
           error instanceof Error ? error.message : 'Failed to check demo status.',
-          { position: 'top-center', autoClose: 4000 },
         );
       }
     };
 
     poll();
   };
+
+  useEffect(() => {
+    const checkInitialStatus = async () => {
+      try {
+        const status = await getDemoStatus();
+        if (!mountedRef.current) return;
+
+        if (status !== null && (status.status === 'generating' || status.status === 'pending')) {
+          setProgressPercent(status.progress_percent);
+          setStepLabel(status.current_step_label);
+          setIsPending(true);
+          startPolling();
+        }
+      } catch {
+        // silently ignore — just show the normal button
+      }
+    };
+
+    checkInitialStatus();
+
+    return () => {
+      mountedRef.current = false;
+      pollingRef.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isOpen]);
 
   const handleGenerate = async () => {
     setIsOpen(false);
@@ -238,7 +227,6 @@ export default function DemoSeedButton() {
       setIsPending(false);
       toast.error(
         error instanceof Error ? error.message : 'Failed to generate demo data',
-        { position: 'top-center', autoClose: 4000 },
       );
     }
   };
@@ -347,16 +335,16 @@ export default function DemoSeedButton() {
               </div>
 
               {/* Progress bar or spinner */}
-              {progressPercent !== null ? (
+              {progressPercent === null ? (
+                <div className='flex justify-center py-2'>
+                  <SpinLoader />
+                </div>
+              ) : (
                 <div className='w-full bg-muted rounded-full h-1.5 overflow-hidden'>
                   <div
                     className='h-full bg-primary transition-all duration-500 rounded-full'
                     style={{ width: `${progressPercent}%` }}
                   />
-                </div>
-              ) : (
-                <div className='flex justify-center py-2'>
-                  <SpinLoader />
                 </div>
               )}
 

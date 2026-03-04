@@ -26,7 +26,7 @@ jest.mock('@/features/chat/api/chats', () => ({
   getChats: jest.fn(() => Promise.resolve({ chats: [], totalCount: 0 })),
 }));
 
-jest.mock('react-toastify', () => ({
+jest.mock('sonner', () => ({
   toast: { error: jest.fn() },
 }));
 

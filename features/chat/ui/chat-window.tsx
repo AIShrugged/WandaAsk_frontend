@@ -2,7 +2,7 @@
 
 import { ChevronLeft, Loader2, MessageSquare } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 
 import { sendMessage } from '@/features/chat/api/messages';
 import { useMessages } from '@/features/chat/hooks/use-messages';

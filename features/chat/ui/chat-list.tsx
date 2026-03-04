@@ -9,7 +9,7 @@ import {
   useState,
   useTransition,
 } from 'react';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 
 import { createChat, getChats } from '@/features/chat/api/chats';
 import { ChatListItem } from '@/features/chat/ui/chat-list-item';

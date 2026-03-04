@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import React, { useTransition } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 import {
   createMethodology,
@@ -18,12 +19,11 @@ import { ROUTES } from '@/shared/lib/routes';
 import { BUTTON_VARIANT } from '@/shared/types/button';
 import { Button } from '@/shared/ui/button/Button';
 
+import type { TeamProps } from '@/entities/team';
 import type {
   MethodologyDTO,
   MethodologyProps,
 } from '@/features/methodology/model/types';
-import type { TeamProps } from '@/entities/team';
-import { toast } from 'react-toastify';
 
 const FORM_ID = 'methodology-form';
 

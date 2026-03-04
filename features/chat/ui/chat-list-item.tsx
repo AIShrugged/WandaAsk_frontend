@@ -3,7 +3,7 @@
 import { Check, Pencil, Trash2, X } from 'lucide-react';
 import Link from 'next/link';
 import { useRef, useState, useTransition } from 'react';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 
 import { deleteChat, updateChatTitle } from '@/features/chat/api/chats';
 import { ROUTES } from '@/shared/lib/routes';

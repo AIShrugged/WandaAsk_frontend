@@ -2,6 +2,11 @@ import { DatabaseZap, UserRoundX } from 'lucide-react';
 
 export const USER_MENU = [
   {
+    id: 'profile',
+    title: 'Profile',
+    action: 'profile',
+  },
+  {
     id: 'log-out',
     title: 'Log out',
     action: 'logout',
