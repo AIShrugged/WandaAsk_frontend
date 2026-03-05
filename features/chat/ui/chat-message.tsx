@@ -51,7 +51,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
           </time>
           <button
             onClick={copyToClipboard}
-            className='text-muted-foreground hover:text-foreground transition-colors'
+            className='cursor-pointer text-muted-foreground hover:text-foreground transition-colors'
             aria-label='Copy message'
             title='Copy message'
           >

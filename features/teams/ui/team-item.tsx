@@ -17,7 +17,7 @@ export function TeamItem({ team, actions, href }: Props) {
   return (
     <div className='border-b border-border'>
       <div className='flex items-center justify-between py-4'>
-        <Link className='flex-1' href={route}>
+        <Link className='cursor-pointer flex-1' href={route}>
           <div className='flex-1'>
             <H3>{team.name}</H3>
             <p className='text-sm text-muted-foreground'>

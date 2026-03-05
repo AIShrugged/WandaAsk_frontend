@@ -52,7 +52,7 @@ export const REGISTER_FIELDS = [
     name: 'acceptTerms',
     label: 'I agree to',
     labelExtra: (
-      <Link className={'text-primary'} href={''}>
+      <Link className={'cursor-pointer text-primary'} href={''}>
         Terms & Privacy Policy
       </Link>
     ),

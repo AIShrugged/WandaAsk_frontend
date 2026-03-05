@@ -12,7 +12,7 @@ export default function MethodologyCreate() {
 
   return (
     <div className={'mt-auto ml-6 mr-8 mb-6 w-full md:w-[240px]'}>
-      <Link href={route}>
+      <Link href={route} className='cursor-pointer'>
         <Button type='submit'>
           <Plus /> {BUTTON.ADD} methodology
         </Button>

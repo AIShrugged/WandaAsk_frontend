@@ -20,7 +20,7 @@ export default async function OrganizationList({
         <form key={organization.id} action={selectOrganizationAction}>
           <input type='hidden' name='organization_id' value={organization.id} />
 
-          <button type='submit' className='w-full text-left'>
+          <button type='submit' className='cursor-pointer w-full text-left'>
             <div className='flex flex-row justify-between items-center border-b border-border cursor-pointer py-4'>
               <div className='flex flex-col justify-between gap-2'>
                 <H3>{organization.name}</H3>

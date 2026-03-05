@@ -35,7 +35,7 @@ export default function AuthFormFooter({
 
       <p className='text-sm text-center text-muted-foreground'>
         {secondaryText}{' '}
-        <Link className='text-foreground font-medium hover:underline underline-offset-4' href={secondaryRoute}>
+        <Link className='cursor-pointer text-foreground font-medium hover:underline underline-offset-4' href={secondaryRoute}>
           {primaryText}
         </Link>
       </p>

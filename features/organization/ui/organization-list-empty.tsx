@@ -15,7 +15,7 @@ export default function OrganizationListEmpty() {
         You don't have any organization invitations. Create your own
         organization and get all the platform's features!
       </p>
-      <Link href={route}>
+      <Link href={route} className='cursor-pointer'>
         <Button>{BUTTON.CREATE} Organization</Button>
       </Link>
     </div>

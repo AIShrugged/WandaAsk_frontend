@@ -12,7 +12,7 @@ export function FollowUpItem({ followUp }: { followUp: TeamFollowUpDTO }) {
 
   return (
     <div className='border-b border-border'>
-      <Link href={route} className='py-4 flex items-center justify-between'>
+      <Link href={route} className='cursor-pointer py-4 flex items-center justify-between'>
         <div className='flex-1'>
           <H3>{followUp?.calendar_event.title}</H3>
           <p className='text-sm text-muted-foreground'>

@@ -15,6 +15,7 @@
     "@hookform/resolvers": "^5.2.2",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "eslint-plugin-jsdoc": "^62.7.1",
     "framer-motion": "^12.23.26",
     "html-react-parser": "^5.2.10",
     "lucide-react": "^0.554.0",

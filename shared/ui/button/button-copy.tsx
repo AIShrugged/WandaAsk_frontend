@@ -11,7 +11,7 @@ export default function ButtonCopy({ copyText }: { copyText: string }) {
   };
 
   return (
-    <button onClick={copy}>
+    <button onClick={copy} className='cursor-pointer'>
       <Copy className='w-4 h-4 text-primary cursor-pointer' />
     </button>
   );

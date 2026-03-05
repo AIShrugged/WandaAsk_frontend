@@ -104,7 +104,7 @@ export default function OrganizationForm({
           >
             {BUTTON.SAVE}
           </Button>
-          <Link href={ROUTES.AUTH.ORGANIZATION}>
+          <Link href={ROUTES.AUTH.ORGANIZATION} className='cursor-pointer'>
             <Button variant={'secondary'}>{BUTTON.BACK}</Button>
           </Link>
         </div>

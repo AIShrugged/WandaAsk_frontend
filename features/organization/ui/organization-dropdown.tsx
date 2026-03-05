@@ -131,7 +131,7 @@ export default function OrganizationDropdown({
               push(`${ROUTES.DASHBOARD.ORGANIZATION}/create`);
             }}
             type='button'
-            className='w-full px-4 py-3 text-left
+            className='cursor-pointer w-full px-4 py-3 text-left
                        text-sm font-medium text-primary
                        hover:bg-accent transition-colors'
           >

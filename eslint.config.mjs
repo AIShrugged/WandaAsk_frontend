@@ -1,10 +1,11 @@
 import { defineConfig, globalIgnores } from 'eslint/config';
 import nextVitals from 'eslint-config-next/core-web-vitals';
 import nextTs from 'eslint-config-next/typescript';
-import securityPlugin from 'eslint-plugin-security';
-import unicornPlugin from 'eslint-plugin-unicorn';
-import sonarjsPlugin from 'eslint-plugin-sonarjs';
 import importPlugin from 'eslint-plugin-import';
+import jsdocPlugin from 'eslint-plugin-jsdoc';
+import securityPlugin from 'eslint-plugin-security';
+import sonarjsPlugin from 'eslint-plugin-sonarjs';
+import unicornPlugin from 'eslint-plugin-unicorn';
 
 export default defineConfig([
   ...nextVitals,
@@ -26,6 +27,7 @@ export default defineConfig([
     plugins: {
       unicorn: unicornPlugin,
       sonarjs: sonarjsPlugin,
+      jsdoc: jsdocPlugin,
     },
     rules: {
       ...unicornPlugin.configs.recommended.rules,
@@ -39,6 +41,44 @@ export default defineConfig([
       'unicorn/no-useless-undefined': 'warn',
       'sonarjs/no-duplicate-string': ['warn', { threshold: 4 }],
       'sonarjs/cognitive-complexity': ['warn', 15],
+
+      /*
+       * Verbose style & structure enforcement (non-breaking, mostly warn)
+       */
+      'arrow-body-style': ['warn', 'always'],
+      'no-nested-ternary': 'warn',
+      'no-unneeded-ternary': 'warn',
+      'max-depth': ['warn', 3],
+      'max-params': ['warn', 4],
+      'max-statements': ['warn', 15],
+      complexity: ['warn', 8],
+
+      /*
+       * Encourage vertical spacing
+       */
+      'padding-line-between-statements': [
+        'warn',
+        { blankLine: 'always', prev: '*', next: 'return' },
+        { blankLine: 'always', prev: 'const', next: '*' },
+        { blankLine: 'always', prev: '*', next: 'if' },
+      ],
+
+      /*
+       * JSDoc requirements (warn only, safe for existing codebase)
+       */
+      'jsdoc/require-jsdoc': [
+        'warn',
+        {
+          require: {
+            FunctionDeclaration: true,
+            MethodDefinition: true,
+            ClassDeclaration: true,
+            ArrowFunctionExpression: true,
+          },
+        },
+      ],
+      'jsdoc/require-param': 'warn',
+      'jsdoc/require-returns': 'warn',
     },
   },
 

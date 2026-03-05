@@ -27,7 +27,7 @@ export default function MobileSidebar({ children }: MobileSidebarProps) {
     <>
       {/* Hamburger button — visible below lg */}
       <button
-        className='lg:hidden flex items-center justify-center w-9 h-9 rounded-md hover:bg-accent transition-colors'
+        className='cursor-pointer lg:hidden flex items-center justify-center w-9 h-9 rounded-md hover:bg-accent transition-colors'
         onClick={() => setIsOpen(true)}
         aria-label='Open navigation menu'
         aria-expanded={isOpen}
@@ -59,7 +59,7 @@ export default function MobileSidebar({ children }: MobileSidebarProps) {
         <div className='flex items-center justify-between h-[var(--topbar-height)] px-6 border-b border-sidebar-border flex-shrink-0'>
           <TribesLogo />
           <button
-            className='flex items-center justify-center w-8 h-8 rounded-md hover:bg-accent transition-colors'
+            className='cursor-pointer flex items-center justify-center w-8 h-8 rounded-md hover:bg-accent transition-colors'
             onClick={() => setIsOpen(false)}
             aria-label='Close navigation menu'
           >

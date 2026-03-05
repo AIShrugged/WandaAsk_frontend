@@ -19,7 +19,7 @@ export function TabLink({
   };
 
   return (
-    <a href={`?tab=${tab}`} onClick={handleClick}>
+    <a href={`?tab=${tab}`} onClick={handleClick} className='cursor-pointer'>
       {children}
     </a>
   );
