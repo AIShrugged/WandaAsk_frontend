@@ -6,7 +6,11 @@ import { API_URL } from '@/shared/lib/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 import { logApiError } from '@/shared/lib/logger';
 
-export type DemoGenerationStatus = 'generating' | 'ready' | 'failed' | 'pending';
+export type DemoGenerationStatus =
+  | 'generating'
+  | 'ready'
+  | 'failed'
+  | 'pending';
 
 export interface DemoStatusResult {
   status: DemoGenerationStatus;
@@ -24,6 +28,10 @@ type DemoStatusApiResponse = {
   meta: unknown[];
 };
 
+/**
+ * getDemoStatus.
+ * @returns Promise.
+ */
 export async function getDemoStatus(): Promise<DemoStatusResult | null> {
   const authHeaders = await getAuthHeaders();
 
@@ -46,6 +54,7 @@ export async function getDemoStatus(): Promise<DemoStatusResult | null> {
     }
 
     const text = await res.text();
+
     logApiError({
       method: 'GET',
       url: `${API_URL}/demo/status`,

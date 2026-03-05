@@ -6,6 +6,12 @@ import type { RichError } from '@/shared/ui/error/ErrorDisplay';
 
 // Global error boundary — catches errors in the root layout itself.
 // Must include <html> and <body> tags.
+/**
+ * GlobalError component.
+ * @param root0
+ * @param root0.error
+ * @param root0.reset
+ */
 export default function GlobalError({
   error,
   reset,

@@ -11,15 +11,27 @@ import { ButtonIcon } from '@/shared/ui/button/button-icon';
 
 import type { MethodologyProps } from '@/features/methodology/model/types';
 
+/**
+ * MethodologiesAction component.
+ * @param root0
+ * @param root0.methodology
+ */
 export function MethodologiesAction({
   methodology,
 }: {
   methodology: MethodologyProps;
 }) {
   const [isPending, startTransition] = useTransition();
-  const removeItem = useMethodologyStore(state => state.removeItem);
+
+  const removeItem = useMethodologyStore((state) => {
+    return state.removeItem;
+  });
+
   const isDefault = methodology.id === 1;
 
+  /**
+   * handleDelete.
+   */
   const handleDelete = () => {
     startTransition(async () => {
       try {
@@ -44,7 +56,7 @@ export function MethodologiesAction({
         disabled={isPending || isDefault}
         icon={<Trash className='size-[28]' />}
         variant='danger'
-        onClick={handleDelete}
+        onClickAction={handleDelete}
       />
     </div>
   );

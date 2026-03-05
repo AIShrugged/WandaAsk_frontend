@@ -33,8 +33,11 @@ export const getOrganizations = cache(
       }
 
       const text = await res.text();
+
       // eslint-disable-next-line no-console
-      console.error(`[org] getOrganizations → ${res.status} ${res.statusText}: ${text}`);
+      console.error(
+        `[org] getOrganizations → ${res.status} ${res.statusText}: ${text}`,
+      );
       throw new Error('Failed to load organizations. Please try again.');
     }
 
@@ -62,8 +65,11 @@ export const getOrganization = cache(
 
     if (!res.ok) {
       const text = await res.text();
+
       // eslint-disable-next-line no-console
-      console.error(`[org] getOrganization → ${res.status} ${res.statusText}: ${text}`);
+      console.error(
+        `[org] getOrganization → ${res.status} ${res.statusText}: ${text}`,
+      );
       throw new Error('Failed to load organization. Please try again.');
     }
 
@@ -77,6 +83,11 @@ export const getOrganization = cache(
   },
 );
 
+/**
+ * createOrganization.
+ * @param data - data.
+ * @returns Promise.
+ */
 export async function createOrganization(data: OrganizationDTO) {
   const authHeaders = await getAuthHeaders();
 
@@ -92,8 +103,11 @@ export async function createOrganization(data: OrganizationDTO) {
 
   if (!res.ok) {
     const text = await res.text();
+
     // eslint-disable-next-line no-console
-    console.error(`[org] createOrganization → ${res.status} ${res.statusText}: ${text}`);
+    console.error(
+      `[org] createOrganization → ${res.status} ${res.statusText}: ${text}`,
+    );
     throw new Error('Failed to create organization. Please try again.');
   }
 
@@ -104,12 +118,20 @@ export async function createOrganization(data: OrganizationDTO) {
   }
 
   const formData = new FormData();
+
   formData.append('organization_id', String(json.data.id));
 
   await selectOrganizationAction(formData);
   revalidatePath('/organizations');
 }
 
+/**
+ * setActiveOrganization.
+ * @param prevState
+ * @param prevState.ok
+ * @param formData
+ * @returns Promise.
+ */
 export async function setActiveOrganization(
   prevState: { ok: boolean },
   formData: FormData,
@@ -133,6 +155,11 @@ export async function setActiveOrganization(
   return { ok: true };
 }
 
+/**
+ * selectOrganizationAction.
+ * @param formData - formData.
+ * @returns Promise.
+ */
 export async function selectOrganizationAction(formData: FormData) {
   const id = formData.get('organization_id') as string;
 

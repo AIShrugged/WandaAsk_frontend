@@ -8,6 +8,13 @@ import InputDropdown from '@/shared/ui/input/InputDropdown';
 
 import type { AttendeeProps, GuestProps } from '@/entities/participant';
 
+/**
+ * ParticipantMatching component.
+ * @param root0
+ * @param root0.eventId
+ * @param root0.guests
+ * @param root0.attendees
+ */
 export default function ParticipantMatching({
   eventId,
   guests,
@@ -17,39 +24,47 @@ export default function ParticipantMatching({
   guests: GuestProps[];
   attendees: AttendeeProps[];
 }) {
-  const initialMatching = attendees.reduce<Record<number, string>>(
-    (acc, attendee) => {
-      if (attendee.profile?.id) {
-        acc[attendee.id] = String(attendee.profile.id);
-      }
-      return acc;
-    },
-    {},
-  );
+  const initialMatching: Record<number, string> = {};
+
+  for (const attendee of attendees) {
+    if (attendee.profile?.id) {
+      initialMatching[attendee.id] = String(attendee.profile.id);
+    }
+  }
 
   const [optimisticMatching, updateOptimistic] = useOptimistic(
     initialMatching,
     (
       state,
       { attendeeId, guestId }: { attendeeId: number; guestId: string | null },
-    ) => ({
-      ...state,
-      [attendeeId]: guestId ?? '',
-    }),
+    ) => {
+      return {
+        ...state,
+        [attendeeId]: guestId ?? '',
+      };
+    },
   );
 
   const [isPending, startTransition] = useTransition();
 
-  const guestOptions = guests.map(guest => ({
-    label: guest.channel_identifier,
-    value: String(guest.id),
-  }));
+  const guestOptions = guests.map((guest) => {
+    return {
+      label: guest.channel_identifier,
+      value: String(guest.id),
+    };
+  });
 
+  /**
+   * handleSelect.
+   * @param attendeeId - attendeeId.
+   * @param guestId - guestId.
+   * @returns Result.
+   */
   const handleSelect = (attendeeId: number, guestId: string) => {
     startTransition(() => {
       updateOptimistic({ attendeeId, guestId });
 
-      setProfile(eventId, attendeeId, guestId).catch(error => {
+      setProfile(eventId, attendeeId, guestId).catch((error) => {
         console.error('Failed to save profile:', error);
       });
     });
@@ -57,7 +72,7 @@ export default function ParticipantMatching({
 
   return (
     <div className='flex flex-col gap-2'>
-      {attendees.map(attendee => {
+      {attendees.map((attendee) => {
         const currentValue = optimisticMatching[attendee.id] || '';
 
         return (
@@ -71,7 +86,9 @@ export default function ParticipantMatching({
                 label=''
                 options={guestOptions}
                 value={currentValue}
-                onChange={value => handleSelect(attendee.id, value.toString())}
+                onChange={(value) => {
+                  return handleSelect(attendee.id, value.toString());
+                }}
                 placeholder='Select invited'
                 searchable
                 disabled={isPending}

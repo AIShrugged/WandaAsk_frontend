@@ -10,6 +10,11 @@ interface RecentChatsProps {
   chats: Chat[];
 }
 
+/**
+ * RecentChats component.
+ * @param props - Component props.
+ * @param props.chats
+ */
 export function RecentChats({ chats }: RecentChatsProps) {
   if (chats.length === 0) {
     return (
@@ -22,30 +27,32 @@ export function RecentChats({ chats }: RecentChatsProps) {
 
   return (
     <div className='flex flex-col divide-y divide-border'>
-      {chats.map(chat => (
-        <Link
-          key={chat.id}
-          href={`${ROUTES.DASHBOARD.CHAT}/${chat.id}`}
-          className='group flex items-center justify-between gap-3 px-1 py-3 hover:bg-accent/50 rounded-md transition-colors'
-        >
-          <div className='flex items-center gap-3 min-w-0'>
-            <div className='flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary/10'>
-              <MessageSquare className='h-3.5 w-3.5 text-primary' />
+      {chats.map((chat) => {
+        return (
+          <Link
+            key={chat.id}
+            href={`${ROUTES.DASHBOARD.CHAT}/${chat.id}`}
+            className='group flex items-center justify-between gap-3 px-1 py-3 hover:bg-accent/50 rounded-md transition-colors'
+          >
+            <div className='flex items-center gap-3 min-w-0'>
+              <div className='flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary/10'>
+                <MessageSquare className='h-3.5 w-3.5 text-primary' />
+              </div>
+              <div className='min-w-0'>
+                <p className='truncate text-sm font-medium text-foreground'>
+                  {chat.title ?? 'Untitled chat'}
+                </p>
+                <p className='text-xs text-muted-foreground'>
+                  {formatDistanceToNow(new Date(chat.updated_at), {
+                    addSuffix: true,
+                  })}
+                </p>
+              </div>
             </div>
-            <div className='min-w-0'>
-              <p className='truncate text-sm font-medium text-foreground'>
-                {chat.title ?? 'Untitled chat'}
-              </p>
-              <p className='text-xs text-muted-foreground'>
-                {formatDistanceToNow(new Date(chat.updated_at), {
-                  addSuffix: true,
-                })}
-              </p>
-            </div>
-          </div>
-          <ChevronRight className='h-4 w-4 flex-shrink-0 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity' />
-        </Link>
-      ))}
+            <ChevronRight className='h-4 w-4 flex-shrink-0 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity' />
+          </Link>
+        );
+      })}
     </div>
   );
 }

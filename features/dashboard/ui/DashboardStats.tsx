@@ -12,11 +12,21 @@ interface StatCardProps {
   icon: React.ReactNode;
 }
 
+/**
+ * StatCard component.
+ * @param value.label
+ * @param value - value.
+ * @param value.value
+ * @param icon - icon.
+ * @param value.icon
+ */
 function StatCard({ label, value, icon }: StatCardProps) {
   return (
     <div className='flex flex-col gap-3 rounded-[var(--radius-card)] border border-border bg-card p-5 shadow-card'>
       <div className='flex items-center justify-between'>
-        <span className='text-sm font-medium text-muted-foreground'>{label}</span>
+        <span className='text-sm font-medium text-muted-foreground'>
+          {label}
+        </span>
         <div className='flex h-8 w-8 items-center justify-center rounded-md bg-primary/10 text-primary'>
           {icon}
         </div>
@@ -26,6 +36,13 @@ function StatCard({ label, value, icon }: StatCardProps) {
   );
 }
 
+/**
+ * DashboardStats component.
+ * @param root0
+ * @param root0.teamsCount
+ * @param root0.chatsCount
+ * @param root0.methodologiesCount
+ */
 export function DashboardStats({
   teamsCount,
   chatsCount,

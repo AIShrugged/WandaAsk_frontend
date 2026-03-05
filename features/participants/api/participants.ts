@@ -23,6 +23,7 @@ export const getAttendees = cache(
 
     if (!res.ok) {
       const text = await res.text();
+
       throw new Error(
         `getMethodologies failed: ${res.status} ${res.statusText} — ${text}`,
       );
@@ -52,6 +53,7 @@ export const getGuests = cache(
 
     if (!res.ok) {
       const text = await res.text();
+
       throw new Error(
         `getMethodologies failed: ${res.status} ${res.statusText} — ${text}`,
       );
@@ -67,6 +69,13 @@ export const getGuests = cache(
   },
 );
 
+/**
+ * setProfile.
+ * @param eventId
+ * @param participantId
+ * @param guestId
+ * @returns Promise.
+ */
 export async function setProfile(
   eventId: number,
   participantId: number,
@@ -74,7 +83,7 @@ export async function setProfile(
 ) {
   const authHeaders = await getAuthHeaders();
 
-  const payload: any = {
+  const payload = {
     calendar_event_id: eventId,
     participant_id: participantId,
     profile_id: guestId,

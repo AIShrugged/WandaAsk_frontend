@@ -17,30 +17,65 @@ interface ChatListItemProps {
   onDelete: (id: number) => void;
 }
 
-export function ChatListItem({ chat, isActive, onUpdate, onDelete }: ChatListItemProps) {
-  const [mode, setMode] = useState<'idle' | 'editing' | 'confirming-delete'>('idle');
+/**
+ * ChatListItem component.
+ * @param isActive.chat
+ * @param isActive - isActive.
+ * @param isActive.isActive
+ * @param onUpdate - onUpdate.
+ * @param isActive.onUpdate
+ * @param onDelete - onDelete.
+ * @param isActive.onDelete
+ */
+export function ChatListItem({
+  chat,
+  isActive,
+  onUpdate,
+  onDelete,
+}: ChatListItemProps) {
+  const [mode, setMode] = useState<'idle' | 'editing' | 'confirming-delete'>(
+    'idle',
+  );
+
   const [editValue, setEditValue] = useState(chat.title ?? '');
+
   const [isPending, startTransition] = useTransition();
+
   const inputRef = useRef<HTMLInputElement>(null);
 
   // ── Edit handlers ──────────────────────────────────────────────────────────
 
+  /**
+   * startEditing.
+   * @param e - e.
+   * @returns Result.
+   */
   const startEditing = (e: React.MouseEvent) => {
     e.preventDefault();
     setEditValue(chat.title ?? '');
     setMode('editing');
-    setTimeout(() => inputRef.current?.focus(), 0);
+    setTimeout(() => {
+      return inputRef.current?.focus();
+    }, 0);
   };
 
+  /**
+   * cancelEditing.
+   */
   const cancelEditing = () => {
     setMode('idle');
     setEditValue(chat.title ?? '');
   };
 
+  /**
+   * saveTitle.
+   */
   const saveTitle = () => {
     const title = editValue.trim();
+
     if (!title || title === chat.title) {
       cancelEditing();
+
       return;
     }
 
@@ -55,20 +90,39 @@ export function ChatListItem({ chat, isActive, onUpdate, onDelete }: ChatListIte
     });
   };
 
+  /**
+   * handleEditKeyDown.
+   * @param e - e.
+   * @returns Result.
+   */
   const handleEditKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') saveTitle();
+
     if (e.key === 'Escape') cancelEditing();
   };
 
   // ── Delete handlers ────────────────────────────────────────────────────────
 
+  /**
+   * handleDeleteClick.
+   * @param e - e.
+   * @returns Result.
+   */
   const handleDeleteClick = (e: React.MouseEvent) => {
     e.preventDefault();
     setMode('confirming-delete');
   };
 
-  const cancelDelete = () => setMode('idle');
+  /**
+   * cancelDelete.
+   */
+  const cancelDelete = () => {
+    return setMode('idle');
+  };
 
+  /**
+   * confirmDelete.
+   */
   const confirmDelete = () => {
     startTransition(async () => {
       try {
@@ -84,12 +138,15 @@ export function ChatListItem({ chat, isActive, onUpdate, onDelete }: ChatListIte
   // ── Render ─────────────────────────────────────────────────────────────────
 
   const href = `${ROUTES.DASHBOARD.CHAT}/${chat.id}`;
+
   const displayTitle = chat.title ?? 'Untitled chat';
 
   return (
     <div
       className={`group flex items-center gap-2 rounded-md px-3 py-2 transition-colors ${
-        isActive ? 'bg-sidebar-accent text-sidebar-accent-foreground' : 'hover:bg-sidebar-accent/50'
+        isActive
+          ? 'bg-sidebar-accent text-sidebar-accent-foreground'
+          : 'hover:bg-sidebar-accent/50'
       }`}
     >
       {/* ── Editing title ── */}
@@ -98,7 +155,9 @@ export function ChatListItem({ chat, isActive, onUpdate, onDelete }: ChatListIte
           <input
             ref={inputRef}
             value={editValue}
-            onChange={e => setEditValue(e.target.value)}
+            onChange={(e) => {
+              return setEditValue(e.target.value);
+            }}
             onKeyDown={handleEditKeyDown}
             disabled={isPending}
             className='flex-1 min-w-0 text-sm bg-transparent outline-none border-b border-border text-foreground'
@@ -124,7 +183,9 @@ export function ChatListItem({ chat, isActive, onUpdate, onDelete }: ChatListIte
       {/* ── Confirm delete ── */}
       {mode === 'confirming-delete' && (
         <div className='flex items-center gap-1 flex-1 min-w-0'>
-          <span className='flex-1 min-w-0 text-xs text-destructive truncate'>Delete?</span>
+          <span className='flex-1 min-w-0 text-xs text-destructive truncate'>
+            Delete?
+          </span>
           <button
             onClick={confirmDelete}
             disabled={isPending}

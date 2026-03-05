@@ -20,6 +20,15 @@ interface ChatWindowProps {
   onCollapse?: () => void;
 }
 
+/**
+ * ChatWindow component.
+ * @param root0
+ * @param root0.chatId
+ * @param root0.initialMessages
+ * @param root0.totalCount
+ * @param root0.startOffset
+ * @param root0.onCollapse
+ */
 export function ChatWindow({
   chatId,
   initialMessages,
@@ -46,6 +55,11 @@ export function ChatWindow({
     }
   }, [containerRef]);
 
+  /**
+   * handleSend.
+   * @param content - content.
+   * @returns Result.
+   */
   const handleSend = (content: string) => {
     const optimistic: Message = {
       id: Date.now(),
@@ -55,14 +69,19 @@ export function ChatWindow({
       followup_data: null,
       role: 'user',
     };
+
     addMessage(optimistic);
     setIsSending(true);
 
     sendMessage(chatId, content)
-      .then(responses => {
-        addMessages(responses.filter(m => m.role === 'assistant'));
+      .then((responses) => {
+        addMessages(
+          responses.filter((m) => {
+            return m.role === 'assistant';
+          }),
+        );
       })
-      .catch(error => {
+      .catch((error) => {
         toast.error((error as Error).message);
       })
       .finally(() => {
@@ -108,9 +127,9 @@ export function ChatWindow({
           </div>
         )}
 
-        {messages.map(msg => (
-          <ChatMessage key={msg.id} message={msg} />
-        ))}
+        {messages.map((msg) => {
+          return <ChatMessage key={msg.id} message={msg} />;
+        })}
 
         {/* Thinking indicator — shown while waiting for assistant response */}
         {isSending && <ThinkingIndicator />}

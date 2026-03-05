@@ -6,6 +6,11 @@ import { H3 } from '@/shared/ui/typography/H3';
 
 import type { MethodologyProps } from '@/features/methodology/model/types';
 
+/**
+ * MethodologyItem component.
+ * @param root0
+ * @param root0.methodology
+ */
 export default function MethodologyItem({
   methodology,
 }: {

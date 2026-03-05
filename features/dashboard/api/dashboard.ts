@@ -6,6 +6,10 @@ import { getTeams } from '@/features/teams/api/team';
 import { getUser } from '@/features/user/api/user';
 import { getOrganizationId } from '@/shared/lib/getOrganizationId';
 
+/**
+ * getDashboardData.
+ * @returns Promise.
+ */
 export async function getDashboardData() {
   const organizationId = await getOrganizationId();
 

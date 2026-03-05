@@ -1,5 +1,8 @@
 import Link from 'next/link';
 
+/**
+ * OrganizationCreateLink component.
+ */
 export default function OrganizationCreateLink() {
   const route = 'organization/create';
 

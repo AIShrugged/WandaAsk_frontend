@@ -2,6 +2,12 @@ import { X } from 'lucide-react';
 
 import Hover from '@/shared/ui/animation/Hover';
 
+/**
+ * ModalHeader component.
+ * @param root0
+ * @param root0.title
+ * @param root0.onClick
+ */
 export default function ModalHeader({
   title,
   onClick,

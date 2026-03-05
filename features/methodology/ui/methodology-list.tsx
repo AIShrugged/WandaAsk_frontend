@@ -17,18 +17,26 @@ type Props = {
   organizationId: string;
 };
 
+/**
+ * MethodologyList component.
+ * @param root0
+ * @param root0.initialMethodologies
+ * @param root0.totalCount
+ * @param root0.organizationId
+ */
 export default function MethodologyList({
   initialMethodologies,
   totalCount,
   organizationId,
 }: Props) {
-  const fetchChunk = useCallback(
+  const fetchChunkAction = useCallback(
     async (offset: number, limit: number) => {
       const { data, hasMore } = await loadMethodologiesChunk(
         organizationId,
         offset,
         limit,
       );
+
       return { data, hasMore };
     },
     [organizationId],
@@ -37,7 +45,7 @@ export default function MethodologyList({
   const { items, isLoading, hasMore, sentinelRef } =
     useCachedInfiniteScroll<MethodologyProps>({
       store: useMethodologyStore,
-      fetchChunk,
+      fetchChunkAction,
       cacheKey: organizationId,
       initialItems: initialMethodologies,
       totalCount,
@@ -47,9 +55,11 @@ export default function MethodologyList({
 
   return (
     <div className='flex flex-col h-full'>
-      {items.map(methodology => (
-        <MethodologyItem key={methodology.id} methodology={methodology} />
-      ))}
+      {items.map((methodology) => {
+        return (
+          <MethodologyItem key={methodology.id} methodology={methodology} />
+        );
+      })}
 
       {!hasMore && items.length > 0 ? (
         <div className='py-4'>

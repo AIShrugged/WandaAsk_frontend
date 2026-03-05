@@ -24,6 +24,11 @@ const items = [
   },
 ];
 
+/**
+ * ButtonsRow component.
+ * @param props - Component props.
+ * @param props.currentTab
+ */
 export default function ButtonsRow({ currentTab }: Props) {
   return items.map((item, index) => {
     const isActive = item.link === currentTab;
@@ -38,7 +43,9 @@ export default function ButtonsRow({ currentTab }: Props) {
   ${index > 0 ? '-ml-px' : ''}`}
           type='button'
         >
-          <p className={isActive ? 'text-primary-foreground' : 'text-foreground'}>
+          <p
+            className={isActive ? 'text-primary-foreground' : 'text-foreground'}
+          >
             {item.title}
           </p>
         </button>

@@ -8,8 +8,12 @@ import Card from '@/shared/ui/card/Card';
 import CardBody from '@/shared/ui/card/CardBody';
 import PageHeader from '@/widgets/layout/ui/page-header';
 
+/**
+ * Page component.
+ */
 export default async function Page() {
   const organizationId = await getOrganizationId();
+
   const { data: teams = [], totalCount = 0 } = await getTeams(organizationId);
 
   return (

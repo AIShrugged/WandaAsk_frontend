@@ -1,3 +1,4 @@
+/* eslint-disable jsdoc/require-jsdoc */
 import { render, screen } from '@testing-library/react';
 
 import { ChatMessage } from '@/features/chat/ui/chat-message';
@@ -5,11 +6,13 @@ import { ChatMessage } from '@/features/chat/ui/chat-message';
 import type { Message } from '@/features/chat/types';
 
 // Keep ChatMessageContent simple — its own rendering is tested separately
-jest.mock('@/features/chat/ui/chat-message-content', () => ({
-  ChatMessageContent: ({ content }: { content: string }) => (
-    <div data-testid='chat-message-content'>{content}</div>
-  ),
-}));
+jest.mock('@/features/chat/ui/chat-message-content', () => {
+  return {
+    ChatMessageContent: ({ content }: { content: string }) => {
+      return <div data-testid='chat-message-content'>{content}</div>;
+    },
+  };
+});
 
 const baseMessage: Message = {
   id: 1,
@@ -27,6 +30,7 @@ describe('ChatMessage', () => {
 
   it('aligns user messages to the right', () => {
     const { container } = render(<ChatMessage message={baseMessage} />);
+
     expect(container.firstChild).toHaveClass('justify-end');
   });
 
@@ -36,7 +40,9 @@ describe('ChatMessage', () => {
       role: 'assistant',
       content: 'Hi there',
     };
+
     const { container } = render(<ChatMessage message={assistantMessage} />);
+
     expect(container.firstChild).toHaveClass('justify-start');
   });
 
@@ -46,6 +52,7 @@ describe('ChatMessage', () => {
       role: 'assistant',
       content: 'AI response',
     };
+
     render(<ChatMessage message={assistantMessage} />);
     expect(screen.getByTestId('chat-message-content')).toBeInTheDocument();
   });

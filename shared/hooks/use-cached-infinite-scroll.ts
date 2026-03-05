@@ -13,7 +13,7 @@ type StoreHook<T> = {
 
 type UseCachedInfiniteScrollOptions<T> = {
   store: StoreHook<T>;
-  fetchChunk: (
+  fetchChunkAction: (
     offset: number,
     limit: number,
   ) => Promise<{ data: T[]; hasMore: boolean }>;
@@ -23,17 +23,36 @@ type UseCachedInfiniteScrollOptions<T> = {
   limit?: number;
 };
 
+/**
+ * useCachedInfiniteScroll hook.
+ * @param root0
+ * @param root0.store
+ * @param root0.fetchChunkAction
+ * @param root0.cacheKey
+ * @param root0.initialItems
+ * @param root0.totalCount
+ * @param root0.limit
+ */
 export function useCachedInfiniteScroll<T>({
   store,
-  fetchChunk,
+  fetchChunkAction,
   cacheKey,
   initialItems,
   totalCount,
   limit = DEFAULT_LIMIT,
 }: UseCachedInfiniteScrollOptions<T>) {
-  const items = store(s => s.items);
-  const isLoading = store(s => s.isLoading);
-  const hasMore = store(s => s.hasMore);
+  const items = store((s) => {
+    return s.items;
+  });
+
+  const isLoading = store((s) => {
+    return s.isLoading;
+  });
+
+  const hasMore = store((s) => {
+    return s.hasMore;
+  });
+
   const sentinelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -42,18 +61,23 @@ export function useCachedInfiniteScroll<T>({
 
   const loadMore = useCallback(async () => {
     const state = store.getState();
+
     if (state.isLoading || !state.hasMore) return;
 
     state.setLoading(true);
     try {
-      const { data, hasMore: more } = await fetchChunk(state.offset, limit);
+      const { data, hasMore: more } = await fetchChunkAction(
+        state.offset,
+        limit,
+      );
+
       store.getState().appendChunk(data, more);
     } catch {
       // silently fail
     } finally {
       store.getState().setLoading(false);
     }
-  }, [store, fetchChunk, limit]);
+  }, [store, fetchChunkAction, limit]);
 
   useEffect(() => {
     if (!sentinelRef.current) return;
@@ -68,7 +92,10 @@ export function useCachedInfiniteScroll<T>({
     );
 
     observer.observe(sentinelRef.current);
-    return () => observer.disconnect();
+
+    return () => {
+      return observer.disconnect();
+    };
   }, [hasMore, isLoading, loadMore]);
 
   return { items, isLoading, hasMore, sentinelRef };

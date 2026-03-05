@@ -13,10 +13,21 @@ interface UserInfoProps {
   user: UserProps;
 }
 
+/**
+ * UserInfo component.
+ * @param props - Component props.
+ * @param props.user
+ */
 export default function UserInfo({ user }: UserInfoProps) {
   const anchorRef = useRef<HTMLDivElement>(null);
+
   const { open, close } = usePopup();
 
+  /**
+   * handleOpen.
+   * @param e - e.
+   * @returns Result.
+   */
   const handleOpen = (e: React.MouseEvent) => {
     e.stopPropagation();
 

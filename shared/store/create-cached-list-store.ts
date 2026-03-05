@@ -15,6 +15,9 @@ export type CachedListStore<T> = {
   removeItem: (id: number) => void;
 };
 
+/**
+ * createCachedListStore.
+ */
 export function createCachedListStore<T>() {
   const initialState = {
     items: [] as T[],
@@ -26,51 +29,91 @@ export function createCachedListStore<T>() {
     lastHydratedAt: 0,
   };
 
-  return create<CachedListStore<T>>()((set, get) => ({
-    ...initialState,
+  return create<CachedListStore<T>>()((set, get) => {
+    return {
+      ...initialState,
 
-    hydrate: (items, totalCount, cacheKey) => {
-      const state = get();
+      /**
+       * hydrate.
+       * @param items - items.
+       * @param totalCount - totalCount.
+       * @param cacheKey - cacheKey.
+       * @returns Result.
+       */
+      hydrate: (items, totalCount, cacheKey) => {
+        const state = get();
 
-      if (
-        state.cacheKey === cacheKey &&
-        state.items.length > 0 &&
-        state.lastHydratedAt > 0
-      ) {
-        return;
-      }
+        if (
+          state.cacheKey === cacheKey &&
+          state.items.length > 0 &&
+          state.lastHydratedAt > 0
+        ) {
+          return;
+        }
 
-      set({
-        items,
-        totalCount,
-        offset: items.length,
-        hasMore: items.length < totalCount,
-        cacheKey,
-        lastHydratedAt: Date.now(),
-      });
-    },
+        set({
+          items,
+          totalCount,
+          offset: items.length,
+          hasMore: items.length < totalCount,
+          cacheKey,
+          lastHydratedAt: Date.now(),
+        });
+      },
 
-    appendChunk: (newItems, hasMore) => {
-      set(state => ({
-        items: [...state.items, ...newItems],
-        offset: state.offset + newItems.length,
-        hasMore,
-      }));
-    },
+      /**
+       * appendChunk.
+       * @param newItems - newItems.
+       * @param hasMore - hasMore.
+       * @returns Result.
+       */
+      appendChunk: (newItems, hasMore) => {
+        set((state) => {
+          return {
+            items: [...state.items, ...newItems],
+            offset: state.offset + newItems.length,
+            hasMore,
+          };
+        });
+      },
 
-    setLoading: (loading) => {
-      set({ isLoading: loading });
-    },
+      /**
+       * setLoading.
+       * @param loading - loading.
+       * @returns Result.
+       */
+      setLoading: (loading) => {
+        set({ isLoading: loading });
+      },
 
-    invalidate: () => {
-      set({ ...initialState });
-    },
+      /**
+       * invalidate.
+       */
+      invalidate: () => {
+        set({ ...initialState });
+      },
 
-    removeItem: (id: number) => {
-      set(state => ({
-        items: state.items.filter((item: any) => item.id !== id),
-        totalCount: state.totalCount - 1,
-      }));
-    },
-  }));
+      /**
+       * removeItem.
+       * @param id - id.
+       * @returns Result.
+       */
+      /* eslint-disable sonarjs/no-nested-functions */
+      /**
+       *
+       * @param id
+       */
+      removeItem: (id: number) => {
+        set((state) => {
+          return {
+            items: state.items.filter((item) => {
+              return (item as { id: number }).id !== id;
+            }),
+            totalCount: state.totalCount - 1,
+          };
+        });
+      },
+      /* eslint-enable sonarjs/no-nested-functions */
+    };
+  });
 }

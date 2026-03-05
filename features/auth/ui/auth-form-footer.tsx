@@ -13,6 +13,17 @@ interface AuthActionsFooterProps {
   disabled?: boolean;
 }
 
+/**
+ * AuthFormFooter component.
+ * @param root0
+ * @param root0.primaryButton
+ * @param root0.primaryText
+ * @param root0.secondaryText
+ * @param root0.secondaryRoute
+ * @param root0.formId
+ * @param root0.loading
+ * @param root0.disabled
+ */
 export default function AuthFormFooter({
   primaryButton,
   primaryText,
@@ -35,7 +46,10 @@ export default function AuthFormFooter({
 
       <p className='text-sm text-center text-muted-foreground'>
         {secondaryText}{' '}
-        <Link className='cursor-pointer text-foreground font-medium hover:underline underline-offset-4' href={secondaryRoute}>
+        <Link
+          className='cursor-pointer text-foreground font-medium hover:underline underline-offset-4'
+          href={secondaryRoute}
+        >
           {primaryText}
         </Link>
       </p>

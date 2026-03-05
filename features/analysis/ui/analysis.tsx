@@ -5,6 +5,11 @@ import Total from '@/features/analysis/widgets/total';
 
 import type { AnalysisProps } from '@/features/analysis/model/types';
 
+/**
+ * Analysis component.
+ * @param props - Component props.
+ * @param props.data
+ */
 export default async function Analysis({ data }: { data: string }) {
   let parsed: AnalysisProps;
   try {
@@ -19,9 +24,9 @@ export default async function Analysis({ data }: { data: string }) {
     <div className={'flex flex-col gap-10'}>
       {parsed.total && <Total total={parsed.total} />}
       <Summary metrics={parsed.metrics} />
-      {parsed.metrics.map((item, index) => (
-        <Linear key={index} {...item} />
-      ))}
+      {parsed.metrics.map((item, index) => {
+        return <Linear key={index} {...item} />;
+      })}
       {parsed.conclusion && <Conclusion conclusion={parsed.conclusion} />}
     </div>
   );

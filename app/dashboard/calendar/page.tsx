@@ -10,36 +10,61 @@ import SpinLoader from '@/shared/ui/layout/spin-loader';
 
 import type { EventProps } from '@/entities/event';
 
-const Wrapper = ({ children }: PropsWithChildren) => (
-  <Card className='h-full flex flex-col overflow-hidden'>{children}</Card>
-);
+/**
+ * Wrapper component.
+ * @param props - Component props.
+ * @param props.children
+ */
+const Wrapper = ({ children }: PropsWithChildren) => {
+  return (
+    <Card className='h-full flex flex-col overflow-hidden'>{children}</Card>
+  );
+};
 
-const UnattachedView = () => (
-  <Wrapper>
-    <OnboardingTrigger />
-  </Wrapper>
-);
+/**
+ * UnattachedView component.
+ */
+const UnattachedView = () => {
+  return (
+    <Wrapper>
+      <OnboardingTrigger />
+    </Wrapper>
+  );
+};
 
+/**
+ * AttachedView component.
+ * @param root0
+ * @param root0.events
+ * @param root0.currentMonth
+ */
 const AttachedView = ({
   events,
   currentMonth,
 }: {
   events: EventProps[];
   currentMonth: string;
-}) => (
-  <Wrapper>
-    <Suspense
-      fallback={
-        <div className='flex flex-1 items-center justify-center'>
-          <SpinLoader />
-        </div>
-      }
-    >
-      <Calendar currentMonth={currentMonth} events={events} />
-    </Suspense>
-  </Wrapper>
-);
+}) => {
+  return (
+    <Wrapper>
+      <Suspense
+        fallback={
+          <div className='flex flex-1 items-center justify-center'>
+            <SpinLoader />
+          </div>
+        }
+      >
+        <Calendar currentMonth={currentMonth} events={events} />
+      </Suspense>
+    </Wrapper>
+  );
+};
 
+/**
+ * Page component.
+ * @param root0
+ * @param root0.searchParams
+ */
 export default async function Page({
   searchParams,
 }: {
@@ -52,10 +77,12 @@ export default async function Page({
   }
 
   const { data } = await getSources();
+
   const isCalendarAttached = data?.length > 0;
 
   if (isCalendarAttached && !params.month) {
     const currentMonth = new Date().toISOString().slice(0, 7) + '-01';
+
     redirect(`/dashboard/calendar?month=${currentMonth}`);
   }
 
@@ -64,6 +91,7 @@ export default async function Page({
   }
 
   const month = params.month ?? new Date().toISOString().slice(0, 7) + '-01';
+
   const { data: events } = await getEvents();
 
   return <AttachedView currentMonth={month} events={events} />;

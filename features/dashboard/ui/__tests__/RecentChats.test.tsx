@@ -1,26 +1,33 @@
+/* eslint-disable jsdoc/require-jsdoc */
 import { render, screen } from '@testing-library/react';
 
 import { RecentChats } from '@/features/dashboard/ui/RecentChats';
 
 import type { Chat } from '@/features/chat/types';
 
-jest.mock('next/link', () => ({
-  __esModule: true,
-  default: ({
-    children,
-    href,
-  }: {
-    children: React.ReactNode;
-    href: string;
-  }) => <a href={href}>{children}</a>,
-}));
-
-const makeChat = (id: number, title: string | null = null): Chat => ({
-  id,
-  title,
-  created_at: '2024-01-01T00:00:00.000Z',
-  updated_at: '2024-06-15T10:00:00.000Z',
+jest.mock('next/link', () => {
+  return {
+    __esModule: true,
+    default: ({
+      children,
+      href,
+    }: {
+      children: React.ReactNode;
+      href: string;
+    }) => {
+      return <a href={href}>{children}</a>;
+    },
+  };
 });
+
+const makeChat = (id: number, title: string | null = null): Chat => {
+  return {
+    id,
+    title,
+    created_at: '2024-01-01T00:00:00.000Z',
+    updated_at: '2024-06-15T10:00:00.000Z',
+  };
+};
 
 describe('RecentChats', () => {
   it('renders empty state when no chats', () => {
@@ -48,6 +55,7 @@ describe('RecentChats', () => {
       <RecentChats chats={[makeChat(5, 'Chat A'), makeChat(6, 'Chat B')]} />,
     );
     const links = screen.getAllByRole('link');
+
     expect(links).toHaveLength(2);
     expect(links[0]).toHaveAttribute('href', expect.stringContaining('5'));
     expect(links[1]).toHaveAttribute('href', expect.stringContaining('6'));

@@ -9,18 +9,19 @@ export const isDev =
 
 // ── ANSI colour palette (Unicode escapes required by unicorn/no-hex-escape) ─
 const ESC = '\u001B[';
+
 const C = {
-  reset:   `${ESC}0m`,
-  bold:    `${ESC}1m`,
-  dim:     `${ESC}2m`,
-  cyan:    `${ESC}36m`,
-  green:   `${ESC}32m`,
-  yellow:  `${ESC}33m`,
-  red:     `${ESC}31m`,
-  blue:    `${ESC}34m`,
+  reset: `${ESC}0m`,
+  bold: `${ESC}1m`,
+  dim: `${ESC}2m`,
+  cyan: `${ESC}36m`,
+  green: `${ESC}32m`,
+  yellow: `${ESC}33m`,
+  red: `${ESC}31m`,
+  blue: `${ESC}34m`,
   magenta: `${ESC}35m`,
-  gray:    `${ESC}90m`,
-  orange:  `${ESC}38;5;208m`,
+  gray: `${ESC}90m`,
+  orange: `${ESC}38;5;208m`,
 } as const;
 
 const DIVIDER = C.dim + '─'.repeat(72) + C.reset;
@@ -33,26 +34,44 @@ export const SLOW_THRESHOLD_MS: number =
 // ── Request ID counter ─────────────────────────────────────────────────────
 let _reqCounter = 0;
 
+/**
+ * createRequestId.
+ */
 export function createRequestId(): string {
   return `#${String(++_reqCounter).padStart(4, '0')}`;
 }
 
 // ── Timestamp ──────────────────────────────────────────────────────────────
 
+/**
+ * formatTimestamp.
+ */
 export function formatTimestamp(): string {
   const d = new Date();
+
   const hh = String(d.getHours()).padStart(2, '0');
+
   const mm = String(d.getMinutes()).padStart(2, '0');
+
   const ss = String(d.getSeconds()).padStart(2, '0');
+
   const ms = String(d.getMilliseconds()).padStart(3, '0');
+
   return hh + ':' + mm + ':' + ss + '.' + ms;
 }
 
 // ── Byte formatter ─────────────────────────────────────────────────────────
 
+/**
+ * formatBytes.
+ * @param bytes - bytes.
+ * @returns Result.
+ */
 export function formatBytes(bytes: number): string {
   if (bytes < 1024) return String(bytes) + ' B';
+
   if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+
   return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
 }
 
@@ -75,6 +94,7 @@ const STACK_NOISE = [
  */
 export function captureCallerStack(skipFile: string): string | undefined {
   const { stack } = new Error('Stack capture');
+
   if (!stack) return undefined;
 
   const noise = [...STACK_NOISE, skipFile];
@@ -82,29 +102,43 @@ export function captureCallerStack(skipFile: string): string | undefined {
   const frames = stack
     .split('\n')
     .slice(1) // skip the "Error" header line
-    .map(l => l.trim())
-    .filter(l => l.startsWith('at ') && !noise.some(n => l.includes(n)));
+    .map((l) => {
+      return l.trim();
+    })
+    .filter((l) => {
+      return (
+        l.startsWith('at ') &&
+        !noise.some((n) => {
+          return l.includes(n);
+        })
+      );
+    });
 
   if (frames.length === 0) return undefined;
 
   // Strip absolute project root on server to show relative paths.
   let root = '';
+
   if (globalThis.window === undefined) {
     try {
       root = process.cwd() + '/';
-    } catch { /* edge runtime */ }
+    } catch {
+      /* edge runtime */
+    }
   }
 
   return frames
     .slice(0, 3)
-    .map(l =>
-      l
-        .replace(/^at\s+/, '')
-        .replace(root, '')
-        // Browser: strip webpack-internal:// + chunk path prefix
-        .replaceAll(/webpack-internal:\/\/\/[^/]*\/\.\//g, '')
-        .replaceAll('\\', '/'),
-    )
+    .map((l) => {
+      return (
+        l
+          .replace(/^at\s+/, '')
+          .replace(root, '')
+          // Browser: strip webpack-internal:// + chunk path prefix
+          .replaceAll(/webpack-internal:\/\/\/[^/]*\/\.\//g, '')
+          .replaceAll('\\', '/')
+      );
+    })
     .join('\n    ');
 }
 
@@ -118,21 +152,34 @@ const SENSITIVE_HEADERS = new Set([
   'x-auth-token',
 ]);
 
+/**
+ * sanitizeHeaders.
+ * @param headers
+ */
 export function sanitizeHeaders(
   headers: Record<string, string>,
 ): Record<string, string> {
   return Object.fromEntries(
-    Object.entries(headers).map(([k, v]) => [
-      k,
-      SENSITIVE_HEADERS.has(k.toLowerCase())
-        ? v.slice(0, 8) + '\u2026' + v.slice(-4)
-        : v,
-    ]),
+    Object.entries(headers).map(([k, v]) => {
+      return [
+        k,
+        SENSITIVE_HEADERS.has(k.toLowerCase())
+          ? v.slice(0, 8) + '\u2026' + v.slice(-4)
+          : v,
+      ];
+    }),
   );
 }
 
+/**
+ * truncate.
+ * @param str - str.
+ * @param max - max.
+ * @returns Result.
+ */
 function truncate(str: string, max = 2000): string {
   if (str.length <= max) return str;
+
   return (
     str.slice(0, max) +
     '\n' +
@@ -144,21 +191,37 @@ function truncate(str: string, max = 2000): string {
   );
 }
 
+/**
+ * prettyBody.
+ * @param raw - raw.
+ * @param indent - indent.
+ * @returns Result.
+ */
 function prettyBody(raw: string, indent = '    '): string {
   try {
     return JSON.stringify(JSON.parse(raw), null, 2)
       .split('\n')
-      .map(l => indent + l)
+      .map((l) => {
+        return indent + l;
+      })
       .join('\n');
   } catch {
     return indent + raw;
   }
 }
 
+/**
+ * statusColour.
+ * @param status - status.
+ * @returns Result.
+ */
 function statusColour(status: number): string {
   if (status >= 500) return C.red;
+
   if (status >= 400) return C.yellow;
+
   if (status >= 300) return C.blue;
+
   return C.green;
 }
 
@@ -210,23 +273,34 @@ export interface ApiErrorContext {
 /**
  * Log an outgoing HTTP request.
  * Outputs timestamp, method, URL, sanitised headers, body, and caller stack.
+ * @param tag
  */
 function tagColour(tag: string): string {
   if (tag === 'BACKEND') return C.magenta;
+
   if (tag === 'NEXT') return C.blue;
+
   return C.gray;
 }
 
+/**
+ * logRequest.
+ * @param ctx - ctx.
+ * @returns Result.
+ */
 export function logRequest(ctx: RequestLogContext): void {
   if (!isDev) return;
 
   const { id, method, url, headers = {}, body, timestamp, caller, tag } = ctx;
+
   const sanitized = sanitizeHeaders(headers);
 
   const hdrsStr =
     Object.entries(sanitized).length > 0
       ? Object.entries(sanitized)
-          .map(([k, v]) => '    ' + C.gray + k + C.reset + ': ' + v)
+          .map(([k, v]) => {
+            return '    ' + C.gray + k + C.reset + ': ' + v;
+          })
           .join('\n')
       : '    ' + C.gray + '(none)' + C.reset;
 
@@ -234,7 +308,14 @@ export function logRequest(ctx: RequestLogContext): void {
 
   // When a tag is present, show "[TAG] path" in the header and full URL as a detail.
   const urlDisplay = tag
-    ? tagColour(tag) + C.bold + '[' + tag + ']' + C.reset + '  ' + new URL(url).pathname
+    ? tagColour(tag) +
+      C.bold +
+      '[' +
+      tag +
+      ']' +
+      C.reset +
+      '  ' +
+      new URL(url).pathname
     : url;
 
   let out =
@@ -268,14 +349,7 @@ export function logRequest(ctx: RequestLogContext): void {
 
   if (caller) {
     out +=
-      C.dim +
-      '  Caller' +
-      C.reset +
-      '   ' +
-      C.gray +
-      caller +
-      C.reset +
-      '\n';
+      C.dim + '  Caller' + C.reset + '   ' + C.gray + caller + C.reset + '\n';
   }
 
   // eslint-disable-next-line no-console
@@ -285,17 +359,27 @@ export function logRequest(ctx: RequestLogContext): void {
 /**
  * Log an HTTP response including status, timing, size, cache info, and body.
  * Slow responses (> SLOW_THRESHOLD_MS) are highlighted in orange.
+ * @param ctx
  */
 export function logResponse(ctx: ResponseLogContext): void {
   if (!isDev) return;
 
   const { id, method, url, status, durationMs, body, slow, size, cacheStatus } =
     ctx;
+
   const sc = statusColour(status);
+
   const headerColour = slow ? C.orange : sc;
 
   const timeStr = slow
-    ? C.orange + C.bold + '\u26A0 SLOW  ' + C.reset + C.orange + String(durationMs) + 'ms' + C.reset
+    ? C.orange +
+      C.bold +
+      '\u26A0 SLOW  ' +
+      C.reset +
+      C.orange +
+      String(durationMs) +
+      'ms' +
+      C.reset
     : String(durationMs) + 'ms';
 
   let out =
@@ -334,6 +418,7 @@ export function logResponse(ctx: ResponseLogContext): void {
 
   if (cacheStatus) {
     const cacheColour = cacheStatus === 'HIT' ? C.green : C.gray;
+
     out +=
       '     ' +
       C.dim +
@@ -363,11 +448,13 @@ export function logResponse(ctx: ResponseLogContext): void {
 /**
  * Log an API error. In dev prints full context; in production is a no-op
  * (Next.js already logs server-side errors to the terminal in production).
+ * @param context
  */
 export function logApiError(context: ApiErrorContext): void {
   if (!isDev) return;
 
   const method = context.method ?? 'GET';
+
   const { url, status, statusText, body } = context;
 
   // eslint-disable-next-line no-console

@@ -9,21 +9,33 @@ import { logApiError } from '@/shared/lib/logger';
 import type { Chat } from '@/features/chat/types';
 import type { ApiResponse } from '@/shared/types/common';
 
+/**
+ * getChats.
+ * @param offset
+ * @param limit
+ * @returns Promise.
+ */
 export async function getChats(
   offset = 0,
   limit = 20,
 ): Promise<{ chats: Chat[]; totalCount: number; hasMore: boolean }> {
   const authHeaders = await getAuthHeaders();
 
-  const res = await fetch(
-    `${API_URL}/chats?offset=${offset}&limit=${limit}`,
-    { headers: { ...authHeaders }, cache: 'no-store' },
-  );
+  const res = await fetch(`${API_URL}/chats?offset=${offset}&limit=${limit}`, {
+    headers: { ...authHeaders },
+    cache: 'no-store',
+  });
 
   if (!res.ok) {
     if (res.status === 401) redirect('/api/auth/clear-session');
     const text = await res.text();
-    logApiError({ url: res.url, status: res.status, statusText: res.statusText, body: text });
+
+    logApiError({
+      url: res.url,
+      status: res.status,
+      statusText: res.statusText,
+      body: text,
+    });
     throw new Error(text || 'Failed to load chats');
   }
 
@@ -42,6 +54,11 @@ export async function getChats(
   };
 }
 
+/**
+ * createChat.
+ * @param title - title.
+ * @returns Promise.
+ */
 export async function createChat(title: string | null = null): Promise<Chat> {
   const authHeaders = await getAuthHeaders();
 
@@ -55,14 +72,31 @@ export async function createChat(title: string | null = null): Promise<Chat> {
   if (!res.ok) {
     if (res.status === 401) redirect('/api/auth/clear-session');
     const text = await res.text();
-    logApiError({ method: 'POST', url: res.url, status: res.status, statusText: res.statusText, body: text });
-    throw new Error((JSON.parse(text) as { message?: string })?.message ?? 'Failed to create chat');
+
+    logApiError({
+      method: 'POST',
+      url: res.url,
+      status: res.status,
+      statusText: res.statusText,
+      body: text,
+    });
+    throw new Error(
+      (JSON.parse(text) as { message?: string })?.message ??
+        'Failed to create chat',
+    );
   }
 
   const json: ApiResponse<Chat> = await res.json();
+
   return json.data!;
 }
 
+/**
+ * updateChatTitle.
+ * @param id
+ * @param title
+ * @returns Promise.
+ */
 export async function updateChatTitle(
   id: number,
   title: string,
@@ -79,11 +113,26 @@ export async function updateChatTitle(
   if (!res.ok) {
     if (res.status === 401) redirect('/api/auth/clear-session');
     const text = await res.text();
-    logApiError({ method: 'PUT', url: res.url, status: res.status, statusText: res.statusText, body: text });
-    throw new Error((JSON.parse(text) as { message?: string })?.message ?? 'Failed to update chat title');
+
+    logApiError({
+      method: 'PUT',
+      url: res.url,
+      status: res.status,
+      statusText: res.statusText,
+      body: text,
+    });
+    throw new Error(
+      (JSON.parse(text) as { message?: string })?.message ??
+        'Failed to update chat title',
+    );
   }
 }
 
+/**
+ * deleteChat.
+ * @param id - id.
+ * @returns Promise.
+ */
 export async function deleteChat(id: number): Promise<void> {
   const authHeaders = await getAuthHeaders();
 
@@ -96,7 +145,17 @@ export async function deleteChat(id: number): Promise<void> {
   if (!res.ok) {
     if (res.status === 401) redirect('/api/auth/clear-session');
     const text = await res.text();
-    logApiError({ method: 'DELETE', url: res.url, status: res.status, statusText: res.statusText, body: text });
-    throw new Error((JSON.parse(text) as { message?: string })?.message ?? 'Failed to delete chat');
+
+    logApiError({
+      method: 'DELETE',
+      url: res.url,
+      status: res.status,
+      statusText: res.statusText,
+      body: text,
+    });
+    throw new Error(
+      (JSON.parse(text) as { message?: string })?.message ??
+        'Failed to delete chat',
+    );
   }
 }

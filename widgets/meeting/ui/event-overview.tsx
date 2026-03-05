@@ -7,6 +7,13 @@ import ParticipantData from '@/features/participants/ui/participant-data';
 
 import type { EventProps } from '@/entities/event';
 
+/**
+ * EventOverview component.
+ * @param root0
+ * @param root0.id
+ * @param root0.event
+ * @param root0.withoutMatcher
+ */
 export default async function EventOverview({
   id,
   event,

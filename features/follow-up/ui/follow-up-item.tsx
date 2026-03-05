@@ -7,12 +7,20 @@ import { H3 } from '@/shared/ui/typography/H3';
 
 import type { TeamFollowUpDTO } from '@/entities/team';
 
+/**
+ * FollowUpItem component.
+ * @param props - Component props.
+ * @param props.followUp
+ */
 export function FollowUpItem({ followUp }: { followUp: TeamFollowUpDTO }) {
   const route = `${ROUTES.DASHBOARD.FOLLOWUPS}/analysis/${followUp.calendar_event.id}`;
 
   return (
     <div className='border-b border-border'>
-      <Link href={route} className='cursor-pointer py-4 flex items-center justify-between'>
+      <Link
+        href={route}
+        className='cursor-pointer py-4 flex items-center justify-between'
+      >
         <div className='flex-1'>
           <H3>{followUp?.calendar_event.title}</H3>
           <p className='text-sm text-muted-foreground'>

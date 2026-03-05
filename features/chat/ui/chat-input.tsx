@@ -8,18 +8,34 @@ interface ChatInputProps {
   disabled?: boolean;
 }
 
+/**
+ * ChatInput component.
+ * @param disabled.onSend
+ * @param disabled - disabled.
+ * @param disabled.disabled
+ */
 export function ChatInput({ onSend, disabled }: ChatInputProps) {
   const [value, setValue] = useState('');
+
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  /**
+   * submit.
+   */
   const submit = () => {
     const trimmed = value.trim();
+
     if (!trimmed || disabled) return;
     setValue('');
     onSend(trimmed);
     textareaRef.current?.focus();
   };
 
+  /**
+   * handleKeyDown.
+   * @param e - e.
+   * @returns Result.
+   */
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -32,7 +48,9 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
       <textarea
         ref={textareaRef}
         value={value}
-        onChange={e => setValue(e.target.value)}
+        onChange={(e) => {
+          return setValue(e.target.value);
+        }}
         rows={1}
         placeholder='Type a message… (Enter to send, Shift+Enter for new line)'
         disabled={disabled}

@@ -12,16 +12,24 @@ import type {
 } from '@/features/methodology/model/types';
 import type { ApiResponse } from '@/shared/types/common';
 
+/**
+ * afterMethodologyMutate.
+ */
 const afterMethodologyMutate = () => {
   revalidatePath('/dashboard/methodology');
 };
 
+/**
+ * createMethodology.
+ * @param data - data.
+ * @returns Promise.
+ */
 export async function createMethodology(data: MethodologyDTO): Promise<void> {
   const authHeaders = await getAuthHeaders();
 
   const payload = {
     ...data,
-    teams_ids: data.team_ids.map(id => Number(id)),
+    teams_ids: data.team_ids.map(Number),
   };
 
   const res = await fetch(`${API_URL}/methodologies`, {
@@ -36,17 +44,21 @@ export async function createMethodology(data: MethodologyDTO): Promise<void> {
 
   if (!res.ok) {
     const text = await res.text();
+
     throw new Error(
       `createOrganization failed: ${res.status} ${res.statusText} — ${text}`,
     );
   }
 
   revalidatePath('/methodology');
-
-
-  //afterMethodologyMutate();
 }
 
+/**
+ * updateMethodology.
+ * @param methodology_id
+ * @param data
+ * @returns Promise.
+ */
 export async function updateMethodology(
   methodology_id: number,
   data: MethodologyDTO,
@@ -55,7 +67,7 @@ export async function updateMethodology(
 
   const payload = {
     ...data,
-    teams_ids: data.team_ids.map(id => Number(id)) || [],
+    teams_ids: data.team_ids.map(Number),
   };
 
   const res = await fetch(`${API_URL}/methodologies/${methodology_id}`, {
@@ -70,6 +82,7 @@ export async function updateMethodology(
 
   if (!res.ok) {
     const text = await res.text();
+
     throw new Error(
       `updateMethodology failed: ${res.status} ${res.statusText} — ${text}`,
     );
@@ -78,6 +91,13 @@ export async function updateMethodology(
   afterMethodologyMutate();
 }
 
+/**
+ * loadMethodologiesChunk.
+ * @param organizationId
+ * @param offset
+ * @param limit
+ * @returns Promise.
+ */
 export async function loadMethodologiesChunk(
   organizationId: string,
   offset: number,
@@ -99,6 +119,7 @@ export async function loadMethodologiesChunk(
 
   if (!res.ok) {
     const text = await res.text();
+
     throw new Error(
       `getMethodologies failed: ${res.status} ${res.statusText} — ${text}`,
     );
@@ -115,12 +136,18 @@ export async function loadMethodologiesChunk(
   return { data: json.data, totalCount, hasMore: offset + limit < totalCount };
 }
 
+/**
+ * getMethodologies.
+ * @param organizationId - organizationId.
+ * @returns Promise.
+ */
 export const getMethodologies = async (organizationId: string) => {
   const { data, totalCount } = await loadMethodologiesChunk(
     organizationId,
     0,
     10,
   );
+
   return { data, totalCount };
 };
 
@@ -138,6 +165,7 @@ export const getMethodology = cache(
 
     if (!res.ok) {
       const text = await res.text();
+
       throw new Error(
         `getMethodologies failed: ${res.status} ${res.statusText} — ${text}`,
       );
@@ -153,6 +181,11 @@ export const getMethodology = cache(
   },
 );
 
+/**
+ * deleteMethodology.
+ * @param id - id.
+ * @returns Promise.
+ */
 export async function deleteMethodology(id: number) {
   const authHeaders = await getAuthHeaders();
 
@@ -164,10 +197,12 @@ export async function deleteMethodology(id: number) {
     },
     cache: 'no-store',
   });
+
   afterMethodologyMutate();
 
   if (!res.ok) {
     const text = await res.text();
+
     throw new Error(
       `deleteMethodology failed: ${res.status} ${res.statusText} — ${text}`,
     );

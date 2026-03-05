@@ -6,6 +6,12 @@ import ComponentHeader from '@/shared/ui/layout/component-header';
 
 import type { EventProps } from '@/entities/event';
 
+/**
+ * Calendar component.
+ * @param root0
+ * @param root0.events
+ * @param root0.currentMonth
+ */
 export default function Calendar({
   events,
   currentMonth,

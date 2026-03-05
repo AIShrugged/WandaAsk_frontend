@@ -3,8 +3,21 @@ import { format, isSameMonth, parseISO } from 'date-fns';
 import type { EventProps } from '@/entities/event';
 
 // currentMonth is always "yyyy-MM-dd" (e.g. "2026-03-01")
-const eventDateKey = (ev: EventProps) => ev.starts_at.slice(0, 10);
+/**
+ * eventDateKey.
+ * @param ev - ev.
+ * @returns Result.
+ */
+const eventDateKey = (ev: EventProps) => {
+  return ev.starts_at.slice(0, 10);
+};
 
+/**
+ * CalendarAgenda component.
+ * @param root0
+ * @param root0.events
+ * @param root0.currentMonth
+ */
 export default function CalendarAgenda({
   events,
   currentMonth,
@@ -16,8 +29,12 @@ export default function CalendarAgenda({
   const monthStart = parseISO(currentMonth);
 
   const monthEvents = events
-    .filter(ev => isSameMonth(parseISO(eventDateKey(ev)), monthStart))
-    .toSorted((a, b) => a.starts_at.localeCompare(b.starts_at));
+    .filter((ev) => {
+      return isSameMonth(parseISO(eventDateKey(ev)), monthStart);
+    })
+    .toSorted((a, b) => {
+      return a.starts_at.localeCompare(b.starts_at);
+    });
 
   if (monthEvents.length === 0) {
     return (
@@ -28,9 +45,12 @@ export default function CalendarAgenda({
   }
 
   const grouped = new Map<string, EventProps[]>();
+
   for (const ev of monthEvents) {
     const key = eventDateKey(ev);
+
     const existing = grouped.get(key);
+
     if (existing) {
       existing.push(ev);
     } else {
@@ -40,23 +60,27 @@ export default function CalendarAgenda({
 
   return (
     <div className='flex flex-col gap-4 py-2'>
-      {[...grouped.entries()].map(([date, dayEvents]) => (
-        <div key={date}>
-          <p className='text-xs font-medium text-muted-foreground mb-1'>
-            {format(parseISO(date), 'EEE, d MMM')}
-          </p>
-          <div className='flex flex-col gap-1'>
-            {dayEvents.map(ev => (
-              <div
-                key={ev.id}
-                className='px-3 py-2 rounded-md bg-muted text-sm text-foreground truncate'
-              >
-                {ev.title}
-              </div>
-            ))}
+      {[...grouped.entries()].map(([date, dayEvents]) => {
+        return (
+          <div key={date}>
+            <p className='text-xs font-medium text-muted-foreground mb-1'>
+              {format(parseISO(date), 'EEE, d MMM')}
+            </p>
+            <div className='flex flex-col gap-1'>
+              {dayEvents.map((ev) => {
+                return (
+                  <div
+                    key={ev.id}
+                    className='px-3 py-2 rounded-md bg-muted text-sm text-foreground truncate'
+                  >
+                    {ev.title}
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

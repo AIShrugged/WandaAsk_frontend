@@ -5,6 +5,12 @@ import { useModal } from '@/shared/hooks/use-modal';
 
 import type { EventProps } from '@/entities/event';
 
+/**
+ * EventExtraButton component.
+ * @param root0
+ * @param root0.count
+ * @param root0.dayEvents
+ */
 export default function EventExtraButton({
   count,
   dayEvents,
@@ -14,8 +20,14 @@ export default function EventExtraButton({
 }) {
   const { open, close } = useModal();
 
+  /**
+   * handleClick.
+   * @param e - e.
+   * @returns Result.
+   */
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
+
     if (open) open(<EventPopupAll list={dayEvents} close={close} />);
   };
 

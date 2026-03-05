@@ -8,6 +8,13 @@ import type { Message } from '@/features/chat/types';
 
 const PAGE_SIZE = 10;
 
+/**
+ * useMessages hook.
+ * @param chatId
+ * @param initialMessages
+ * @param totalCount
+ * @param startOffset
+ */
 export function useMessages(
   chatId: number,
   initialMessages: Message[],
@@ -20,10 +27,14 @@ export function useMessages(
   // Messages stored in chronological order (oldest first, newest last).
   // API returns oldest-first, so no reversal needed.
   const [messages, setMessages] = useState<Message[]>(initialMessages);
+
   // Tracks the beginning offset of what we've loaded so far.
   const [loadedStartOffset, setLoadedStartOffset] = useState(startOffset);
+
   const [isLoading, setIsLoading] = useState(false);
+
   const sentinelRef = useRef<HTMLDivElement>(null);
+
   const containerRef = useRef<HTMLDivElement>(null);
 
   // There are older messages if we haven't loaded from offset 0 yet.
@@ -33,17 +44,25 @@ export function useMessages(
     if (isLoading || !hasMore) return;
 
     const container = containerRef.current;
+
     const prevScrollHeight = container?.scrollHeight ?? 0;
 
     setIsLoading(true);
     try {
       const fetchOffset = Math.max(0, loadedStartOffset - PAGE_SIZE);
+
       const fetchCount = loadedStartOffset - fetchOffset;
 
-      const { messages: older } = await getMessages(chatId, fetchOffset, fetchCount);
+      const { messages: older } = await getMessages(
+        chatId,
+        fetchOffset,
+        fetchCount,
+      );
 
       // Prepend older messages (they're already in chronological order)
-      setMessages(prev => [...older, ...prev]);
+      setMessages((prev) => {
+        return [...older, ...prev];
+      });
       setLoadedStartOffset(fetchOffset);
 
       // Restore scroll position so viewport doesn't jump
@@ -73,7 +92,10 @@ export function useMessages(
     );
 
     observer.observe(sentinelRef.current);
-    return () => observer.disconnect();
+
+    return () => {
+      return observer.disconnect();
+    };
   }, [hasMore, isLoading, loadOlder]);
 
   const shouldScrollToBottom = useRef(false);
@@ -88,13 +110,25 @@ export function useMessages(
 
   const addMessage = useCallback((message: Message) => {
     shouldScrollToBottom.current = true;
-    setMessages(prev => [...prev, message]);
+    setMessages((prev) => {
+      return [...prev, message];
+    });
   }, []);
 
   const addMessages = useCallback((incoming: Message[]) => {
     shouldScrollToBottom.current = true;
-    setMessages(prev => [...prev, ...incoming]);
+    setMessages((prev) => {
+      return [...prev, ...incoming];
+    });
   }, []);
 
-  return { messages, isLoading, hasMore, sentinelRef, containerRef, addMessage, addMessages };
+  return {
+    messages,
+    isLoading,
+    hasMore,
+    sentinelRef,
+    containerRef,
+    addMessage,
+    addMessages,
+  };
 }

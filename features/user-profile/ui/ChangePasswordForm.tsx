@@ -13,6 +13,9 @@ interface ChangePasswordFormData {
   password_confirmation: string;
 }
 
+/**
+ * ChangePasswordForm component.
+ */
 export function ChangePasswordForm() {
   const [isPending, startTransition] = useTransition();
 
@@ -30,11 +33,18 @@ export function ChangePasswordForm() {
     },
   });
 
+  /**
+   * onSubmit.
+   * @param data - data.
+   * @returns Result.
+   */
   const onSubmit = (data: ChangePasswordFormData) => {
     startTransition(async () => {
       const result = await changePassword(data);
+
       if (result.error) {
         toast.error(result.error);
+
         return;
       }
       toast.success('Password changed successfully');
@@ -68,7 +78,10 @@ export function ChangePasswordForm() {
       </div>
 
       <div className='flex flex-col gap-1.5'>
-        <label htmlFor='password' className='text-sm font-medium text-foreground'>
+        <label
+          htmlFor='password'
+          className='text-sm font-medium text-foreground'
+        >
           New password
         </label>
         <input
@@ -98,8 +111,15 @@ export function ChangePasswordForm() {
           type='password'
           {...register('password_confirmation', {
             required: 'Please confirm your password',
-            validate: value =>
-              value === getValues('password') || 'Passwords do not match',
+            /**
+             *
+             * @param value
+             */
+            validate: (value) => {
+              return (
+                value === getValues('password') || 'Passwords do not match'
+              );
+            },
           })}
           className='rounded-[var(--radius-button)] border border-input bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30'
           autoComplete='new-password'
@@ -112,7 +132,11 @@ export function ChangePasswordForm() {
       </div>
 
       <div className='w-full md:w-[170px]'>
-        <Button type='submit' loading={isPending} disabled={isPending || !isDirty}>
+        <Button
+          type='submit'
+          loading={isPending}
+          disabled={isPending || !isDirty}
+        >
           Change password
         </Button>
       </div>

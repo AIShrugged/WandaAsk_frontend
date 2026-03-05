@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/no-hardcoded-passwords */
 import { LoginSchema, RegisterSchema } from '@/features/auth/model/schemas';
 
 describe('LoginSchema', () => {
@@ -6,6 +7,7 @@ describe('LoginSchema', () => {
       email: 'user@example.com',
       password: 'secret123',
     });
+
     expect(result.success).toBe(true);
   });
 
@@ -14,9 +16,14 @@ describe('LoginSchema', () => {
       email: 'not-an-email',
       password: 'secret123',
     });
+
     expect(result.success).toBe(false);
+
     if (!result.success) {
-      const emailErrors = result.error.issues.filter(i => i.path[0] === 'email');
+      const emailErrors = result.error.issues.filter((i) => {
+        return i.path[0] === 'email';
+      });
+
       expect(emailErrors.length).toBeGreaterThan(0);
     }
   });
@@ -26,9 +33,14 @@ describe('LoginSchema', () => {
       email: 'user@example.com',
       password: '',
     });
+
     expect(result.success).toBe(false);
+
     if (!result.success) {
-      const passErrors = result.error.issues.filter(i => i.path[0] === 'password');
+      const passErrors = result.error.issues.filter((i) => {
+        return i.path[0] === 'password';
+      });
+
       expect(passErrors.length).toBeGreaterThan(0);
     }
   });
@@ -38,18 +50,21 @@ describe('LoginSchema', () => {
       email: 'user@example.com',
       password: 'abc',
     });
+
     expect(result.success).toBe(false);
+
     if (!result.success) {
       expect(
-        result.error.issues.some(
-          i => i.path[0] === 'password' && i.message.includes('6'),
-        ),
+        result.error.issues.some((i) => {
+          return i.path[0] === 'password' && i.message.includes('6');
+        }),
       ).toBe(true);
     }
   });
 
   it('rejects missing email', () => {
     const result = LoginSchema.safeParse({ password: 'secret123' });
+
     expect(result.success).toBe(false);
   });
 });
@@ -70,7 +85,9 @@ describe('RegisterSchema', () => {
       ...validData,
       invite: 'abc123',
     });
+
     expect(result.success).toBe(true);
+
     if (result.success) {
       expect(result.data.invite).toBe('abc123');
     }
@@ -78,7 +95,9 @@ describe('RegisterSchema', () => {
 
   it('parses without invite (undefined)', () => {
     const result = RegisterSchema.safeParse(validData);
+
     expect(result.success).toBe(true);
+
     if (result.success) {
       expect(result.data.invite).toBeUndefined();
     }
@@ -86,33 +105,39 @@ describe('RegisterSchema', () => {
 
   it('rejects name shorter than 2 chars', () => {
     const result = RegisterSchema.safeParse({ ...validData, name: 'J' });
+
     expect(result.success).toBe(false);
+
     if (!result.success) {
       expect(
-        result.error.issues.some(
-          i => i.path[0] === 'name' && i.message.includes('2'),
-        ),
+        result.error.issues.some((i) => {
+          return i.path[0] === 'name' && i.message.includes('2');
+        }),
       ).toBe(true);
     }
   });
 
   it('rejects empty name', () => {
     const result = RegisterSchema.safeParse({ ...validData, name: '' });
+
     expect(result.success).toBe(false);
   });
 
   it('rejects name starting with space', () => {
     const result = RegisterSchema.safeParse({ ...validData, name: ' John' });
+
     expect(result.success).toBe(false);
   });
 
   it('rejects name ending with space', () => {
     const result = RegisterSchema.safeParse({ ...validData, name: 'John ' });
+
     expect(result.success).toBe(false);
   });
 
   it('rejects invalid email', () => {
     const result = RegisterSchema.safeParse({ ...validData, email: 'bad' });
+
     expect(result.success).toBe(false);
   });
 
@@ -121,6 +146,7 @@ describe('RegisterSchema', () => {
       ...validData,
       password: '123',
     });
+
     expect(result.success).toBe(false);
   });
 });

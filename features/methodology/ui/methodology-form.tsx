@@ -27,6 +27,13 @@ import type {
 
 const FORM_ID = 'methodology-form';
 
+/**
+ * MethodologyForm component.
+ * @param root0
+ * @param root0.organization_id
+ * @param root0.teams
+ * @param root0.values
+ */
 export default function MethodologyForm({
   values,
   organization_id,
@@ -37,16 +44,23 @@ export default function MethodologyForm({
   values?: MethodologyProps;
 }) {
   const isEdit = Boolean(values?.id);
+
   const disabled = values?.id === 1;
 
   const [isPending, startTransition] = useTransition();
+
   const { push } = useRouter();
 
   const formFields = getFormFields(
-    teams.map(team => ({ value: String(team.id), label: team.name })),
+    teams.map((team) => {
+      return { value: String(team.id), label: team.name };
+    }),
   );
 
-  const initialTeamIds = values?.teams?.map(team => String(team.id)) ?? [];
+  const initialTeamIds =
+    values?.teams?.map((team) => {
+      return String(team.id);
+    }) ?? [];
 
   const {
     control,
@@ -62,13 +76,28 @@ export default function MethodologyForm({
     reValidateMode: 'onChange',
   });
 
+  /**
+   * onSubmit.
+   * @param data - data.
+   * @returns Result.
+   */
   const onSubmit = (data: MethodologyDTO) => {
     startTransition(async () => {
       try {
         if (isEdit && values) {
-          const existingTeamIds = values.teams?.map(team => String(team.id)) ?? [];
-          const mergedTeamIds = [...new Set([...existingTeamIds, ...data.team_ids])];
-          await updateMethodology(values.id, { ...data, team_ids: mergedTeamIds });
+          const existingTeamIds =
+            values.teams?.map((team) => {
+              return String(team.id);
+            }) ?? [];
+
+          const mergedTeamIds = [
+            ...new Set([...existingTeamIds, ...data.team_ids]),
+          ];
+
+          await updateMethodology(values.id, {
+            ...data,
+            team_ids: mergedTeamIds,
+          });
           toast.success(`Methodology updated`);
         } else {
           await createMethodology(data);
@@ -90,27 +119,30 @@ export default function MethodologyForm({
       onSubmit={handleSubmit(onSubmit)}
       className='flex flex-col flex-1 gap-8'
     >
-      {formFields.map(field => (
-        <Controller
-          disabled={disabled}
-          key={field.name}
-          name={field.name as keyof MethodologyDTO}
-          control={control}
-          rules={field.rules}
-          render={({ field: hookField, fieldState }) => {
-            const variant: VariantType = field.variant;
-            const Component = VARIANT_MAPPER[variant];
+      {formFields.map((field) => {
+        return (
+          <Controller
+            disabled={disabled}
+            key={field.name}
+            name={field.name as keyof MethodologyDTO}
+            control={control}
+            rules={field.rules}
+            render={({ field: hookField, fieldState }) => {
+              const variant: VariantType = field.variant;
 
-            return (
-              <Component
-                field={hookField}
-                fieldState={fieldState}
-                config={field}
-              />
-            );
-          }}
-        />
-      ))}
+              const Component = VARIANT_MAPPER[variant];
+
+              return (
+                <Component
+                  field={hookField}
+                  fieldState={fieldState}
+                  config={field}
+                />
+              );
+            }}
+          />
+        );
+      })}
       <div className={'mt-auto w-full md:w-[170px]'}>
         <Button
           form={FORM_ID}

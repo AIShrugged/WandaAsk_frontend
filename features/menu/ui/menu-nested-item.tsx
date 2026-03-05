@@ -10,6 +10,12 @@ import { ICONS_MAP } from '@/features/menu/lib/options';
 
 import type { MenuProps } from '@/features/menu/model/types';
 
+/**
+ * NestedMenuItem component.
+ * @param root0
+ * @param root0.item
+ * @param root0.level
+ */
 export function NestedMenuItem({
   item,
   level,
@@ -18,11 +24,16 @@ export function NestedMenuItem({
   level: number;
 }) {
   const [isOpen, setIsOpen] = useState(false);
+
   const hasChildren = item.children && item.children.length > 0;
 
   const segment = useSelectedLayoutSegment();
+
   const isActive = item.id === segment;
 
+  /**
+   * handleToggle.
+   */
   const handleToggle = () => {
     if (hasChildren) {
       setIsOpen(!isOpen);
@@ -78,9 +89,11 @@ export function NestedMenuItem({
           transition={{ duration: 0.2, ease: 'easeInOut' }}
           className='overflow-hidden'
         >
-          {item.children?.map(child => (
-            <NestedMenuItem key={child.id} item={child} level={level + 1} />
-          ))}
+          {item.children?.map((child) => {
+            return (
+              <NestedMenuItem key={child.id} item={child} level={level + 1} />
+            );
+          })}
         </motion.div>
       )}
     </div>

@@ -1,3 +1,8 @@
+/**
+ * LinearProgressTitle component.
+ * @param props - Component props.
+ * @param props.title
+ */
 export default function LinearProgressTitle({ title }: { title: string }) {
   if (!title) return;
 

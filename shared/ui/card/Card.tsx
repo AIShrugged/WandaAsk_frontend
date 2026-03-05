@@ -6,6 +6,12 @@ interface Props extends PropsWithChildren {
   className?: string;
 }
 
+/**
+ * Card component.
+ * @param className.children
+ * @param className - className.
+ * @param className.className
+ */
 export default function Card({ children, className = '' }: Props) {
   return (
     <div

@@ -5,6 +5,12 @@ interface Props {
   className?: string;
 }
 
+/**
+ * H2 component.
+ * @param className.children
+ * @param className - className.
+ * @param className.className
+ */
 export function H2({ children, className = '' }: Props) {
   return (
     <h2

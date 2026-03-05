@@ -4,6 +4,9 @@ import { BUTTON } from '@/shared/lib/buttons';
 import { ROUTES } from '@/shared/lib/routes';
 import { Button } from '@/shared/ui/button/Button';
 
+/**
+ * TeamCreate component.
+ */
 export default function TeamCreate() {
   const route = `${ROUTES.DASHBOARD.TEAMS}/create`;
 

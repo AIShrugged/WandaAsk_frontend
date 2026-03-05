@@ -2,6 +2,9 @@ import LoginForm from '@/features/auth/ui/login-form';
 import { TribesLogo } from '@/shared/ui/brand';
 import Card from '@/shared/ui/card/Card';
 
+/**
+ * Page component.
+ */
 export default async function Page() {
   return (
     <div className='w-full max-w-[400px]'>

@@ -7,8 +7,14 @@ import PageHeader from '@/widgets/layout/ui/page-header';
 
 import type { PageProps } from '@/shared/types/common';
 
+/**
+ * Page component.
+ * @param props - Component props.
+ * @param props.params
+ */
 export default async function Page({ params }: PageProps) {
   const { id } = await params;
+
   const { data: team } = await getTeam(id);
 
   if (!team) return null;

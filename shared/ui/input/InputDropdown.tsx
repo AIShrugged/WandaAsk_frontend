@@ -31,8 +31,14 @@ interface InputDropdownProps {
   error?: boolean | string;
 }
 
-const cn = (...parts: Array<string | false | null | undefined>) =>
-  parts.filter(Boolean).join(' ');
+/**
+ * cn.
+ * @param parts - parts.
+ * @returns Result.
+ */
+const cn = (...parts: Array<string | false | null | undefined>) => {
+  return parts.filter(Boolean).join(' ');
+};
 
 const InputDropdown = forwardRef<
   { focus: () => void; clear: () => void },
@@ -52,32 +58,47 @@ const InputDropdown = forwardRef<
   } = props;
 
   const autoId = useId();
+
   const inputId = `dropdown-${autoId}`;
+
   const errorId = `${inputId}-error`;
 
   const [isOpen, setIsOpen] = useState(false);
+
   const [searchQuery, setSearchQuery] = useState('');
+
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
 
   const triggerRef = useRef<HTMLDivElement>(null);
+
   const searchInputRef = useRef<HTMLInputElement>(null);
+
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const selectedValues = multiple
-    ? Array.isArray(value)
-      ? value
-      : []
-    : value
-      ? [value]
-      : [];
+  let selectedValues: string[];
+
+  if (multiple) {
+    selectedValues = Array.isArray(value) ? value : [];
+  } else {
+    selectedValues = value ? [value as string] : [];
+  }
 
   const selectedLabels = selectedValues
-    .map(val => options.find(opt => opt.value === val)?.label)
+    .map((val) => {
+      return options.find((opt) => {
+        return opt.value === val;
+      })?.label;
+    })
     .filter(Boolean);
 
+  /**
+   * getMultipleDisplayLabel.
+   */
   const getMultipleDisplayLabel = (): string => {
     if (selectedLabels.length === 0) return '';
+
     if (selectedLabels.length === 1) return selectedLabels[0] ?? '';
+
     return `${selectedLabels[0]} +${selectedLabels.length - 1}`;
   };
 
@@ -86,12 +107,18 @@ const InputDropdown = forwardRef<
     : (selectedLabels[0] ?? '');
 
   const hasValue = displayedLabel.length > 0;
+
   const floatingActive = isOpen || hasValue;
 
-  const filteredOptions = options.filter(option =>
-    option.label.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+  const filteredOptions = options.filter((option) => {
+    return option.label.toLowerCase().includes(searchQuery.toLowerCase());
+  });
 
+  /**
+   * selectOption.
+   * @param option - option.
+   * @returns Result.
+   */
   const selectOption = (option: DropdownOption) => {
     if (option.disabled) return;
 
@@ -99,9 +126,13 @@ const InputDropdown = forwardRef<
 
     if (multiple) {
       const current = Array.isArray(value) ? value : [];
+
       const exists = current.includes(option.value);
+
       newValue = exists
-        ? current.filter(v => v !== option.value)
+        ? current.filter((v) => {
+            return v !== option.value;
+          })
         : [...current, option.value];
     } else {
       newValue = option.value;
@@ -112,11 +143,19 @@ const InputDropdown = forwardRef<
     onChange?.(newValue);
   };
 
+  /**
+   * toggleOpen.
+   */
   const toggleOpen = () => {
     if (!disabled) {
-      setIsOpen(prev => !prev);
+      setIsOpen((prev) => {
+        return !prev;
+      });
+
       if (!isOpen && searchable) {
-        setTimeout(() => searchInputRef.current?.focus(), 0);
+        setTimeout(() => {
+          return searchInputRef.current?.focus();
+        }, 0);
       }
     }
   };
@@ -124,22 +163,30 @@ const InputDropdown = forwardRef<
   useEffect(() => {
     if (!isOpen) return;
 
+    /**
+     * handleKeyDown.
+     * @param e - e.
+     * @returns Result.
+     */
     const handleKeyDown = (e: KeyboardEvent) => {
       switch (e.key) {
         case 'ArrowDown': {
           e.preventDefault();
-          setHighlightedIndex(prev =>
-            prev < filteredOptions.length - 1 ? prev + 1 : prev,
-          );
+          setHighlightedIndex((prev) => {
+            return prev < filteredOptions.length - 1 ? prev + 1 : prev;
+          });
           break;
         }
         case 'ArrowUp': {
           e.preventDefault();
-          setHighlightedIndex(prev => (prev > 0 ? prev - 1 : -1));
+          setHighlightedIndex((prev) => {
+            return prev > 0 ? prev - 1 : -1;
+          });
           break;
         }
         case 'Enter': {
           e.preventDefault();
+
           if (highlightedIndex >= 0) {
             selectOption(filteredOptions[highlightedIndex]);
           }
@@ -155,10 +202,18 @@ const InputDropdown = forwardRef<
     };
 
     document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+
+    return () => {
+      return document.removeEventListener('keydown', handleKeyDown);
+    };
   }, [isOpen, highlightedIndex, filteredOptions]);
 
   useEffect(() => {
+    /**
+     * handleClickOutside.
+     * @param e - e.
+     * @returns Result.
+     */
     const handleClickOutside = (e: MouseEvent) => {
       if (
         dropdownRef.current &&
@@ -173,13 +228,28 @@ const InputDropdown = forwardRef<
     };
 
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      return document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, []);
 
-  useImperativeHandle(ref, () => ({
-    focus: () => triggerRef.current?.focus(),
-    clear: () => onChange?.(multiple ? [] : ''),
-  }));
+  useImperativeHandle(ref, () => {
+    return {
+      /**
+       * focus.
+       */
+      focus: () => {
+        return triggerRef.current?.focus();
+      },
+      /**
+       * clear.
+       */
+      clear: () => {
+        return onChange?.(multiple ? [] : '');
+      },
+    };
+  });
 
   return (
     <div className={cn('relative flex flex-col items-start w-full', className)}>
@@ -192,7 +262,7 @@ const InputDropdown = forwardRef<
         aria-invalid={!!error}
         aria-describedby={error ? errorId : undefined}
         onClick={toggleOpen}
-        onKeyDown={e => {
+        onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
             toggleOpen();
@@ -259,23 +329,28 @@ const InputDropdown = forwardRef<
                 ref={searchInputRef}
                 type='text'
                 value={searchQuery}
-                onChange={e => {
+                onChange={(e) => {
                   setSearchQuery(e.target.value);
                   setHighlightedIndex(-1);
                 }}
                 placeholder='Search'
                 className='w-full px-3 h-8 text-sm border border-input rounded-[var(--radius-button)] bg-transparent outline-none focus:border-ring focus:ring-2 focus:ring-ring/30 focus:ring-offset-0'
-                onClick={e => e.stopPropagation()}
+                onClick={(e) => {
+                  return e.stopPropagation();
+                }}
               />
             </div>
           )}
 
           <ul className='py-1'>
             {filteredOptions.length === 0 ? (
-              <li className='px-4 py-3 text-sm text-muted-foreground'>Nothing found</li>
+              <li className='px-4 py-3 text-sm text-muted-foreground'>
+                Nothing found
+              </li>
             ) : (
               filteredOptions.map((option, index) => {
                 const isSelected = selectedValues.includes(option.value);
+
                 const isHighlighted = index === highlightedIndex;
 
                 return (
@@ -283,8 +358,12 @@ const InputDropdown = forwardRef<
                     key={option.value}
                     role='option'
                     aria-selected={isSelected}
-                    onClick={() => selectOption(option)}
-                    onMouseEnter={() => setHighlightedIndex(index)}
+                    onClick={() => {
+                      return selectOption(option);
+                    }}
+                    onMouseEnter={() => {
+                      return setHighlightedIndex(index);
+                    }}
                     className={cn(
                       'px-4 py-2.5 flex items-center justify-between cursor-pointer transition-colors text-sm',
                       isHighlighted && 'bg-accent',

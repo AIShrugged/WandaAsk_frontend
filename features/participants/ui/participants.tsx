@@ -5,6 +5,12 @@ import ParticipantsTitle from '@/features/participants/ui/participants-title';
 
 import type { AttendeeProps, GuestProps } from '@/entities/participant';
 
+/**
+ * Participants component.
+ * @param root0
+ * @param root0.list
+ * @param root0.title
+ */
 export default function Participants({
   list,
   title,

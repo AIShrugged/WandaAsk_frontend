@@ -11,6 +11,14 @@ interface CollapsedSidePanelProps {
   className?: string;
 }
 
+/**
+ * CollapsedSidePanel component.
+ * @param root0
+ * @param root0.label
+ * @param root0.onExpand
+ * @param root0.icon
+ * @param root0.className
+ */
 export function CollapsedSidePanel({
   label,
   onExpand,
@@ -20,7 +28,9 @@ export function CollapsedSidePanel({
   const Icon = icon === 'right' ? ChevronRight : ChevronLeft;
 
   return (
-    <div className={`w-10 flex-shrink-0 flex flex-col items-center justify-center bg-sidebar ${className}`}>
+    <div
+      className={`w-10 flex-shrink-0 flex flex-col items-center justify-center bg-sidebar ${className}`}
+    >
       <button
         onClick={onExpand}
         className='flex flex-col items-center gap-1 p-2 text-muted-foreground hover:text-foreground transition-colors cursor-pointer'

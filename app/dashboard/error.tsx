@@ -9,6 +9,12 @@ interface ErrorPageProps {
   reset: () => void;
 }
 
+/**
+ * ErrorPage component.
+ * @param reset.error
+ * @param reset - reset.
+ * @param reset.reset
+ */
 export default function ErrorPage({ error, reset }: ErrorPageProps) {
   return (
     <div className='flex h-full items-center justify-center p-4'>

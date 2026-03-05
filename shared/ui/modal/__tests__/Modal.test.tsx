@@ -1,17 +1,27 @@
+/* eslint-disable jsdoc/require-jsdoc */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { Modal } from '@/shared/ui/modal/modal';
 
 // framer-motion uses CSS animations — render as plain div in tests
-jest.mock('framer-motion', () => ({
-  motion: {
-    div: ({ children, ...props }: React.HTMLAttributes<HTMLDivElement> & { children?: React.ReactNode }) => (
-      <div {...props}>{children}</div>
-    ),
-  },
-  AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-}));
+jest.mock('framer-motion', () => {
+  return {
+    motion: {
+      div: ({
+        children,
+        ...props
+      }: React.HTMLAttributes<HTMLDivElement> & {
+        children?: React.ReactNode;
+      }) => {
+        return <div {...props}>{children}</div>;
+      },
+    },
+    AnimatePresence: ({ children }: { children: React.ReactNode }) => {
+      return <>{children}</>;
+    },
+  };
+});
 
 describe('Modal', () => {
   const defaultProps = {
@@ -39,6 +49,7 @@ describe('Modal', () => {
 
   it('calls onClose when close button is clicked', async () => {
     const onClose = jest.fn();
+
     render(<Modal {...defaultProps} onClose={onClose} />);
     await userEvent.click(screen.getByRole('button', { name: /close modal/i }));
     expect(onClose).toHaveBeenCalledTimes(1);
@@ -46,6 +57,7 @@ describe('Modal', () => {
 
   it('calls onClose on Escape key press', async () => {
     const onClose = jest.fn();
+
     render(<Modal {...defaultProps} onClose={onClose} />);
     await userEvent.keyboard('{Escape}');
     expect(onClose).toHaveBeenCalledTimes(1);
@@ -53,6 +65,7 @@ describe('Modal', () => {
 
   it('does not trigger Escape handler when closed', async () => {
     const onClose = jest.fn();
+
     render(<Modal {...defaultProps} isOpen={false} onClose={onClose} />);
     await userEvent.keyboard('{Escape}');
     expect(onClose).not.toHaveBeenCalled();

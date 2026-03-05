@@ -18,33 +18,52 @@ type Props = Pick<TeamProps, 'id'> & {
   actions: TeamActionType[];
 };
 
+/**
+ * TeamActions component.
+ * @param actions.id
+ * @param actions - actions.
+ * @param actions.actions
+ */
 export function TeamActions({ id, actions }: Props) {
   const [isPending, startTransition] = useTransition();
+
   const { push, replace } = useRouter();
+
   const pathname = usePathname();
+
   const searchParams = useSearchParams();
+
   const { open, close } = useModal();
 
   const handleClose = useCallback(() => {
     const params = new URLSearchParams(searchParams.toString());
+
     params.delete('team_id');
     replace(`${pathname}?${params.toString()}`);
     close();
   }, [close, pathname, replace, searchParams]);
 
+  /**
+   * handleOpenModal.
+   */
   const handleOpenModal = () => {
     if (open) {
       const params = new URLSearchParams(searchParams.toString());
+
       params.set('team_id', String(id));
       replace(`${pathname}?${params.toString()}`);
       open(<TeamMemberAddModal close={handleClose} />);
     }
   };
 
+  /**
+   * handleDelete.
+   */
   const handleDelete = () => {
     startTransition(async () => {
       try {
         const error = await deleteTeam(id);
+
         if (error) {
           toast.error('Не удалось удалить команду');
         } else {
@@ -57,6 +76,9 @@ export function TeamActions({ id, actions }: Props) {
     });
   };
 
+  /**
+   * handleViewTeamFollowUp.
+   */
   const handleViewTeamFollowUp = () => {
     push(`${ROUTES.DASHBOARD.FOLLOWUPS}/${String(id)}`);
   };
@@ -68,7 +90,7 @@ export function TeamActions({ id, actions }: Props) {
         disabled={isPending}
         icon={<UserPlus className='size-[28]' />}
         variant='primary'
-        onClick={handleOpenModal}
+        onClickAction={handleOpenModal}
       />
     ),
     delete: (
@@ -77,7 +99,7 @@ export function TeamActions({ id, actions }: Props) {
         disabled={isPending}
         icon={<Trash className='size-[28]' />}
         variant='danger'
-        onClick={handleDelete}
+        onClickAction={handleDelete}
       />
     ),
     view: (
@@ -86,14 +108,16 @@ export function TeamActions({ id, actions }: Props) {
         disabled={isPending}
         icon={<ChevronRightIcon className='size-[28]' />}
         variant='primary'
-        onClick={handleViewTeamFollowUp}
+        onClickAction={handleViewTeamFollowUp}
       />
     ),
   };
 
   return (
     <div className='flex items-center gap-2'>
-      {actions.map(action => actionMap[action])}
+      {actions.map((action) => {
+        return actionMap[action];
+      })}
     </div>
   );
 }

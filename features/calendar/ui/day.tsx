@@ -1,5 +1,10 @@
 import { format, isToday } from 'date-fns';
 
+/**
+ * Day component.
+ * @param props - Component props.
+ * @param props.currentDay
+ */
 export default function Day({ currentDay }: { currentDay: Date }) {
   return (
     <div className='flex justify-center'>

@@ -29,13 +29,21 @@ const PHRASES = [
 
 type Phrase = (typeof PHRASES)[number];
 
+/**
+ * shuffle.
+ * @param arr - arr.
+ * @returns Result.
+ */
 function shuffle(arr: readonly Phrase[]): Phrase[] {
   const copy = [...arr];
+
   for (let i = copy.length - 1; i > 0; i--) {
     // eslint-disable-next-line sonarjs/pseudo-random
     const j = Math.floor(Math.random() * (i + 1));
+
     [copy[i], copy[j]] = [copy[j], copy[i]];
   }
+
   return copy;
 }
 
@@ -43,6 +51,9 @@ function shuffle(arr: readonly Phrase[]): Phrase[] {
 
 type Phase = 'wait' | 'fadeOut' | 'show';
 
+/**
+ * ThinkingIndicator component.
+ */
 export function ThinkingIndicator() {
   // phrasesRef is initialised with a shuffled deck via useRef(shuffle(...)).
   // This does NOT read a ref during render — it only passes the initial value.
@@ -53,29 +64,43 @@ export function ThinkingIndicator() {
 
   // The displayed phrase; starts with the hardcoded first phrase ('Thinking').
   // No ref access here — avoids the react-hooks/refs violation.
-  const [phrase, setPhrase]   = useState<Phrase>(PHRASES[0]);
+  const [phrase, setPhrase] = useState<Phrase>(PHRASES[0]);
+
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
     let pending: ReturnType<typeof setTimeout>;
 
+    /**
+     * step.
+     * @param phase - phase.
+     * @returns Result.
+     */
     const step = (phase: Phase) => {
       if (cancelled) return;
 
       if (phase === 'wait') {
         // Hold the current phrase for 1.5 – 2.5 s before fading out.
         // eslint-disable-next-line sonarjs/pseudo-random
-        pending = setTimeout(() => step('fadeOut'), 1500 + Math.random() * 1000);
+        pending = setTimeout(
+          () => {
+            return step('fadeOut');
+          },
+          1500 + Math.random() * 1000,
+        );
       } else if (phase === 'fadeOut') {
         setVisible(false);
-        pending = setTimeout(() => step('show'), 300);
+        pending = setTimeout(() => {
+          return step('show');
+        }, 300);
       } else {
         // Advance to the next phrase; reshuffle when the deck is exhausted.
         indexRef.current += 1;
+
         if (indexRef.current >= phrasesRef.current.length) {
           phrasesRef.current = shuffle(PHRASES);
-          indexRef.current   = 0;
+          indexRef.current = 0;
         }
         setPhrase(phrasesRef.current[indexRef.current] ?? PHRASES[0]);
         setVisible(true);
@@ -97,7 +122,6 @@ export function ThinkingIndicator() {
     <div className='flex justify-start'>
       <div className='rounded-lg rounded-tl-sm px-4 py-3 bg-card border border-border'>
         <div className='flex items-center gap-2'>
-
           {/* Dots — slightly smaller than the original typing indicator */}
           <div className='flex items-center gap-0.5'>
             <span
@@ -120,7 +144,6 @@ export function ThinkingIndicator() {
           >
             {phrase}
           </span>
-
         </div>
       </div>
     </div>

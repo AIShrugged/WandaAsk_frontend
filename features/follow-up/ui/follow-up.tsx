@@ -1,3 +1,8 @@
+/**
+ * FollowUp component.
+ * @param props - Component props.
+ * @param props.data
+ */
 export default async function FollowUp({ data }: { data: string }) {
   if (!data) {
     return <div>No data</div>;

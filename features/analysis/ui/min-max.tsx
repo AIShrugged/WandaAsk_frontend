@@ -1,3 +1,10 @@
+/**
+ * MinMax component.
+ * @param root0
+ * @param root0.max_value
+ * @param root0.min_value
+ * @param root0.current_value
+ */
 export default function MinMax({
   max_value,
   current_value,

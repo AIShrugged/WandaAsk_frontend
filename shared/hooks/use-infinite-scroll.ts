@@ -9,6 +9,14 @@ type UseInfiniteScrollOptions<T> = {
   maxItems?: number;
 };
 
+/**
+ * useInfiniteScroll hook.
+ * @param root0
+ * @param root0.fetchMore
+ * @param root0.initialItems
+ * @param root0.initialHasMore
+ * @param root0.maxItems
+ */
 export function useInfiniteScroll<T>({
   fetchMore,
   initialItems,
@@ -16,9 +24,13 @@ export function useInfiniteScroll<T>({
   maxItems,
 }: UseInfiniteScrollOptions<T>) {
   const [items, setItems] = useState<T[]>(initialItems);
+
   const [offset, setOffset] = useState(initialItems.length);
+
   const [hasMore, setHasMore] = useState(initialHasMore);
+
   const [isLoading, setIsLoading] = useState(false);
+
   const sentinelRef = useRef<HTMLDivElement>(null);
 
   const loadMore = useCallback(async () => {
@@ -28,14 +40,18 @@ export function useInfiniteScroll<T>({
     try {
       const { items: newItems, hasMore: more } = await fetchMore(offset);
 
-      setItems(prev => {
+      setItems((prev) => {
         const combined = [...prev, ...newItems];
+
         if (maxItems && combined.length > maxItems) {
           return combined.slice(-maxItems);
         }
+
         return combined;
       });
-      setOffset(prev => prev + newItems.length);
+      setOffset((prev) => {
+        return prev + newItems.length;
+      });
       setHasMore(more);
     } catch {
       // silently fail
@@ -57,7 +73,10 @@ export function useInfiniteScroll<T>({
     );
 
     observer.observe(sentinelRef.current);
-    return () => observer.disconnect();
+
+    return () => {
+      return observer.disconnect();
+    };
   }, [hasMore, isLoading, loadMore]);
 
   return { items, isLoading, hasMore, sentinelRef };

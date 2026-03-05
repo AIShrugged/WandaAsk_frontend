@@ -11,16 +11,30 @@ interface MobileSidebarProps {
   children: ReactNode;
 }
 
+/**
+ * MobileSidebar component.
+ * @param props - Component props.
+ * @param props.children
+ */
 export default function MobileSidebar({ children }: MobileSidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     if (!isOpen) return;
+    /**
+     * handleKeyDown.
+     * @param e - e.
+     * @returns Result.
+     */
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setIsOpen(false);
     };
+
     document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+
+    return () => {
+      return document.removeEventListener('keydown', handleKeyDown);
+    };
   }, [isOpen]);
 
   return (
@@ -28,7 +42,9 @@ export default function MobileSidebar({ children }: MobileSidebarProps) {
       {/* Hamburger button — visible below lg */}
       <button
         className='cursor-pointer lg:hidden flex items-center justify-center w-9 h-9 rounded-md hover:bg-accent transition-colors'
-        onClick={() => setIsOpen(true)}
+        onClick={() => {
+          return setIsOpen(true);
+        }}
         aria-label='Open navigation menu'
         aria-expanded={isOpen}
         aria-controls='mobile-sidebar'
@@ -39,9 +55,13 @@ export default function MobileSidebar({ children }: MobileSidebarProps) {
       {/* Backdrop */}
       <div
         className={`fixed inset-0 z-40 bg-black/30 transition-opacity duration-300 lg:hidden ${
-          isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+          isOpen
+            ? 'opacity-100 pointer-events-auto'
+            : 'opacity-0 pointer-events-none'
         }`}
-        onClick={() => setIsOpen(false)}
+        onClick={() => {
+          return setIsOpen(false);
+        }}
         aria-hidden='true'
       />
 
@@ -60,7 +80,9 @@ export default function MobileSidebar({ children }: MobileSidebarProps) {
           <TribesLogo />
           <button
             className='cursor-pointer flex items-center justify-center w-8 h-8 rounded-md hover:bg-accent transition-colors'
-            onClick={() => setIsOpen(false)}
+            onClick={() => {
+              return setIsOpen(false);
+            }}
             aria-label='Close navigation menu'
           >
             <X className='w-4 h-4 text-muted-foreground' />
@@ -68,7 +90,12 @@ export default function MobileSidebar({ children }: MobileSidebarProps) {
         </div>
 
         {/* Close drawer on link click */}
-        <div className='flex-1 overflow-y-auto py-3 px-3' onClick={() => setIsOpen(false)}>
+        <div
+          className='flex-1 overflow-y-auto py-3 px-3'
+          onClick={() => {
+            return setIsOpen(false);
+          }}
+        >
           {children}
         </div>
       </aside>

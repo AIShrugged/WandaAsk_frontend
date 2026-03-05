@@ -1,3 +1,4 @@
+/* eslint-disable jsdoc/require-jsdoc */
 import { render, screen } from '@testing-library/react';
 
 import { TeamItem } from '@/features/teams/ui/team-item';
@@ -5,31 +6,51 @@ import { TeamItem } from '@/features/teams/ui/team-item';
 import type { TeamActionType, TeamProps } from '@/entities/team';
 
 // TeamActions uses next/navigation hooks and Zustand — mock it
-jest.mock('@/features/teams/ui/team-actions', () => ({
-  TeamActions: ({ id, actions }: { id: number; actions: TeamActionType[] }) => (
-    <div data-testid='team-actions' data-id={id} data-actions={actions.join(',')} />
-  ),
-}));
-
-jest.mock('next/link', () => ({
-  __esModule: true,
-  default: ({
-    children,
-    href,
-  }: {
-    children: React.ReactNode;
-    href: string;
-  }) => <a href={href}>{children}</a>,
-}));
-
-const makeTeam = (overrides?: Partial<TeamProps>): TeamProps => ({
-  id: 1,
-  name: 'Engineering',
-  slug: 'engineering',
-  employee_count: 5,
-  members: [],
-  ...overrides,
+jest.mock('@/features/teams/ui/team-actions', () => {
+  return {
+    TeamActions: ({
+      id,
+      actions,
+    }: {
+      id: number;
+      actions: TeamActionType[];
+    }) => {
+      return (
+        <div
+          data-testid='team-actions'
+          data-id={id}
+          data-actions={actions.join(',')}
+        />
+      );
+    },
+  };
 });
+
+jest.mock('next/link', () => {
+  return {
+    __esModule: true,
+    default: ({
+      children,
+      href,
+    }: {
+      children: React.ReactNode;
+      href: string;
+    }) => {
+      return <a href={href}>{children}</a>;
+    },
+  };
+});
+
+const makeTeam = (overrides?: Partial<TeamProps>): TeamProps => {
+  return {
+    id: 1,
+    name: 'Engineering',
+    slug: 'engineering',
+    employee_count: 5,
+    members: [],
+    ...overrides,
+  };
+};
 
 describe('TeamItem', () => {
   it('renders the team name', () => {
@@ -93,6 +114,7 @@ describe('TeamItem', () => {
       />,
     );
     const actions = screen.getByTestId('team-actions');
+
     expect(actions).toHaveAttribute('data-id', '7');
     expect(actions).toHaveAttribute('data-actions', 'add-member,delete');
   });

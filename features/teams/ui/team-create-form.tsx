@@ -15,6 +15,12 @@ import { Button } from '@/shared/ui/button/Button';
 
 import type { TeamCreateDTO, TeamProps } from '@/entities/team';
 
+/**
+ * TeamCreateForm component.
+ * @param root0
+ * @param root0.values
+ * @param root0.organization_id
+ */
 export default function TeamCreateForm({
   values,
   organization_id,
@@ -23,7 +29,9 @@ export default function TeamCreateForm({
   organization_id: string;
 }) {
   const FORM_ID = 'team-create-form';
+
   const isEdit = Boolean(values?.id);
+
   const router = useRouter();
 
   const [isPending, startTransition] = useTransition();
@@ -38,6 +46,11 @@ export default function TeamCreateForm({
     reValidateMode: 'onChange',
   });
 
+  /**
+   * onSubmit.
+   * @param data - data.
+   * @returns Result.
+   */
   const onSubmit = (data: TeamCreateDTO) => {
     startTransition(async () => {
       try {
@@ -45,8 +58,10 @@ export default function TeamCreateForm({
           await updateTeam(values.id, data);
         } else {
           const result = await createTeam(organization_id, data);
+
           if (result.error) {
             toast.error(result.error);
+
             return;
           }
         }
@@ -65,26 +80,29 @@ export default function TeamCreateForm({
       onSubmit={handleSubmit(onSubmit)}
       className='flex flex-col flex-1 gap-8'
     >
-      {TEAM_CREATE_FIELDS.map(field => (
-        <Controller
-          key={field.name}
-          name={field.name as keyof TeamCreateDTO}
-          control={control}
-          rules={field.rules}
-          render={({ field: hookField, fieldState }) => {
-            const variant: VariantType = field.variant;
-            const Component = VARIANT_MAPPER[variant];
+      {TEAM_CREATE_FIELDS.map((field) => {
+        return (
+          <Controller
+            key={field.name}
+            name={field.name as keyof TeamCreateDTO}
+            control={control}
+            rules={field.rules}
+            render={({ field: hookField, fieldState }) => {
+              const variant: VariantType = field.variant;
 
-            return (
-              <Component
-                field={hookField}
-                fieldState={fieldState}
-                config={field}
-              />
-            );
-          }}
-        />
-      ))}
+              const Component = VARIANT_MAPPER[variant];
+
+              return (
+                <Component
+                  field={hookField}
+                  fieldState={fieldState}
+                  config={field}
+                />
+              );
+            }}
+          />
+        );
+      })}
       <div className={'mt-auto w-full md:w-[170px]'}>
         <Button
           loading={isPending}

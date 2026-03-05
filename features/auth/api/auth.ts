@@ -20,8 +20,16 @@ const SESSION_COOKIE_OPTIONS = {
   maxAge: 60 * 60 * 24 * 7,
 } as const;
 
-async function parseJsonResponse(res: Response): Promise<Record<string, unknown>> {
+/**
+ * parseJsonResponse.
+ * @param res - res.
+ * @returns Promise.
+ */
+async function parseJsonResponse(
+  res: Response,
+): Promise<Record<string, unknown>> {
   const text = await res.text();
+
   try {
     return JSON.parse(text) as Record<string, unknown>;
   } catch {
@@ -29,9 +37,13 @@ async function parseJsonResponse(res: Response): Promise<Record<string, unknown>
   }
 }
 
+/**
+ * login.
+ * @param data - data.
+ * @returns Promise.
+ */
 export async function login(data: LoginInput): Promise<void> {
   const validated = LoginSchema.parse(data);
-
 
   const res = await fetch(`${API_URL}/auth/login`, {
     method: 'POST',
@@ -45,6 +57,7 @@ export async function login(data: LoginInput): Promise<void> {
 
   if (!res.ok) {
     if (res.status === 401) throw new Error('Invalid credentials');
+
     if (res.status === 422) throw new Error('Please check your input');
     throw new Error('Login failed');
   }
@@ -54,11 +67,21 @@ export async function login(data: LoginInput): Promise<void> {
   }
 
   const cookieStore = await cookies();
-  cookieStore.set({ name: 'token', value: json.token, ...SESSION_COOKIE_OPTIONS });
+
+  cookieStore.set({
+    name: 'token',
+    value: json.token,
+    ...SESSION_COOKIE_OPTIONS,
+  });
 
   redirect(ROUTES.AUTH.ORGANIZATION);
 }
 
+/**
+ * register.
+ * @param data - data.
+ * @returns Promise.
+ */
 export async function register(data: RegisterInput): Promise<void> {
   const validated = RegisterSchema.parse(data);
 
@@ -73,7 +96,9 @@ export async function register(data: RegisterInput): Promise<void> {
   const json = await parseJsonResponse(res);
 
   if (!res.ok) {
-    if (res.status === 409) throw new Error('An account with this email already exists');
+    if (res.status === 409)
+      throw new Error('An account with this email already exists');
+
     if (res.status === 422) throw new Error('Please check your input');
     throw new Error('Registration failed');
   }
@@ -83,10 +108,19 @@ export async function register(data: RegisterInput): Promise<void> {
   }
 
   const cookieStore = await cookies();
-  cookieStore.set({ name: 'token', value: json.token, ...SESSION_COOKIE_OPTIONS });
+
+  cookieStore.set({
+    name: 'token',
+    value: json.token,
+    ...SESSION_COOKIE_OPTIONS,
+  });
 
   if (typeof json.organization_id === 'string') {
-    cookieStore.set({ name: 'organization_id', value: json.organization_id, ...SESSION_COOKIE_OPTIONS });
+    cookieStore.set({
+      name: 'organization_id',
+      value: json.organization_id,
+      ...SESSION_COOKIE_OPTIONS,
+    });
   }
 
   redirect(ROUTES.AUTH.ORGANIZATION);

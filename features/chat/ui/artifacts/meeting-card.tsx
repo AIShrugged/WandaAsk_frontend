@@ -3,6 +3,11 @@ import { Calendar, CheckCircle2, Clock, Lightbulb, Users } from 'lucide-react';
 
 import type { MeetingCardArtifact } from '@/features/chat/types';
 
+/**
+ * formatTime.
+ * @param iso - iso.
+ * @returns Result.
+ */
 function formatTime(iso: string): string {
   try {
     return format(parseISO(iso), 'HH:mm');
@@ -11,6 +16,11 @@ function formatTime(iso: string): string {
   }
 }
 
+/**
+ * formatDate.
+ * @param iso - iso.
+ * @returns Result.
+ */
 function formatDate(iso: string): string {
   try {
     return format(parseISO(iso), 'MMM d, yyyy');
@@ -19,9 +29,16 @@ function formatDate(iso: string): string {
   }
 }
 
+/**
+ * MeetingCard component.
+ * @param props - Component props.
+ * @param props.data
+ */
 export function MeetingCard({ data }: { data: MeetingCardArtifact['data'] }) {
   const participants = data.participants ?? [];
+
   const keyPoints = data.key_points ?? [];
+
   const decisions = data.decisions ?? [];
 
   return (
@@ -34,7 +51,9 @@ export function MeetingCard({ data }: { data: MeetingCardArtifact['data'] }) {
         </span>
         <span className='flex items-center gap-1'>
           <Clock className='w-3.5 h-3.5' />
-          {formatTime(data.starts_at)}{'\u2013'}{formatTime(data.ends_at)}
+          {formatTime(data.starts_at)}
+          {'\u2013'}
+          {formatTime(data.ends_at)}
         </span>
         {participants.length > 0 && (
           <span className='flex items-center gap-1'>
@@ -46,7 +65,9 @@ export function MeetingCard({ data }: { data: MeetingCardArtifact['data'] }) {
 
       {/* Summary */}
       {data.summary && (
-        <p className='text-sm text-foreground leading-relaxed'>{data.summary}</p>
+        <p className='text-sm text-foreground leading-relaxed'>
+          {data.summary}
+        </p>
       )}
 
       {/* Key points */}
@@ -57,12 +78,17 @@ export function MeetingCard({ data }: { data: MeetingCardArtifact['data'] }) {
             Key points
           </p>
           <ul className='flex flex-col gap-1'>
-            {keyPoints.map((point, i) => (
-              <li key={i} className='flex items-start gap-2 text-sm text-foreground'>
-                <span className='w-1.5 h-1.5 rounded-full bg-primary mt-1.5 flex-shrink-0' />
-                {point}
-              </li>
-            ))}
+            {keyPoints.map((point, i) => {
+              return (
+                <li
+                  key={i}
+                  className='flex items-start gap-2 text-sm text-foreground'
+                >
+                  <span className='w-1.5 h-1.5 rounded-full bg-primary mt-1.5 flex-shrink-0' />
+                  {point}
+                </li>
+              );
+            })}
           </ul>
         </div>
       )}
@@ -75,12 +101,17 @@ export function MeetingCard({ data }: { data: MeetingCardArtifact['data'] }) {
             Decisions
           </p>
           <ul className='flex flex-col gap-1'>
-            {decisions.map((d, i) => (
-              <li key={i} className='flex items-start gap-2 text-sm text-foreground'>
-                <CheckCircle2 className='w-3.5 h-3.5 text-primary mt-0.5 flex-shrink-0' />
-                {d}
-              </li>
-            ))}
+            {decisions.map((d, i) => {
+              return (
+                <li
+                  key={i}
+                  className='flex items-start gap-2 text-sm text-foreground'
+                >
+                  <CheckCircle2 className='w-3.5 h-3.5 text-primary mt-0.5 flex-shrink-0' />
+                  {d}
+                </li>
+              );
+            })}
           </ul>
         </div>
       )}

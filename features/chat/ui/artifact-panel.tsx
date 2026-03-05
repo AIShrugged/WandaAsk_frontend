@@ -55,6 +55,11 @@ const TYPE_META: Record<
   },
 };
 
+/**
+ * ArtifactContent component.
+ * @param props - Component props.
+ * @param props.artifact
+ */
 function ArtifactContent({ artifact }: { artifact: Artifact }) {
   switch (artifact.type) {
     case 'task_table': {
@@ -86,10 +91,50 @@ function ArtifactContent({ artifact }: { artifact: Artifact }) {
   }
 }
 
+/**
+ * ArtifactCard component.
+ * @param props - Component props.
+ * @param props.artifact
+ */
 function ArtifactCard({ artifact }: { artifact: Artifact }) {
   const meta = TYPE_META[artifact.type] ?? { label: artifact.type, icon: null };
+
   const isGenerating = artifact.status === 'generating';
+
   const isFailed = artifact.status === 'failed';
+
+  let statusClassName: string;
+
+  if (isGenerating) {
+    statusClassName = 'bg-amber-100 text-amber-700 animate-pulse';
+  } else if (isFailed) {
+    statusClassName = 'bg-destructive/10 text-destructive';
+  } else {
+    statusClassName = 'bg-primary/10 text-primary';
+  }
+
+  const nonGeneratingLabel = isFailed ? 'Failed' : meta.label;
+
+  const statusLabel = isGenerating ? 'Generating\u2026' : nonGeneratingLabel;
+
+  let cardBody: React.ReactNode;
+
+  if (isGenerating) {
+    cardBody = (
+      <div className='flex items-center justify-center gap-2 py-6 text-sm text-muted-foreground'>
+        <Loader2 className='w-4 h-4 animate-spin' />
+        Generating\u2026
+      </div>
+    );
+  } else if (isFailed) {
+    cardBody = (
+      <p className='text-sm text-destructive text-center py-4'>
+        Failed to generate
+      </p>
+    );
+  } else {
+    cardBody = <ArtifactContent artifact={artifact} />;
+  }
 
   return (
     <div className='bg-background border border-border rounded-[var(--radius-card)] overflow-hidden'>
@@ -104,33 +149,14 @@ function ArtifactCard({ artifact }: { artifact: Artifact }) {
           </span>
         </div>
         <span
-          className={`flex-shrink-0 ml-2 text-xs px-2 py-0.5 rounded-full font-medium ${
-            isGenerating
-              ? 'bg-amber-100 text-amber-700 animate-pulse'
-              : isFailed
-                ? 'bg-destructive/10 text-destructive'
-                : 'bg-primary/10 text-primary'
-          }`}
+          className={`flex-shrink-0 ml-2 text-xs px-2 py-0.5 rounded-full font-medium ${statusClassName}`}
         >
-          {isGenerating ? 'Generating\u2026' : isFailed ? 'Failed' : meta.label}
+          {statusLabel}
         </span>
       </div>
 
       {/* Card body */}
-      <div className='px-4 py-3'>
-        {isGenerating ? (
-          <div className='flex items-center justify-center gap-2 py-6 text-sm text-muted-foreground'>
-            <Loader2 className='w-4 h-4 animate-spin' />
-            Generating\u2026
-          </div>
-        ) : isFailed ? (
-          <p className='text-sm text-destructive text-center py-4'>
-            Failed to generate
-          </p>
-        ) : (
-          <ArtifactContent artifact={artifact} />
-        )}
-      </div>
+      <div className='px-4 py-3'>{cardBody}</div>
     </div>
   );
 }
@@ -140,6 +166,12 @@ interface ArtifactPanelProps {
   initialArtifacts: ArtifactsResponse | null;
 }
 
+/**
+ * ArtifactPanel component.
+ * @param root0
+ * @param root0.chatId
+ * @param root0.initialArtifacts
+ */
 export function ArtifactPanel({
   chatId,
   initialArtifacts,
@@ -147,20 +179,28 @@ export function ArtifactPanel({
   const [artifacts, setArtifacts] = useState<ArtifactsResponse | null>(
     initialArtifacts,
   );
+
   const [isCollapsed, setIsCollapsed] = useState(false);
+
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const mountedRef = useRef(true);
+
   const pollingRef = useRef(false);
 
   useEffect(() => {
     pollingRef.current = true;
 
+    /**
+     * poll.
+     * @returns Promise.
+     */
     const poll = async () => {
       if (!pollingRef.current || !mountedRef.current) return;
 
       try {
         const data = await getArtifacts(chatId);
+
         if (mountedRef.current) setArtifacts(data);
       } catch {
         /* keep previous data */
@@ -180,10 +220,15 @@ export function ArtifactPanel({
     };
   }, [chatId]);
 
+  /**
+   * handleRefresh.
+   * @returns Promise.
+   */
   const handleRefresh = async () => {
     setIsRefreshing(true);
     try {
       const data = await getArtifacts(chatId);
+
       if (mountedRef.current) setArtifacts(data);
     } catch {
       /* keep */
@@ -193,7 +238,9 @@ export function ArtifactPanel({
   };
 
   const items = (artifacts?.layout?.items ?? [])
-    .map(item => artifacts!.artifacts[item.id])
+    .map((item) => {
+      return artifacts!.artifacts[item.id];
+    })
     .filter(Boolean) as Artifact[];
 
   // ── Collapsed state ──────────────────────────────────────────────────────────
@@ -201,7 +248,9 @@ export function ArtifactPanel({
     return (
       <CollapsedSidePanel
         label='Artifacts'
-        onExpand={() => setIsCollapsed(false)}
+        onExpand={() => {
+          return setIsCollapsed(false);
+        }}
       />
     );
   }
@@ -234,7 +283,9 @@ export function ArtifactPanel({
             />
           </button>
           <button
-            onClick={() => setIsCollapsed(true)}
+            onClick={() => {
+              return setIsCollapsed(true);
+            }}
             className='p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer'
             aria-label='Collapse artifacts panel'
           >
@@ -261,9 +312,9 @@ export function ArtifactPanel({
           </div>
         ) : (
           <div className='flex flex-col gap-3'>
-            {items.map(artifact => (
-              <ArtifactCard key={artifact.id} artifact={artifact} />
-            ))}
+            {items.map((artifact) => {
+              return <ArtifactCard key={artifact.id} artifact={artifact} />;
+            })}
           </div>
         )}
       </div>

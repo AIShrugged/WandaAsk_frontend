@@ -15,16 +15,21 @@ import {
   RegisterSchema,
   type RegisterInput,
 } from '@/features/auth/model/schemas';
+import AuthFormFooter from '@/features/auth/ui/auth-form-footer';
 import { VARIANT_MAPPER, type VariantType } from '@/shared/lib/fieldMapper';
 import { handleFormError } from '@/shared/lib/formErrors';
 import { ROUTES } from '@/shared/lib/routes';
-import AuthFormFooter from '@/features/auth/ui/auth-form-footer';
 
 const FORM_ID = 'register-form';
 
+/**
+ * RegisterForm component.
+ */
 export default function RegisterForm() {
   const [isPending, startTransition] = useTransition();
+
   const searchParams = useSearchParams();
+
   const invite = searchParams.get('invite');
 
   const {
@@ -39,6 +44,11 @@ export default function RegisterForm() {
     reValidateMode: 'onChange',
   });
 
+  /**
+   * onSubmit.
+   * @param data - data.
+   * @returns Result.
+   */
   const onSubmit = (data: RegisterInput) => {
     startTransition(async () => {
       try {
@@ -71,25 +81,28 @@ export default function RegisterForm() {
             {errors.root.message}
           </p>
         )}
-        {REGISTER_FIELDS.map(field => (
-          <Controller
-            key={field.name}
-            name={field.name as keyof RegisterInput}
-            control={control}
-            render={({ field: hookField, fieldState }) => {
-              const variant: VariantType = field.variant;
-              const Component = VARIANT_MAPPER[variant];
+        {REGISTER_FIELDS.map((field) => {
+          return (
+            <Controller
+              key={field.name}
+              name={field.name as keyof RegisterInput}
+              control={control}
+              render={({ field: hookField, fieldState }) => {
+                const variant: VariantType = field.variant;
 
-              return (
-                <Component
-                  field={hookField}
-                  fieldState={fieldState}
-                  config={field}
-                />
-              );
-            }}
-          />
-        ))}
+                const Component = VARIANT_MAPPER[variant];
+
+                return (
+                  <Component
+                    field={hookField}
+                    fieldState={fieldState}
+                    config={field}
+                  />
+                );
+              }}
+            />
+          );
+        })}
       </form>
 
       <AuthFormFooter

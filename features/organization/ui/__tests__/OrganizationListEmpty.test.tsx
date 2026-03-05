@@ -1,17 +1,22 @@
+/* eslint-disable jsdoc/require-jsdoc */
 import { render, screen } from '@testing-library/react';
 
 import OrganizationListEmpty from '@/features/organization/ui/organization-list-empty';
 
-jest.mock('next/link', () => ({
-  __esModule: true,
-  default: ({
-    children,
-    href,
-  }: {
-    children: React.ReactNode;
-    href: string;
-  }) => <a href={href}>{children}</a>,
-}));
+jest.mock('next/link', () => {
+  return {
+    __esModule: true,
+    default: ({
+      children,
+      href,
+    }: {
+      children: React.ReactNode;
+      href: string;
+    }) => {
+      return <a href={href}>{children}</a>;
+    },
+  };
+});
 
 describe('OrganizationListEmpty', () => {
   it('renders the invitation message', () => {
@@ -24,6 +29,7 @@ describe('OrganizationListEmpty', () => {
   it('renders a link to create organization', () => {
     render(<OrganizationListEmpty />);
     const link = screen.getByRole('link');
+
     expect(link).toHaveAttribute('href', expect.stringContaining('create'));
   });
 

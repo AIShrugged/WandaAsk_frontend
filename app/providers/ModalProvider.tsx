@@ -5,6 +5,11 @@ import { type ReactNode, useState } from 'react';
 import { ModalContext } from '@/shared/ui/modal/modal-context';
 import { ModalRoot } from '@/shared/ui/modal/modal-root';
 
+/**
+ * ModalProvider component.
+ * @param props - Component props.
+ * @param props.children
+ */
 export function ModalProvider({ children }: { children: ReactNode }) {
   const [content, setContent] = useState<ReactNode | null>(null);
 
@@ -12,11 +17,21 @@ export function ModalProvider({ children }: { children: ReactNode }) {
     <ModalContext.Provider
       value={{
         open: setContent,
-        close: () => setContent(null),
+        /**
+         * close.
+         */
+        close: () => {
+          return setContent(null);
+        },
       }}
     >
       {children}
-      <ModalRoot open={Boolean(content)} onClose={() => setContent(null)}>
+      <ModalRoot
+        open={Boolean(content)}
+        onClose={() => {
+          return setContent(null);
+        }}
+      >
         {content}
       </ModalRoot>
     </ModalContext.Provider>

@@ -15,6 +15,9 @@ import { ROUTES } from '@/shared/lib/routes';
 
 const FORM_ID = 'login-form';
 
+/**
+ * LoginForm component.
+ */
 export default function LoginForm() {
   const [isPending, startTransition] = useTransition();
 
@@ -30,6 +33,11 @@ export default function LoginForm() {
     reValidateMode: 'onChange',
   });
 
+  /**
+   * onSubmit.
+   * @param data - data.
+   * @returns Result.
+   */
   const onSubmit = (data: LoginInput) => {
     startTransition(async () => {
       try {
@@ -58,25 +66,28 @@ export default function LoginForm() {
             {errors.root.message}
           </p>
         )}
-        {SIGN_IN_FIELDS.map(field => (
-          <Controller
-            key={field.name}
-            name={field.name as keyof LoginInput}
-            control={control}
-            render={({ field: hookField, fieldState }) => {
-              const variant: VariantType = field.variant;
-              const Component = VARIANT_MAPPER[variant];
+        {SIGN_IN_FIELDS.map((field) => {
+          return (
+            <Controller
+              key={field.name}
+              name={field.name as keyof LoginInput}
+              control={control}
+              render={({ field: hookField, fieldState }) => {
+                const variant: VariantType = field.variant;
 
-              return (
-                <Component
-                  field={hookField}
-                  fieldState={fieldState}
-                  config={field}
-                />
-              );
-            }}
-          />
-        ))}
+                const Component = VARIANT_MAPPER[variant];
+
+                return (
+                  <Component
+                    field={hookField}
+                    fieldState={fieldState}
+                    config={field}
+                  />
+                );
+              }}
+            />
+          );
+        })}
       </form>
       <AuthFormFooter
         loading={isPending}

@@ -4,6 +4,9 @@ import RegisterForm from '@/features/auth/ui/register-form';
 import { TribesLogo } from '@/shared/ui/brand';
 import Card from '@/shared/ui/card/Card';
 
+/**
+ * Page component.
+ */
 export default function Page() {
   return (
     <div className='w-full max-w-[400px]'>
@@ -14,7 +17,9 @@ export default function Page() {
       <Card>
         <div className='px-8 py-10'>
           <div className='mb-8'>
-            <h1 className='text-xl font-semibold tracking-tight'>Create account</h1>
+            <h1 className='text-xl font-semibold tracking-tight'>
+              Create account
+            </h1>
             <p className='text-sm text-muted-foreground mt-1'>
               Fill in the details below to get started
             </p>

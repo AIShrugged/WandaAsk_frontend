@@ -2,13 +2,7 @@
 
 import { ChevronLeft, Loader2, MessageSquare, Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  useTransition,
-} from 'react';
+import { useCallback, useEffect, useRef, useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
 import { createChat, getChats } from '@/features/chat/api/chats';
@@ -26,18 +20,32 @@ interface ChatListProps {
 
 const PAGE_SIZE = 20;
 
+/**
+ * ChatList component.
+ * @param root0
+ * @param root0.initialChats
+ * @param root0.totalCount
+ * @param root0.activeChatId
+ */
 export function ChatList({
   initialChats,
   totalCount,
   activeChatId,
 }: ChatListProps) {
   const router = useRouter();
+
   const [chats, setChats] = useState<Chat[]>(initialChats);
+
   const [offset, setOffset] = useState(initialChats.length);
+
   const [hasMore, setHasMore] = useState(initialChats.length < totalCount);
+
   const [isLoading, setIsLoading] = useState(false);
+
   const [isCreating, startCreateTransition] = useTransition();
+
   const [isCollapsed, setIsCollapsed] = useState(false);
+
   const sentinelRef = useRef<HTMLDivElement>(null);
 
   const loadMore = useCallback(async () => {
@@ -48,8 +56,13 @@ export function ChatList({
         offset,
         PAGE_SIZE,
       );
-      setChats(prev => [...prev, ...more]);
-      setOffset(prev => prev + more.length);
+
+      setChats((prev) => {
+        return [...prev, ...more];
+      });
+      setOffset((prev) => {
+        return prev + more.length;
+      });
       setHasMore(offset + more.length < total);
     } catch {
       // silently fail
@@ -66,15 +79,25 @@ export function ChatList({
       },
       { rootMargin: '20px' },
     );
+
     observer.observe(sentinelRef.current);
-    return () => observer.disconnect();
+
+    return () => {
+      return observer.disconnect();
+    };
   }, [hasMore, isLoading, loadMore]);
 
+  /**
+   * handleCreateChat.
+   */
   const handleCreateChat = () => {
     startCreateTransition(async () => {
       try {
         const chat = await createChat(null);
-        setChats(prev => [chat, ...prev]);
+
+        setChats((prev) => {
+          return [chat, ...prev];
+        });
         router.push(`${ROUTES.DASHBOARD.CHAT}/${chat.id}`);
       } catch (error) {
         toast.error((error as Error).message);
@@ -82,12 +105,31 @@ export function ChatList({
     });
   };
 
+  /**
+   * handleUpdate.
+   * @param updated - updated.
+   * @returns Result.
+   */
   const handleUpdate = (updated: Chat) => {
-    setChats(prev => prev.map(c => (c.id === updated.id ? updated : c)));
+    setChats((prev) => {
+      return prev.map((c) => {
+        return c.id === updated.id ? updated : c;
+      });
+    });
   };
 
+  /**
+   * handleDelete.
+   * @param id - id.
+   * @returns Result.
+   */
   const handleDelete = (id: number) => {
-    setChats(prev => prev.filter(c => c.id !== id));
+    setChats((prev) => {
+      return prev.filter((c) => {
+        return c.id !== id;
+      });
+    });
+
     if (id === activeChatId) {
       router.push(ROUTES.DASHBOARD.CHAT);
     }
@@ -95,7 +137,14 @@ export function ChatList({
 
   // ── Collapsed state ──────────────────────────────────────────────────────────
   if (isCollapsed) {
-    return <CollapsedSidePanel label='Chats' onExpand={() => setIsCollapsed(false)} />;
+    return (
+      <CollapsedSidePanel
+        label='Chats'
+        onExpand={() => {
+          return setIsCollapsed(false);
+        }}
+      />
+    );
   }
 
   // ── Open state ───────────────────────────────────────────────────────────────
@@ -122,7 +171,9 @@ export function ChatList({
             New
           </button>
           <button
-            onClick={() => setIsCollapsed(true)}
+            onClick={() => {
+              return setIsCollapsed(true);
+            }}
             className='p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer'
             aria-label='Collapse chats panel'
           >
@@ -139,15 +190,17 @@ export function ChatList({
           </p>
         )}
 
-        {chats.map(chat => (
-          <ChatListItem
-            key={chat.id}
-            chat={chat}
-            isActive={chat.id === activeChatId}
-            onUpdate={handleUpdate}
-            onDelete={handleDelete}
-          />
-        ))}
+        {chats.map((chat) => {
+          return (
+            <ChatListItem
+              key={chat.id}
+              chat={chat}
+              isActive={chat.id === activeChatId}
+              onUpdate={handleUpdate}
+              onDelete={handleDelete}
+            />
+          );
+        })}
 
         {/* Bottom sentinel for pagination */}
         <div ref={sentinelRef} />

@@ -3,6 +3,10 @@
 import { API_URL } from '@/shared/lib/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 
+/**
+ * attachCalendar.
+ * @returns Promise.
+ */
 export async function attachCalendar() {
   const authHeaders = await getAuthHeaders();
 
@@ -17,9 +21,11 @@ export async function attachCalendar() {
 
   if (!res.ok) {
     const text = await res.text();
+
     throw new Error(`Failed to initiate Google OAuth: ${res.status} ${text}`);
   }
 
   const { data } = await res.json();
+
   return data.redirect as string;
 }

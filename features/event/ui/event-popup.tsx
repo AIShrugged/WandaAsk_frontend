@@ -4,15 +4,23 @@ import React, { type JSX, useTransition } from 'react';
 import { switchBot } from '@/features/event/api/calendar-events';
 import EventSummary from '@/features/event/ui/event-summary';
 import { participants } from '@/features/participants/lib/options';
+import Participants from '@/features/participants/ui/participants';
 import { Button } from '@/shared/ui/button/Button';
 import ModalBody from '@/shared/ui/modal/modal-body';
 import ModalFooter from '@/shared/ui/modal/modal-footer';
 import ModalHeader from '@/shared/ui/modal/modal-header';
-import Participants from '@/features/participants/ui/participants';
 
 import type { EventProps } from '@/entities/event';
 import type { AttendeeProps, GuestProps } from '@/entities/participant';
 
+/**
+ * EventPopup component.
+ * @param root0
+ * @param root0.event
+ * @param root0.close
+ * @param root0.attendees
+ * @param root0.guests
+ */
 export function EventPopup({
   event,
   close,
@@ -27,13 +35,20 @@ export function EventPopup({
   const [isPending, startTransition] = useTransition();
 
   const isBotAdded = event.required_bot;
+
   const Icon = isBotAdded ? Minus : Plus;
+
   const actionText = isBotAdded ? 'remove bot' : 'add bot';
 
+  /**
+   * handleSwitchBot.
+   */
   const handleSwitchBot = () => {
     startTransition(async () => {
       try {
-        await switchBot(event.id, !event.required_bot).then(() => close());
+        await switchBot(event.id, !event.required_bot).then(() => {
+          return close();
+        });
       } catch (error) {
         console.warn('name', {
           message: (error as Error).message,

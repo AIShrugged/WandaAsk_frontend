@@ -2,6 +2,9 @@ import Image from 'next/image';
 
 import { onboardingImageOptions } from '@/features/calendar/lib/options';
 
+/**
+ * OnboardingImage component.
+ */
 export default function OnboardingImage() {
   return (
     <div className={'flex flex-row gap-[22px] items-center'}>

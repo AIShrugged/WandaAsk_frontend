@@ -11,8 +11,23 @@ type Props = {
   href?: string;
 };
 
+/**
+ * TeamItem component.
+ * @param actions.team
+ * @param actions - actions.
+ * @param actions.actions
+ * @param href - href.
+ * @param actions.href
+ */
 export function TeamItem({ team, actions, href }: Props) {
   const route = `${href}/${team.id}`;
+
+  const employeeSuffix = team.employee_count === 1 ? '' : 's';
+
+  const employeeLabel =
+    team.employee_count < 1
+      ? `No employees in ${team.name}`
+      : `${team.employee_count} employee${employeeSuffix}`;
 
   return (
     <div className='border-b border-border'>
@@ -20,11 +35,7 @@ export function TeamItem({ team, actions, href }: Props) {
         <Link className='cursor-pointer flex-1' href={route}>
           <div className='flex-1'>
             <H3>{team.name}</H3>
-            <p className='text-sm text-muted-foreground'>
-              {team.employee_count < 1
-                ? `No employees in ${team.name}`
-                : `${team.employee_count} employee${team.employee_count === 1 ? '' : 's'}`}
-            </p>
+            <p className='text-sm text-muted-foreground'>{employeeLabel}</p>
           </div>
         </Link>
 

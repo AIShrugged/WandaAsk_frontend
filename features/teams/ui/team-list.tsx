@@ -19,6 +19,15 @@ type Props = {
   href: string;
 };
 
+/**
+ * TeamList component.
+ * @param root0
+ * @param root0.initialTeams
+ * @param root0.totalCount
+ * @param root0.organizationId
+ * @param root0.actions
+ * @param root0.href
+ */
 export function TeamList({
   initialTeams,
   totalCount,
@@ -26,13 +35,14 @@ export function TeamList({
   actions,
   href,
 }: Props) {
-  const fetchChunk = useCallback(
+  const fetchChunkAction = useCallback(
     async (offset: number, limit: number) => {
       const { data, hasMore } = await loadTeamsChunk(
         organizationId,
         offset,
         limit,
       );
+
       return { data: data as TeamProps[], hasMore };
     },
     [organizationId],
@@ -41,7 +51,7 @@ export function TeamList({
   const { items, isLoading, hasMore, sentinelRef } =
     useCachedInfiniteScroll<TeamProps>({
       store: useTeamsStore,
-      fetchChunk,
+      fetchChunkAction,
       cacheKey: organizationId,
       initialItems: initialTeams,
       totalCount,
@@ -51,9 +61,11 @@ export function TeamList({
 
   return (
     <div className='flex flex-col h-full'>
-      {items.map(team => (
-        <TeamItem href={href} key={team.id} team={team} actions={actions} />
-      ))}
+      {items.map((team) => {
+        return (
+          <TeamItem href={href} key={team.id} team={team} actions={actions} />
+        );
+      })}
 
       {!hasMore && items.length > 0 ? (
         <div className='py-4'>

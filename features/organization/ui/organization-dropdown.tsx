@@ -11,6 +11,12 @@ import { ROUTES } from '@/shared/lib/routes';
 
 import type { OrganizationProps } from '@/entities/organization';
 
+/**
+ * OrganizationDropdown component.
+ * @param root0
+ * @param root0.organizations
+ * @param root0.organizationActiveId
+ */
 export default function OrganizationDropdown({
   organizations,
   organizationActiveId,
@@ -19,20 +25,30 @@ export default function OrganizationDropdown({
   organizationActiveId: number | null;
 }) {
   const [open, setOpen] = useState(false);
+
   const [, action, pending] = useActionState(setActiveOrganization, {
     ok: false,
   });
+
   const { push } = useRouter();
-  const active = organizations.find(
-    o => String(o.id) === String(organizationActiveId),
-  );
+
+  const active = organizations.find((o) => {
+    return String(o.id) === String(organizationActiveId);
+  });
+
   const sortedOrganizations = active
-    ? [active, ...organizations.filter(o => o.id !== active.id)]
+    ? [
+        active,
+        ...organizations.filter((o) => {
+          return o.id !== active.id;
+        }),
+      ]
     : organizations;
 
   useEffect(() => {
     if (!organizationActiveId && organizations.length > 0) {
       const formData = new FormData();
+
       formData.append('organization_id', String(organizations[0].id));
       action(formData);
     }
@@ -41,7 +57,11 @@ export default function OrganizationDropdown({
   return (
     <div className='relative w-full max-w-[260px]'>
       <button
-        onClick={() => setOpen(prev => !prev)}
+        onClick={() => {
+          return setOpen((prev) => {
+            return !prev;
+          });
+        }}
         className='cursor-pointer w-full flex items-center justify-between gap-2
                    rounded-[var(--radius-button)] bg-accent px-4 py-2
                    hover:bg-accent/80 transition'
@@ -68,62 +88,64 @@ export default function OrganizationDropdown({
                      rounded-[var(--radius-card)] bg-popover border border-border shadow-card
                      z-50 overflow-hidden'
         >
-          {sortedOrganizations.map(organization => (
-            <form
-              key={organization.id}
-              action={formData => {
-                action(formData);
-                setOpen(false);
-                toast.success(`Switched to: ${organization.name}`);
-              }}
-            >
-              <input
-                type='hidden'
-                name='organization_id'
-                value={organization.id}
-              />
+          {sortedOrganizations.map((organization) => {
+            return (
+              <form
+                key={organization.id}
+                action={(formData) => {
+                  action(formData);
+                  setOpen(false);
+                  toast.success(`Switched to: ${organization.name}`);
+                }}
+              >
+                <input
+                  type='hidden'
+                  name='organization_id'
+                  value={organization.id}
+                />
 
-              <>
-                {organization.id === organizationActiveId ? (
-                  <div className='gap-5 px-4 py-2.5 w-full flex flex-row justify-between items-center border-b border-border bg-accent/30'>
-                    <div>
-                      <p className='text-sm font-medium text-foreground'>
+                <>
+                  {organization.id === organizationActiveId ? (
+                    <div className='gap-5 px-4 py-2.5 w-full flex flex-row justify-between items-center border-b border-border bg-accent/30'>
+                      <div>
+                        <p className='text-sm font-medium text-foreground'>
+                          {organization.name}
+                        </p>
+                        <p className='text-xs text-muted-foreground'>
+                          {organization.pivot.role}
+                        </p>
+                      </div>
+
+                      <button
+                        className='cursor-pointer text-muted-foreground hover:text-foreground transition-colors'
+                        onClick={() => {
+                          setOpen(false);
+                          push(
+                            `${ROUTES.DASHBOARD.ORGANIZATION}/${organization.id}`,
+                          );
+                        }}
+                      >
+                        <Settings size={16} />
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      type='submit'
+                      disabled={pending}
+                      className='flex flex-row gap-5 px-4 py-2.5 cursor-pointer w-full items-center justify-between hover:bg-accent transition-colors'
+                    >
+                      <p className='text-sm text-foreground'>
                         {organization.name}
                       </p>
                       <p className='text-xs text-muted-foreground'>
                         {organization.pivot.role}
                       </p>
-                    </div>
-
-                    <button
-                      className='cursor-pointer text-muted-foreground hover:text-foreground transition-colors'
-                      onClick={() => {
-                        setOpen(false);
-                        push(
-                          `${ROUTES.DASHBOARD.ORGANIZATION}/${organization.id}`,
-                        );
-                      }}
-                    >
-                      <Settings size={16} />
                     </button>
-                  </div>
-                ) : (
-                  <button
-                    type='submit'
-                    disabled={pending}
-                    className='flex flex-row gap-5 px-4 py-2.5 cursor-pointer w-full items-center justify-between hover:bg-accent transition-colors'
-                  >
-                    <p className='text-sm text-foreground'>
-                      {organization.name}
-                    </p>
-                    <p className='text-xs text-muted-foreground'>
-                      {organization.pivot.role}
-                    </p>
-                  </button>
-                )}
-              </>
-            </form>
-          ))}
+                  )}
+                </>
+              </form>
+            );
+          })}
 
           <button
             onClick={() => {

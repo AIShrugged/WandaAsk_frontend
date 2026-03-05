@@ -9,6 +9,10 @@ export interface MinMaxResult {
   maxItem: MetricItem | null;
 }
 
+/**
+ * selectMinMaxMetric.
+ * @param metrics
+ */
 export function selectMinMaxMetric(
   metrics: AnalysisProps['metrics'],
 ): MinMaxResult {
@@ -25,6 +29,11 @@ export function selectMinMaxMetric(
     }
   }
 
+  /**
+   * updateMinMax.
+   * @param item - item.
+   * @returns Result.
+   */
   function updateMinMax(item: MetricGroup | MetricItem): void {
     const val = item.current_value;
 

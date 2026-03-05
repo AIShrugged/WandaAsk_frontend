@@ -3,6 +3,13 @@
 import { API_URL } from '@/shared/lib/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 
+/**
+ * loadTranscriptChunk.
+ * @param id
+ * @param offset
+ * @param limit
+ * @returns Promise.
+ */
 export async function loadTranscriptChunk(
   id: string,
   offset: number,
@@ -26,6 +33,7 @@ export async function loadTranscriptChunk(
   }
 
   const data = await res.json();
+
   const totalCount = Number(res.headers.get('Items-Count') || '0');
 
   return { data, totalCount, hasMore: offset + limit < totalCount };

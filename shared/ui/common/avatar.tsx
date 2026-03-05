@@ -17,6 +17,13 @@ interface AvatarProps extends PropsWithChildren {
   className?: string;
 }
 
+/**
+ * Avatar component.
+ * @param root0
+ * @param root0.children
+ * @param root0.size
+ * @param root0.className
+ */
 export default function Avatar({
   children,
   size = 'md',

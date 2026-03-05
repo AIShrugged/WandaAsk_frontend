@@ -1,10 +1,7 @@
 import { redirect } from 'next/navigation';
 import React, { Suspense } from 'react';
 
-import {
-  getEvent,
-  getEventFollowUp,
-} from '@/features/event/api/calendar-events';
+import { getEventFollowUp } from '@/features/event/api/calendar-events';
 import FollowUp from '@/features/follow-up/ui/follow-up';
 import {
   available_tabs,
@@ -24,8 +21,15 @@ import Analysis from '../../../../features/analysis/ui/analysis';
 
 import type { PageProps } from '@/shared/types/common';
 
+/**
+ * Page component.
+ * @param searchParams.params
+ * @param searchParams - searchParams.
+ * @param searchParams.searchParams
+ */
 export default async function Page({ params, searchParams }: PageProps) {
   const { id } = await params;
+
   const { tab = available_tabs.summary } = await searchParams;
 
   const { data: followUp } = await getEventFollowUp(id);

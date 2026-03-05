@@ -2,6 +2,11 @@ import * as motion from 'motion/react-client';
 
 import type { PropsWithChildren } from 'react';
 
+/**
+ * Opacity component.
+ * @param props - Component props.
+ * @param props.children
+ */
 export default function Opacity({ children }: PropsWithChildren) {
   return (
     <motion.div

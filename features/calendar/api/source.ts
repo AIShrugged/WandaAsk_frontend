@@ -1,6 +1,10 @@
 import { API_URL } from '@/shared/lib/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 
+/**
+ * getSources.
+ * @returns Promise.
+ */
 export async function getSources() {
   const authHeaders = await getAuthHeaders();
 

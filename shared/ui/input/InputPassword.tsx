@@ -7,6 +7,10 @@ import Input, { type Props as InputProps } from './Input';
 
 type Props = Omit<InputProps, 'type'>;
 
+/**
+ * PasswordInput component.
+ * @param props - props.
+ */
 export default function PasswordInput(props: Props) {
   const [visible, setVisible] = useState(false);
 
@@ -21,7 +25,11 @@ export default function PasswordInput(props: Props) {
           <Hover>
             <button
               type='button'
-              onClick={() => setVisible(prevState => !prevState)}
+              onClick={() => {
+                return setVisible((prevState) => {
+                  return !prevState;
+                });
+              }}
               aria-label={visible ? 'Hide password' : 'Show password'}
               className='cursor-pointer text-primary'
             >

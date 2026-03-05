@@ -2,12 +2,17 @@ import React, {
   forwardRef,
   useId,
   useState,
-  useEffect,
   type TextareaHTMLAttributes,
 } from 'react';
 
-const cn = (...parts: Array<string | false | null | undefined>) =>
-  parts.filter(Boolean).join(' ');
+/**
+ * cn.
+ * @param parts - parts.
+ * @returns Result.
+ */
+const cn = (...parts: Array<string | false | null | undefined>) => {
+  return parts.filter(Boolean).join(' ');
+};
 
 interface TextareaProps
   extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'value'> {
@@ -43,37 +48,43 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     ref,
   ) => {
     const autoId = useId();
+
     const textareaId = id ?? `textarea-${autoId}`;
 
     const [isFocused, setIsFocused] = useState(false);
-    const [internalValue, setInternalValue] = useState<string | undefined>(
-      defaultValue === undefined ? undefined : String(defaultValue),
-    );
 
-    useEffect(() => {
-      if (propValue === undefined) return;
-      setInternalValue(String(propValue ?? ''));
-    }, [propValue]);
+    const currentValue = propValue ?? '';
 
-    const currentValue = propValue ?? internalValue ?? '';
     const hasValue = currentValue.length > 0 || !!placeholder;
 
     const floatingActive = floating && (isFocused || hasValue);
 
+    /**
+     * handleFocus.
+     * @param e - e.
+     * @returns Result.
+     */
     const handleFocus = (e: React.FocusEvent<HTMLTextAreaElement>) => {
       setIsFocused(true);
       onFocus?.(e);
     };
 
+    /**
+     * handleBlur.
+     * @param e - e.
+     * @returns Result.
+     */
     const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
       setIsFocused(false);
       onBlur?.(e);
     };
 
+    /**
+     * handleChange.
+     * @param e - e.
+     * @returns Result.
+     */
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      if (propValue === undefined) {
-        setInternalValue(e.target.value);
-      }
       onChange?.(e);
     };
 

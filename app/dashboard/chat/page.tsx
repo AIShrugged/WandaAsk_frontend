@@ -2,6 +2,9 @@ import { MessageSquare } from 'lucide-react';
 
 import { getChats, ChatList } from '@/features/chat';
 
+/**
+ * ChatPage component.
+ */
 export default async function ChatPage() {
   const { chats, totalCount } = await getChats(0, 20);
 

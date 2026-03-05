@@ -7,6 +7,9 @@ import { BUTTON } from '@/shared/lib/buttons';
 import { ROUTES } from '@/shared/lib/routes';
 import { Button } from '@/shared/ui/button/Button';
 
+/**
+ * MethodologyCreate component.
+ */
 export default function MethodologyCreate() {
   const route = `${ROUTES.DASHBOARD.METHODOLOGY}/create`;
 

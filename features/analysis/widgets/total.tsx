@@ -6,6 +6,11 @@ import { H3 } from '@/shared/ui/typography/H3';
 
 import type { AnalysisProps } from '@/features/analysis/model/types';
 
+/**
+ * Total component.
+ * @param props - Component props.
+ * @param props.total
+ */
 export default function Total({ total }: Pick<AnalysisProps, 'total'>) {
   return (
     <div className={'flex flex-row items-center gap-4'}>

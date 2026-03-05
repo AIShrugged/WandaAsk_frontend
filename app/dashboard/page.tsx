@@ -6,6 +6,9 @@ import { RecentChats } from '@/features/dashboard/ui/RecentChats';
 import { ROUTES } from '@/shared/lib/routes';
 import Card from '@/shared/ui/card/Card';
 
+/**
+ * DashboardPage component.
+ */
 export default async function DashboardPage() {
   const { user, teamsCount, chatsCount, methodologiesCount, recentChats } =
     await getDashboardData();
@@ -32,7 +35,9 @@ export default async function DashboardPage() {
       {/* Recent chats */}
       <Card className='flex flex-col gap-0'>
         <div className='flex items-center justify-between px-5 py-4 border-b border-border'>
-          <h2 className='text-base font-semibold text-foreground'>Recent Chats</h2>
+          <h2 className='text-base font-semibold text-foreground'>
+            Recent Chats
+          </h2>
           <Link
             href={ROUTES.DASHBOARD.CHAT}
             className='text-xs text-primary hover:underline'
@@ -52,15 +57,17 @@ export default async function DashboardPage() {
           { label: 'Calendar', href: ROUTES.DASHBOARD.CALENDAR },
           { label: 'Methodology', href: ROUTES.DASHBOARD.METHODOLOGY },
           { label: 'Statistics', href: ROUTES.DASHBOARD.STATISTICS },
-        ].map(({ label, href }) => (
-          <Link
-            key={href}
-            href={href}
-            className='flex items-center justify-center rounded-[var(--radius-card)] border border-border bg-card px-4 py-3 text-sm font-medium text-foreground shadow-card hover:bg-accent transition-colors'
-          >
-            {label}
-          </Link>
-        ))}
+        ].map(({ label, href }) => {
+          return (
+            <Link
+              key={href}
+              href={href}
+              className='flex items-center justify-center rounded-[var(--radius-card)] border border-border bg-card px-4 py-3 text-sm font-medium text-foreground shadow-card hover:bg-accent transition-colors'
+            >
+              {label}
+            </Link>
+          );
+        })}
       </div>
     </div>
   );

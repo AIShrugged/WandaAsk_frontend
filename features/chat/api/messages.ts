@@ -9,6 +9,13 @@ import { logApiError } from '@/shared/lib/logger';
 import type { Message } from '@/features/chat/types';
 import type { ApiResponse } from '@/shared/types/common';
 
+/**
+ * getMessages.
+ * @param chatId
+ * @param offset
+ * @param limit
+ * @returns Promise.
+ */
 export async function getMessages(
   chatId: number,
   offset = 0,
@@ -24,7 +31,13 @@ export async function getMessages(
   if (!res.ok) {
     if (res.status === 401) redirect('/api/auth/clear-session');
     const text = await res.text();
-    logApiError({ url: res.url, status: res.status, statusText: res.statusText, body: text });
+
+    logApiError({
+      url: res.url,
+      status: res.status,
+      statusText: res.statusText,
+      body: text,
+    });
     throw new Error(text || 'Failed to load messages');
   }
 
@@ -43,6 +56,12 @@ export async function getMessages(
   };
 }
 
+/**
+ * sendMessage.
+ * @param chatId
+ * @param content
+ * @returns Promise.
+ */
 export async function sendMessage(
   chatId: number,
   content: string,
@@ -59,11 +78,23 @@ export async function sendMessage(
   if (!res.ok) {
     if (res.status === 401) redirect('/api/auth/clear-session');
     const text = await res.text();
-    logApiError({ method: 'POST', url: res.url, status: res.status, statusText: res.statusText, body: text });
-    throw new Error((JSON.parse(text) as { message?: string })?.message ?? 'Failed to send message');
+
+    logApiError({
+      method: 'POST',
+      url: res.url,
+      status: res.status,
+      statusText: res.statusText,
+      body: text,
+    });
+    throw new Error(
+      (JSON.parse(text) as { message?: string })?.message ??
+        'Failed to send message',
+    );
   }
 
   const json: ApiResponse<Message | Message[]> = await res.json();
+
   const data = json.data!;
+
   return Array.isArray(data) ? data : [data];
 }

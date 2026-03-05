@@ -6,6 +6,12 @@ import { H4 } from '@/shared/ui/typography/H4';
 
 import type { EventProps } from '@/entities/event';
 
+/**
+ * EventPopupAll component.
+ * @param root0
+ * @param root0.list
+ * @param root0.close
+ */
 export const EventPopupAll = ({
   list,
   close,
@@ -26,9 +32,9 @@ export const EventPopupAll = ({
       </div>
 
       <div className='p-4 flex flex-col gap-1'>
-        {list.map(event => (
-          <div key={event.id} />
-        ))}
+        {list.map((event) => {
+          return <div key={event.id} />;
+        })}
       </div>
     </div>
   );

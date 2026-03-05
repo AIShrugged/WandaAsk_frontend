@@ -4,12 +4,12 @@ import InputDropdown from '@/shared/ui/input/InputDropdown';
 import PasswordInput from '@/shared/ui/input/InputPassword';
 import InputTextarea from '@/shared/ui/input/InputTextarea';
 
+import type { DropdownOption } from '@/shared/ui/input/InputDropdown';
 import type { ReactNode } from 'react';
 import type {
   ControllerRenderProps,
   ControllerFieldState,
 } from 'react-hook-form';
-import type { DropdownOption } from '@/shared/ui/input/InputDropdown';
 
 type FieldConfig = {
   label: string;
@@ -21,6 +21,7 @@ type FieldConfig = {
 };
 
 type VariantProps = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   field: ControllerRenderProps<any, string>;
   fieldState: ControllerFieldState;
   config: FieldConfig;
@@ -84,7 +85,9 @@ export const VARIANT_MAPPER = {
         placeholder={config.placeholder}
         options={config.options ?? []}
         value={field.value}
-        onChange={val => field.onChange(val as string)}
+        onChange={(val) => {
+          return field.onChange(val as string);
+        }}
         disabled={field.disabled}
         error={fieldState.error?.message}
         searchable={config.searchable ?? false}
@@ -102,7 +105,9 @@ export const VARIANT_MAPPER = {
         placeholder={config.placeholder}
         options={config.options ?? []}
         value={field.value}
-        onChange={val => field.onChange(val as string[])}
+        onChange={(val) => {
+          return field.onChange(val as string[]);
+        }}
         disabled={field.disabled}
         error={fieldState.error?.message}
         searchable={config.searchable ?? false}

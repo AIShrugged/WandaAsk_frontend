@@ -17,11 +17,24 @@ import type { ApiResponse } from '@/shared/types/common';
 // ------------------------------
 // Teams API
 // ------------------------------
+/**
+ * getTeams.
+ * @param organizationId - organizationId.
+ * @returns Promise.
+ */
 export const getTeams = async (organizationId: number | string) => {
   const { data, totalCount } = await loadTeamsChunk(organizationId, 0, 10);
+
   return { data, totalCount };
 };
 
+/**
+ * loadTeamsChunk.
+ * @param organizationId
+ * @param offset
+ * @param limit
+ * @returns Promise.
+ */
 export async function loadTeamsChunk(
   organizationId: number | string,
   offset: number,
@@ -41,6 +54,7 @@ export async function loadTeamsChunk(
 
   if (!res.ok) {
     const text = await res.text();
+
     throw new Error(`${text}`);
   }
 
@@ -55,9 +69,20 @@ export async function loadTeamsChunk(
   return { data: json.data, totalCount, hasMore: offset + limit < totalCount };
 }
 
-export const getTeam = async (teamId: string) =>
-  httpClient<TeamProps>(`${API_URL}/teams/${teamId}`);
+/**
+ * getTeam.
+ * @param teamId - teamId.
+ * @returns Promise.
+ */
+export const getTeam = async (teamId: string) => {
+  return httpClient<TeamProps>(`${API_URL}/teams/${teamId}`);
+};
 
+/**
+ * deleteTeam.
+ * @param teamId - teamId.
+ * @returns Promise.
+ */
 export async function deleteTeam(teamId: number) {
   const authHeaders = await getAuthHeaders();
 
@@ -78,6 +103,12 @@ export async function deleteTeam(teamId: number) {
 // ------------------------------
 // Create / Update
 // ------------------------------
+/**
+ * createTeam.
+ * @param organizationId - organizationId.
+ * @param data - data.
+ * @returns Promise.
+ */
 export async function createTeam(organizationId: string, data: TeamCreateDTO) {
   const authHeaders = await getAuthHeaders();
 
@@ -95,13 +126,21 @@ export async function createTeam(organizationId: string, data: TeamCreateDTO) {
 
   if (!res.ok) {
     const text = await res.text();
+
     return { error: text || 'Failed to create team' };
   }
 
   revalidatePath('/team');
+
   return { error: null };
 }
 
+/**
+ * updateTeam.
+ * @param id - id.
+ * @param data - data.
+ * @returns Promise.
+ */
 export async function updateTeam(id: number, data: TeamCreateDTO) {
   await httpClient<TeamProps>(`${API_URL}/teams/${id}`, {
     method: 'PUT',
@@ -111,6 +150,11 @@ export async function updateTeam(id: number, data: TeamCreateDTO) {
   revalidatePath('/team');
 }
 
+/**
+ * getTeamFollowUps.
+ * @param teamId
+ * @returns Promise.
+ */
 export const getTeamFollowUps = async (
   teamId: number | string,
 ): Promise<{ data: TeamFollowUpDTO[] }> => {
@@ -125,6 +169,7 @@ export const getTeamFollowUps = async (
 
   if (!res.ok) {
     const text = await res.text();
+
     throw new Error(`${text}`);
   }
 
@@ -137,6 +182,11 @@ export const getTeamFollowUps = async (
   return { data: json.data };
 };
 
+/**
+ * getTeamFollowUp.
+ * @param calendarEventId - calendarEventId.
+ * @returns Promise.
+ */
 export const getTeamFollowUp = async (calendarEventId: number | string) => {
   const authHeaders = await getAuthHeaders();
 
@@ -152,6 +202,7 @@ export const getTeamFollowUp = async (calendarEventId: number | string) => {
 
   if (!res.ok) {
     const text = await res.text();
+
     throw new Error(`${text}`);
   }
 
@@ -164,6 +215,12 @@ export const getTeamFollowUp = async (calendarEventId: number | string) => {
   return { data: json.data };
 };
 
+/**
+ * sendInvite.
+ * @param teamId - teamId.
+ * @param data - data.
+ * @returns Promise.
+ */
 export const sendInvite = async (teamId: number, data: TeamAddMemberDTO) => {
   const authHeaders = await getAuthHeaders();
 

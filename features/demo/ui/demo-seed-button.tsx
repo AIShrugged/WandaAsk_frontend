@@ -13,13 +13,26 @@ import { Button } from '@/shared/ui/button/Button';
 import SpinLoader from '@/shared/ui/layout/spin-loader';
 
 const TEAMS_COUNT_OPTIONS = [1, 2, 3] as const;
+
 const MEETINGS_OPTIONS = [1, 2, 3, 4, 5, 6] as const;
+
 const EMPLOYEES_MIN = 3;
+
 const EMPLOYEES_MAX = 10;
+
 const LABEL_CLASS = 'text-xs font-medium text-muted-foreground';
+
 const POLLING_INTERVAL_MS = 2000;
+
 const MAX_POLL_RETRIES = 150; // ~5 minutes at 2s interval
 
+/**
+ * SegmentedControl component.
+ * @param root0
+ * @param root0.value
+ * @param root0.options
+ * @param root0.onChange
+ */
 function SegmentedControl({
   value,
   options,
@@ -31,25 +44,37 @@ function SegmentedControl({
 }) {
   return (
     <div className='flex rounded-[var(--radius-button)] border border-input bg-muted p-0.5 gap-0.5'>
-      {options.map(opt => (
-        <button
-          key={opt}
-          type='button'
-          onClick={() => onChange(opt)}
-          className={clsx(
-            'flex-1 h-7 text-xs rounded-sm font-medium transition-all cursor-pointer',
-            opt === value
-              ? 'bg-background text-foreground shadow-sm'
-              : 'text-muted-foreground hover:text-foreground',
-          )}
-        >
-          {opt}
-        </button>
-      ))}
+      {options.map((opt) => {
+        return (
+          <button
+            key={opt}
+            type='button'
+            onClick={() => {
+              return onChange(opt);
+            }}
+            className={clsx(
+              'flex-1 h-7 text-xs rounded-sm font-medium transition-all cursor-pointer',
+              opt === value
+                ? 'bg-background text-foreground shadow-sm'
+                : 'text-muted-foreground hover:text-foreground',
+            )}
+          >
+            {opt}
+          </button>
+        );
+      })}
     </div>
   );
 }
 
+/**
+ * Stepper component.
+ * @param root0
+ * @param root0.value
+ * @param root0.min
+ * @param root0.max
+ * @param root0.onChange
+ */
 function Stepper({
   value,
   min,
@@ -65,7 +90,9 @@ function Stepper({
     <div className='flex items-center border border-input rounded-[var(--radius-button)] overflow-hidden'>
       <button
         type='button'
-        onClick={() => onChange(Math.max(min, value - 1))}
+        onClick={() => {
+          return onChange(Math.max(min, value - 1));
+        }}
         disabled={value === min}
         className='w-9 h-8 flex items-center justify-center text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer border-r border-input'
       >
@@ -76,7 +103,9 @@ function Stepper({
       </span>
       <button
         type='button'
-        onClick={() => onChange(Math.min(max, value + 1))}
+        onClick={() => {
+          return onChange(Math.min(max, value + 1));
+        }}
         disabled={value === max}
         className='w-9 h-8 flex items-center justify-center text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer border-l border-input'
       >
@@ -86,23 +115,40 @@ function Stepper({
   );
 }
 
+/**
+ * DemoSeedButton component.
+ */
 export default function DemoSeedButton() {
   const [isOpen, setIsOpen] = useState(false);
+
   const [isPending, setIsPending] = useState(false);
+
   const [progressPercent, setProgressPercent] = useState<number | null>(null);
+
   const [stepLabel, setStepLabel] = useState<string | null>(null);
+
   const [teamsCount, setTeamsCount] = useState(1);
+
   const [employeesPerTeam, setEmployeesPerTeam] = useState(7);
+
   const [meetingsPerTeam, setMeetingsPerTeam] = useState(3);
 
   const containerRef = useRef<HTMLDivElement>(null);
+
   const pollingRef = useRef(false);
+
   const pollCountRef = useRef(0);
+
   const mountedRef = useRef(true);
+
   const router = useRouter();
 
+  /**
+   * stopPolling.
+   */
   const stopPolling = () => {
     pollingRef.current = false;
+
     if (mountedRef.current) {
       setIsPending(false);
       setProgressPercent(null);
@@ -110,16 +156,24 @@ export default function DemoSeedButton() {
     }
   };
 
+  /**
+   * startPolling.
+   */
   const startPolling = () => {
     pollingRef.current = true;
     pollCountRef.current = 0;
 
+    /**
+     * poll.
+     * @returns Promise.
+     */
     const poll = async () => {
       if (!pollingRef.current || !mountedRef.current) return;
 
       if (pollCountRef.current >= MAX_POLL_RETRIES) {
         stopPolling();
         toast.error('Demo generation timed out. Please try again.');
+
         return;
       }
 
@@ -133,6 +187,7 @@ export default function DemoSeedButton() {
         if (status === null) {
           // 404 — generation not found yet, continue polling
           setTimeout(poll, POLLING_INTERVAL_MS);
+
           return;
         }
 
@@ -149,12 +204,14 @@ export default function DemoSeedButton() {
             toast.success('Demo data is ready!');
             router.push('/auth/organization');
           }, 600);
+
           return;
         }
 
         if (status.status === 'failed') {
           stopPolling();
           toast.error(status.error ?? 'Demo generation failed.');
+
           return;
         }
 
@@ -164,7 +221,9 @@ export default function DemoSeedButton() {
         if (!pollingRef.current || !mountedRef.current) return;
         stopPolling();
         toast.error(
-          error instanceof Error ? error.message : 'Failed to check demo status.',
+          error instanceof Error
+            ? error.message
+            : 'Failed to check demo status.',
         );
       }
     };
@@ -173,12 +232,20 @@ export default function DemoSeedButton() {
   };
 
   useEffect(() => {
+    /**
+     * checkInitialStatus.
+     * @returns Promise.
+     */
     const checkInitialStatus = async () => {
       try {
         const status = await getDemoStatus();
+
         if (!mountedRef.current) return;
 
-        if (status !== null && (status.status === 'generating' || status.status === 'pending')) {
+        if (
+          status !== null &&
+          (status.status === 'generating' || status.status === 'pending')
+        ) {
           setProgressPercent(status.progress_percent);
           setStepLabel(status.current_step_label);
           setIsPending(true);
@@ -200,16 +267,31 @@ export default function DemoSeedButton() {
   useEffect(() => {
     if (!isOpen) return;
 
+    /**
+     * handleClickOutside.
+     * @param e - e.
+     * @returns Result.
+     */
     const handleClickOutside = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(e.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      return document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, [isOpen]);
 
+  /**
+   * handleGenerate.
+   * @returns Promise.
+   */
   const handleGenerate = async () => {
     setIsOpen(false);
     setIsPending(true);
@@ -236,12 +318,18 @@ export default function DemoSeedButton() {
       <div ref={containerRef} className='relative'>
         {/* Trigger */}
         <button
-          onClick={() => setIsOpen(v => !v)}
+          onClick={() => {
+            return setIsOpen((v) => {
+              return !v;
+            });
+          }}
           disabled={isPending}
           className={clsx(
             'flex items-center gap-2 px-3 h-9 rounded-[var(--radius-button)] text-sm font-medium transition-all select-none border text-primary border-primary/20',
             !isPending && isOpen && 'bg-primary/10 border-primary/30',
-            !isPending && !isOpen && 'hover:bg-primary/10 hover:border-primary/30 cursor-pointer',
+            !isPending &&
+              !isOpen &&
+              'hover:bg-primary/10 hover:border-primary/30 cursor-pointer',
             isPending && 'opacity-70 cursor-not-allowed',
           )}
           aria-label='Generate demo data'
@@ -267,8 +355,12 @@ export default function DemoSeedButton() {
                 <Sparkles className='w-3.5 h-3.5 text-primary' />
               </div>
               <div>
-                <p className='text-sm font-semibold text-foreground leading-tight'>Demo data</p>
-                <p className='text-xs text-muted-foreground leading-tight'>Configure and generate</p>
+                <p className='text-sm font-semibold text-foreground leading-tight'>
+                  Demo data
+                </p>
+                <p className='text-xs text-muted-foreground leading-tight'>
+                  Configure and generate
+                </p>
               </div>
             </div>
 
@@ -288,7 +380,9 @@ export default function DemoSeedButton() {
                 <div className='flex items-center justify-between'>
                   <span className={LABEL_CLASS}>Employees per team</span>
                   <span className='text-xs text-muted-foreground'>
-                    {EMPLOYEES_MIN}{'\u2013'}{EMPLOYEES_MAX}
+                    {EMPLOYEES_MIN}
+                    {'\u2013'}
+                    {EMPLOYEES_MAX}
                   </span>
                 </div>
                 <Stepper
@@ -326,7 +420,9 @@ export default function DemoSeedButton() {
             <div className='bg-card border border-border rounded-[var(--radius-card)] shadow-card p-6 flex flex-col gap-3 w-72'>
               {/* Title + percent */}
               <div className='flex items-center justify-between'>
-                <p className='text-sm font-semibold text-foreground'>Generating demo</p>
+                <p className='text-sm font-semibold text-foreground'>
+                  Generating demo
+                </p>
                 {progressPercent !== null && (
                   <span className='text-sm font-bold text-primary tabular-nums'>
                     {progressPercent}%

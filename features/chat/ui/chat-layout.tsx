@@ -20,6 +20,18 @@ interface ChatLayoutProps {
   startOffset: number;
 }
 
+/**
+ * ChatLayout component.
+ * @param root0
+ * @param root0.initialChats
+ * @param root0.totalCount
+ * @param root0.activeChatId
+ * @param root0.chatId
+ * @param root0.initialArtifacts
+ * @param root0.initialMessages
+ * @param root0.totalMessagesCount
+ * @param root0.startOffset
+ */
 export function ChatLayout({
   initialChats,
   totalCount,
@@ -45,7 +57,9 @@ export function ChatLayout({
       {isChatCollapsed ? (
         <CollapsedSidePanel
           label='Chat'
-          onExpand={() => setIsChatCollapsed(false)}
+          onExpand={() => {
+            return setIsChatCollapsed(false);
+          }}
         />
       ) : (
         <div className='flex-1 min-w-0 flex flex-col'>
@@ -54,7 +68,9 @@ export function ChatLayout({
             initialMessages={initialMessages}
             totalCount={totalMessagesCount}
             startOffset={startOffset}
-            onCollapse={() => setIsChatCollapsed(true)}
+            onCollapse={() => {
+              return setIsChatCollapsed(true);
+            }}
           />
         </div>
       )}

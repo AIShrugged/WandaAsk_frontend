@@ -12,15 +12,27 @@ interface ChatMessageProps {
   message: Message;
 }
 
+/**
+ * ChatMessage component.
+ * @param props - Component props.
+ * @param props.message
+ */
 export function ChatMessage({ message }: ChatMessageProps) {
   const isUser = message.role === 'user';
+
   const [copied, setCopied] = useState(false);
 
+  /**
+   * copyToClipboard.
+   * @returns Promise.
+   */
   const copyToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(message.content);
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      setTimeout(() => {
+        return setCopied(false);
+      }, 2000);
     } catch {
       // clipboard not available (e.g. non-secure context) — silently ignore
     }
@@ -28,7 +40,9 @@ export function ChatMessage({ message }: ChatMessageProps) {
 
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
-      <div className={`flex flex-col gap-1 max-w-[85%] ${isUser ? 'items-end' : 'items-start'}`}>
+      <div
+        className={`flex flex-col gap-1 max-w-[85%] ${isUser ? 'items-end' : 'items-start'}`}
+      >
         {/* Bubble */}
         <div
           className={`rounded-lg px-4 py-3 text-sm leading-relaxed ${
@@ -45,7 +59,9 @@ export function ChatMessage({ message }: ChatMessageProps) {
         </div>
 
         {/* Meta row: time + copy */}
-        <div className={`flex items-center gap-2 px-1 ${isUser ? 'flex-row-reverse' : 'flex-row'}`}>
+        <div
+          className={`flex items-center gap-2 px-1 ${isUser ? 'flex-row-reverse' : 'flex-row'}`}
+        >
           <time className='text-xs text-muted-foreground'>
             {format(new Date(message.created_at), 'HH:mm')}
           </time>

@@ -8,6 +8,11 @@ import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 import type { EventProps } from '@/entities/event';
 import type { ApiResponse } from '@/shared/types/common';
 
+/**
+ * getEvent.
+ * @param id - id.
+ * @returns Promise.
+ */
 export async function getEvent(id: string) {
   const authHeaders = await getAuthHeaders();
 
@@ -35,6 +40,10 @@ export async function getEvent(id: string) {
   };
 }
 
+/**
+ * getEvents.
+ * @returns Promise.
+ */
 export async function getEvents() {
   const authHeaders = await getAuthHeaders();
 
@@ -62,6 +71,12 @@ export async function getEvents() {
   };
 }
 
+/**
+ * switchBot.
+ * @param eventId - eventId.
+ * @param botRequired - botRequired.
+ * @returns Promise.
+ */
 export async function switchBot(eventId: number, botRequired: boolean) {
   const authHeaders = await getAuthHeaders();
 
@@ -88,6 +103,11 @@ export async function switchBot(eventId: number, botRequired: boolean) {
   return await res.json();
 }
 
+/**
+ * getFollowUps.
+ * @param id - id.
+ * @returns Promise.
+ */
 export async function getFollowUps(id: number) {
   const authHeaders = await getAuthHeaders();
 
@@ -109,6 +129,11 @@ export async function getFollowUps(id: number) {
   return res.json();
 }
 
+/**
+ * getEventFollowUp.
+ * @param calendarEventId - calendarEventId.
+ * @returns Promise.
+ */
 export const getEventFollowUp = async (calendarEventId: number | string) => {
   const authHeaders = await getAuthHeaders();
 
@@ -124,6 +149,7 @@ export const getEventFollowUp = async (calendarEventId: number | string) => {
 
   if (!res.ok) {
     const text = await res.text();
+
     throw new Error(`${text}`);
   }
 

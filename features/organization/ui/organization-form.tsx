@@ -19,12 +19,18 @@ import type {
   OrganizationProps,
 } from '@/entities/organization';
 
+/**
+ * OrganizationForm component.
+ * @param root0
+ * @param root0.values
+ */
 export default function OrganizationForm({
   values,
 }: {
   values?: OrganizationProps;
 }) {
   const FORM_ID = 'organization-form';
+
   const isEdit = Boolean(values?.id);
 
   const [isPending, startTransition] = useTransition();
@@ -40,6 +46,11 @@ export default function OrganizationForm({
     reValidateMode: 'onChange',
   });
 
+  /**
+   * onSubmit.
+   * @param data - data.
+   * @returns Result.
+   */
   const onSubmit = (data: OrganizationDTO) => {
     startTransition(async () => {
       try {
@@ -59,26 +70,29 @@ export default function OrganizationForm({
         onSubmit={handleSubmit(onSubmit)}
         className='w-full flex flex-col gap-8 h-full'
       >
-        {ORGANIZATION_FIELDS.map(field => (
-          <Controller
-            key={field.name}
-            name={field.name as keyof OrganizationDTO}
-            control={control}
-            rules={field.rules}
-            render={({ field: hookField, fieldState }) => {
-              const variant: VariantType = field.variant;
-              const Component = VARIANT_MAPPER[variant];
+        {ORGANIZATION_FIELDS.map((field) => {
+          return (
+            <Controller
+              key={field.name}
+              name={field.name as keyof OrganizationDTO}
+              control={control}
+              rules={field.rules}
+              render={({ field: hookField, fieldState }) => {
+                const variant: VariantType = field.variant;
 
-              return (
-                <Component
-                  field={hookField}
-                  fieldState={fieldState}
-                  config={field}
-                />
-              );
-            }}
-          />
-        ))}
+                const Component = VARIANT_MAPPER[variant];
+
+                return (
+                  <Component
+                    field={hookField}
+                    fieldState={fieldState}
+                    config={field}
+                  />
+                );
+              }}
+            />
+          );
+        })}
 
         {isEdit && (
           <div className={'mt-auto w-full md:w-[170px]'}>

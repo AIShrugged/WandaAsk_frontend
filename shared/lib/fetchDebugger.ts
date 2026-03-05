@@ -23,27 +23,52 @@ import {
 // ── Startup banner ─────────────────────────────────────────────────────────
 
 const ESC = '\u001B[';
+
 const B = {
-  reset:   `${ESC}0m`,
-  bold:    `${ESC}1m`,
-  dim:     `${ESC}2m`,
+  reset: `${ESC}0m`,
+  bold: `${ESC}1m`,
+  dim: `${ESC}2m`,
   magenta: `${ESC}35m`,
-  gray:    `${ESC}90m`,
-  cyan:    `${ESC}36m`,
+  gray: `${ESC}90m`,
+  cyan: `${ESC}36m`,
 } as const;
 
+/**
+ * logDebugBanner.
+ */
 function logDebugBanner(): void {
   const backendUrl = process.env.API_URL ?? '(not set)';
-  const threshold  = String(SLOW_THRESHOLD_MS) + 'ms';
-  const line       = B.dim + '─'.repeat(60) + B.reset;
+
+  const threshold = String(SLOW_THRESHOLD_MS) + 'ms';
+
+  const line = B.dim + '─'.repeat(60) + B.reset;
 
   // eslint-disable-next-line no-console
   console.log(
-    '\n' + line + '\n' +
-    B.magenta + B.bold + '  \u25C6 Tribes Fetch Debugger' + B.reset + '\n' +
-    '  ' + B.dim + 'Backend  ' + B.reset + B.cyan + backendUrl + B.reset + '\n' +
-    '  ' + B.dim + 'Slow \u2265  ' + B.reset + threshold + '\n' +
-    line + '\n',
+    '\n' +
+      line +
+      '\n' +
+      B.magenta +
+      B.bold +
+      '  \u25C6 Tribes Fetch Debugger' +
+      B.reset +
+      '\n' +
+      '  ' +
+      B.dim +
+      'Backend  ' +
+      B.reset +
+      B.cyan +
+      backendUrl +
+      B.reset +
+      '\n' +
+      '  ' +
+      B.dim +
+      'Slow \u2265  ' +
+      B.reset +
+      threshold +
+      '\n' +
+      line +
+      '\n',
   );
 }
 
@@ -51,14 +76,24 @@ function logDebugBanner(): void {
 
 type RequestTag = 'BACKEND' | 'EXT';
 
+/**
+ * resolveTag.
+ * @param url - url.
+ * @returns Result.
+ */
 function resolveTag(url: string): RequestTag | undefined {
   const apiUrl = process.env.API_URL;
+
   if (apiUrl && url.startsWith(apiUrl)) return 'BACKEND';
   // Any other absolute URL to a different host
   try {
     const { origin } = new URL(url);
+
     if (origin !== 'null') return 'EXT';
-  } catch { /* relative URL — no tag */ }
+  } catch {
+    /* relative URL — no tag */
+  }
+
   return undefined;
 }
 
@@ -74,18 +109,38 @@ const SKIP_PATTERNS = [
   '_rsc=',
 ];
 
+/**
+ * shouldSkip.
+ * @param url - url.
+ * @returns Result.
+ */
 function shouldSkip(url: string): boolean {
-  return SKIP_PATTERNS.some(p => url.includes(p));
+  return SKIP_PATTERNS.some((p) => {
+    return url.includes(p);
+  });
 }
 
+/**
+ * extractUrl.
+ * @param input - input.
+ * @returns Result.
+ */
 function extractUrl(input: RequestInfo | URL): string {
   if (typeof input === 'string') return input;
+
   if (input instanceof URL) return input.href;
+
   return (input as Request).url;
 }
 
+/**
+ * extractHeaders.
+ * @param init - init.
+ * @returns Result.
+ */
 function extractHeaders(init: RequestInit): Record<string, string> {
   const headers: Record<string, string> = {};
+
   if (!init.headers) return headers;
 
   if (init.headers instanceof Headers) {
@@ -101,24 +156,41 @@ function extractHeaders(init: RequestInit): Record<string, string> {
   return headers;
 }
 
+/**
+ * extractBodyText.
+ * @param init - init.
+ * @returns Result.
+ */
 function extractBodyText(init: RequestInit): string | undefined {
   if (!init.body) return undefined;
+
   if (typeof init.body === 'string') return init.body;
+
   return '(non-string body \u2014 FormData / ArrayBuffer / etc.)';
 }
 
+/**
+ * isStreaming.
+ * @param res - res.
+ * @returns Result.
+ */
 function isStreaming(res: Response): boolean {
   const ct = res.headers.get('content-type') ?? '';
+
   return ct.includes('text/event-stream') || ct.includes('octet-stream');
 }
 
 /**
  * Builds a new RequestInit with the X-Debug-Request-ID header injected.
  * Does not mutate the original init object.
+ * @param init
+ * @param id
  */
 function withDebugHeader(init: RequestInit, id: string): RequestInit {
   const headers = new Headers(init.headers as HeadersInit | undefined);
+
   headers.set('X-Debug-Request-ID', id);
+
   return { ...init, headers };
 }
 
@@ -131,6 +203,7 @@ export function patchServerFetch(): void {
 
   // Detect double-patch via a Symbol property on globalThis.
   const g = globalThis as typeof globalThis & { [PATCHED_SYM]?: true };
+
   if (g[PATCHED_SYM]) return;
 
   logDebugBanner();
@@ -142,16 +215,21 @@ export function patchServerFetch(): void {
     init: RequestInit = {},
   ): Promise<Response> {
     const url = extractUrl(input);
+
     if (shouldSkip(url)) return original(input, init);
 
     // Capture caller stack and timestamp BEFORE the async boundary
     // so the stack reflects the actual call site.
     const caller = captureCallerStack('fetchDebugger');
+
     const timestamp = formatTimestamp();
 
     const id = createRequestId();
+
     const method = ((init.method ?? 'GET') as string).toUpperCase();
+
     const rawHeaders = extractHeaders(init);
+
     const body = extractBodyText(init);
 
     logRequest({
@@ -172,25 +250,32 @@ export function patchServerFetch(): void {
 
     try {
       const res = await original(input, patchedInit);
+
       const durationMs = Math.round(performance.now() - start);
 
       // Clone before reading so the caller's response stream is untouched.
       let responseBody: string | undefined;
+
       if (!isStreaming(res)) {
         try {
           responseBody = await res.clone().text();
-        } catch { /* ignore read errors on non-critical clone */ }
+        } catch {
+          /* ignore read errors on non-critical clone */
+        }
       }
 
       // Response size: prefer Content-Length header, fall back to body length.
       const contentLength = res.headers.get('content-length');
+
       const byteCount = contentLength
         ? Number(contentLength)
         : (responseBody?.length ?? 0);
+
       const size = byteCount > 0 ? formatBytes(byteCount) : undefined;
 
       // Next.js Data Cache status.
       const rawCache = res.headers.get('x-nextjs-cache');
+
       const cacheStatus = rawCache ?? undefined;
 
       logResponse({
@@ -208,6 +293,7 @@ export function patchServerFetch(): void {
       return res;
     } catch (error) {
       const durationMs = Math.round(performance.now() - start);
+
       logApiError({
         method,
         url,

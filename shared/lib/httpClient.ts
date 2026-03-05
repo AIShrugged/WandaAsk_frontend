@@ -9,6 +9,12 @@ import { logApiError } from '@/shared/lib/logger';
 
 import type { ApiResponse, PaginatedResult } from '@/shared/types/common';
 
+/**
+ * httpClient.
+ * @param url
+ * @param options
+ * @returns Promise.
+ */
 export async function httpClient<T>(
   url: string,
   options: RequestInit = {},
@@ -30,7 +36,14 @@ export async function httpClient<T>(
     }
 
     const text = await res.text();
-    logApiError({ method: options.method, url, status: res.status, statusText: res.statusText, body: text });
+
+    logApiError({
+      method: options.method,
+      url,
+      status: res.status,
+      statusText: res.statusText,
+      body: text,
+    });
     throw new ServerError('A server error occurred. Please try again.', {
       status: res.status,
       url,
@@ -50,6 +63,12 @@ export async function httpClient<T>(
 // ------------------------------
 // Paginated HTTP client — extracts Items-Count header
 // ------------------------------
+/**
+ * httpClientList.
+ * @param url
+ * @param options
+ * @returns Promise.
+ */
 export async function httpClientList<T>(
   url: string,
   options: RequestInit = {},
@@ -71,7 +90,14 @@ export async function httpClientList<T>(
     }
 
     const text = await res.text();
-    logApiError({ method: options.method, url, status: res.status, statusText: res.statusText, body: text });
+
+    logApiError({
+      method: options.method,
+      url,
+      status: res.status,
+      statusText: res.statusText,
+      body: text,
+    });
     throw new ServerError('A server error occurred. Please try again.', {
       status: res.status,
       url,
@@ -87,5 +113,9 @@ export async function httpClientList<T>(
 
   const totalCount = Number(res.headers.get('Items-Count') ?? '0');
 
-  return { data: json.data, totalCount, hasMore: json.data.length < totalCount };
+  return {
+    data: json.data,
+    totalCount,
+    hasMore: json.data.length < totalCount,
+  };
 }

@@ -9,6 +9,9 @@ import PageHeader from '@/widgets/layout/ui/page-header';
 
 import type { TeamProps } from '@/entities/team';
 
+/**
+ * Page component.
+ */
 export default async function Page() {
   const organizationId = await getOrganizationId();
 

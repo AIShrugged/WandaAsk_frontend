@@ -2,6 +2,11 @@ import clsx from 'clsx';
 
 import { APP_NAME } from '@/shared/lib/app-name';
 
+/**
+ * TribesLogo component.
+ * @param props - Component props.
+ * @param props.className
+ */
 export function TribesLogo({ className }: { className?: string }) {
   return (
     <div className={clsx('flex items-center gap-2', className)}>

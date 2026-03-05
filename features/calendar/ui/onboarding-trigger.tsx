@@ -7,10 +7,18 @@ import { H1 } from '@/shared/ui/typography/H1';
 
 import OnboardingImage from './onboarding-image';
 
+/**
+ * OnboardingTrigger component.
+ */
 export default function OnboardingTrigger() {
   const [isPending, setIsPending] = useState(false);
+
   const [error, setError] = useState<string | null>(null);
 
+  /**
+   * handleAttach.
+   * @returns Promise.
+   */
   const handleAttach = async () => {
     setError(null);
     setIsPending(true);
@@ -18,7 +26,9 @@ export default function OnboardingTrigger() {
     try {
       globalThis.location.href = await attachCalendar();
     } catch (error_) {
-      setError(error_ instanceof Error ? error_.message : 'Something went wrong');
+      setError(
+        error_ instanceof Error ? error_.message : 'Something went wrong',
+      );
       setIsPending(false);
     }
   };

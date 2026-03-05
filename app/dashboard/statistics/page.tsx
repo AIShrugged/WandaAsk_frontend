@@ -4,6 +4,9 @@ import Card from '@/shared/ui/card/Card';
 import CardBody from '@/shared/ui/card/CardBody';
 import PageHeader from '@/widgets/layout/ui/page-header';
 
+/**
+ * Page component.
+ */
 export default function Page() {
   return (
     <Card className='min-h-full h-full overflow-x-hidden overflow-y-scroll'>

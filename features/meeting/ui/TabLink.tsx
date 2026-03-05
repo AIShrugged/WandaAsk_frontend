@@ -4,6 +4,12 @@ import { useRouter } from 'next/navigation';
 
 import type { ReactNode } from 'react';
 
+/**
+ * TabLink component.
+ * @param root0
+ * @param root0.tab
+ * @param root0.children
+ */
 export function TabLink({
   tab,
   children,
@@ -13,6 +19,11 @@ export function TabLink({
 }) {
   const router = useRouter();
 
+  /**
+   * handleClick.
+   * @param e - e.
+   * @returns Result.
+   */
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     router.replace(`?tab=${tab}`, { scroll: false });

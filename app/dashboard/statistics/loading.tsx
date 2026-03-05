@@ -1,6 +1,9 @@
 import Card from '@/shared/ui/card/Card';
 import { Skeleton } from '@/shared/ui/layout/skeleton';
 
+/**
+ * Loading component.
+ */
 export default function Loading() {
   return (
     <Card className='h-full flex flex-col gap-4 p-6'>

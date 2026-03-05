@@ -1,9 +1,20 @@
 import type { InsightCardArtifact } from '@/features/chat/types';
 
+/**
+ * formatKey.
+ * @param key - key.
+ * @returns Result.
+ */
 function formatKey(key: string): string {
-  return key.replace(/_/g, ' ');
+  return key.replaceAll('_', ' ');
 }
 
+/**
+ * InsightSection component.
+ * @param root0
+ * @param root0.category
+ * @param root0.content
+ */
 function InsightSection({
   category,
   content,
@@ -21,14 +32,16 @@ function InsightSection({
         if (Array.isArray(value) && value.length > 0) {
           return (
             <div key={key} className='flex flex-wrap gap-1.5'>
-              {(value as string[]).map((item, i) => (
-                <span
-                  key={i}
-                  className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary'
-                >
-                  {item}
-                </span>
-              ))}
+              {(value as string[]).map((item, i) => {
+                return (
+                  <span
+                    key={i}
+                    className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary'
+                  >
+                    {item}
+                  </span>
+                );
+              })}
             </div>
           );
         }
@@ -36,7 +49,9 @@ function InsightSection({
         if (typeof value === 'string' && value.length > 0) {
           return (
             <div key={key} className='flex flex-col gap-0.5'>
-              <span className='text-xs text-muted-foreground capitalize'>{formatKey(key)}</span>
+              <span className='text-xs text-muted-foreground capitalize'>
+                {formatKey(key)}
+              </span>
               <p className='text-sm text-foreground bg-accent/40 rounded-[var(--radius-button)] px-3 py-2'>
                 {value}
               </p>
@@ -50,6 +65,11 @@ function InsightSection({
   );
 }
 
+/**
+ * InsightCard component.
+ * @param props - Component props.
+ * @param props.data
+ */
 export function InsightCard({ data }: { data: InsightCardArtifact['data'] }) {
   const insights = data.insights ?? [];
 
@@ -61,21 +81,27 @@ export function InsightCard({ data }: { data: InsightCardArtifact['data'] }) {
             {data.person.name
               .split(' ')
               .slice(0, 2)
-              .map(w => w[0])
+              .map((w) => {
+                return w[0];
+              })
               .join('')
               .toUpperCase()}
           </div>
-          <p className='text-sm font-semibold text-foreground'>{data.person.name}</p>
+          <p className='text-sm font-semibold text-foreground'>
+            {data.person.name}
+          </p>
         </div>
       )}
 
-      {insights.map((insight, i) => (
-        <InsightSection
-          key={i}
-          category={insight.category}
-          content={insight.content}
-        />
-      ))}
+      {insights.map((insight, i) => {
+        return (
+          <InsightSection
+            key={i}
+            category={insight.category}
+            content={insight.content}
+          />
+        );
+      })}
     </div>
   );
 }

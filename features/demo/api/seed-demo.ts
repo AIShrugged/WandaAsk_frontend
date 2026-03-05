@@ -28,7 +28,14 @@ type DemoSeedApiResponse = {
   meta: Record<string, string> | unknown[];
 };
 
-export async function seedDemo(params: SeedDemoParams): Promise<SeedDemoResult> {
+/**
+ * seedDemo.
+ * @param params - params.
+ * @returns Promise.
+ */
+export async function seedDemo(
+  params: SeedDemoParams,
+): Promise<SeedDemoResult> {
   const authHeaders = await getAuthHeaders();
 
   const res = await fetch(`${API_URL}/demo/seed`, {
@@ -63,7 +70,9 @@ export async function seedDemo(params: SeedDemoParams): Promise<SeedDemoResult> 
       body: text,
     });
 
-    throw new Error(json?.message ?? 'Failed to generate demo data. Please try again.');
+    throw new Error(
+      json?.message ?? 'Failed to generate demo data. Please try again.',
+    );
   }
 
   return { message: json?.message ?? 'Demo generation started' };

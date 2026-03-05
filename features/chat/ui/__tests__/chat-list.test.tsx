@@ -1,3 +1,4 @@
+/* eslint-disable jsdoc/require-jsdoc */
 import { beforeAll } from '@jest/globals';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -15,40 +16,62 @@ beforeAll(() => {
   } as unknown as typeof IntersectionObserver;
 });
 
-jest.mock('next/navigation', () => ({
-  useRouter: () => ({ push: jest.fn() }),
-}));
+jest.mock('next/navigation', () => {
+  return {
+    useRouter: () => {
+      return { push: jest.fn() };
+    },
+  };
+});
 
-jest.mock('@/features/chat/api/chats', () => ({
-  createChat: jest.fn(() =>
-    Promise.resolve({ id: 99, title: null, created_at: '', updated_at: '' }),
-  ),
-  getChats: jest.fn(() => Promise.resolve({ chats: [], totalCount: 0 })),
-}));
+jest.mock('@/features/chat/api/chats', () => {
+  return {
+    createChat: jest.fn(() => {
+      return Promise.resolve({
+        id: 99,
+        title: null,
+        created_at: '',
+        updated_at: '',
+      });
+    }),
+    getChats: jest.fn(() => {
+      return Promise.resolve({ chats: [], totalCount: 0 });
+    }),
+  };
+});
 
-jest.mock('sonner', () => ({
-  toast: { error: jest.fn() },
-}));
+jest.mock('sonner', () => {
+  return {
+    toast: { error: jest.fn() },
+  };
+});
 
 // Simplify ChatListItem to avoid nested dependencies
-jest.mock('@/features/chat/ui/chat-list-item', () => ({
-  ChatListItem: ({ chat }: { chat: Chat }) => (
-    <div data-testid={`chat-item-${chat.id}`}>
-      {chat.title ?? 'Untitled chat'}
-    </div>
-  ),
-}));
-
-const makeChat = (id: number, title: string | null = null): Chat => ({
-  id,
-  title,
-  created_at: '2024-01-01T00:00:00.000Z',
-  updated_at: '2024-01-01T00:00:00.000Z',
+jest.mock('@/features/chat/ui/chat-list-item', () => {
+  return {
+    ChatListItem: ({ chat }: { chat: Chat }) => {
+      return (
+        <div data-testid={`chat-item-${chat.id}`}>
+          {chat.title ?? 'Untitled chat'}
+        </div>
+      );
+    },
+  };
 });
+
+const makeChat = (id: number, title: string | null = null): Chat => {
+  return {
+    id,
+    title,
+    created_at: '2024-01-01T00:00:00.000Z',
+    updated_at: '2024-01-01T00:00:00.000Z',
+  };
+};
 
 describe('ChatList', () => {
   it('renders a list of initial chats', () => {
     const chats = [makeChat(1, 'First chat'), makeChat(2, 'Second chat')];
+
     render(<ChatList initialChats={chats} totalCount={2} />);
     expect(screen.getByTestId('chat-item-1')).toBeInTheDocument();
     expect(screen.getByTestId('chat-item-2')).toBeInTheDocument();

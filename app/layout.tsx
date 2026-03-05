@@ -20,6 +20,11 @@ export const metadata: Metadata = {
   description: 'Best App',
 };
 
+/**
+ * RootLayout component.
+ * @param root0
+ * @param root0.children
+ */
 export default function RootLayout({
   children,
 }: Readonly<{

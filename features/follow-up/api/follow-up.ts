@@ -3,6 +3,11 @@
 import { API_URL } from '@/shared/lib/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 
+/**
+ * getFollowUp.
+ * @param id - id.
+ * @returns Promise.
+ */
 export async function getFollowUp(id: number) {
   const authHeaders = await getAuthHeaders();
 
@@ -15,6 +20,7 @@ export async function getFollowUp(id: number) {
 
   if (!res.ok) {
     const text = await res.text();
+
     throw new Error(`${text}`);
   }
 

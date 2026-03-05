@@ -21,11 +21,19 @@ import Analysis from '../../../../../features/analysis/ui/analysis';
 
 import type { PageProps } from '@/shared/types/common';
 
+/**
+ * Page component.
+ * @param searchParams.params
+ * @param searchParams - searchParams.
+ * @param searchParams.searchParams
+ */
 export default async function Page({ params, searchParams }: PageProps) {
   const { id } = await params;
+
   const { tab = available_tabs.summary } = await searchParams;
 
   const { data: followUp } = await getTeamFollowUp(id);
+
   const currentTab = validTabs.includes(tab as Tab) ? (tab as Tab) : 'summary';
 
   if (tab !== currentTab)

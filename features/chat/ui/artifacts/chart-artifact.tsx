@@ -18,20 +18,27 @@ import {
 import type { ChartArtifact } from '@/features/chat/types';
 
 const CHART_COLORS = [
-  'hsl(142 47% 45%)',   // primary green
-  'hsl(217 91% 60%)',   // blue
-  'hsl(45 93% 58%)',    // amber
-  'hsl(0 84% 60%)',     // red
-  'hsl(280 68% 60%)',   // violet
+  'hsl(142 47% 45%)', // primary green
+  'hsl(217 91% 60%)', // blue
+  'hsl(45 93% 58%)', // amber
+  'hsl(0 84% 60%)', // red
+  'hsl(280 68% 60%)', // violet
 ];
 
+/**
+ * ChartArtifactView component.
+ * @param props - Component props.
+ * @param props.data
+ */
 export function ChartArtifactView({ data }: { data: ChartArtifact['data'] }) {
   // Merge labels + datasets into recharts-friendly [{label, ds0, ds1, ...}]
   const chartData = data.labels.map((label, i) => {
     const point: Record<string, string | number> = { label };
+
     for (const ds of data.datasets) {
       point[ds.label] = ds.data[i] ?? 0;
     }
+
     return point;
   });
 
@@ -71,16 +78,18 @@ export function ChartArtifactView({ data }: { data: ChartArtifact['data'] }) {
       <ResponsiveContainer width='100%' height={200}>
         <LineChart {...sharedProps}>
           {axes}
-          {data.datasets.map((ds, i) => (
-            <Line
-              key={ds.label}
-              type='monotone'
-              dataKey={ds.label}
-              stroke={CHART_COLORS[i % CHART_COLORS.length]}
-              strokeWidth={2}
-              dot={false}
-            />
-          ))}
+          {data.datasets.map((ds, i) => {
+            return (
+              <Line
+                key={ds.label}
+                type='monotone'
+                dataKey={ds.label}
+                stroke={CHART_COLORS[i % CHART_COLORS.length]}
+                strokeWidth={2}
+                dot={false}
+              />
+            );
+          })}
         </LineChart>
       </ResponsiveContainer>
     );
@@ -91,17 +100,19 @@ export function ChartArtifactView({ data }: { data: ChartArtifact['data'] }) {
       <ResponsiveContainer width='100%' height={200}>
         <AreaChart {...sharedProps}>
           {axes}
-          {data.datasets.map((ds, i) => (
-            <Area
-              key={ds.label}
-              type='monotone'
-              dataKey={ds.label}
-              stroke={CHART_COLORS[i % CHART_COLORS.length]}
-              fill={CHART_COLORS[i % CHART_COLORS.length]}
-              fillOpacity={0.15}
-              strokeWidth={2}
-            />
-          ))}
+          {data.datasets.map((ds, i) => {
+            return (
+              <Area
+                key={ds.label}
+                type='monotone'
+                dataKey={ds.label}
+                stroke={CHART_COLORS[i % CHART_COLORS.length]}
+                fill={CHART_COLORS[i % CHART_COLORS.length]}
+                fillOpacity={0.15}
+                strokeWidth={2}
+              />
+            );
+          })}
         </AreaChart>
       </ResponsiveContainer>
     );
@@ -112,14 +123,16 @@ export function ChartArtifactView({ data }: { data: ChartArtifact['data'] }) {
     <ResponsiveContainer width='100%' height={200}>
       <BarChart {...sharedProps} barGap={2}>
         {axes}
-        {data.datasets.map((ds, i) => (
-          <Bar
-            key={ds.label}
-            dataKey={ds.label}
-            fill={CHART_COLORS[i % CHART_COLORS.length]}
-            radius={[3, 3, 0, 0]}
-          />
-        ))}
+        {data.datasets.map((ds, i) => {
+          return (
+            <Bar
+              key={ds.label}
+              dataKey={ds.label}
+              fill={CHART_COLORS[i % CHART_COLORS.length]}
+              radius={[3, 3, 0, 0]}
+            />
+          );
+        })}
       </BarChart>
     </ResponsiveContainer>
   );

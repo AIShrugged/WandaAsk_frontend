@@ -1,6 +1,6 @@
 'use client';
 
-import React, { forwardRef, useId, useState, useEffect } from 'react';
+import React, { forwardRef, useId, useState } from 'react';
 
 import Error from '@/shared/ui/input/Error';
 
@@ -14,8 +14,14 @@ export interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   value: string;
 }
 
-const cn = (...parts: Array<string | false | null | undefined>) =>
-  parts.filter(Boolean).join(' ');
+/**
+ * cn.
+ * @param parts - parts.
+ * @returns Result.
+ */
+const cn = (...parts: Array<string | false | null | undefined>) => {
+  return parts.filter(Boolean).join(' ');
+};
 
 const Input = forwardRef<HTMLInputElement, Props>(function Input(
   {
@@ -37,37 +43,42 @@ const Input = forwardRef<HTMLInputElement, Props>(function Input(
   ref,
 ) {
   const autoId = useId();
+
   const inputId = id ?? `input-${autoId}`;
+
   const errorId = `${inputId}-error`;
 
   const [isFocused, setIsFocused] = useState(false);
-  const [internalValue, setInternalValue] = useState<string | undefined>(
-    defaultValue === undefined ? undefined : String(defaultValue),
-  );
-
-  useEffect(() => {
-    if (value === undefined) return;
-    setInternalValue(String(value ?? ''));
-  }, [value]);
 
   const hasValue =
-    (value ?? internalValue ?? rest.placeholder) !== undefined &&
-    (value ?? internalValue ?? '').toString().length > 0;
+    (value || rest.placeholder) !== undefined && (value || '').length > 0;
 
+  /**
+   * handleFocus.
+   * @param e - e.
+   * @returns Result.
+   */
   function handleFocus(e: React.FocusEvent<HTMLInputElement>) {
     setIsFocused(true);
     onFocus?.(e);
   }
 
+  /**
+   * handleBlur.
+   * @param e - e.
+   * @returns Result.
+   */
   function handleBlur(e: React.FocusEvent<HTMLInputElement>) {
     setIsFocused(false);
     onBlur?.(e);
   }
 
+  /**
+   * handleChange.
+   * @param e - e.
+   * @returns Result.
+   */
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    if (value === undefined) {
-      setInternalValue(e.target.value);
-    }
     onChange?.(e);
   }
 

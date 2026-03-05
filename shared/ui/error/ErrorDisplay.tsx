@@ -63,33 +63,59 @@ const SOURCE_ACCENT: Record<ErrorSource, string> = {
   unknown: 'border-l-border',
 };
 
+/**
+ * SourceIcon component.
+ * @param props - Component props.
+ * @param props.source
+ */
 function SourceIcon({ source }: { source: ErrorSource }) {
   const cls = 'h-3.5 w-3.5 shrink-0';
+
   if (source === 'server') return <Server className={cls} />;
+
   if (source === 'frontend') return <Monitor className={cls} />;
+
   if (source === 'network') return <Wifi className={cls} />;
+
   return <AlertCircle className={cls} />;
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
+/**
+ * buildDebugText.
+ * @param error - error.
+ * @returns Result.
+ */
 function buildDebugText(error: RichError): string {
   const source = error.source ?? 'unknown';
+
   const lines: string[] = [
     `[${SOURCE_LABEL[source]}] ${error.name ?? 'Error'}: ${error.message}`,
   ];
+
   if (error.status !== undefined) lines.push(`HTTP Status: ${error.status}`);
+
   if (error.url !== undefined) lines.push(`URL: ${error.url}`);
+
   if (error.digest !== undefined) lines.push(`Digest: ${error.digest}`);
+
   if (error.responseBody !== undefined && error.responseBody.length > 0) {
     lines.push(`\nResponse Body:\n${error.responseBody}`);
   }
+
   if (error.stack !== undefined) lines.push(`\nStack Trace:\n${error.stack}`);
+
   return lines.join('\n');
 }
 
 // ── Production view ───────────────────────────────────────────────────────────
 
+/**
+ * ProdErrorView component.
+ * @param props - Component props.
+ * @param props.reset
+ */
 function ProdErrorView({ reset }: { reset: () => void }) {
   return (
     <div className='flex flex-col items-center justify-center gap-6 p-10 text-center'>
@@ -97,10 +123,12 @@ function ProdErrorView({ reset }: { reset: () => void }) {
         <AlertCircle className='h-8 w-8 text-destructive' />
       </div>
       <div className='space-y-2'>
-        <h2 className='text-xl font-semibold text-foreground'>Something went wrong</h2>
+        <h2 className='text-xl font-semibold text-foreground'>
+          Something went wrong
+        </h2>
         <p className='max-w-sm text-sm text-muted-foreground'>
-          We&apos;re sorry for the inconvenience. Please try again, or contact support if the issue
-          persists.
+          We&apos;re sorry for the inconvenience. Please try again, or contact
+          support if the issue persists.
         </p>
       </div>
       <button
@@ -116,14 +144,26 @@ function ProdErrorView({ reset }: { reset: () => void }) {
 
 // ── Dev view ──────────────────────────────────────────────────────────────────
 
+/**
+ * DevErrorView component.
+ * @param reset.error
+ * @param reset - reset.
+ * @param reset.reset
+ */
 function DevErrorView({ error, reset }: ErrorDisplayProps) {
   const source = error.source ?? 'unknown';
+
   const label = SOURCE_LABEL[source];
+
   const badgeClass = SOURCE_BADGE[source];
+
   const accentClass = SOURCE_ACCENT[source];
 
   const [isStackOpen, setIsStackOpen] = useState(false);
 
+  /**
+   * handleCopy.
+   */
   const handleCopy = () => {
     navigator.clipboard.writeText(buildDebugText(error)).then(() => {
       toast.success('Debug info copied to clipboard');
@@ -158,7 +198,9 @@ function DevErrorView({ error, reset }: ErrorDisplayProps) {
       <div>
         <p className='text-sm font-medium text-foreground'>{error.message}</p>
         {error.url !== undefined && (
-          <p className='mt-1 break-all font-mono text-xs text-muted-foreground'>→ {error.url}</p>
+          <p className='mt-1 break-all font-mono text-xs text-muted-foreground'>
+            → {error.url}
+          </p>
         )}
       </div>
 
@@ -178,7 +220,11 @@ function DevErrorView({ error, reset }: ErrorDisplayProps) {
       {error.stack !== undefined && (
         <div>
           <button
-            onClick={() => setIsStackOpen((prev) => !prev)}
+            onClick={() => {
+              return setIsStackOpen((prev) => {
+                return !prev;
+              });
+            }}
             className='flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground transition-colors hover:text-foreground'
           >
             {isStackOpen ? (
@@ -227,8 +273,15 @@ function DevErrorView({ error, reset }: ErrorDisplayProps) {
 
 // ── Main export ───────────────────────────────────────────────────────────────
 
+/**
+ * ErrorDisplay component.
+ * @param reset.error
+ * @param reset - reset.
+ * @param reset.reset
+ */
 export default function ErrorDisplay({ error, reset }: ErrorDisplayProps) {
   const source = error.source ?? 'unknown';
+
   const label = SOURCE_LABEL[source];
 
   useEffect(() => {
@@ -242,12 +295,17 @@ export default function ErrorDisplay({ error, reset }: ErrorDisplayProps) {
     );
     // eslint-disable-next-line no-console
     console.error('Error object:', error);
+
     // eslint-disable-next-line no-console
     if (error.status !== undefined) console.log('HTTP Status:', error.status);
+
     // eslint-disable-next-line no-console
     if (error.url !== undefined) console.log('URL:', error.url);
+
     // eslint-disable-next-line no-console
-    if (error.responseBody !== undefined) console.log('Response body:', error.responseBody);
+    if (error.responseBody !== undefined)
+      console.log('Response body:', error.responseBody);
+
     // eslint-disable-next-line no-console
     if (error.digest !== undefined) console.log('Digest:', error.digest);
     // eslint-disable-next-line no-console

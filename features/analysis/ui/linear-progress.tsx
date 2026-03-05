@@ -1,5 +1,11 @@
 import type { MetricItem } from '@/features/analysis/model/types';
 
+/**
+ * LinearProgress component.
+ * @param root0
+ * @param root0.current_value
+ * @param root0.max_value
+ */
 export default function LinearProgress({
   current_value,
   max_value,

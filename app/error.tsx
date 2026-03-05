@@ -4,6 +4,12 @@ import ErrorDisplay from '@/shared/ui/error/ErrorDisplay';
 
 import type { RichError } from '@/shared/ui/error/ErrorDisplay';
 
+/**
+ * Error component.
+ * @param root0
+ * @param root0.error
+ * @param root0.reset
+ */
 // eslint-disable-next-line sonarjs/no-globals-shadowing
 export default function Error({
   error,

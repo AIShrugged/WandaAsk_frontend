@@ -12,13 +12,31 @@ interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
   loadingText?: string;
 }
 
-const Loader = ({ text }: { text: string }) => (
-  <div className='flex items-center justify-center gap-2'>
-    <div className='animate-spin rounded-full h-5 w-5 border-2 border-primary-foreground border-t-transparent' />
-    <p>{text}</p>
-  </div>
-);
+/**
+ * Loader component.
+ * @param props - Component props.
+ * @param props.text
+ */
+const Loader = ({ text }: { text: string }) => {
+  return (
+    <div className='flex items-center justify-center gap-2'>
+      <div className='animate-spin rounded-full h-5 w-5 border-2 border-primary-foreground border-t-transparent' />
+      <p>{text}</p>
+    </div>
+  );
+};
 
+/**
+ * Button component.
+ * @param root0
+ * @param root0.loadingText
+ * @param root0.children
+ * @param root0.variant
+ * @param root0.className
+ * @param root0.loading
+ * @param root0.disabled
+ * @param root0.type
+ */
 export function Button({
   loadingText = 'Please wait',
   children,

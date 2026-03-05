@@ -7,6 +7,15 @@ interface DonutChartProps extends ComponentProps<'div'> {
   textClassName?: string;
 }
 
+/**
+ * ChartDonut component.
+ * @param root0
+ * @param root0.value
+ * @param root0.size
+ * @param root0.strokeWidth
+ * @param root0.className
+ * @param root0.textClassName
+ */
 export default function ChartDonut({
   value,
   size = 200,
@@ -16,8 +25,11 @@ export default function ChartDonut({
   ...props
 }: DonutChartProps) {
   const normalizedValue = Math.max(0, Math.min(100, value));
+
   const radius = (size - strokeWidth) / 2;
+
   const circumference = 2 * Math.PI * radius;
+
   const offset = circumference - (circumference * normalizedValue) / 100;
 
   return (

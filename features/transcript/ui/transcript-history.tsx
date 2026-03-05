@@ -20,6 +20,13 @@ type Props = {
   initialTotal: number;
 };
 
+/**
+ * TranscriptHistory component.
+ * @param root0
+ * @param root0.eventId
+ * @param root0.initialData
+ * @param root0.initialTotal
+ */
 export default function TranscriptHistory({
   eventId,
   initialData,
@@ -32,6 +39,7 @@ export default function TranscriptHistory({
         offset,
         filters.limit,
       );
+
       return { items: data.data as TranscriptProps[], hasMore };
     },
     [eventId],

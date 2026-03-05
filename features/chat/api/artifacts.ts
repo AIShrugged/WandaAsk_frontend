@@ -15,7 +15,14 @@ type ArtifactsApiResponse = {
   status: number;
 };
 
-export async function getArtifacts(chatId: number): Promise<ArtifactsResponse | null> {
+/**
+ * getArtifacts.
+ * @param chatId - chatId.
+ * @returns Promise.
+ */
+export async function getArtifacts(
+  chatId: number,
+): Promise<ArtifactsResponse | null> {
   const authHeaders = await getAuthHeaders();
 
   const res = await fetch(`${API_URL}/chats/${chatId}/artifacts`, {
@@ -28,7 +35,14 @@ export async function getArtifacts(chatId: number): Promise<ArtifactsResponse | 
   if (!res.ok) {
     if (res.status === 401) redirect('/api/auth/clear-session');
     const text = await res.text();
-    logApiError({ url: res.url, status: res.status, statusText: res.statusText, body: text });
+
+    logApiError({
+      url: res.url,
+      status: res.status,
+      statusText: res.statusText,
+      body: text,
+    });
+
     return null;
   }
 

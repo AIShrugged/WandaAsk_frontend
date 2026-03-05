@@ -4,6 +4,9 @@ import { ProfileForm } from '@/features/user-profile/ui/ProfileForm';
 import Card from '@/shared/ui/card/Card';
 import PageHeader from '@/widgets/layout/ui/page-header';
 
+/**
+ * ProfilePage component.
+ */
 export default async function ProfilePage() {
   const { data: user } = await getUser();
 

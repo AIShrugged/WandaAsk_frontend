@@ -8,16 +8,26 @@ import type { ReactNode } from 'react';
 type IconActionProps = {
   icon: ReactNode;
   href?: string;
-  onClick?: () => void;
+  onClickAction?: () => void;
   disabled?: boolean;
   className?: string;
   variant?: 'primary' | 'danger';
 };
 
+/**
+ * ButtonIcon component.
+ * @param root0
+ * @param root0.icon
+ * @param root0.href
+ * @param root0.onClickAction
+ * @param root0.disabled
+ * @param root0.variant
+ * @param root0.className
+ */
 export function ButtonIcon({
   icon,
   href,
-  onClick,
+  onClickAction,
   disabled = false,
   variant = 'primary',
   className,
@@ -26,9 +36,14 @@ export function ButtonIcon({
     'cursor-pointer flex items-center justify-center transition-colors';
 
   const stateClasses = clsx(
-    !disabled && variant === 'primary' && 'text-muted-foreground hover:text-primary',
-    !disabled && variant === 'danger' && 'text-muted-foreground hover:text-destructive',
-    disabled && 'text-muted-foreground/40 opacity-40 cursor-not-allowed pointer-events-none',
+    !disabled &&
+      variant === 'primary' &&
+      'text-muted-foreground hover:text-primary',
+    !disabled &&
+      variant === 'danger' &&
+      'text-muted-foreground hover:text-destructive',
+    disabled &&
+      'text-muted-foreground/40 opacity-40 cursor-not-allowed pointer-events-none',
   );
 
   const content = (
@@ -42,7 +57,7 @@ export function ButtonIcon({
   return (
     <button
       type='button'
-      onClick={disabled ? undefined : onClick}
+      onClick={disabled ? undefined : onClickAction}
       disabled={disabled}
       className={clsx(disabled && 'cursor-not-allowed')}
     >

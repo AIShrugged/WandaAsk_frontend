@@ -7,6 +7,11 @@ import User from '@/features/user/ui/user';
 import { TribesLogo } from '@/shared/ui/brand';
 import MobileSidebar from '@/widgets/layout/ui/mobile-sidebar';
 
+/**
+ * Layout component.
+ * @param props - Component props.
+ * @param props.children
+ */
 export default async function Layout({ children }: PropsWithChildren) {
   return (
     <div className='flex h-screen bg-background overflow-hidden'>

@@ -14,6 +14,11 @@ interface ProfileFormData {
   email: string;
 }
 
+/**
+ * ProfileForm component.
+ * @param props - Component props.
+ * @param props.user
+ */
 export function ProfileForm({ user }: { user: UserProps }) {
   const [isPending, startTransition] = useTransition();
 
@@ -25,11 +30,18 @@ export function ProfileForm({ user }: { user: UserProps }) {
     defaultValues: { name: user.name, email: user.email },
   });
 
+  /**
+   * onSubmit.
+   * @param data - data.
+   * @returns Result.
+   */
   const onSubmit = (data: ProfileFormData) => {
     startTransition(async () => {
       const result = await updateProfile(data);
+
       if (result.error) {
         toast.error(result.error);
+
         return;
       }
       toast.success('Profile updated successfully');
@@ -71,7 +83,11 @@ export function ProfileForm({ user }: { user: UserProps }) {
       </div>
 
       <div className='w-full md:w-[170px]'>
-        <Button type='submit' loading={isPending} disabled={isPending || !isDirty}>
+        <Button
+          type='submit'
+          loading={isPending}
+          disabled={isPending || !isDirty}
+        >
           Save changes
         </Button>
       </div>

@@ -2,6 +2,10 @@ import MinMax from '@/features/analysis/ui/min-max';
 
 import type { MetricItem } from '@/features/analysis/model/types';
 
+/**
+ * LinearProgressAgenda component.
+ * @param metric - metric.
+ */
 export default function LinearProgressAgenda(metric: MetricItem) {
   return (
     <div className={'mb-2'}>

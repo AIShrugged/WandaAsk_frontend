@@ -17,17 +17,31 @@ import { ROUTES } from '@/shared/lib/routes';
 
 import type { EventProps } from '@/entities/event';
 
+/**
+ * Event component.
+ * @param props - Component props.
+ * @param props.event
+ */
 const Event = ({ event }: { event: EventProps }) => {
   const isPast = isEventPast(event.ends_at);
+
   const { push } = useRouter();
+
   const { open, close } = useModal();
+
   const [isPending, startTransition] = useTransition();
 
+  /**
+   * handleClick.
+   * @param e - e.
+   * @returns Result.
+   */
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
 
     if (isPast) {
       push(`${ROUTES.DASHBOARD.MEETING}/${event.id}?tab=summary`);
+
       return;
     }
 
@@ -40,6 +54,7 @@ const Event = ({ event }: { event: EventProps }) => {
             getAttendees(String(event.id)),
             getGuests(String(event.id)),
           ]);
+
         open(
           <EventPopup
             attendees={attendees}
