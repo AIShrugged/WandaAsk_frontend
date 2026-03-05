@@ -15,5 +15,6 @@ export const ROUTES = {
     FOLLOWUPS: '/dashboard/follow-ups',
     ORGANIZATION: '/dashboard/organization',
     PROFILE: '/dashboard/profile',
+    SUMMARY: '/dashboard/summary',
   },
 } as const;
