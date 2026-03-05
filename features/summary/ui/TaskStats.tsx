@@ -25,10 +25,10 @@ const TOOLTIP_STYLE = {
 } as const;
 
 const STATUS_COLORS: Record<string, string> = {
-  Открытые: 'hsl(217 91% 60%)',
-  'В работе': 'hsl(45 93% 58%)',
-  Выполненные: 'hsl(142 47% 45%)',
-  Отменённые: 'hsl(240 3.8% 65%)',
+  Open: 'hsl(217 91% 60%)',
+  'In Progress': 'hsl(45 93% 58%)',
+  Done: 'hsl(142 47% 45%)',
+  Cancelled: 'hsl(240 3.8% 65%)',
 };
 
 // ------------------------------
@@ -57,10 +57,10 @@ function TaskDonutChart({
   cancelled,
 }: TaskDonutChartProps) {
   const chartData = [
-    { name: 'Открытые', value: open },
-    { name: 'В работе', value: in_progress },
-    { name: 'Выполненные', value: done },
-    { name: 'Отменённые', value: cancelled },
+    { name: 'Open', value: open },
+    { name: 'In Progress', value: in_progress },
+    { name: 'Done', value: done },
+    { name: 'Cancelled', value: cancelled },
   ].filter((entry) => {
     return entry.value > 0;
   });
@@ -68,7 +68,7 @@ function TaskDonutChart({
   if (chartData.length === 0) {
     return (
       <p className='py-6 text-center text-sm text-muted-foreground'>
-        Нет данных по задачам
+        No task data
       </p>
     );
   }
@@ -120,7 +120,7 @@ export function TaskStats({ data }: TaskStatsProps) {
   return (
     <div className='flex flex-col gap-4'>
       <div className='flex items-center justify-between'>
-        <h2 className='text-lg font-semibold text-foreground'>Задачи</h2>
+        <h2 className='text-lg font-semibold text-foreground'>Tasks</h2>
         <span className='text-3xl font-bold text-primary tabular-nums'>
           {data.total}
         </span>
@@ -139,7 +139,7 @@ export function TaskStats({ data }: TaskStatsProps) {
         <div className='flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3'>
           <AlertTriangle className='h-4 w-4 shrink-0 text-destructive' />
           <p className='text-sm font-medium text-destructive'>
-            Просрочено задач: {data.overdue}
+            Overdue tasks: {data.overdue}
           </p>
         </div>
       )}

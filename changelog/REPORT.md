@@ -360,20 +360,81 @@ Claude Code при работе с API.
 
 ---
 
+---
+
+## 14. Перевод /dashboard/summary на английский — 05.03.2026
+
+Весь пользовательский интерфейс страницы статистики переведён с русского на
+английский. Правило закреплено: **интерфейс приложения — только английский**.
+
+Переведены файлы:
+
+| Файл                                       | Было → Стало                                                       |
+| ------------------------------------------ | ------------------------------------------------------------------ |
+| `features/summary/ui/SummaryHeader.tsx`    | «Сводный отчёт» → «Summary Report»; убран `locale: ru`             |
+| `features/summary/ui/MeetingStats.tsx`     | Все подписи, заголовки таблицы, «мин» → «min»; убран `ru`          |
+| `features/summary/ui/TaskStats.tsx`        | Статусы и заголовок «Задачи» → «Tasks», «Открытые» → «Open» и т.д. |
+| `features/summary/ui/FollowupStats.tsx`    | Статусы donut-диаграммы переведены                                 |
+| `features/summary/ui/ParticipantStats.tsx` | «Участники», «Топ», «Ср.» → English-варианты                       |
+| `features/summary/ui/TeamStats.tsx`        | «Команды», «Размеры» → «Teams», «Team sizes»                       |
+| `app/dashboard/summary/page.tsx`           | KPI-карточки: «Встречи» → «Meetings» и т.д.                        |
+
+---
+
+## 15. Unit-тесты для features/summary — 05.03.2026
+
+Добавлено 4 тест-файла, 27 тестов — все проходят.
+
+| Файл                                                      | Тестов |
+| --------------------------------------------------------- | ------ |
+| `features/summary/ui/__tests__/MeetingStats.test.tsx`     | 9      |
+| `features/summary/ui/__tests__/TaskStats.test.tsx`        | 5      |
+| `features/summary/ui/__tests__/ParticipantStats.test.tsx` | 5      |
+| `features/summary/ui/__tests__/TeamStats.test.tsx`        | 5      |
+| `features/summary/ui/__tests__/FollowupStats.test.tsx`    | 3      |
+
+Покрывают: заголовки секций, KPI-значения, пустые состояния (empty state),
+условный рендеринг диаграмм, overdue-бейдж. `recharts` замокан
+(ResponsiveContainer → plain `<div>`).
+
+---
+
+## 16. Фикс бэкенда: MeetingStatsService (500 Internal Server Error) — 05.03.2026
+
+Эндпоинт `GET /api/v1/dashboard` возвращал 500 из-за трёх ошибок в
+`app/Services/Dashboard/MeetingStatsService.php`:
+
+1. **`has_bot` → `required_bot`** — колонка была переименована миграцией
+   `2025_11_26_163220_rename_column_has_bot_on_calendar_events_table.php`, но
+   сервис не был обновлён.
+
+2. **`TIMESTAMPDIFF(MINUTE, ...)` → `EXTRACT(EPOCH FROM ...) / 60`** —
+   `TIMESTAMPDIFF` — MySQL-функция, не поддерживается PostgreSQL.
+
+3. **`DATE_FORMAT(starts_at, '%Y-%m')` → `TO_CHAR(starts_at, 'YYYY-MM')`** —
+   аналогично, MySQL-специфичный синтаксис.
+
+Файл: `app/Services/Dashboard/MeetingStatsService.php` (бэкенд-репозиторий)
+
+---
+
 ## Итого за период
 
-| #   | Задача                                | Дата  | Файлов | Строк         |
-| --- | ------------------------------------- | ----- | ------ | ------------- |
-| 1   | Система артефактов в чате             | 27.02 | 13     | +1 400        |
-| 2   | Демо-режим организации                | 27.02 | 4      | +514          |
-| 3   | Восстановление Follow-up + фиксы      | 02.03 | 38     | +301 / −1 989 |
-| 4   | Первые unit-тесты                     | 02.03 | 5      | +260          |
-| 5   | Ошибки + Dashboard + Профиль          | 04.03 | 41     | +1 286 / −179 |
-| 6   | Аудит cursor-pointer                  | 04.03 | 18     | +56           |
-| 7   | ESLint расширение (JSDoc + правила)   | 04.03 | 1      | +43           |
-| 8   | CI-хуки + тест-база (127 тестов)      | 05.03 | 16     | +1 430        |
-| 9   | JSDoc покрытие (399 → 0 warnings)     | 05.03 | 221    | +1 542        |
-| 10  | Backend: GET /api/v1/dashboard        | 05.03 | —      | —             |
-| 11  | Frontend: /dashboard/summary          | 05.03 | 11     | +500          |
-| 12  | CLAUDE.md: навигация по бэкенду       | 05.03 | 1      | +50           |
-| 13  | Аудит и настройка Claude Code агентов | 05.03 | 3      | —             |
+| #   | Задача                                 | Дата  | Файлов | Строк         |
+| --- | -------------------------------------- | ----- | ------ | ------------- |
+| 1   | Система артефактов в чате              | 27.02 | 13     | +1 400        |
+| 2   | Демо-режим организации                 | 27.02 | 4      | +514          |
+| 3   | Восстановление Follow-up + фиксы       | 02.03 | 38     | +301 / −1 989 |
+| 4   | Первые unit-тесты                      | 02.03 | 5      | +260          |
+| 5   | Ошибки + Dashboard + Профиль           | 04.03 | 41     | +1 286 / −179 |
+| 6   | Аудит cursor-pointer                   | 04.03 | 18     | +56           |
+| 7   | ESLint расширение (JSDoc + правила)    | 04.03 | 1      | +43           |
+| 8   | CI-хуки + тест-база (127 тестов)       | 05.03 | 16     | +1 430        |
+| 9   | JSDoc покрытие (399 → 0 warnings)      | 05.03 | 221    | +1 542        |
+| 10  | Backend: GET /api/v1/dashboard         | 05.03 | —      | —             |
+| 11  | Frontend: /dashboard/summary           | 05.03 | 11     | +500          |
+| 12  | CLAUDE.md: навигация по бэкенду        | 05.03 | 1      | +50           |
+| 13  | Аудит и настройка Claude Code агентов  | 05.03 | 3      | —             |
+| 14  | Перевод /dashboard/summary на English  | 05.03 | 7      | ~80           |
+| 15  | Unit-тесты: features/summary (27 тест) | 05.03 | 4      | +280          |
+| 16  | Фикс бэкенда: MeetingStatsService      | 05.03 | 1      | +8 / −8       |

@@ -47,7 +47,7 @@ export const MENU_ITEMS: MenuProps[] = [
     id: 'statistics',
     label: 'Statistics',
     icon: 'kanban',
-    href: ROUTES.DASHBOARD.STATISTICS,
+    href: ROUTES.DASHBOARD.SUMMARY,
   },
 ];
 

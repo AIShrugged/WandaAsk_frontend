@@ -56,7 +56,7 @@ export default async function DashboardPage() {
           { label: 'Teams', href: ROUTES.DASHBOARD.TEAMS },
           { label: 'Calendar', href: ROUTES.DASHBOARD.CALENDAR },
           { label: 'Methodology', href: ROUTES.DASHBOARD.METHODOLOGY },
-          { label: 'Statistics', href: ROUTES.DASHBOARD.STATISTICS },
+          { label: 'Statistics', href: ROUTES.DASHBOARD.SUMMARY },
         ].map(({ label, href }) => {
           return (
             <Link

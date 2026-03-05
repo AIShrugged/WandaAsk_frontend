@@ -52,7 +52,7 @@ function TeamsChart({ teams }: TeamsChartProps) {
   if (teams.length === 0) {
     return (
       <p className='py-6 text-center text-sm text-muted-foreground'>
-        Нет данных о командах
+        No team data
       </p>
     );
   }
@@ -60,7 +60,7 @@ function TeamsChart({ teams }: TeamsChartProps) {
   const chartData = teams.map((t) => {
     return {
       name: t.name.length > 18 ? `${t.name.slice(0, 16)}…` : t.name,
-      Участники: t.members_count,
+      Members: t.members_count,
     };
   });
 
@@ -95,7 +95,7 @@ function TeamsChart({ teams }: TeamsChartProps) {
           width={110}
         />
         <Tooltip contentStyle={TOOLTIP_STYLE} />
-        <Bar dataKey='Участники' radius={[0, 3, 3, 0]}>
+        <Bar dataKey='Members' radius={[0, 3, 3, 0]}>
           {chartData.map((entry) => {
             return <Cell key={entry.name} fill={BAR_COLOR} />;
           })}
@@ -122,14 +122,14 @@ interface TeamStatsProps {
 export function TeamStats({ data }: TeamStatsProps) {
   return (
     <div className='flex flex-col gap-4'>
-      <h2 className='text-lg font-semibold text-foreground'>Команды</h2>
+      <h2 className='text-lg font-semibold text-foreground'>Teams</h2>
 
       <div className='flex items-center gap-3 rounded-lg bg-muted/50 px-4 py-3'>
         <div className='flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary'>
           <Building2 className='h-4 w-4' />
         </div>
         <div>
-          <p className='text-xs text-muted-foreground'>Всего команд</p>
+          <p className='text-xs text-muted-foreground'>Total teams</p>
           <p className='text-sm font-semibold text-foreground tabular-nums'>
             {data.total}
           </p>
@@ -138,9 +138,7 @@ export function TeamStats({ data }: TeamStatsProps) {
 
       {data.list.length > 0 && (
         <Card className='p-5'>
-          <p className='mb-4 text-sm font-medium text-foreground'>
-            Размеры команд
-          </p>
+          <p className='mb-4 text-sm font-medium text-foreground'>Team sizes</p>
           <TeamsChart teams={data.list} />
         </Card>
       )}

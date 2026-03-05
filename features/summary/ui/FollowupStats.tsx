@@ -24,9 +24,9 @@ const TOOLTIP_STYLE = {
 } as const;
 
 const STATUS_COLORS: Record<string, string> = {
-  Выполнено: 'hsl(142 47% 45%)',
-  'В процессе': 'hsl(45 93% 58%)',
-  Провалено: 'hsl(0 84% 60%)',
+  Done: 'hsl(142 47% 45%)',
+  'In Progress': 'hsl(45 93% 58%)',
+  Failed: 'hsl(0 84% 60%)',
 };
 
 // ------------------------------
@@ -52,9 +52,9 @@ function FollowupDonutChart({
   failed,
 }: FollowupDonutChartProps) {
   const chartData = [
-    { name: 'Выполнено', value: done },
-    { name: 'В процессе', value: in_progress },
-    { name: 'Провалено', value: failed },
+    { name: 'Done', value: done },
+    { name: 'In Progress', value: in_progress },
+    { name: 'Failed', value: failed },
   ].filter((entry) => {
     return entry.value > 0;
   });
@@ -62,7 +62,7 @@ function FollowupDonutChart({
   if (chartData.length === 0) {
     return (
       <p className='py-6 text-center text-sm text-muted-foreground'>
-        Нет данных по follow-up
+        No follow-up data
       </p>
     );
   }

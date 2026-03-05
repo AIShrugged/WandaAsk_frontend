@@ -1,17 +1,11 @@
-import React from 'react';
+import { redirect } from 'next/navigation';
 
-import Card from '@/shared/ui/card/Card';
-import CardBody from '@/shared/ui/card/CardBody';
-import PageHeader from '@/widgets/layout/ui/page-header';
+import { ROUTES } from '@/shared/lib/routes';
 
 /**
  * Page component.
+ * @returns Redirect to summary page.
  */
 export default function Page() {
-  return (
-    <Card className='min-h-full h-full overflow-x-hidden overflow-y-scroll'>
-      <PageHeader title={'Statistics'} />
-      <CardBody>Soon</CardBody>
-    </Card>
-  );
+  redirect(ROUTES.DASHBOARD.SUMMARY);
 }

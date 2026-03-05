@@ -1,7 +1,6 @@
 'use client';
 
 import { format, parseISO } from 'date-fns';
-import { ru } from 'date-fns/locale';
 import { Bot, Clock, Calendar } from 'lucide-react';
 import {
   Bar,
@@ -84,8 +83,8 @@ interface MonthlyChartProps {
 function MeetingMonthlyChart({ data }: MonthlyChartProps) {
   const chartData = data.map((item) => {
     return {
-      label: format(parseISO(`${item.month}-01`), 'MMM', { locale: ru }),
-      Встречи: item.count,
+      label: format(parseISO(`${item.month}-01`), 'MMM'),
+      Meetings: item.count,
     };
   });
 
@@ -110,7 +109,7 @@ function MeetingMonthlyChart({ data }: MonthlyChartProps) {
           allowDecimals={false}
         />
         <Tooltip contentStyle={TOOLTIP_STYLE} />
-        <Bar dataKey='Встречи' fill={BAR_COLOR} radius={[3, 3, 0, 0]} />
+        <Bar dataKey='Meetings' fill={BAR_COLOR} radius={[3, 3, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   );
@@ -133,7 +132,7 @@ function RecentMeetingsTable({ meetings }: RecentMeetingsProps) {
   if (meetings.length === 0) {
     return (
       <p className='py-6 text-center text-sm text-muted-foreground'>
-        Нет данных о встречах
+        No meeting data
       </p>
     );
   }
@@ -144,16 +143,16 @@ function RecentMeetingsTable({ meetings }: RecentMeetingsProps) {
         <thead>
           <tr className='border-b border-border'>
             <th className='pb-2 pr-4 text-left text-xs font-medium text-muted-foreground'>
-              Название
+              Title
             </th>
             <th className='pb-2 pr-4 text-left text-xs font-medium text-muted-foreground'>
-              Дата
+              Date
             </th>
             <th className='pb-2 pr-4 text-right text-xs font-medium text-muted-foreground'>
-              Длит.
+              Duration
             </th>
             <th className='pb-2 text-right text-xs font-medium text-muted-foreground'>
-              Участники
+              Participants
             </th>
           </tr>
         </thead>
@@ -168,12 +167,10 @@ function RecentMeetingsTable({ meetings }: RecentMeetingsProps) {
                   {meeting.title}
                 </td>
                 <td className='py-2 pr-4 text-muted-foreground'>
-                  {format(parseISO(meeting.starts_at), 'd MMM yyyy', {
-                    locale: ru,
-                  })}
+                  {format(parseISO(meeting.starts_at), 'MMM d, yyyy')}
                 </td>
                 <td className='py-2 pr-4 text-right text-muted-foreground tabular-nums'>
-                  {meeting.duration_minutes} мин
+                  {meeting.duration_minutes} min
                 </td>
                 <td className='py-2 text-right text-muted-foreground tabular-nums'>
                   {meeting.participants_count}
@@ -207,23 +204,23 @@ export function MeetingStats({ data }: MeetingStatsProps) {
 
   return (
     <div className='flex flex-col gap-4'>
-      <h2 className='text-lg font-semibold text-foreground'>Встречи</h2>
+      <h2 className='text-lg font-semibold text-foreground'>Meetings</h2>
 
       {/* Sub-stats row */}
       <div className='grid grid-cols-1 gap-3 sm:grid-cols-3'>
         <SubStat
-          label='С участием бота'
+          label='With bot'
           value={String(data.with_bot)}
           icon={<Bot className='h-4 w-4' />}
         />
         <SubStat
-          label='Средняя длительность'
-          value={`${data.average_duration_minutes} мин`}
+          label='Avg. duration'
+          value={`${data.average_duration_minutes} min`}
           icon={<Clock className='h-4 w-4' />}
         />
         <SubStat
-          label='Всего времени'
-          value={`${totalHours} ч`}
+          label='Total time'
+          value={`${totalHours} h`}
           icon={<Calendar className='h-4 w-4' />}
         />
       </div>
@@ -232,7 +229,7 @@ export function MeetingStats({ data }: MeetingStatsProps) {
       {data.by_month.length > 0 && (
         <Card className='p-5'>
           <p className='mb-4 text-sm font-medium text-foreground'>
-            Встречи по месяцам
+            Meetings by month
           </p>
           <MeetingMonthlyChart data={data.by_month} />
         </Card>
@@ -241,7 +238,7 @@ export function MeetingStats({ data }: MeetingStatsProps) {
       {/* Recent meetings */}
       <Card className='p-5'>
         <p className='mb-4 text-sm font-medium text-foreground'>
-          Последние встречи
+          Recent meetings
         </p>
         <RecentMeetingsTable meetings={data.recent} />
       </Card>

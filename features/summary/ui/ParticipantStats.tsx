@@ -52,7 +52,7 @@ function TopParticipantsChart({ participants }: TopParticipantsChartProps) {
   if (participants.length === 0) {
     return (
       <p className='py-6 text-center text-sm text-muted-foreground'>
-        Нет данных об участниках
+        No participant data
       </p>
     );
   }
@@ -60,7 +60,7 @@ function TopParticipantsChart({ participants }: TopParticipantsChartProps) {
   const chartData = participants.map((p) => {
     return {
       name: p.name.length > 18 ? `${p.name.slice(0, 16)}…` : p.name,
-      Встречи: p.meetings_count,
+      Meetings: p.meetings_count,
     };
   });
 
@@ -95,7 +95,7 @@ function TopParticipantsChart({ participants }: TopParticipantsChartProps) {
           width={110}
         />
         <Tooltip contentStyle={TOOLTIP_STYLE} />
-        <Bar dataKey='Встречи' radius={[0, 3, 3, 0]}>
+        <Bar dataKey='Meetings' radius={[0, 3, 3, 0]}>
           {chartData.map((entry) => {
             return <Cell key={entry.name} fill={BAR_COLOR} />;
           })}
@@ -123,7 +123,7 @@ interface ParticipantStatsProps {
 export function ParticipantStats({ data }: ParticipantStatsProps) {
   return (
     <div className='flex flex-col gap-4'>
-      <h2 className='text-lg font-semibold text-foreground'>Участники</h2>
+      <h2 className='text-lg font-semibold text-foreground'>Participants</h2>
 
       <div className='grid grid-cols-2 gap-3'>
         <div className='flex items-center gap-3 rounded-lg bg-muted/50 px-4 py-3'>
@@ -131,7 +131,7 @@ export function ParticipantStats({ data }: ParticipantStatsProps) {
             <Users className='h-4 w-4' />
           </div>
           <div>
-            <p className='text-xs text-muted-foreground'>Уникальных</p>
+            <p className='text-xs text-muted-foreground'>Unique</p>
             <p className='text-sm font-semibold text-foreground tabular-nums'>
               {data.total_unique}
             </p>
@@ -142,7 +142,7 @@ export function ParticipantStats({ data }: ParticipantStatsProps) {
             <Users className='h-4 w-4' />
           </div>
           <div>
-            <p className='text-xs text-muted-foreground'>Ср. на встречу</p>
+            <p className='text-xs text-muted-foreground'>Avg. per meeting</p>
             <p className='text-sm font-semibold text-foreground tabular-nums'>
               {data.average_per_meeting.toFixed(1)}
             </p>
@@ -152,7 +152,7 @@ export function ParticipantStats({ data }: ParticipantStatsProps) {
 
       <Card className='p-5'>
         <p className='mb-4 text-sm font-medium text-foreground'>
-          Топ участников
+          Top participants
         </p>
         <TopParticipantsChart participants={data.top} />
       </Card>

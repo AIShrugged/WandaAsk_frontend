@@ -63,6 +63,20 @@ function KpiCard({ label, value, icon, accent = false }: KpiCardProps) {
 export default async function SummaryPage() {
   const data = await getSummaryData();
 
+  if (!data) {
+    return (
+      <div className='flex flex-col gap-6 h-full overflow-y-auto p-2'>
+        <SummaryHeader />
+        <div className='flex flex-col items-center justify-center gap-3 rounded-[var(--radius-card)] border border-border bg-card p-12 text-center shadow-card'>
+          <p className='text-base font-medium text-foreground'>
+            Statistics unavailable
+          </p>
+          <p className='text-sm text-muted-foreground'>Try to reload page</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className='flex flex-col gap-6 h-full overflow-y-auto p-2'>
       {/* Header */}
@@ -71,28 +85,28 @@ export default async function SummaryPage() {
       {/* KPI row */}
       <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5'>
         <KpiCard
-          label='Встречи'
+          label='Meetings'
           value={data.meetings.total}
           icon={<Video className='h-4 w-4' />}
           accent
         />
         <KpiCard
-          label='Уникальных участников'
+          label='Unique participants'
           value={data.participants.total_unique}
           icon={<Users className='h-4 w-4' />}
         />
         <KpiCard
-          label='Задачи'
+          label='Tasks'
           value={data.tasks.total}
           icon={<CheckSquare className='h-4 w-4' />}
         />
         <KpiCard
-          label='Follow-up'
+          label='Follow-ups'
           value={data.followups.total}
           icon={<ListChecks className='h-4 w-4' />}
         />
         <KpiCard
-          label='Конспектов'
+          label='Summaries'
           value={data.summaries.total}
           icon={<FileText className='h-4 w-4' />}
         />
