@@ -1,4 +1,4 @@
-Вот отчёт по работам за период 26.02–05.03.2026 (последние коммиты / PR)
+Вот отчёт по работам за период 26.02–06.03.2026 (последние коммиты / PR)
 
 Период: 26 февраля — 5 марта 2026 Репозиторий: FIT-Wanda/ai_ask_wanda-frontend
 PR смержено: #8, #9, #10, #11, #12
@@ -418,6 +418,104 @@ Claude Code при работе с API.
 
 ---
 
+## 17. Лендинг-страница Tribes — 06.03.2026
+
+Создана публичная маркетинговая страница (`/`) с нуля. Цель — конвертация
+посетителей в регистрации. Стилистика: dark cosmic (глубокий космос, фиолетово-
+голубые акценты, туманности, звёзды).
+
+### Архитектура
+
+Реализована через 4 файла:
+
+| Файл                                   | Тип              | Назначение                                       |
+| -------------------------------------- | ---------------- | ------------------------------------------------ |
+| `app/page.tsx`                         | Server Component | Весь HTML лендинга, метатеги, статические данные |
+| `features/landing/ui/HeroTyping.tsx`   | `'use client'`   | TypeIt-эффект в заголовке                        |
+| `features/landing/ui/ScrollReveal.tsx` | `'use client'`   | Анимации появления блоков                        |
+| `features/landing/ui/PixelRobot.tsx`   | `'use client'`   | Пиксельный SVG-робот                             |
+
+Страница — чистый Server Component, нулевой JS в основном бандле. Клиентские
+компоненты подключены точечно только там, где нужна интерактивность.
+
+### Секции страницы
+
+1. **Sticky navigation** — логотип «T», три anchor-ссылки, кнопки Sign In / Get
+   Started
+2. **Hero** — TypeIt-заголовок (5 фраз), описание, 2 CTA, плавающий макет
+   AI-чата
+3. **Stats bar** — 10×, 100%, <60s, ∞ с градиентными цифрами
+4. **Features (6 карточек)** — AI Bot, Summaries, Action Items, Chat, Teams,
+   Analytics
+5. **How it works (3 шага)** — Connect → Join → Receive
+6. **AI Artifacts (6 типов)** — Meeting Card, Task Table, Transcript, Insights,
+   Charts, People
+7. **Integrations** — Google Calendar, Telegram, Any Video Call
+8. **Methodologies** — split-layout с буллетами + живой список шаблонов встреч
+9. **CTA-баннер** — «Create Free Account →» с glow-эффектом
+10. **Footer** — логотип, навигация, копирайт
+
+### Анимации и эффекты
+
+**TypeIt (HeroTyping):**
+
+- Поочерёдно печатает и стирает 5 фраз (TYPE_MS=52, DELETE_MS=28, PAUSE=2.3s)
+- Мигающий курсор — вертикальный 3px бар с purple→cyan градиентом и
+  `box-shadow`-свечением, цикл 530ms
+
+**Scroll Reveal (ScrollReveal):**
+
+- `IntersectionObserver` (threshold 0.1) добавляет класс `.is-revealed` при
+  входе элемента с `[data-reveal]` во viewport
+- Поддержка `data-reveal-delay="ms"` для stagger-эффекта на карточках (0–420ms)
+- CSS-переходы: `opacity` + `translateY(28px)` за 0.65s cubic-bezier
+
+**Космический фон (pure CSS):**
+
+- 4 радиальных туманности (rgba purple/cyan/green/violet с blur)
+- 20 звёзд (`@keyframes tribes-twinkle`, рандомные размер/позиция/задержка)
+- Плавающий hero-блок (`@keyframes tribes-float`, 7s ease-in-out)
+- Пульсирующий glow на CTA-кнопках (`@keyframes tribes-glow`, 3s)
+
+**Пиксельный робот (PixelRobot):**
+
+- Появляется **один раз за сессию** (ключ `tribes-robot-shown` в
+  `sessionStorage`)
+- Случайная задержка 4–12 секунд (`Math.random()` с ESLint-disable)
+- Анимация: slide-in из правого края → 2 подмигивания левым глазом (1.2s, 2.4s)
+  → slide-out в правый край (4.6s) → unmount (5.9s)
+- SVG-дизайн: антенна с кольцом свечения, разноцветные глаза
+  (фиолетовый/голубой), румянец щёк, 3 кнопки на груди
+  (фиолетовая/голубая/зелёная), scan-lines на экране
+- `drop-shadow` фильтр создаёт фиолетовую ауру вокруг персонажа
+
+### Брендинг
+
+Все упоминания «WandaAsk» / «Wanda» заменены на «Tribes» (APP_NAME). Нет ни
+одного вхождения «wanda» в коде: ни в CSS-классах (`tribes-*`), ни в
+keyframe-именах, ни в текстовом контенте.
+
+### SEO / Метатеги
+
+```
+title: "Tribes — AI Meeting Intelligence Platform"
+description: "..."
+keywords: [...7 ключевых слов...]
+openGraph: { title, description, type: "website", siteName: "Tribes" }
+twitter: { card: "summary_large_image", title, description }
+```
+
+### ESLint-фиксы
+
+- `sonarjs/no-invariant-returns` (HeroTyping): каждая ветка useEffect теперь
+  захватывает локальный `id` и возвращает собственное `() => clearTimeout(id)`
+- `sonarjs/pseudo-random` (PixelRobot): `// eslint-disable-next-line` с
+  обоснованием (UI-тайминг, не безопасность)
+
+Масштаб: 4 файла, ~560 строк
+
+---
+
 ## Итого за период
 
 | #   | Задача                                 | Дата  | Файлов | Строк         |
@@ -438,3 +536,4 @@ Claude Code при работе с API.
 | 14  | Перевод /dashboard/summary на English  | 05.03 | 7      | ~80           |
 | 15  | Unit-тесты: features/summary (27 тест) | 05.03 | 4      | +280          |
 | 16  | Фикс бэкенда: MeetingStatsService      | 05.03 | 1      | +8 / −8       |
+| 17  | Лендинг-страница Tribes                | 06.03 | 4      | +560          |
