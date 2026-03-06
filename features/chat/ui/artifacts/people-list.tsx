@@ -44,7 +44,8 @@ function initials(name: string): string {
 /**
  * PeopleList component.
  * @param props - Component props.
- * @param props.data
+ * @param props.data - People list artifact data.
+ * @returns Result.
  */
 export function PeopleList({ data }: { data: PeopleListArtifact['data'] }) {
   const members = data.members ?? [];

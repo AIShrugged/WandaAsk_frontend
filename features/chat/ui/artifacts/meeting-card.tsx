@@ -32,7 +32,8 @@ function formatDate(iso: string): string {
 /**
  * MeetingCard component.
  * @param props - Component props.
- * @param props.data
+ * @param props.data - Meeting card artifact data.
+ * @returns Result.
  */
 export function MeetingCard({ data }: { data: MeetingCardArtifact['data'] }) {
   const participants = data.participants ?? [];

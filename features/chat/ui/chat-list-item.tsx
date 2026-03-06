@@ -19,13 +19,12 @@ interface ChatListItemProps {
 
 /**
  * ChatListItem component.
- * @param isActive.chat
- * @param isActive - isActive.
- * @param isActive.isActive
- * @param onUpdate - onUpdate.
- * @param isActive.onUpdate
- * @param onDelete - onDelete.
- * @param isActive.onDelete
+ * @param props - Component props.
+ * @param props.chat - The chat data to display.
+ * @param props.isActive - Whether this item is currently selected.
+ * @param props.onUpdate - Callback when the chat title is updated.
+ * @param props.onDelete - Callback when the chat is deleted.
+ * @returns Result.
  */
 export function ChatListItem({
   chat,
@@ -61,6 +60,7 @@ export function ChatListItem({
 
   /**
    * cancelEditing.
+   * @returns Result.
    */
   const cancelEditing = () => {
     setMode('idle');
@@ -69,6 +69,7 @@ export function ChatListItem({
 
   /**
    * saveTitle.
+   * @returns Result.
    */
   const saveTitle = () => {
     const title = editValue.trim();
@@ -115,6 +116,7 @@ export function ChatListItem({
 
   /**
    * cancelDelete.
+   * @returns Result.
    */
   const cancelDelete = () => {
     return setMode('idle');
@@ -122,6 +124,7 @@ export function ChatListItem({
 
   /**
    * confirmDelete.
+   * @returns Result.
    */
   const confirmDelete = () => {
     startTransition(async () => {

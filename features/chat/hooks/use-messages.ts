@@ -10,10 +10,11 @@ const PAGE_SIZE = 10;
 
 /**
  * useMessages hook.
- * @param chatId
- * @param initialMessages
- * @param totalCount
- * @param startOffset
+ * @param chatId - The chat ID to load messages for.
+ * @param initialMessages - Initially loaded messages (newest batch).
+ * @param totalCount - Total message count in the chat.
+ * @param startOffset - Offset from which initialMessages were loaded; 0 means oldest batch.
+ * @returns Hook state and helpers for paginated message management.
  */
 export function useMessages(
   chatId: number,
@@ -40,6 +41,10 @@ export function useMessages(
   // There are older messages if we haven't loaded from offset 0 yet.
   const hasMore = loadedStartOffset > 0;
 
+  /**
+   * loadOlder.
+   * @returns Promise.
+   */
   const loadOlder = useCallback(async () => {
     if (isLoading || !hasMore) return;
 
@@ -108,6 +113,11 @@ export function useMessages(
     }
   }, [messages]);
 
+  /**
+   * addMessage.
+   * @param message - Message to append and scroll to.
+   * @returns Result.
+   */
   const addMessage = useCallback((message: Message) => {
     shouldScrollToBottom.current = true;
     setMessages((prev) => {
@@ -115,6 +125,11 @@ export function useMessages(
     });
   }, []);
 
+  /**
+   * addMessages.
+   * @param incoming - Messages to append and scroll to.
+   * @returns Result.
+   */
   const addMessages = useCallback((incoming: Message[]) => {
     shouldScrollToBottom.current = true;
     setMessages((prev) => {

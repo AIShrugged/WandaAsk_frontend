@@ -10,9 +10,10 @@ interface ChatInputProps {
 
 /**
  * ChatInput component.
- * @param disabled.onSend
- * @param disabled - disabled.
- * @param disabled.disabled
+ * @param props - Component props.
+ * @param props.onSend - Callback invoked with the trimmed message content when the user submits.
+ * @param props.disabled - Disables the input and send button when true.
+ * @returns Result.
  */
 export function ChatInput({ onSend, disabled }: ChatInputProps) {
   const [value, setValue] = useState('');
@@ -21,6 +22,7 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
 
   /**
    * submit.
+   * @returns Result.
    */
   const submit = () => {
     const trimmed = value.trim();

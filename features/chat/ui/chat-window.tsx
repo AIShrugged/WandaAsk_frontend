@@ -22,12 +22,13 @@ interface ChatWindowProps {
 
 /**
  * ChatWindow component.
- * @param root0
- * @param root0.chatId
- * @param root0.initialMessages
- * @param root0.totalCount
- * @param root0.startOffset
- * @param root0.onCollapse
+ * @param root0 - Component props.
+ * @param root0.chatId - The chat ID to load messages for.
+ * @param root0.initialMessages - Pre-loaded messages.
+ * @param root0.totalCount - Total message count in the chat.
+ * @param root0.startOffset - Offset from which initialMessages were loaded.
+ * @param root0.onCollapse - Callback to collapse the chat panel.
+ * @returns Result.
  */
 export function ChatWindow({
   chatId,

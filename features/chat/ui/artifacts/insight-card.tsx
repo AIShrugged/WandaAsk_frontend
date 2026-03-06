@@ -11,9 +11,10 @@ function formatKey(key: string): string {
 
 /**
  * InsightSection component.
- * @param root0
- * @param root0.category
- * @param root0.content
+ * @param root0 - Component props.
+ * @param root0.category - Section category label.
+ * @param root0.content - Key-value content to render.
+ * @returns Result.
  */
 function InsightSection({
   category,
@@ -68,7 +69,8 @@ function InsightSection({
 /**
  * InsightCard component.
  * @param props - Component props.
- * @param props.data
+ * @param props.data - Insight card artifact data.
+ * @returns Result.
  */
 export function InsightCard({ data }: { data: InsightCardArtifact['data'] }) {
   const insights = data.insights ?? [];

@@ -53,6 +53,7 @@ type Phase = 'wait' | 'fadeOut' | 'show';
 
 /**
  * ThinkingIndicator component.
+ * @returns Result.
  */
 export function ThinkingIndicator() {
   // phrasesRef is initialised with a shuffled deck via useRef(shuffle(...)).

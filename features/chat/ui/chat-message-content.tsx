@@ -13,8 +13,9 @@ interface ChatMessageContentProps {
  *
  * - Plain text / markdown → react-markdown (handles \n, lists, bold, tables, code, etc.)
  * - Raw HTML (starts with "<") → innerHTML + script re-execution (Chart.js, canvas, etc.)
- * @param root0
- * @param root0.content
+ * @param root0 - Component props.
+ * @param root0.content - The raw message content string to render.
+ * @returns Result.
  */
 export function ChatMessageContent({ content }: ChatMessageContentProps) {
   const isHtml = content.trimStart().startsWith('<');
@@ -33,7 +34,8 @@ export function ChatMessageContent({ content }: ChatMessageContentProps) {
 /**
  * HtmlContent component.
  * @param props - Component props.
- * @param props.content
+ * @param props.content - Raw HTML string to inject and execute.
+ * @returns Result.
  */
 function HtmlContent({ content }: { content: string }) {
   const ref = useRef<HTMLDivElement>(null);

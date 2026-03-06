@@ -15,7 +15,8 @@ interface ChatMessageProps {
 /**
  * ChatMessage component.
  * @param props - Component props.
- * @param props.message
+ * @param props.message - The message to display.
+ * @returns Result.
  */
 export function ChatMessage({ message }: ChatMessageProps) {
   const isUser = message.role === 'user';

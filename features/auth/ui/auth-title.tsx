@@ -7,7 +7,8 @@ import { H1 } from '@/shared/ui/typography/H1';
 /**
  * AuthTitle component.
  * @param props - Component props.
- * @param props.type
+ * @param props.type - The variant that determines which title to display.
+ * @returns Result.
  */
 export default function AuthTitle({ type }: { type: AuthTitleVariant }) {
   const titleVariant = {

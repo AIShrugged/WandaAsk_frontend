@@ -22,10 +22,11 @@ const PAGE_SIZE = 20;
 
 /**
  * ChatList component.
- * @param root0
- * @param root0.initialChats
- * @param root0.totalCount
- * @param root0.activeChatId
+ * @param root0 - Component props.
+ * @param root0.initialChats - Initial list of chats.
+ * @param root0.totalCount - Total number of chats available.
+ * @param root0.activeChatId - ID of the currently active chat.
+ * @returns Result.
  */
 export function ChatList({
   initialChats,
@@ -48,6 +49,10 @@ export function ChatList({
 
   const sentinelRef = useRef<HTMLDivElement>(null);
 
+  /**
+   * loadMore.
+   * @returns Promise.
+   */
   const loadMore = useCallback(async () => {
     if (isLoading || !hasMore) return;
     setIsLoading(true);
@@ -89,6 +94,7 @@ export function ChatList({
 
   /**
    * handleCreateChat.
+   * @returns Result.
    */
   const handleCreateChat = () => {
     startCreateTransition(async () => {

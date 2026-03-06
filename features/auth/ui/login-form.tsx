@@ -17,6 +17,7 @@ const FORM_ID = 'login-form';
 
 /**
  * LoginForm component.
+ * @returns Result.
  */
 export default function LoginForm() {
   const [isPending, startTransition] = useTransition();

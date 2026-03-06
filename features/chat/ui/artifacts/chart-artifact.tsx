@@ -28,7 +28,8 @@ const CHART_COLORS = [
 /**
  * ChartArtifactView component.
  * @param props - Component props.
- * @param props.data
+ * @param props.data - Chart artifact data including type, labels, and datasets.
+ * @returns Result.
  */
 export function ChartArtifactView({ data }: { data: ChartArtifact['data'] }) {
   // Merge labels + datasets into recharts-friendly [{label, ds0, ds1, ...}]

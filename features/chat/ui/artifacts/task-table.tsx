@@ -37,7 +37,8 @@ function formatDueDate(value: string | null): string {
 /**
  * TaskTable component.
  * @param props - Component props.
- * @param props.data
+ * @param props.data - Task table artifact data.
+ * @returns Result.
  */
 export function TaskTable({ data }: { data: TaskTableArtifact['data'] }) {
   const tasks = data.tasks ?? [];

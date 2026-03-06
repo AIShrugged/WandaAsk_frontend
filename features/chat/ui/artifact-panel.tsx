@@ -58,7 +58,8 @@ const TYPE_META: Record<
 /**
  * ArtifactContent component.
  * @param props - Component props.
- * @param props.artifact
+ * @param props.artifact - The artifact to render.
+ * @returns Result.
  */
 function ArtifactContent({ artifact }: { artifact: Artifact }) {
   switch (artifact.type) {
@@ -94,7 +95,8 @@ function ArtifactContent({ artifact }: { artifact: Artifact }) {
 /**
  * ArtifactCard component.
  * @param props - Component props.
- * @param props.artifact
+ * @param props.artifact - The artifact to display as a card.
+ * @returns Result.
  */
 function ArtifactCard({ artifact }: { artifact: Artifact }) {
   const meta = TYPE_META[artifact.type] ?? { label: artifact.type, icon: null };
@@ -168,9 +170,10 @@ interface ArtifactPanelProps {
 
 /**
  * ArtifactPanel component.
- * @param root0
- * @param root0.chatId
- * @param root0.initialArtifacts
+ * @param root0 - Component props.
+ * @param root0.chatId - The chat ID to poll artifacts for.
+ * @param root0.initialArtifacts - Pre-loaded artifacts response.
+ * @returns Result.
  */
 export function ArtifactPanel({
   chatId,

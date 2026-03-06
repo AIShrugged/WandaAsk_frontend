@@ -15,14 +15,15 @@ interface AuthActionsFooterProps {
 
 /**
  * AuthFormFooter component.
- * @param root0
- * @param root0.primaryButton
- * @param root0.primaryText
- * @param root0.secondaryText
- * @param root0.secondaryRoute
- * @param root0.formId
- * @param root0.loading
- * @param root0.disabled
+ * @param root0 - Component props.
+ * @param root0.primaryButton - Label for the primary submit button.
+ * @param root0.primaryText - Link text for the secondary action.
+ * @param root0.secondaryText - Descriptive text preceding the secondary link.
+ * @param root0.secondaryRoute - Route for the secondary action link.
+ * @param root0.formId - ID of the form this footer submits.
+ * @param root0.loading - Whether the form is currently submitting.
+ * @param root0.disabled - Disables the primary button when true.
+ * @returns Result.
  */
 export default function AuthFormFooter({
   primaryButton,

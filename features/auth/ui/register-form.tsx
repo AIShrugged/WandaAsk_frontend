@@ -24,6 +24,7 @@ const FORM_ID = 'register-form';
 
 /**
  * RegisterForm component.
+ * @returns Result.
  */
 export default function RegisterForm() {
   const [isPending, startTransition] = useTransition();

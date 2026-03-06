@@ -22,15 +22,16 @@ interface ChatLayoutProps {
 
 /**
  * ChatLayout component.
- * @param root0
- * @param root0.initialChats
- * @param root0.totalCount
- * @param root0.activeChatId
- * @param root0.chatId
- * @param root0.initialArtifacts
- * @param root0.initialMessages
- * @param root0.totalMessagesCount
- * @param root0.startOffset
+ * @param root0 - Component props.
+ * @param root0.initialChats - Initial list of chats.
+ * @param root0.totalCount - Total number of chats.
+ * @param root0.activeChatId - ID of the currently active chat.
+ * @param root0.chatId - ID of the chat to display in the window.
+ * @param root0.initialArtifacts - Pre-loaded artifacts for the chat.
+ * @param root0.initialMessages - Pre-loaded messages for the chat.
+ * @param root0.totalMessagesCount - Total message count in the chat.
+ * @param root0.startOffset - Offset from which initialMessages were loaded.
+ * @returns Result.
  */
 export function ChatLayout({
   initialChats,

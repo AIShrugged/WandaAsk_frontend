@@ -42,7 +42,8 @@ function initials(name: string): string {
 /**
  * TranscriptView component.
  * @param props - Component props.
- * @param props.data
+ * @param props.data - Transcript artifact data.
+ * @returns Result.
  */
 export function TranscriptView({ data }: { data: TranscriptArtifact['data'] }) {
   const entries = data.entries ?? [];
