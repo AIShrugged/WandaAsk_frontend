@@ -556,26 +556,194 @@ twitter: { card: "summary_large_image", title, description }
 
 ---
 
+## 20. Backend: PATCH /api/v1/users/me — обновление профиля — 10.03.2026
+
+Реализован эндпоинт обновления профиля пользователя.
+
+`PATCH /api/v1/users/me` (требует авторизации)
+
+Принимает любое подмножество полей — как минимум одно из `name` или `password`
+обязательно:
+
+| Поле                    | Тип    | Правила                         |
+| ----------------------- | ------ | ------------------------------- |
+| `name`                  | string | `sometimes`, min 1, max 255     |
+| `current_password`      | string | `required_with:password`        |
+| `password`              | string | `sometimes`, min 8, `confirmed` |
+| `password_confirmation` | string | Должен совпадать с `password`   |
+
+Ответ: `UserResource` (id, name, email) в стандартном envelope.
+
+Ошибки:
+
+- `INVALID_CURRENT_PASSWORD` (422) — введённый текущий пароль не совпадает с
+  реальным
+
+---
+
+## 21. Frontend: синхронизация профиля с бэкендом — 10.03.2026
+
+Фронтенд приведён в соответствие с реальным API `PATCH /api/v1/users/me`.
+
+**`shared/types/server-action.ts`:**
+
+- Добавлен опциональный `errorCode?: string` в ветку ошибки `ActionResult` —
+  обратно-совместимое изменение
+
+**`features/user-profile/api/profile.ts`:**
+
+- `updateProfile` — убран `email` из тела запроса (бэкенд не принимает)
+- `changePassword` — исправлен endpoint: `POST /users/me/password` →
+  `PATCH /users/me`; при ошибке парсит `errorCode` из JSON и возвращает его
+  вызывающей стороне
+
+**`features/user-profile/ui/ProfileForm.tsx`:**
+
+- Убрано поле Email — обновление email через этот эндпоинт не поддерживается
+
+**`features/user-profile/ui/ChangePasswordForm.tsx`:**
+
+- При `INVALID_CURRENT_PASSWORD` вызывает `setError('current_password', ...)` —
+  ошибка показывается прямо под полем, а не в toast
+
+**Тесты обновлены:**
+
+- `ProfileForm.test.tsx` — убран тест email-поля, добавлен тест его отсутствия
+- `ChangePasswordForm.test.tsx` — добавлен тест field-level ошибки при
+  `INVALID_CURRENT_PASSWORD`
+
+Масштаб: 6 файлов, ~80 строк изменено
+
+---
+
+## 22. Агент mr-reviewer — ревью MR по правилам проекта — 10.03.2026
+
+Создан Claude Code агент `.claude/agents/mr-reviewer.md` для автоматического
+аудита pull request перед мержем.
+
+Запуск: «Проверь MR перед мержем» или «Review the current branch changes».
+
+Агент проверяет 11 чеклистов:
+
+| #   | Категория            | Ключевые проверки                                                        |
+| --- | -------------------- | ------------------------------------------------------------------------ |
+| 1   | FSD архитектура      | Слои, изоляция фич, публичный API через index.ts                         |
+| 2   | TypeScript           | no `any`, ActionResult, PaginatedResult                                  |
+| 3   | ESLint               | Все правила из eslint.config.mjs (unicorn, sonarjs, jsdoc, import/order) |
+| 4   | Next.js паттерны     | Server/Client Components, Server Actions, loading.tsx                    |
+| 5   | Backend интеграция   | httpClient, типы из Resource/DTO, обработка ошибок                       |
+| 6   | Tailwind v4          | Нет tailwind.config.ts, токены в globals.css                             |
+| 7   | Zod v4               | z.email(), z.literal()                                                   |
+| 8   | State & Side Effects | zustand, useEffect                                                       |
+| 9   | Тесты                | RTL, моки, happy/empty/error path                                        |
+| 10  | UI язык              | Только English в JSX                                                     |
+| 11  | Code style           | JSDoc, cursor-pointer, kebab-case                                        |
+
+Отчёт: 🔴 Blocking / 🟡 Suggestions / ✅ Looks Good + итоговый вердикт.
+
+Масштаб: 1 файл, ~230 строк
+
+---
+
+## 23. Playwright E2E: тесты профиля пользователя — 10.03.2026
+
+Внедрён Playwright для E2E-тестирования. Первая фича — страница профиля.
+
+**Архитектура двухуровневого тестирования:**
+
+| Уровень            | Инструмент | Что покрывает                                       |
+| ------------------ | ---------- | --------------------------------------------------- |
+| Unit / Integration | Jest + RTL | Компонентная логика, моки, изолированно             |
+| E2E                | Playwright | Реальный браузер, полный стек, визуальная регрессия |
+
+**Новые файлы:**
+
+| Файл                          | Назначение                                                     |
+| ----------------------------- | -------------------------------------------------------------- |
+| `playwright.config.ts`        | Chromium, webServer на порту 8080, projects (setup + chromium) |
+| `e2e/global-setup.ts`         | Логин через `/auth/login`, сохранение `storageState`           |
+| `e2e/profile/profile.spec.ts` | 14 E2E тестов профиля                                          |
+| `.env.playwright.example`     | Шаблон тестовых credentials                                    |
+
+**14 тестов (все проходят):**
+
+- Редирект на `/auth/login` без авторизации
+- Рендер секций Account info и Change password
+- Предзаполненность имени, отсутствие поля email
+- Активация кнопок при изменении полей
+- Клиентская валидация: required, minLength, mismatch (без сети)
+- Успешная смена имени → success toast (реальный бэкенд)
+- Скриншот-регрессия всей страницы (`toHaveScreenshot`)
+
+**Ключевые технические решения:**
+
+- `getByLabel('New password', { exact: true })` — предотвращает substring match
+  с "Confirm new password"
+- `locator.selectText()` + `Backspace` вместо `fill('')` — надёжный триггер
+  react-hook-form onChange в реальном браузере (macOS)
+- Server Actions выполняются server-side (Node.js) → `page.route()` их не
+  перехватывает; success/error сценарии смены пароля остаются в Jest/RTL
+
+**Изменения существующих файлов:**
+
+- `jest.config.mjs` — `testPathIgnorePatterns: ['e2e/']` (изоляция от
+  Playwright)
+- `package.json` — скрипты `test:e2e`, `test:e2e:ui`, `test:e2e:report`
+- `.gitignore` — исключены `playwright-report/`, `test-results/`, `e2e/.auth/`
+- `dotenv-cli` добавлен в devDependencies
+
+Масштаб: 6 файлов создано/изменено, +350 строк
+
+---
+
+## 24. Playwright E2E: тесты аутентификации — 10.03.2026
+
+Создан отдельный spec-файл для тестов авторизации. Ранее `global-setup.ts`
+(setup-скрипт) не отображался в Playwright UI как тест-сьют — теперь
+аутентификация покрыта полноценными spec-тестами.
+
+**Файл:** `e2e/auth/auth.spec.ts` — 6 тестов
+
+| Группа                 | Тест                                                      |
+| ---------------------- | --------------------------------------------------------- |
+| unauthenticated access | Редирект `/dashboard` → `/auth/login`                     |
+| unauthenticated access | Редирект `/dashboard/profile` → `/auth/login`             |
+| unauthenticated access | Login-страница отображает email/password/кнопку           |
+| unauthenticated access | Ошибка при неверных credentials                           |
+| authenticated session  | Аутентифицированный пользователь видит /dashboard         |
+| authenticated session  | Аутентифицированный пользователь видит /dashboard/profile |
+
+Итого Playwright: **2 spec-файла**, **20 тестов** (6 auth + 14 profile).
+
+Масштаб: 1 файл, +57 строк
+
+---
+
 ## Итого за период
 
-| #   | Задача                                 | Дата  | Файлов | Строк         |
-| --- | -------------------------------------- | ----- | ------ | ------------- |
-| 1   | Система артефактов в чате              | 27.02 | 13     | +1 400        |
-| 2   | Демо-режим организации                 | 27.02 | 4      | +514          |
-| 3   | Восстановление Follow-up + фиксы       | 02.03 | 38     | +301 / −1 989 |
-| 4   | Первые unit-тесты                      | 02.03 | 5      | +260          |
-| 5   | Ошибки + Dashboard + Профиль           | 04.03 | 41     | +1 286 / −179 |
-| 6   | Аудит cursor-pointer                   | 04.03 | 18     | +56           |
-| 7   | ESLint расширение (JSDoc + правила)    | 04.03 | 1      | +43           |
-| 8   | CI-хуки + тест-база (127 тестов)       | 05.03 | 16     | +1 430        |
-| 9   | JSDoc покрытие (399 → 0 warnings)      | 05.03 | 221    | +1 542        |
-| 10  | Backend: GET /api/v1/dashboard         | 05.03 | —      | —             |
-| 11  | Frontend: /dashboard/summary           | 05.03 | 11     | +500          |
-| 12  | CLAUDE.md: навигация по бэкенду        | 05.03 | 1      | +50           |
-| 13  | Аудит и настройка Claude Code агентов  | 05.03 | 3      | —             |
-| 14  | Перевод /dashboard/summary на English  | 05.03 | 7      | ~80           |
-| 15  | Unit-тесты: features/summary (27 тест) | 05.03 | 4      | +280          |
-| 16  | Фикс бэкенда: MeetingStatsService      | 05.03 | 1      | +8 / −8       |
-| 17  | Лендинг-страница Tribes                | 06.03 | 4      | +560          |
-| 18  | JSDoc: features/auth + features/chat   | 06.03 | 20     | +106 / −60    |
-| 19  | Фавиконка (Next.js ImageResponse)      | 06.03 | 1      | +69           |
+| #   | Задача                                        | Дата  | Файлов | Строк         |
+| --- | --------------------------------------------- | ----- | ------ | ------------- |
+| 1   | Система артефактов в чате                     | 27.02 | 13     | +1 400        |
+| 2   | Демо-режим организации                        | 27.02 | 4      | +514          |
+| 3   | Восстановление Follow-up + фиксы              | 02.03 | 38     | +301 / −1 989 |
+| 4   | Первые unit-тесты                             | 02.03 | 5      | +260          |
+| 5   | Ошибки + Dashboard + Профиль                  | 04.03 | 41     | +1 286 / −179 |
+| 6   | Аудит cursor-pointer                          | 04.03 | 18     | +56           |
+| 7   | ESLint расширение (JSDoc + правила)           | 04.03 | 1      | +43           |
+| 8   | CI-хуки + тест-база (127 тестов)              | 05.03 | 16     | +1 430        |
+| 9   | JSDoc покрытие (399 → 0 warnings)             | 05.03 | 221    | +1 542        |
+| 10  | Backend: GET /api/v1/dashboard                | 05.03 | —      | —             |
+| 11  | Frontend: /dashboard/summary                  | 05.03 | 11     | +500          |
+| 12  | CLAUDE.md: навигация по бэкенду               | 05.03 | 1      | +50           |
+| 13  | Аудит и настройка Claude Code агентов         | 05.03 | 3      | —             |
+| 14  | Перевод /dashboard/summary на English         | 05.03 | 7      | ~80           |
+| 15  | Unit-тесты: features/summary (27 тест)        | 05.03 | 4      | +280          |
+| 16  | Фикс бэкенда: MeetingStatsService             | 05.03 | 1      | +8 / −8       |
+| 17  | Лендинг-страница Tribes                       | 06.03 | 4      | +560          |
+| 18  | JSDoc: features/auth + features/chat          | 06.03 | 20     | +106 / −60    |
+| 19  | Фавиконка (Next.js ImageResponse)             | 06.03 | 1      | +69           |
+| 20  | Backend: PATCH /api/v1/users/me               | 10.03 | —      | —             |
+| 21  | Frontend: синхронизация профиля с API         | 10.03 | 6      | ~80           |
+| 22  | Агент mr-reviewer                             | 10.03 | 1      | +230          |
+| 23  | Playwright E2E: тесты профиля (14 тест)       | 10.03 | 6      | +350          |
+| 24  | Playwright E2E: тесты аутентификации (6 тест) | 10.03 | 1      | +57           |

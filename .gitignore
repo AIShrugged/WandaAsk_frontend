@@ -42,3 +42,9 @@ next-env.d.ts
 .env.local
 .env.development
 .env.production
+
+# playwright
+/playwright-report/
+/test-results/
+e2e/.auth/
+.env.playwright

@@ -9,6 +9,9 @@
     "start": "NODE_ENV=production next start",
     "prod": "NODE_ENV=production next build && NODE_ENV=production next start",
     "test": "jest",
+    "test:e2e": "dotenv -e .env.playwright -- playwright test",
+    "test:e2e:ui": "dotenv -e .env.playwright -- playwright test --ui",
+    "test:e2e:report": "playwright show-report",
     "lint": "next lint",
     "prepare": "husky"
   },
@@ -41,6 +44,7 @@
     "*.{js,mjs,cjs,json,css,md}": "prettier --write"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.7.0",
     "@testing-library/react": "^16.3.0",
@@ -51,6 +55,7 @@
     "@types/react-dom": "^19",
     "babel-plugin-react-compiler": "1.0.0",
     "baseline-browser-mapping": "^2.9.19",
+    "dotenv-cli": "^11.0.0",
     "eslint": "^9.39.1",
     "eslint-config-next": "^16.0.5",
     "eslint-config-prettier": "^10.1.8",

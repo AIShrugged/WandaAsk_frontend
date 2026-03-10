@@ -79,9 +79,12 @@ export async function changePassword(data: {
     });
 
     try {
-      const json = JSON.parse(text) as { message?: string; errorCode?: string };
+      const json = JSON.parse(text) as {
+        message?: string;
+        meta?: { error_code?: string };
+      };
 
-      if (json.errorCode === 'INVALID_CURRENT_PASSWORD') {
+      if (json.meta?.error_code === 'INVALID_CURRENT_PASSWORD') {
         return {
           data: null,
           error: 'Current password is incorrect',
