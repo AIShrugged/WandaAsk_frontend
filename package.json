@@ -13,6 +13,9 @@
     "test:e2e:ui": "dotenv -e .env.playwright -- playwright test --ui",
     "test:e2e:report": "playwright show-report",
     "lint": "next lint",
+    "lint:fix": "next lint --fix",
+    "format": "prettier --write .",
+    "typecheck": "tsc --noEmit",
     "prepare": "husky"
   },
   "dependencies": {
