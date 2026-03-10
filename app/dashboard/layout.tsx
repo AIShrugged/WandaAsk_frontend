@@ -5,6 +5,7 @@ import { MenuSidebar } from '@/features/menu';
 import OrganizationSelector from '@/features/organization/ui/organization-selector';
 import User from '@/features/user/ui/user';
 import { TribesLogo } from '@/shared/ui/brand';
+import { CosmicBackground } from '@/shared/ui/layout/cosmic-background';
 import MobileSidebar from '@/widgets/layout/ui/mobile-sidebar';
 
 /**
@@ -14,11 +15,28 @@ import MobileSidebar from '@/widgets/layout/ui/mobile-sidebar';
  */
 export default async function Layout({ children }: PropsWithChildren) {
   return (
-    <div className='flex h-screen bg-background overflow-hidden'>
+    <div
+      className='flex h-screen overflow-hidden'
+      style={{ background: 'hsl(240 40% 2%)' }}
+    >
+      {/* Cosmic space backdrop */}
+      <CosmicBackground />
+
       {/* Desktop sidebar — hidden below lg */}
-      <aside className='hidden lg:flex flex-col sidebar-width flex-shrink-0 bg-sidebar border-r border-sidebar-border'>
+      <aside
+        className='hidden lg:flex flex-col sidebar-width flex-shrink-0 border-r relative z-10'
+        style={{
+          background: 'rgba(8,8,22,0.75)',
+          borderColor: 'rgba(124,58,237,0.15)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+        }}
+      >
         {/* Logo slot */}
-        <div className='flex items-center h-[var(--topbar-height)] px-6 border-b border-sidebar-border flex-shrink-0'>
+        <div
+          className='flex items-center h-[var(--topbar-height)] px-6 flex-shrink-0'
+          style={{ borderBottom: '1px solid rgba(124,58,237,0.15)' }}
+        >
           <TribesLogo />
         </div>
         {/* Navigation */}
@@ -28,9 +46,17 @@ export default async function Layout({ children }: PropsWithChildren) {
       </aside>
 
       {/* Main area */}
-      <div className='flex flex-col flex-1 min-w-0'>
+      <div className='flex flex-col flex-1 min-w-0 relative z-10'>
         {/* Top bar */}
-        <header className='flex items-center justify-between h-[var(--topbar-height)] px-4 border-b border-border bg-background flex-shrink-0'>
+        <header
+          className='flex items-center justify-between h-[var(--topbar-height)] px-4 flex-shrink-0'
+          style={{
+            background: 'rgba(8,8,22,0.7)',
+            borderBottom: '1px solid rgba(124,58,237,0.15)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+          }}
+        >
           <div className='flex items-center gap-3'>
             {/* Mobile sidebar trigger — visible below lg */}
             <MobileSidebar>
