@@ -9,15 +9,13 @@ import { logApiError } from '@/shared/lib/logger';
 import type { ActionResult } from '@/shared/types/server-action';
 
 /**
- * updateProfile.
- * @param data
- * @param data.name
- * @param data.email
- * @returns Promise.
+ * updateProfile — updates the authenticated user's display name.
+ * @param data - Request payload.
+ * @param data.name - New display name (1–255 characters).
+ * @returns ActionResult.
  */
 export async function updateProfile(data: {
   name: string;
-  email: string;
 }): Promise<ActionResult> {
   const authHeaders = await getAuthHeaders();
 
@@ -48,12 +46,12 @@ export async function updateProfile(data: {
 }
 
 /**
- * changePassword.
- * @param data
- * @param data.current_password
- * @param data.password
- * @param data.password_confirmation
- * @returns Promise.
+ * changePassword — changes the authenticated user's password via PATCH /users/me.
+ * @param data - Request payload.
+ * @param data.current_password - The user's current password.
+ * @param data.password - The new password (min 8 characters).
+ * @param data.password_confirmation - Must match `password`.
+ * @returns ActionResult with optional errorCode for field-level handling.
  */
 export async function changePassword(data: {
   current_password: string;
@@ -62,8 +60,8 @@ export async function changePassword(data: {
 }): Promise<ActionResult> {
   const authHeaders = await getAuthHeaders();
 
-  const res = await fetch(`${API_URL}/users/me/password`, {
-    method: 'POST',
+  const res = await fetch(`${API_URL}/users/me`, {
+    method: 'PATCH',
     headers: { ...authHeaders, 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
     cache: 'no-store',
@@ -73,23 +71,35 @@ export async function changePassword(data: {
     const text = await res.text();
 
     logApiError({
-      method: 'POST',
-      url: `${API_URL}/users/me/password`,
+      method: 'PATCH',
+      url: `${API_URL}/users/me`,
       status: res.status,
       statusText: res.statusText,
       body: text,
     });
 
-    let message = 'Failed to change password. Please try again.';
     try {
-      const json = JSON.parse(text) as { message?: string };
+      const json = JSON.parse(text) as { message?: string; errorCode?: string };
 
-      if (json.message) message = json.message;
+      if (json.errorCode === 'INVALID_CURRENT_PASSWORD') {
+        return {
+          data: null,
+          error: 'Current password is incorrect',
+          errorCode: 'INVALID_CURRENT_PASSWORD',
+        };
+      }
+
+      if (json.message) {
+        return { data: null, error: json.message };
+      }
     } catch {
       // use default message
     }
 
-    return { data: null, error: message };
+    return {
+      data: null,
+      error: 'Failed to change password. Please try again.',
+    };
   }
 
   return { data: undefined, error: null };

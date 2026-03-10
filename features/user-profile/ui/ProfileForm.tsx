@@ -11,13 +11,12 @@ import type { UserProps } from '@/entities/user';
 
 interface ProfileFormData {
   name: string;
-  email: string;
 }
 
 /**
  * ProfileForm component.
  * @param props - Component props.
- * @param props.user
+ * @param props.user - The current authenticated user.
  */
 export function ProfileForm({ user }: { user: UserProps }) {
   const [isPending, startTransition] = useTransition();
@@ -27,13 +26,13 @@ export function ProfileForm({ user }: { user: UserProps }) {
     handleSubmit,
     formState: { isDirty, errors },
   } = useForm<ProfileFormData>({
-    defaultValues: { name: user.name, email: user.email },
+    defaultValues: { name: user.name },
   });
 
   /**
    * onSubmit.
-   * @param data - data.
-   * @returns Result.
+   * @param data - Form data.
+   * @returns {void}
    */
   const onSubmit = (data: ProfileFormData) => {
     startTransition(async () => {
@@ -44,6 +43,7 @@ export function ProfileForm({ user }: { user: UserProps }) {
 
         return;
       }
+
       toast.success('Profile updated successfully');
     });
   };
@@ -63,22 +63,6 @@ export function ProfileForm({ user }: { user: UserProps }) {
         />
         {errors.name && (
           <p className='text-xs text-destructive'>{errors.name.message}</p>
-        )}
-      </div>
-
-      <div className='flex flex-col gap-1.5'>
-        <label htmlFor='email' className='text-sm font-medium text-foreground'>
-          Email
-        </label>
-        <input
-          id='email'
-          type='email'
-          {...register('email', { required: 'Email is required' })}
-          className='rounded-[var(--radius-button)] border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30'
-          placeholder='you@example.com'
-        />
-        {errors.email && (
-          <p className='text-xs text-destructive'>{errors.email.message}</p>
         )}
       </div>
 

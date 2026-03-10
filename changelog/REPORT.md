@@ -516,6 +516,46 @@ twitter: { card: "summary_large_image", title, description }
 
 ---
 
+## 18. JSDoc: features/auth и features/chat — 06.03.2026
+
+Добавлены JSDoc-комментарии к компонентам аутентификации и чата, устранены все
+предупреждения `jsdoc/require-jsdoc` в двух feature-модулях.
+
+Обновлено:
+
+- `features/auth/ui/` — auth-form-footer.tsx, auth-title.tsx, login-form.tsx,
+  register-form.tsx
+- `features/chat/hooks/use-messages.ts` — добавлен JSDoc + небольшой рефакторинг
+  логики хука
+- `features/chat/ui/` — artifact-panel.tsx, chat-input.tsx, chat-layout.tsx,
+  chat-list-item.tsx, chat-list.tsx, chat-message-content.tsx, chat-message.tsx,
+  chat-window.tsx, thinking-indicator.tsx
+- `features/chat/ui/artifacts/` — все 6 рендереров (chart-artifact.tsx,
+  insight-card.tsx, meeting-card.tsx, people-list.tsx, task-table.tsx,
+  transcript-view.tsx)
+
+Масштаб: 20 файлов, +106 / −60 строк
+
+---
+
+## 19. Фавиконка (SVG, Next.js ImageResponse) — 06.03.2026
+
+Добавлена браузерная иконка приложения через механизм Next.js App Router
+(`app/icon.tsx`).
+
+Детали:
+
+- Используется `ImageResponse` из `next/og` — генерация PNG на лету, без
+  статических файлов
+- Дизайн: 32×32 px, тёмно-фиолетовый фон (#1a1840), точка антенны (#c4b5fd), два
+  глаза (фиолетовый #7c3aed / голубой #0891b2), рот (#a78bfa) — отсылка к
+  персонажу PixelRobot с лендинга
+- Формат: `image/png`, размер 32×32
+
+Масштаб: 1 файл, +69 строк
+
+---
+
 ## Итого за период
 
 | #   | Задача                                 | Дата  | Файлов | Строк         |
@@ -537,3 +577,5 @@ twitter: { card: "summary_large_image", title, description }
 | 15  | Unit-тесты: features/summary (27 тест) | 05.03 | 4      | +280          |
 | 16  | Фикс бэкенда: MeetingStatsService      | 05.03 | 1      | +8 / −8       |
 | 17  | Лендинг-страница Tribes                | 06.03 | 4      | +560          |
+| 18  | JSDoc: features/auth + features/chat   | 06.03 | 20     | +106 / −60    |
+| 19  | Фавиконка (Next.js ImageResponse)      | 06.03 | 1      | +69           |

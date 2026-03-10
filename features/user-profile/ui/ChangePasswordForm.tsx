@@ -24,6 +24,7 @@ export function ChangePasswordForm() {
     handleSubmit,
     getValues,
     reset,
+    setError,
     formState: { isDirty, errors },
   } = useForm<ChangePasswordFormData>({
     defaultValues: {
@@ -35,18 +36,25 @@ export function ChangePasswordForm() {
 
   /**
    * onSubmit.
-   * @param data - data.
-   * @returns Result.
+   * @param data - Form data.
+   * @returns {void}
    */
   const onSubmit = (data: ChangePasswordFormData) => {
     startTransition(async () => {
       const result = await changePassword(data);
 
       if (result.error) {
+        if (result.errorCode === 'INVALID_CURRENT_PASSWORD') {
+          setError('current_password', { message: result.error });
+
+          return;
+        }
+
         toast.error(result.error);
 
         return;
       }
+
       toast.success('Password changed successfully');
       reset();
     });
@@ -112,8 +120,8 @@ export function ChangePasswordForm() {
           {...register('password_confirmation', {
             required: 'Please confirm your password',
             /**
-             *
-             * @param value
+             * @param value - Confirmation value.
+             * @returns True or error message.
              */
             validate: (value) => {
               return (

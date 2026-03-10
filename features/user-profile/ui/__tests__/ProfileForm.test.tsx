@@ -33,10 +33,14 @@ const makeUser = (overrides?: Partial<UserProps>): UserProps => {
 };
 
 describe('ProfileForm', () => {
-  it('renders name and email inputs with user values', () => {
+  it('renders name input with user value', () => {
     render(<ProfileForm user={makeUser()} />);
     expect(screen.getByDisplayValue('Jane Doe')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('jane@example.com')).toBeInTheDocument();
+  });
+
+  it('does not render an email input', () => {
+    render(<ProfileForm user={makeUser()} />);
+    expect(screen.queryByLabelText(/email/i)).not.toBeInTheDocument();
   });
 
   it('renders the Save button', () => {
@@ -53,7 +57,7 @@ describe('ProfileForm', () => {
     ).toBeDisabled();
   });
 
-  it('enables Save button after editing a field', async () => {
+  it('enables Save button after editing name', async () => {
     render(<ProfileForm user={makeUser()} />);
     const nameInput = screen.getByDisplayValue('Jane Doe');
 
@@ -64,7 +68,7 @@ describe('ProfileForm', () => {
     ).not.toBeDisabled();
   });
 
-  it('shows required validation error on name', async () => {
+  it('shows required validation error on empty name', async () => {
     render(<ProfileForm user={makeUser()} />);
     const nameInput = screen.getByDisplayValue('Jane Doe');
 
