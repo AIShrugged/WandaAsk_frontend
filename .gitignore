@@ -48,3 +48,5 @@ next-env.d.ts
 /test-results/
 e2e/.auth/
 .env.playwright
+# MCP local config (may contain tokens)
+.mcp.local.json
