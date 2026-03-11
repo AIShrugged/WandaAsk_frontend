@@ -1,16 +1,20 @@
 /* eslint-disable jsdoc/require-jsdoc */
-import { render, screen } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { ProfileForm } from '@/features/user-profile/ui/ProfileForm';
 
 import type { UserProps } from '@/entities/user';
 
+const mockUpdateProfile = jest.fn(() => {
+  return Promise.resolve({ error: null });
+});
+
 jest.mock('@/features/user-profile/api/profile', () => {
   return {
-    updateProfile: jest.fn(() => {
-      return Promise.resolve({ error: null });
-    }),
+    updateProfile: (...args: unknown[]) => {
+      return mockUpdateProfile(...args);
+    },
   };
 });
 
@@ -32,7 +36,13 @@ const makeUser = (overrides?: Partial<UserProps>): UserProps => {
   };
 };
 
+const user = userEvent.setup({ delay: null });
+
 describe('ProfileForm', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockUpdateProfile.mockResolvedValue({ error: null });
+  });
   it('renders name input with user value', () => {
     render(<ProfileForm user={makeUser()} />);
     expect(screen.getByDisplayValue('Jane Doe')).toBeInTheDocument();
@@ -72,10 +82,57 @@ describe('ProfileForm', () => {
     render(<ProfileForm user={makeUser()} />);
     const nameInput = screen.getByDisplayValue('Jane Doe');
 
-    await userEvent.clear(nameInput);
-    await userEvent.click(
-      screen.getByRole('button', { name: /save changes/i }),
-    );
+    await user.clear(nameInput);
+    await user.click(screen.getByRole('button', { name: /save changes/i }));
     expect(await screen.findByText(/name is required/i)).toBeInTheDocument();
+  });
+
+  it('calls updateProfile with new name on submit', async () => {
+    render(<ProfileForm user={makeUser()} />);
+    const nameInput = screen.getByDisplayValue('Jane Doe');
+
+    await user.clear(nameInput);
+    await user.type(nameInput, 'Jane Smith');
+    await act(async () => {
+      await user.click(screen.getByRole('button', { name: /save changes/i }));
+    });
+    await waitFor(() => {
+      expect(mockUpdateProfile).toHaveBeenCalledWith({ name: 'Jane Smith' });
+    });
+  });
+
+  it('shows success toast on successful update', async () => {
+    const { toast } = jest.requireMock('sonner') as {
+      toast: { success: jest.Mock };
+    };
+
+    render(<ProfileForm user={makeUser()} />);
+    await user.clear(screen.getByDisplayValue('Jane Doe'));
+    await user.type(screen.getByRole('textbox'), 'New Name');
+    await act(async () => {
+      await user.click(screen.getByRole('button', { name: /save changes/i }));
+    });
+    await waitFor(() => {
+      expect(toast.success).toHaveBeenCalledWith(
+        'Profile updated successfully',
+      );
+    });
+  });
+
+  it('shows error toast when updateProfile returns error', async () => {
+    const { toast } = jest.requireMock('sonner') as {
+      toast: { error: jest.Mock };
+    };
+
+    mockUpdateProfile.mockResolvedValue({ error: 'Server error' });
+    render(<ProfileForm user={makeUser()} />);
+    await user.clear(screen.getByDisplayValue('Jane Doe'));
+    await user.type(screen.getByRole('textbox'), 'Bad Name');
+    await act(async () => {
+      await user.click(screen.getByRole('button', { name: /save changes/i }));
+    });
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith('Server error');
+    });
   });
 });

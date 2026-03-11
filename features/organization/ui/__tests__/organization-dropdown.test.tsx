@@ -1,5 +1,6 @@
 /* eslint-disable jsdoc/require-jsdoc */
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 import OrganizationDropdown from '@/features/organization/ui/organization-dropdown';
 
@@ -90,5 +91,84 @@ describe('OrganizationDropdown', () => {
     expect(
       screen.getByRole('button', { name: /\+ Create/i }),
     ).toBeInTheDocument();
+  });
+
+  it('navigates to /organization/create when Create button is clicked', async () => {
+    const user = userEvent.setup({ delay: null });
+
+    render(
+      <OrganizationDropdown
+        organizations={[makeOrg(1, 'Acme Corp')]}
+        organizationActiveId={1}
+      />,
+    );
+    await user.click(screen.getAllByRole('button')[0]);
+    await user.click(screen.getByRole('button', { name: /\+ Create/i }));
+    expect(mockPush).toHaveBeenCalledWith(expect.stringContaining('/create'));
+  });
+
+  it('navigates to organization settings when Settings icon is clicked', async () => {
+    const user = userEvent.setup({ delay: null });
+
+    render(
+      <OrganizationDropdown
+        organizations={[makeOrg(1, 'Acme Corp')]}
+        organizationActiveId={1}
+      />,
+    );
+    // Open dropdown
+    await user.click(screen.getAllByRole('button')[0]);
+    // The settings button is next to the active org name
+    const settingsBtn = screen.getByRole('button', { name: '' });
+
+    await user.click(settingsBtn);
+    expect(mockPush).toHaveBeenCalledWith(expect.stringContaining('/1'));
+  });
+
+  it('shows non-active org as a switch button', () => {
+    render(
+      <OrganizationDropdown
+        organizations={[makeOrg(1, 'Acme Corp'), makeOrg(2, 'Beta Inc')]}
+        organizationActiveId={1}
+      />,
+    );
+    fireEvent.click(screen.getAllByRole('button')[0]);
+    // Beta Inc should appear as a submit button
+    const betaBtn = screen.getByRole('button', { name: /Beta Inc/i });
+
+    expect(betaBtn).toHaveAttribute('type', 'submit');
+  });
+
+  it('shows success toast after switching organization via form submit', async () => {
+    const { toast } = jest.requireMock('sonner') as {
+      toast: { success: jest.Mock };
+    };
+
+    const user = userEvent.setup({ delay: null });
+
+    render(
+      <OrganizationDropdown
+        organizations={[makeOrg(1, 'Acme Corp'), makeOrg(2, 'Beta Inc')]}
+        organizationActiveId={1}
+      />,
+    );
+    fireEvent.click(screen.getAllByRole('button')[0]);
+    // Submit the Beta Inc form
+    const betaBtn = screen.getByRole('button', { name: /Beta Inc/i });
+
+    await user.click(betaBtn);
+    await waitFor(() => {
+      expect(toast.success).toHaveBeenCalledWith('Switched to: Beta Inc');
+    });
+  });
+
+  it('renders "Select organization" when no active org', () => {
+    render(
+      <OrganizationDropdown
+        organizations={[makeOrg(1, 'Acme Corp')]}
+        organizationActiveId={null}
+      />,
+    );
+    expect(screen.getByText('Select organization')).toBeInTheDocument();
   });
 });

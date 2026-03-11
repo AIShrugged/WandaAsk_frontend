@@ -1,4 +1,4 @@
-/* eslint-disable jsdoc/require-jsdoc */
+/* eslint-disable jsdoc/require-jsdoc, max-statements */
 import { act, renderHook } from '@testing-library/react';
 
 import { useMessages } from '@/features/chat/hooks/use-messages';
@@ -9,13 +9,27 @@ jest.mock('@/shared/lib/config', () => {
   return { API_URL: 'http://localhost' };
 });
 
-jest.mock('@/features/chat/api/messages');
+const mockGetMessages = jest.fn();
+
+jest.mock('@/features/chat/api/messages', () => {
+  return {
+    getMessages: (...args: unknown[]) => {
+      return mockGetMessages(...args);
+    },
+  };
+});
+
+// IntersectionObserver mock that captures the callback so tests can trigger it
+type IOCallback = (entries: { isIntersecting: boolean }[]) => void;
+let capturedIOCallback: IOCallback | null = null;
 
 beforeAll(() => {
   Object.defineProperty(globalThis, 'IntersectionObserver', {
     writable: true,
     configurable: true,
-    value: jest.fn().mockImplementation(() => {
+    value: jest.fn().mockImplementation((cb: IOCallback) => {
+      capturedIOCallback = cb;
+
       return {
         observe: jest.fn(),
         disconnect: jest.fn(),
@@ -45,6 +59,8 @@ const INITIAL_MESSAGES: Message[] = [
 describe('useMessages', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    capturedIOCallback = null;
+    mockGetMessages.mockResolvedValue({ messages: [], totalCount: 0 });
   });
 
   it('returns initial messages', () => {
@@ -178,5 +194,66 @@ describe('useMessages', () => {
     });
 
     expect(result.current.messages[0].role).toBe('assistant');
+  });
+
+  it('loadOlder does not fire when hasMore is false (startOffset=0)', async () => {
+    renderHook(() => {
+      return useMessages(1, INITIAL_MESSAGES, 3, 0);
+    });
+
+    // Fire intersection — should be a no-op because hasMore=false
+    await act(async () => {
+      capturedIOCallback?.([{ isIntersecting: true }]);
+    });
+
+    expect(mockGetMessages).not.toHaveBeenCalled();
+  });
+
+  it('loadOlder sets isLoading to false after resolving via IntersectionObserver', async () => {
+    mockGetMessages.mockResolvedValue({ messages: [], totalCount: 5 });
+
+    // Use renderHook with initializer that creates a real sentinel element
+    const { result, rerender } = renderHook(() => {
+      return useMessages(1, INITIAL_MESSAGES, 5, 3);
+    });
+
+    // The hook won't observe until sentinelRef.current is set.
+    // We simulate by attaching a real element to the ref manually.
+    const sentinel = document.createElement('div');
+
+    // Force the ref to point at a real element by mutating it
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (result.current.sentinelRef as any).current = sentinel;
+    // Re-run the effect by re-rendering
+    rerender();
+
+    // Now capturedIOCallback should be set; trigger it
+    await act(async () => {
+      capturedIOCallback?.([{ isIntersecting: true }]);
+    });
+
+    expect(result.current.isLoading).toBe(false);
+  });
+
+  it('loadOlder silently handles fetch errors', async () => {
+    mockGetMessages.mockRejectedValue(new Error('Network error'));
+
+    const { result, rerender } = renderHook(() => {
+      return useMessages(1, INITIAL_MESSAGES, 5, 3);
+    });
+
+    const sentinel = document.createElement('div');
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (result.current.sentinelRef as any).current = sentinel;
+    rerender();
+
+    await act(async () => {
+      capturedIOCallback?.([{ isIntersecting: true }]);
+    });
+
+    // Messages should be unchanged, isLoading restored
+    expect(result.current.messages).toEqual(INITIAL_MESSAGES);
+    expect(result.current.isLoading).toBe(false);
   });
 });

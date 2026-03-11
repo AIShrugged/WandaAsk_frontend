@@ -44,4 +44,37 @@ describe('ChatMessageContent', () => {
     render(<ChatMessageContent content={'Line 1\nLine 2'} />);
     expect(screen.getByTestId('markdown')).toBeInTheDocument();
   });
+
+  it('sets innerHTML of the container for HTML content', () => {
+    const { container } = render(
+      <ChatMessageContent content='<p id="injected">Hello HTML</p>' />,
+    );
+
+    // The HtmlContent effect runs via useEffect which fires synchronously in RTL
+    expect(container.querySelector('#injected')).toBeInTheDocument();
+  });
+
+  it('re-executes script tags inside HTML content', () => {
+    const executed: string[] = [];
+
+    // Capture document.createElement calls to detect script creation
+    const originalCreate = document.createElement.bind(document);
+
+    const createSpy = jest
+      .spyOn(document, 'createElement')
+      .mockImplementation((tag: string) => {
+        const el = originalCreate(tag);
+
+        if (tag === 'script') executed.push(tag);
+
+        return el;
+      });
+
+    render(
+      <ChatMessageContent content='<script>var x=1;</script><p>text</p>' />,
+    );
+
+    expect(executed).toContain('script');
+    createSpy.mockRestore();
+  });
 });
