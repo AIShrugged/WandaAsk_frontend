@@ -16,7 +16,8 @@
     "lint:fix": "next lint --fix",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
-    "prepare": "husky"
+    "prepare": "husky",
+    "push": "bash scripts/push.sh"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

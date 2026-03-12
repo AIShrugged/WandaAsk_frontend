@@ -31,6 +31,28 @@ COMMIT_HASH=$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")
 COMMIT_MSG=$(git log -1 --pretty=format:"%s" 2>/dev/null || echo "")
 AUTHOR=$(git log -1 --pretty=format:"%an" 2>/dev/null || echo "")
 
+# ── What will be pushed (diff vs remote) ───────────────────────────────────
+PUSH_COMMITS_COUNT="?"
+PUSH_FILES_CHANGED="?"
+PUSH_INSERTIONS="?"
+PUSH_DELETIONS="?"
+PUSH_COMMIT_LIST=""
+
+REMOTE_REF="origin/${BRANCH}"
+if git rev-parse --verify "$REMOTE_REF" > /dev/null 2>&1; then
+  PUSH_RANGE="${REMOTE_REF}..HEAD"
+  PUSH_COMMITS_COUNT=$(git rev-list --count "$PUSH_RANGE" 2>/dev/null || echo "?")
+  PUSH_SHORTSTAT=$(git diff --shortstat "$PUSH_RANGE" 2>/dev/null || echo "")
+  PUSH_COMMIT_LIST=$(git log --oneline --reverse "$PUSH_RANGE" 2>/dev/null | head -7 | sed 's/^/  • /' || echo "")
+  PUSH_FILES_CHANGED=$(echo "$PUSH_SHORTSTAT" | grep -oE '[0-9]+ file' | grep -oE '[0-9]+' || echo "0")
+  PUSH_INSERTIONS=$(echo "$PUSH_SHORTSTAT" | grep -oE '[0-9]+ insertion' | grep -oE '[0-9]+' || echo "0")
+  PUSH_DELETIONS=$(echo "$PUSH_SHORTSTAT" | grep -oE '[0-9]+ deletion' | grep -oE '[0-9]+' || echo "0")
+else
+  # New branch — count all local commits
+  PUSH_COMMITS_COUNT=$(git rev-list --count HEAD 2>/dev/null || echo "?")
+  PUSH_COMMIT_LIST=$(git log --oneline --reverse HEAD 2>/dev/null | tail -7 | sed 's/^/  • /' || echo "")
+fi
+
 # ── Telegram send function ──────────────────────────────────────────────────
 tg_send() {
   local message="$1"
@@ -68,6 +90,7 @@ TESTS_TIME=0
 TESTS_DETAIL=""
 AUTOFIX_SUMMARY=""
 OVERALL_EXIT=0
+T_TOTAL=$(date +%s)
 
 echo ""
 echo "╔══════════════════════════════════════════╗"
@@ -165,6 +188,9 @@ if [ $OVERALL_EXIT -eq 0 ]; then
   echo ""
 fi
 
+# ── Total time ───────────────────────────────────────────────────────────────
+TOTAL_TIME=$(elapsed "$T_TOTAL")
+
 # ── Build result line ────────────────────────────────────────────────────────
 if [ $OVERALL_EXIT -eq 0 ]; then
   RESULT_LINE="✅ <b>All checks passed — push allowed</b>"
@@ -187,16 +213,38 @@ if [ -n "$AUTOFIX_SUMMARY" ]; then
 ${AUTOFIX_SUMMARY}"
 fi
 
+PUSH_STATS_SECTION=""
+if git rev-parse --verify "origin/${BRANCH}" > /dev/null 2>&1; then
+  PUSH_STATS_SECTION="
+📦 <b>Ready to push:</b>
+  🔢 Commits: <b>${PUSH_COMMITS_COUNT}</b>  📁 Files: <b>${PUSH_FILES_CHANGED}</b>
+  ➕ <b>+${PUSH_INSERTIONS}</b> lines  ➖ <b>-${PUSH_DELETIONS}</b> lines"
+  if [ -n "$PUSH_COMMIT_LIST" ]; then
+    PUSH_STATS_SECTION="${PUSH_STATS_SECTION}
+<code>${PUSH_COMMIT_LIST}</code>"
+  fi
+else
+  PUSH_STATS_SECTION="
+📦 <b>Ready to push:</b>
+  🆕 New branch — <b>${PUSH_COMMITS_COUNT}</b> commit(s)"
+  if [ -n "$PUSH_COMMIT_LIST" ]; then
+    PUSH_STATS_SECTION="${PUSH_STATS_SECTION}
+<code>${PUSH_COMMIT_LIST}</code>"
+  fi
+fi
+
 TG_MESSAGE="${RESULT_EMOJI} <b>Pre-push check</b>
 
 📌 Branch: <code>${BRANCH}</code>
 💬 <code>${COMMIT_HASH}</code> ${COMMIT_MSG}
 👤 ${AUTHOR}${AUTOFIX_LINE}
+${PUSH_STATS_SECTION}
 
 <b>Checks:</b>
   ${LINT_STATUS} ESLint (${LINT_TIME}s)
   ${TYPECHECK_STATUS} TypeScript (${TYPECHECK_TIME}s)
   ${TESTS_STATUS} Tests (${TESTS_TIME}s)${DETAIL_LINE}
+  ⏱ Total: <b>${TOTAL_TIME}s</b>
 
 ${RESULT_LINE}"
 
