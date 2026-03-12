@@ -12,11 +12,9 @@ jest.mock('@/features/teams/api/team', () => {
 });
 
 jest.mock('@/features/teams/model/teams-store', () => {
-  const store = (
-    selector: (state: { items: TeamProps[] | null }) => unknown,
-  ) => {
+  function store(selector: (state: { items: TeamProps[] | null }) => unknown) {
     return selector({ items: [] });
-  };
+  }
 
   store.getState = () => {
     return { items: [], cacheKey: null };

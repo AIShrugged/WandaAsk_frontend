@@ -12,11 +12,11 @@ jest.mock('@/features/methodology/api/methodology', () => {
 });
 
 jest.mock('@/features/methodology/model/methodology-store', () => {
-  const store = (
+  function store(
     selector: (state: { items: MethodologyProps[] | null }) => unknown,
-  ) => {
+  ) {
     return selector({ items: [] });
-  };
+  }
 
   store.getState = () => {
     return { items: [], cacheKey: null };
