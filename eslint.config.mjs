@@ -141,6 +141,15 @@ export default defineConfig([
     },
   },
 
+  // Test files — relax rules that conflict with jest.mock() factory constraints
+  {
+    files: ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', '**/*.spec.tsx'],
+    rules: {
+      // jest.mock() factories are hoisted by babel-jest — inner functions cannot be moved to outer scope
+      'unicorn/consistent-function-scoping': 'off',
+    },
+  },
+
   globalIgnores([
     '.next/**',
     'node_modules/**',
