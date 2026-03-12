@@ -74,6 +74,17 @@ PUSH_TIME=$(( $(date +%s) - T_PUSH ))
 
 echo ""
 
+# ── PR link (if gh CLI is available) ───────────────────────────────────────
+PR_LINE=""
+if command -v gh > /dev/null 2>&1; then
+  PR_URL=$(gh pr view --json url -q '.url' 2>/dev/null || echo "")
+  PR_TITLE=$(gh pr view --json title -q '.title' 2>/dev/null || echo "")
+  if [ -n "$PR_URL" ]; then
+    PR_LINE="
+🔀 <b>PR:</b> <a href=\"${PR_URL}\">${PR_TITLE}</a>"
+  fi
+fi
+
 # ── Send notification ───────────────────────────────────────────────────────
 if [ $PUSH_EXIT -eq 0 ]; then
   # ── Gather push statistics ────────────────────────────────────────────────
@@ -117,7 +128,7 @@ if [ $PUSH_EXIT -eq 0 ]; then
 📌 Branch: <code>${BRANCH}</code>
 🔗 Remote: <code>${REMOTE_URL}</code>
 💬 <code>${COMMIT_HASH}</code> ${COMMIT_MSG}
-👤 ${AUTHOR}${STATS_LINES}"
+👤 ${AUTHOR}${PR_LINE}${STATS_LINES}"
 
   echo "✅ Push successful. Notification sent."
 else

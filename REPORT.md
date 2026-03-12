@@ -116,6 +116,62 @@ Checks:
 
 ---
 
+### 📊 Расширенная статистика в Telegram уведомлениях
+
+#### `scripts/push.sh` — post-push уведомление
+
+Добавлен блок `📊 Push stats:` с данными о каждом пуше:
+
+- `🔢 Commits: N` — количество запушенных коммитов
+- `📁 Files changed: N` — количество изменённых файлов
+- `➕ +N lines ➖ -N lines` — строки добавленные/удалённые
+- `⏱ Push time: Ns` — время выполнения push
+- `Commits:` список коммитов (до 7 штук в хронологическом порядке)
+
+Статистика вычисляется через `git diff --shortstat REMOTE_BEFORE..HEAD` и
+`git rev-list --count`, где `REMOTE_BEFORE` — HEAD удалённого репозитория до
+push. Если ветка новая (нет remote ref) — показывает `🆕 New branch pushed`.
+
+#### `scripts/pre-push-checks.sh` — pre-push уведомление
+
+Добавлены два новых блока:
+
+**`📦 Ready to push:`** — вычисляется сразу при старте скрипта (до проверок):
+
+- Количество коммитов, файлов, строк +/- относительно `origin/<branch>`
+- Список коммитов (до 7 штук)
+- Для новых веток: `🆕 New branch — N commit(s)`
+
+**`⏱ Total: Ns`** — суммарное время всех шагов (авто-фикс + ESLint + TypeScript
+\+ Tests)
+
+#### Пример итогового уведомления pre-push
+
+```
+✅ Pre-push check
+
+📌 Branch: master
+💬 abc1234 chore: add push statistics
+👤 Slava Popov
+
+📦 Ready to push:
+  🔢 Commits: 3  📁 Files: 8
+  ➕ +127 lines  ➖ -12 lines
+    • abc1234 feat: add statistics to notifications
+    • def5678 fix: handle new branch edge case
+    • ghi9012 chore: update REPORT.md
+
+Checks:
+  ✅ passed (332 warnings) ESLint (14s)
+  ✅ passed TypeScript (9s)
+  ✅ passed Tests (24s)
+  ⏱ Total: 51s
+
+✅ All checks passed — push allowed
+```
+
+---
+
 ## [до 2026-03-12] — Предыдущие изменения
 
 ### 🎨 Cosmic Design System (PR #13)
