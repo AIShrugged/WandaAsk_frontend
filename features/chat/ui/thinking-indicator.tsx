@@ -88,6 +88,7 @@ export function ThinkingIndicator() {
           () => {
             return step('fadeOut');
           },
+          // eslint-disable-next-line sonarjs/pseudo-random
           1500 + Math.random() * 1000,
         );
       } else if (phase === 'fadeOut') {

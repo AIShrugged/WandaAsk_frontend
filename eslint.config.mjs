@@ -147,6 +147,7 @@ export default defineConfig([
     'out/**',
     'build/**',
     'public/**',
+    'coverage/**',
     '*.d.ts',
   ]),
 ]);
