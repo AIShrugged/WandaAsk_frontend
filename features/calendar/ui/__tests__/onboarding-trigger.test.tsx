@@ -12,7 +12,7 @@ jest.mock('@/features/calendar/api/calendar', () => {
 jest.mock('@/features/calendar/ui/onboarding-image', () => {
   return {
     __esModule: true,
-    // eslint-disable-next-line @next/next/no-img-element
+
     default: () => {
       return <img alt='Google Icon' />;
     },

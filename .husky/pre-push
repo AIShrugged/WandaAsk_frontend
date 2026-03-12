@@ -1,1 +1,1 @@
-npm test -- --ci --passWithNoTests
+bash scripts/pre-push-checks.sh

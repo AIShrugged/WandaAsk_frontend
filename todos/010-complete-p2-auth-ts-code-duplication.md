@@ -1,7 +1,7 @@
 ---
 status: pending
 priority: p2
-issue_id: "010"
+issue_id: '010'
 tags: [code-review, quality]
 ---
 
@@ -11,7 +11,9 @@ tags: [code-review, quality]
 
 `features/auth/api/auth.ts` has two nearly identical duplication problems:
 
-**1. JSON parsing block** — copy-pasted verbatim in `login` (lines 28-34) and `register` (lines 66-72):
+**1. JSON parsing block** — copy-pasted verbatim in `login` (lines 28-34) and
+`register` (lines 66-72):
+
 ```typescript
 const text = await res.text();
 let json: Record<string, unknown>;
@@ -22,15 +24,20 @@ try {
 }
 ```
 
-**2. Cookie options** — `{ httpOnly, secure, sameSite, path, maxAge }` repeated 3 times (token in login, token in register, organization_id in register).
+**2. Cookie options** — `{ httpOnly, secure, sameSite, path, maxAge }` repeated
+3 times (token in login, token in register, organization_id in register).
 
-**3. `cookies()` called twice in `register`** — awaited separately for `token` (line 80) and `organization_id` (line 92).
+**3. `cookies()` called twice in `register`** — awaited separately for `token`
+(line 80) and `organization_id` (line 92).
 
 ## Proposed Solutions
 
 ### Extract `parseJsonResponse` helper
+
 ```typescript
-async function parseJsonResponse(res: Response): Promise<Record<string, unknown>> {
+async function parseJsonResponse(
+  res: Response,
+): Promise<Record<string, unknown>> {
   const text = await res.text();
   try {
     return JSON.parse(text) as Record<string, unknown>;
@@ -44,6 +51,7 @@ const json = await parseJsonResponse(res);
 ```
 
 ### Extract cookie options constant
+
 ```typescript
 const SESSION_COOKIE_OPTIONS = {
   httpOnly: true,
@@ -54,10 +62,15 @@ const SESSION_COOKIE_OPTIONS = {
 } as const;
 
 // Usage:
-cookieStore.set({ name: 'token', value: json.token, ...SESSION_COOKIE_OPTIONS });
+cookieStore.set({
+  name: 'token',
+  value: json.token,
+  ...SESSION_COOKIE_OPTIONS,
+});
 ```
 
 ### Call `cookies()` once in register
+
 ```typescript
 const cookieStore = await cookies(); // once at top
 if (json.token) cookieStore.set({ ... });
@@ -67,10 +80,13 @@ if (json.organization_id) cookieStore.set({ ... });
 **Estimated reduction:** ~15 lines. **Effort:** Small.
 
 ## Acceptance Criteria
+
 - [ ] `parseJsonResponse` extracted as a private helper
-- [ ] Cookie options extracted as a const (can be shared with `organization.ts` fix in #002)
+- [ ] Cookie options extracted as a const (can be shared with `organization.ts`
+      fix in #002)
 - [ ] `cookies()` called once in `register`
 - [ ] Behavior unchanged
 
 ## Affected Files
+
 - `features/auth/api/auth.ts`

@@ -54,7 +54,11 @@ export function Button({
 
   const variants = {
     [BUTTON_VARIANT.primary]: clsx(
-      'bg-primary text-primary-foreground cursor-pointer hover:bg-primary/90 active:bg-primary/80',
+      'bg-gradient-to-b from-violet-500 to-violet-700 text-primary-foreground cursor-pointer',
+      'border border-violet-400/20 border-t-violet-300/30',
+      'shadow-[0_2px_12px_rgba(124,58,237,0.25)]',
+      'hover:from-violet-400 hover:to-violet-600 hover:shadow-[0_4px_20px_rgba(124,58,237,0.5)]',
+      'active:from-violet-600 active:to-violet-800 active:shadow-[0_1px_8px_rgba(124,58,237,0.3)]',
       isDisabled && 'opacity-50 cursor-not-allowed',
       loading && 'cursor-wait',
     ),

@@ -1,5 +1,5 @@
 ---
-title: "Server Action JSON Parse Failure on Laravel 5xx HTML Error Responses"
+title: 'Server Action JSON Parse Failure on Laravel 5xx HTML Error Responses'
 problem_type: integration-issues
 category: api-error-handling
 tags:
@@ -13,11 +13,12 @@ affected_files:
   - features/auth/api/auth.ts
   - shared/api/
 symptoms:
-  - "SyntaxError: Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON"
-  - "POST /auth/login or /auth/register throws on res.json()"
-  - "Server Action crashes when backend returns a 5xx HTML error page"
-  - "Browser DevTools shows POST to localhost instead of backend URL (this is normal)"
-framework: "Next.js 16"
+  - 'SyntaxError: Unexpected token ''<'', "<!DOCTYPE "... is not valid JSON'
+  - 'POST /auth/login or /auth/register throws on res.json()'
+  - 'Server Action crashes when backend returns a 5xx HTML error page'
+  - 'Browser DevTools shows POST to localhost instead of backend URL (this is
+    normal)'
+framework: 'Next.js 16'
 date: 2026-02-19
 ---
 
@@ -25,17 +26,31 @@ date: 2026-02-19
 
 ## Problem Description
 
-When the Laravel backend encountered an error and returned a 5xx HTML error page instead of a JSON body, the Next.js Server Action called `res.json()` unconditionally, which caused a `SyntaxError` because `JSON.parse()` choked on the `<!DOCTYPE html>` preamble. The error propagated unhandled, surfacing a cryptic JavaScript engine exception to the user instead of a friendly message.
+When the Laravel backend encountered an error and returned a 5xx HTML error page
+instead of a JSON body, the Next.js Server Action called `res.json()`
+unconditionally, which caused a `SyntaxError` because `JSON.parse()` choked on
+the `<!DOCTYPE html>` preamble. The error propagated unhandled, surfacing a
+cryptic JavaScript engine exception to the user instead of a friendly message.
 
-A secondary confusion arose because developers inspecting browser DevTools saw `POST /auth/login` going to `localhost:3000` — this looks wrong but is **expected** Next.js Server Action behavior (see Architecture section below).
+A secondary confusion arose because developers inspecting browser DevTools saw
+`POST /auth/login` going to `localhost:3000` — this looks wrong but is
+**expected** Next.js Server Action behavior (see Architecture section below).
 
 ---
 
 ## Root Cause Analysis
 
-The immediate cause was calling `res.json()` directly on a fetch response without first verifying the body contains valid JSON. When Laravel is down, misconfigured, or throws an unhandled exception, it returns an HTML error page. `res.json()` internally parses the raw text with `JSON.parse()` and throws a `SyntaxError` when it encounters HTML.
+The immediate cause was calling `res.json()` directly on a fetch response
+without first verifying the body contains valid JSON. When Laravel is down,
+misconfigured, or throws an unhandled exception, it returns an HTML error page.
+`res.json()` internally parses the raw text with `JSON.parse()` and throws a
+`SyntaxError` when it encounters HTML.
 
-The second problem was that this error was unhandled inside the Server Action. Because it propagated unhandled, Next.js had no friendly error to surface — users saw either a generic "Something went wrong" with no actionable guidance, or in development mode, the raw SyntaxError with "Unexpected token '<'" which tells the user nothing useful.
+The second problem was that this error was unhandled inside the Server Action.
+Because it propagated unhandled, Next.js had no friendly error to surface —
+users saw either a generic "Something went wrong" with no actionable guidance,
+or in development mode, the raw SyntaxError with "Unexpected token '<'" which
+tells the user nothing useful.
 
 ---
 
@@ -97,7 +112,9 @@ Extract into `shared/api/` so every Server Action benefits from safe parsing:
 ```typescript
 // shared/api/safe-fetch.ts (proposed)
 
-async function parseJsonResponse(res: Response): Promise<Record<string, unknown>> {
+async function parseJsonResponse(
+  res: Response,
+): Promise<Record<string, unknown>> {
   const text = await res.text();
   try {
     return JSON.parse(text) as Record<string, unknown>;
@@ -108,6 +125,7 @@ async function parseJsonResponse(res: Response): Promise<Record<string, unknown>
 ```
 
 Usage in any Server Action:
+
 ```typescript
 const json = await parseJsonResponse(res);
 if (!res.ok) {
@@ -119,7 +137,8 @@ if (!res.ok) {
 
 ## Server Action Request Flow Architecture
 
-The POST to `localhost` in DevTools is **correct and expected**. The browser never communicates with Laravel directly:
+The POST to `localhost` in DevTools is **correct and expected**. The browser
+never communicates with Laravel directly:
 
 ```
 Browser                    Next.js Server              Laravel Backend
@@ -136,9 +155,13 @@ Browser                    Next.js Server              Laravel Backend
 ```
 
 **Why this matters for debugging:**
-- The internal backend fetch is invisible in browser DevTools — check the **terminal** running `npm run dev` instead
-- The `POST /auth/login` in DevTools is the Server Action invocation, not the Laravel request
-- All backend errors must be caught server-side and converted to user-friendly messages before reaching the client
+
+- The internal backend fetch is invisible in browser DevTools — check the
+  **terminal** running `npm run dev` instead
+- The `POST /auth/login` in DevTools is the Server Action invocation, not the
+  Laravel request
+- All backend errors must be caught server-side and converted to user-friendly
+  messages before reaching the client
 
 ---
 
@@ -146,7 +169,8 @@ Browser                    Next.js Server              Laravel Backend
 
 ### 1. Never use `res.json()` directly in Server Actions
 
-Always use the safe two-step pattern or the `parseJsonResponse` helper. Add to code review checklist:
+Always use the safe two-step pattern or the `parseJsonResponse` helper. Add to
+code review checklist:
 
 - ❌ `const json = await res.json()` — throws on HTML responses
 - ✅ `const json = await parseJsonResponse(res)` — handles HTML gracefully
@@ -154,6 +178,7 @@ Always use the safe two-step pattern or the `parseJsonResponse` helper. Add to c
 ### 2. Code Review Checklist for Server Actions
 
 When reviewing any file with `'use server'`:
+
 - [ ] No direct calls to `res.json()`
 - [ ] `res.ok` checked before accessing response fields
 - [ ] Token/required fields validated with `typeof` guards (not just truthiness)
@@ -177,7 +202,9 @@ console.log('[Debug] Raw response (first 200 chars):', text.slice(0, 200));
 ### 4. Alternative: Content-Type guard (strict mode)
 
 ```typescript
-async function parseJsonResponse(res: Response): Promise<Record<string, unknown>> {
+async function parseJsonResponse(
+  res: Response,
+): Promise<Record<string, unknown>> {
   const contentType = res.headers.get('content-type');
   if (!contentType?.includes('application/json')) {
     // Backend returned non-JSON (likely HTML error page)
@@ -187,11 +214,14 @@ async function parseJsonResponse(res: Response): Promise<Record<string, unknown>
 }
 ```
 
-Use the text-based approach for production resilience; use the content-type guard for strict API contracts.
+Use the text-based approach for production resilience; use the content-type
+guard for strict API contracts.
 
 ### 5. Team mental model
 
-> **Server Actions run on the server.** Treat them like API route handlers, not client-side fetch calls. When debugging, read the **terminal**, not just the browser console. The backend request is invisible in DevTools by design.
+> **Server Actions run on the server.** Treat them like API route handlers, not
+> client-side fetch calls. When debugging, read the **terminal**, not just the
+> browser console. The backend request is invisible in DevTools by design.
 
 ---
 
@@ -199,4 +229,5 @@ Use the text-based approach for production resilience; use the content-type guar
 
 - `features/auth/api/auth.ts` — where the fix was applied
 - `shared/lib/config.ts` — `API_URL` env var used in Server Actions
-- `todos/006-pending-p2-backend-error-messages-forwarded-to-client.md` — related improvement: don't forward raw backend messages to users
+- `todos/006-pending-p2-backend-error-messages-forwarded-to-client.md` — related
+  improvement: don't forward raw backend messages to users

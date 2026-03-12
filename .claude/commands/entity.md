@@ -1,8 +1,10 @@
 Create a domain entity: $ARGUMENTS
 
-Entities represent core domain objects used across features. Create in `entities/<name>/`.
+Entities represent core domain objects used across features. Create in
+`entities/<name>/`.
 
 ## Structure
+
 ```
 entities/
   <name>/
@@ -15,6 +17,7 @@ entities/
 ```
 
 ## Rules
+
 - Entities are shared domain objects — used by multiple features
 - Entity defines the "shape" of data: types, schemas, display components
 - No feature-specific business logic in entities
@@ -24,6 +27,7 @@ entities/
 - Keep entity lean — if logic is feature-specific, it belongs in `features/`
 
 ## Examples
+
 - `entities/user` — User type, avatar component, name formatter
 - `entities/meeting` — Meeting type, meeting card, duration formatter
 - `entities/organization` — Organization type, org badge

@@ -32,6 +32,7 @@ describe('DashboardStats', () => {
       <DashboardStats teamsCount={0} chatsCount={0} methodologiesCount={0} />,
     );
     const zeros = screen.getAllByText('0');
+
     expect(zeros).toHaveLength(3);
   });
 });

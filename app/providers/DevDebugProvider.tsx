@@ -16,6 +16,7 @@ import { installClientFetchDebugger } from '@/shared/lib/devFetchInterceptor';
 export function DevDebugProvider(): null {
   useEffect(() => {
     const cleanup = installClientFetchDebugger();
+
     return cleanup;
   }, []);
 

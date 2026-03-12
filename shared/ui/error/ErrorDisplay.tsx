@@ -302,7 +302,6 @@ export default function ErrorDisplay({ error, reset }: ErrorDisplayProps) {
     // eslint-disable-next-line no-console
     if (error.url !== undefined) console.log('URL:', error.url);
 
-    // eslint-disable-next-line no-console
     if (error.responseBody !== undefined)
       console.log('Response body:', error.responseBody);
 

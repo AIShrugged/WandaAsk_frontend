@@ -11,6 +11,9 @@ const isDev =
   process.env.NODE_ENV === 'development' ||
   process.env.NEXT_PUBLIC_APP_ENV === 'development';
 
+/**
+ *
+ */
 export async function register(): Promise<void> {
   // Guard 1: non-debug environment — exit immediately, zero overhead.
   if (!isDev) return;
@@ -19,5 +22,6 @@ export async function register(): Promise<void> {
   if (process.env.NEXT_RUNTIME !== 'nodejs') return;
 
   const { patchServerFetch } = await import('@/shared/lib/fetchDebugger');
+
   patchServerFetch();
 }

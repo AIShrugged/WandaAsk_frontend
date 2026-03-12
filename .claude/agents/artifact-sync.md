@@ -83,3 +83,23 @@ features/chat/types.ts                ← TypeScript interfaces
   types
 - `artifact-panel.tsx` `switch` must handle all types with a default fallback
   for unknown types
+
+## Step 7 — Verification (always run after making changes)
+
+After implementing any changes, run these checks in order:
+
+```bash
+# 1. TypeScript — confirm no type errors introduced
+npx tsc --noEmit --incremental false 2>&1 | head -60
+
+# 2. ESLint — confirm new renderer files pass lint
+npx eslint features/chat/ui/artifacts/ features/chat/types.ts features/chat/ui/artifact-panel.tsx 2>&1 | head -60
+```
+
+If either check fails:
+
+1. Read the error output carefully
+2. Fix the root cause in the relevant file
+3. Re-run the failing check before finishing
+
+Only report completion once both TypeScript and ESLint pass clean.

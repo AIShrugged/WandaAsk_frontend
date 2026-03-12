@@ -12,7 +12,6 @@ jest.mock('@/features/methodology/api/methodology', () => {
 });
 
 jest.mock('@/features/methodology/model/methodology-store', () => {
-  // eslint-disable-next-line unicorn/consistent-function-scoping
   const store = (
     selector: (state: { items: MethodologyProps[] | null }) => unknown,
   ) => {

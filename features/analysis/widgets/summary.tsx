@@ -10,10 +10,9 @@ import type { AnalysisProps } from '@/features/analysis/model/types';
 const Summary = memo(function Summary({
   metrics,
 }: Pick<AnalysisProps, 'metrics'>) {
-  const { minItem, maxItem } = useMemo(
-    () => selectMinMaxMetric(metrics),
-    [metrics],
-  );
+  const { minItem, maxItem } = useMemo(() => {
+    return selectMinMaxMetric(metrics);
+  }, [metrics]);
 
   if (!metrics?.length) {
     return null;

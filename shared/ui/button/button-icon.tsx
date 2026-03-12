@@ -38,7 +38,7 @@ export function ButtonIcon({
   const stateClasses = clsx(
     !disabled &&
       variant === 'primary' &&
-      'text-muted-foreground hover:text-primary',
+      'text-muted-foreground hover:text-primary hover:drop-shadow-[0_0_6px_rgba(124,58,237,0.7)]',
     !disabled &&
       variant === 'danger' &&
       'text-muted-foreground hover:text-destructive',

@@ -1,17 +1,20 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { Button } from '@/shared/ui/button/Button';
 import { BUTTON_VARIANT } from '@/shared/types/button';
+import { Button } from '@/shared/ui/button/Button';
 
 describe('Button', () => {
   it('renders children', () => {
     render(<Button>Click me</Button>);
-    expect(screen.getByRole('button', { name: 'Click me' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Click me' }),
+    ).toBeInTheDocument();
   });
 
   it('calls onClick when clicked', async () => {
     const onClick = jest.fn();
+
     render(<Button onClick={onClick}>Submit</Button>);
     await userEvent.click(screen.getByRole('button'));
     expect(onClick).toHaveBeenCalledTimes(1);
@@ -28,7 +31,11 @@ describe('Button', () => {
   });
 
   it('shows loadingText when loading', () => {
-    render(<Button loading loadingText='Saving...'>Submit</Button>);
+    render(
+      <Button loading loadingText='Saving...'>
+        Submit
+      </Button>,
+    );
     expect(screen.getByText('Saving...')).toBeInTheDocument();
     expect(screen.queryByText('Submit')).not.toBeInTheDocument();
   });
@@ -40,7 +47,12 @@ describe('Button', () => {
 
   it('does not call onClick when disabled', async () => {
     const onClick = jest.fn();
-    render(<Button disabled onClick={onClick}>Disabled</Button>);
+
+    render(
+      <Button disabled onClick={onClick}>
+        Disabled
+      </Button>,
+    );
     await userEvent.click(screen.getByRole('button'));
     expect(onClick).not.toHaveBeenCalled();
   });
@@ -48,12 +60,14 @@ describe('Button', () => {
   it('applies secondary variant classes', () => {
     render(<Button variant={BUTTON_VARIANT.secondary}>Secondary</Button>);
     const btn = screen.getByRole('button');
+
     expect(btn.className).toContain('border');
   });
 
   it('applies danger variant classes', () => {
     render(<Button variant={BUTTON_VARIANT.danger}>Delete</Button>);
     const btn = screen.getByRole('button');
+
     expect(btn.className).toContain('destructive');
   });
 

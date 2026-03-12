@@ -83,7 +83,7 @@ export function ThinkingIndicator() {
 
       if (phase === 'wait') {
         // Hold the current phrase for 1.5 – 2.5 s before fading out.
-        // eslint-disable-next-line sonarjs/pseudo-random
+
         pending = setTimeout(
           () => {
             return step('fadeOut');

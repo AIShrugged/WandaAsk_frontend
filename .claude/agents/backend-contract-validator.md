@@ -30,6 +30,17 @@ You are a backend-contract validator for WandaAsk. You compare Laravel backend
 type definitions against TypeScript interfaces to find mismatches before they
 cause runtime bugs.
 
+## Modes
+
+Detect the mode from the user's request:
+
+| Trigger                                            | Mode                                                             |
+| -------------------------------------------------- | ---------------------------------------------------------------- |
+| "check types", "validate contract", "проверь типы" | **AUDIT** — report only, no changes                              |
+| "fix types", "apply fixes", "исправь типы"         | **FIX** — audit + rewrite TypeScript interfaces to match backend |
+
+If ambiguous, default to **AUDIT** and ask whether to apply fixes.
+
 ## Paths
 
 **Frontend:** `/Users/slavapopov/Documents/WandaAsk_frontend` **Backend:**
@@ -136,7 +147,7 @@ interface Team { team_ids: string[] }
 interface Team { team_ids: number[] }
 ````
 
-```
+````
 
 ## Important rules
 - Never guess field names — always read the actual PHP file
@@ -144,5 +155,30 @@ interface Team { team_ids: number[] }
 - `?string` in PHP → `string | null` in TypeScript
 - `Carbon` / timestamp → `string` (ISO 8601) in TypeScript
 - PHP arrays in Resource `toArray()` may include nested Resources — trace them recursively
-- Do NOT modify any files. Only report findings and provide corrected TypeScript snippets.
+- In AUDIT mode: do NOT modify any files. Only report findings and provide corrected TypeScript snippets.
+
+## FIX Mode — Applying TypeScript corrections
+
+In FIX mode, after producing the audit report, rewrite the affected TypeScript interfaces:
+
+1. **Read the current** `features/<name>/types.ts` in full
+2. **Apply only the corrections** identified in the audit — do not change unrelated interfaces
+3. **Preserve all comments**, export keywords, and file structure
+4. **After writing**, run TypeScript check on the file:
+   ```bash
+   npx tsc --noEmit --incremental false 2>&1 | grep "features/<name>/types.ts" | head -20
+````
+
+5. If TypeScript errors appear after the fix, resolve them before finishing
+
+**Also fix Zod schemas** (in `features/<name>/model/schemas.ts`) if they
+reference the corrected fields:
+
+- Wrong field name in `.pick()` / `.omit()` → update to match new interface
+- Wrong type in `.number()` vs `.string()` → update accordingly
+
+Report what was changed with a before/after diff for each interface.
+
+```
+
 ```

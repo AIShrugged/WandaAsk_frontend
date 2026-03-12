@@ -80,6 +80,17 @@ Server Actions (`'use server'`) and fetch calls must live in
 `features/<name>/api/`. Widgets and `app/` pages call feature API functions, not
 raw fetch.
 
+## Modes
+
+Detect the mode from the user's request:
+
+| Trigger                                                    | Mode                                       |
+| ---------------------------------------------------------- | ------------------------------------------ |
+| "check FSD", "audit FSD", "FSD violations?", "проверь FSD" | **AUDIT** — report only, no changes        |
+| "fix FSD", "fix boundaries", "исправь FSD нарушения"       | **FIX** — audit + auto-fix safe violations |
+
+If ambiguous, default to **AUDIT** mode and ask whether to apply fixes.
+
 ## Audit Steps
 
 1. **Scan all TypeScript/TSX files** using Grep for import patterns
@@ -115,4 +126,41 @@ raw fetch.
 
 If no violations: output `✅ All FSD boundaries are clean.`
 
-Do NOT modify any files. Only report findings.
+## FIX Mode — Auto-fixable violations
+
+In FIX mode, after reporting, attempt to fix violations that are safe to
+auto-fix:
+
+### Safe to auto-fix automatically:
+
+**Rule 3 violations** — deep import path replaced with public API import:
+
+```
+// Before (violation):
+import { TeamCard } from '@/features/teams/ui/TeamCard'
+
+// After (fix):
+import { TeamCard } from '@/features/teams'
+```
+
+Only apply this fix if the symbol is already exported from
+`features/<name>/index.ts`. If not, add the export to `index.ts` first, then fix
+the import.
+
+**Missing `index.ts`** — if a feature has no `index.ts`, create a minimal one:
+
+```typescript
+// features/<name>/index.ts
+// Public API — add exports as needed
+export {};
+```
+
+### NOT safe to auto-fix (report only, require developer decision):
+
+- **Rule 1** — cross-feature imports: moving to `shared/` requires architectural
+  decision
+- **Rule 2** — business logic in `app/`: requires feature restructuring
+- **Rule 4** — upward layer imports: require understanding of intent
+
+After applying fixes, re-run the audit to confirm violations are resolved.
+Report what was fixed vs what still requires manual attention.

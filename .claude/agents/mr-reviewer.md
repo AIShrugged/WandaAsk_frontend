@@ -393,6 +393,36 @@ npm test -- --ci --passWithNoTests 2>&1 | tail -20
 - [ ] Exported functions/components have JSDoc
 - [ ] `cursor-pointer` on all interactive elements
 
+### C4.12 Accessibility
+
+- [ ] Interactive elements have accessible labels (`aria-label`,
+      `aria-labelledby`, or visible text)
+- [ ] Images have `alt` attributes (empty `alt=""` for decorative images)
+- [ ] Form inputs are associated with `<label>` elements or `aria-label`
+- [ ] Modal dialogs trap focus and have `role="dialog"` + `aria-modal="true"`
+- [ ] Icon-only buttons have `aria-label` describing the action
+- [ ] Focus management: after opening/closing dialogs, focus returns to trigger
+      element
+- [ ] No `tabIndex > 0` (breaks natural tab order)
+- [ ] Error messages linked to inputs via `aria-describedby`
+- [ ] Loading states announced via `aria-live="polite"` or `role="status"`
+- [ ] Color is not the only means of conveying information (check badges, status
+      indicators)
+
+### C4.13 Delegation to Specialist Agents
+
+For deeper analysis beyond the checklist above, delegate to specialist agents:
+
+- **FSD violations in depth** → run `fsd-boundary-guard` agent for a full import
+  graph audit
+- **Backend contract mismatches** → run `backend-contract-validator` agent on
+  the affected domain
+- **Missing unit tests** → run `unit-test-booster` agent on new/changed files
+- **Visual design inconsistencies** → run `design-guardian` agent on new UI
+  components
+
+Mention in the report which specialist agents were run and link their findings.
+
 ## C5 — Format the Report
 
 ```

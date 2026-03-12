@@ -1,7 +1,7 @@
 'use server';
 
-import { cache } from 'react';
 import { redirect } from 'next/navigation';
+import { cache } from 'react';
 
 import { API_URL } from '@/shared/lib/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
@@ -21,6 +21,7 @@ export const getUser = cache(async () => {
     if (res.status === 401) {
       redirect('/api/auth/clear-session');
     }
+
     return { data: null };
   }
 

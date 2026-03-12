@@ -10,6 +10,7 @@ import { redirect } from 'next/navigation';
  */
 export async function GET() {
   const store = await cookies();
+
   store.delete('token');
   store.delete('organization_id');
 

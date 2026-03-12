@@ -15,6 +15,7 @@ describe('CollapsedSidePanel', () => {
 
   it('calls onExpand when the button is clicked', async () => {
     const onExpand = jest.fn();
+
     render(<CollapsedSidePanel label='Chats' onExpand={onExpand} />);
     await userEvent.click(screen.getByRole('button'));
     expect(onExpand).toHaveBeenCalledTimes(1);

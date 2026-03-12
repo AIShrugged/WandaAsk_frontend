@@ -14,9 +14,9 @@ describe('CreateChatSchema', () => {
   });
 
   it('rejects a title longer than 255 characters', () => {
-    expect(
-      CreateChatSchema.safeParse({ title: 'x'.repeat(256) }).success,
-    ).toBe(false);
+    expect(CreateChatSchema.safeParse({ title: 'x'.repeat(256) }).success).toBe(
+      false,
+    );
   });
 });
 
@@ -32,9 +32,9 @@ describe('UpdateChatSchema', () => {
   });
 
   it('rejects a title longer than 255 characters (max 255)', () => {
-    expect(
-      UpdateChatSchema.safeParse({ title: 'x'.repeat(256) }).success,
-    ).toBe(false);
+    expect(UpdateChatSchema.safeParse({ title: 'x'.repeat(256) }).success).toBe(
+      false,
+    );
   });
 });
 

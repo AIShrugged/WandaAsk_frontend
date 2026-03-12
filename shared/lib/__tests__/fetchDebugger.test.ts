@@ -200,14 +200,12 @@ describe('patchServerFetch', () => {
   it('uses content-length header for size if available', async () => {
     const { formatBytes } = await import('@/shared/lib/logger');
 
-    globalThis.fetch = jest
-      .fn()
-      .mockResolvedValue(
-        makeRes('hello', 200, {
-          'content-length': '5',
-          'content-type': 'text/plain',
-        }),
-      );
+    globalThis.fetch = jest.fn().mockResolvedValue(
+      makeRes('hello', 200, {
+        'content-length': '5',
+        'content-type': 'text/plain',
+      }),
+    );
     patchServerFetch();
     await globalThis.fetch('http://example.com/sized');
     expect(formatBytes).toHaveBeenCalledWith(5);

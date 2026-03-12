@@ -1,8 +1,10 @@
 Create a custom React hook: $ARGUMENTS
 
-The argument format is: `<feature-or-shared>/<useHookName>` (e.g., `auth/useAuth` or `shared/useDebounce`).
+The argument format is: `<feature-or-shared>/<useHookName>` (e.g.,
+`auth/useAuth` or `shared/useDebounce`).
 
 Rules:
+
 - If `shared/`, create in `shared/lib/` or `shared/hooks/`
 - If a feature name, create in `features/<feature>/hooks/`
 - Must start with `use` prefix

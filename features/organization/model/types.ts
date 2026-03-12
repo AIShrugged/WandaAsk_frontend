@@ -1,1 +1,4 @@
-export type { OrganizationProps, OrganizationDTO } from '@/entities/organization';
+export type {
+  OrganizationProps,
+  OrganizationDTO,
+} from '@/entities/organization';

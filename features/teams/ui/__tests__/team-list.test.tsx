@@ -12,7 +12,6 @@ jest.mock('@/features/teams/api/team', () => {
 });
 
 jest.mock('@/features/teams/model/teams-store', () => {
-  // eslint-disable-next-line unicorn/consistent-function-scoping
   const store = (
     selector: (state: { items: TeamProps[] | null }) => unknown,
   ) => {

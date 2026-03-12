@@ -189,14 +189,12 @@ describe('installClientFetchDebugger', () => {
   });
 
   it('uses content-length header for response size', async () => {
-    globalThis.fetch = jest
-      .fn()
-      .mockResolvedValue(
-        makeRes('hello', 200, {
-          'content-length': '5',
-          'content-type': 'text/plain',
-        }),
-      );
+    globalThis.fetch = jest.fn().mockResolvedValue(
+      makeRes('hello', 200, {
+        'content-length': '5',
+        'content-type': 'text/plain',
+      }),
+    );
     installClientFetchDebugger();
     await globalThis.fetch('http://example.com/sized');
     expect(mockFormatBytes).toHaveBeenCalledWith(5);

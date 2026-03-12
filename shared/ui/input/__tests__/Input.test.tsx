@@ -21,6 +21,7 @@ describe('Input', () => {
 
   it('calls onChange when typing', async () => {
     const onChange = jest.fn();
+
     render(<Input value='' onChange={onChange} />);
     await userEvent.type(screen.getByRole('textbox'), 'hello');
     expect(onChange).toHaveBeenCalled();
@@ -44,7 +45,10 @@ describe('Input', () => {
 
   it('does not set aria-invalid when no error', () => {
     render(<Input value='' onChange={jest.fn()} />);
-    expect(screen.getByRole('textbox')).toHaveAttribute('aria-invalid', 'false');
+    expect(screen.getByRole('textbox')).toHaveAttribute(
+      'aria-invalid',
+      'false',
+    );
   });
 
   it('renders startAdornment', () => {

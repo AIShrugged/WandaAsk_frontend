@@ -4,16 +4,26 @@ import type { NextRequest } from 'next/server';
 
 const PUBLIC_ROUTES = ['/auth/login', '/auth/register'];
 
+/**
+ *
+ * @param request
+ */
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
   const token = request.cookies.get('token')?.value;
 
   // Allow public routes
-  if (PUBLIC_ROUTES.some(route => pathname.startsWith(route))) {
+  if (
+    PUBLIC_ROUTES.some((route) => {
+      return pathname.startsWith(route);
+    })
+  ) {
     // Redirect to dashboard if already authenticated
     if (token && pathname !== '/auth/organization') {
       return NextResponse.redirect(new URL('/auth/organization', request.url));
     }
+
     return NextResponse.next();
   }
 

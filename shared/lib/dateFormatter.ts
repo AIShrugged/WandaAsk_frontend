@@ -7,5 +7,6 @@ import { parse, format } from 'date-fns';
  */
 export function formatDate(endsAt: string): string {
   const date = parse(endsAt, 'yyyy-MM-dd HH:mm:ss', new Date());
+
   return format(date, 'h:mma'); // например "1:30PM"
 }

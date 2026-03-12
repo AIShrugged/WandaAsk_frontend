@@ -325,11 +325,13 @@ export default function DemoSeedButton() {
           }}
           disabled={isPending}
           className={clsx(
-            'flex items-center gap-2 px-3 h-9 rounded-[var(--radius-button)] text-sm font-medium transition-all select-none border text-primary border-primary/20',
-            !isPending && isOpen && 'bg-primary/10 border-primary/30',
+            'flex items-center gap-2 px-3 h-9 rounded-[var(--radius-button)] text-sm font-medium transition-all select-none border text-primary border-primary/40 bg-primary/10 shadow-[0_0_10px_rgba(124,58,237,0.2)]',
+            !isPending &&
+              isOpen &&
+              'bg-primary/20 border-primary/60 shadow-[0_0_16px_rgba(124,58,237,0.35)]',
             !isPending &&
               !isOpen &&
-              'hover:bg-primary/10 hover:border-primary/30 cursor-pointer',
+              'hover:bg-primary/20 hover:border-primary/60 hover:shadow-[0_0_16px_rgba(124,58,237,0.35)] cursor-pointer',
             isPending && 'opacity-70 cursor-not-allowed',
           )}
           aria-label='Generate demo data'

@@ -4,5 +4,6 @@
  */
 export function isEventPast(endsAt: string): boolean {
   const localDate = new Date(endsAt.replace(' ', 'T'));
+
   return localDate.getTime() < Date.now();
 }
