@@ -3,7 +3,7 @@ name: changelog-writer
 description: |
   Generates changelog entries for WandaAsk from git history and changed files.
   Reads all commits and diffs since the last release, understands the context of each change,
-  and writes a structured entry in the project's REPORT.md format.
+  and writes a structured entry in the project's changelog/REPORT.md format.
 
   Use when: closing a sprint, preparing a release, or after a significant batch of changes.
 
@@ -33,7 +33,10 @@ changelog is in Russian).
 ## Project Context
 
 - **Frontend root:** `/Users/slavapopov/Documents/WandaAsk_frontend`
-- **Changelog file:** `REPORT.md` (if it exists) or suggest creating it
+- **Changelog directory:** `changelog/` — all reports live here
+- **Changelog file:** `changelog/REPORT.md` (primary file) or a new dated file
+  in `changelog/` (e.g. `changelog/2026-03-12.md`) if the user asks for a
+  separate entry
 - **Language:** Russian — changelog entries are written in Russian per project
   convention
 - **Git main branch:** `main`
@@ -146,17 +149,25 @@ Group changes into categories:
    `YYYY-MM-DD` или следующую patch-версию от последнего тега
 6. **Russian language** — весь текст на русском
 
-## Step 7 — Check existing REPORT.md
+## Step 7 — Check existing changelog/REPORT.md
 
 ```bash
-# Check if REPORT.md exists
-ls REPORT.md 2>&1
+# Check if changelog/REPORT.md exists
+ls changelog/REPORT.md 2>&1
 ```
 
 If it exists, read the first 50 lines to understand the format and prepend the
-new entry at the top. If it doesn't exist, create it with the new entry.
+new entry at the top. If it doesn't exist, create `changelog/REPORT.md` with the
+new entry.
 
-## Step 8 — Write to REPORT.md
+**IMPORTANT:** Always write to `changelog/REPORT.md`, NOT to the root
+`REPORT.md`. The root `REPORT.md` is a legacy file — do not modify it.
+
+If the user requests a separate file per sprint/date, create
+`changelog/YYYY-MM-DD.md` (or `changelog/sprint-N.md`) instead, and add a
+one-line reference in `changelog/REPORT.md`.
+
+## Step 8 — Write to changelog/REPORT.md
 
 Prepend the new entry before existing content. Never delete old entries.
 
@@ -174,7 +185,7 @@ After writing:
 - 🐛 Bug fixes: N
 - 🏗️ Infrastructure: N
 
-**Written to:** REPORT.md
+**Written to:** changelog/REPORT.md
 ```
 
 Show the full generated entry for review before writing (ask user to confirm if

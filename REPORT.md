@@ -172,6 +172,38 @@ Checks:
 
 ---
 
+### ♻️ Рефакторинг лендинга
+
+**`features/landing/`** — монолитный код лендинга разбит на отдельные модули:
+
+- `model/data.ts` — все статические данные (тексты, списки, конфигурация)
+  вынесены из компонентов
+- `ui/LandingHero.tsx` — секция Hero
+- `ui/LandingNav.tsx` — навигация
+- `ui/LandingFeatures.tsx` — блок фич
+- `ui/LandingArtifacts.tsx` — блок артефактов
+- `ui/LandingHowItWorks.tsx` — блок "как это работает"
+- `ui/LandingMethodology.tsx` — блок методологии
+- `ui/LandingIntegrations.tsx` — блок интеграций
+- `ui/LandingStats.tsx` — блок статистики
+- `ui/LandingCta.tsx` — CTA секция
+- `ui/LandingFooter.tsx` — футер
+- `ui/LandingBackground.tsx` — фоновый компонент
+- `ui/LandingStyles.tsx` — стили лендинга
+
+Поведение не изменилось; разбиение улучшает читаемость и позволяет редактировать
+секции лендинга независимо.
+
+---
+
+### 🏗️ Инфраструктура
+
+- **GSD tool**: добавлена `.gitignore`-секция с базовыми исключениями GSD
+  (`.gsd/activity/`, `.gsd/runtime/`, `.gsd/worktrees/` и служебные файлы среды
+  разработки). Функциональность приложения не затронута.
+
+---
+
 ## [до 2026-03-12] — Предыдущие изменения
 
 ### 🎨 Cosmic Design System (PR #13)

@@ -73,14 +73,14 @@
 
     /* --- Muted surfaces --- */
     --muted: 240 20% 10%;
-    --muted-foreground: 240 8% 52%;
+    --muted-foreground: 240 8% 56%; /* bumped from 52% → 56% for WCAG AA on muted bg (4.41→5.11:1) */
 
     /* --- Accent (terminal green) --- */
     --accent: 142 76% 45%; /* #22c55e — terminal green */
     --accent-foreground: 0 0% 0%;
 
     /* --- Destructive (errors, delete) --- */
-    --destructive: 0 70% 55%;
+    --destructive: 0 70% 49%; /* darkened from 55% → 49% for WCAG AA with white text (4.20→5.13:1) */
     --destructive-foreground: 0 0% 98%;
 
     /* --- Borders & inputs --- */

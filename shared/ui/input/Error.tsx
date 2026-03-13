@@ -15,7 +15,7 @@ export default function Error({ id, children }: ErrorProps) {
   return (
     <p
       id={id}
-      className='mt-1 text-sm text-red-700'
+      className='mt-1 text-sm text-destructive'
       role='alert'
       aria-live='polite'
     >

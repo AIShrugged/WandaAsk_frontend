@@ -113,7 +113,7 @@ const Input = forwardRef<HTMLInputElement, Props>(function Input(
           onBlur={handleBlur}
           onChange={handleChange}
           className={cn(
-            'peer bg-transparent outline-none w-full placeholder-muted-foreground/50 py-2',
+            'peer bg-transparent outline-none w-full placeholder-muted-foreground/70 py-2',
             className ?? '',
           )}
           aria-invalid={!!error}

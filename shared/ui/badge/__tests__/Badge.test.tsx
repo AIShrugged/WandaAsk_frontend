@@ -20,12 +20,12 @@ describe('Badge', () => {
 
   it('applies success variant classes', () => {
     render(<Badge variant='success'>Success</Badge>);
-    expect(screen.getByText('Success').className).toContain('bg-green-50');
+    expect(screen.getByText('Success').className).toContain('bg-accent/15');
   });
 
   it('applies warning variant classes', () => {
     render(<Badge variant='warning'>Warning</Badge>);
-    expect(screen.getByText('Warning').className).toContain('bg-yellow-50');
+    expect(screen.getByText('Warning').className).toContain('bg-yellow-500/15');
   });
 
   it('applies destructive variant classes', () => {

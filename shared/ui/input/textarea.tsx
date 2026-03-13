@@ -109,7 +109,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
             onBlur={handleBlur}
             onChange={handleChange}
             className={cn(
-              'peer w-full bg-transparent outline-none placeholder-muted-foreground/50',
+              'peer w-full bg-transparent outline-none placeholder-muted-foreground/70',
               'scrollbar-thin scrollbar-thumb-gray-300',
               !height && 'min-h-20 max-h-96 field-sizing-content',
               !resizable && 'resize-none',

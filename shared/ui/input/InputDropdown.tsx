@@ -280,7 +280,7 @@ const InputDropdown = forwardRef<
         <span
           className={cn(
             'flex-1 truncate py-2 text-sm',
-            hasValue ? 'text-foreground' : 'text-muted-foreground/50',
+            hasValue ? 'text-foreground' : 'text-muted-foreground/70',
           )}
         >
           {hasValue ? displayedLabel : placeholder}
@@ -366,13 +366,18 @@ const InputDropdown = forwardRef<
                     }}
                     className={cn(
                       'px-4 py-2.5 flex items-center justify-between cursor-pointer transition-colors text-sm',
-                      isHighlighted && 'bg-accent',
-                      isSelected && 'bg-accent font-medium',
+                      // bg-accent is terminal green — must use accent-foreground (black, 9.65:1) not foreground (white, 1.84:1)
+                      isHighlighted &&
+                        !isSelected &&
+                        'bg-accent/20 text-foreground',
+                      isSelected && 'bg-primary/15 text-foreground font-medium',
                       option.disabled && 'opacity-50 cursor-not-allowed',
                     )}
                   >
                     <span>{option.label}</span>
-                    {isSelected && <Check className='w-4 h-4 text-primary' />}
+                    {isSelected && (
+                      <Check className='w-4 h-4 text-violet-300' />
+                    )}
                   </li>
                 );
               })
