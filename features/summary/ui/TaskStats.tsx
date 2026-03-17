@@ -2,27 +2,18 @@
 
 import { AlertTriangle } from 'lucide-react';
 import {
-  Cell,
   Pie,
   PieChart,
   ResponsiveContainer,
   Tooltip,
   Legend,
+  Cell,
 } from 'recharts';
 
+import { CHART_TOOLTIP_STYLE } from '@/shared/lib/chart-theme';
 import Card from '@/shared/ui/card/Card';
 
 import type { TaskStats as TaskStatsType } from '@/features/summary/types';
-
-// ------------------------------
-// Constants
-// ------------------------------
-const TOOLTIP_STYLE = {
-  background: 'hsl(0 0% 100%)',
-  border: '1px solid hsl(240 5.9% 90%)',
-  borderRadius: '6px',
-  fontSize: 12,
-} as const;
 
 const STATUS_COLORS: Record<string, string> = {
   Open: 'hsl(217 91% 60%)',
@@ -95,7 +86,7 @@ function TaskDonutChart({
             );
           })}
         </Pie>
-        <Tooltip contentStyle={TOOLTIP_STYLE} />
+        <Tooltip contentStyle={CHART_TOOLTIP_STYLE} />
         <Legend wrapperStyle={{ fontSize: 12, paddingTop: 8 }} />
       </PieChart>
     </ResponsiveContainer>

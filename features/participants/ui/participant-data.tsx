@@ -13,6 +13,7 @@ import type { AttendeeProps, GuestProps } from '@/entities/participant';
  * @param root0.guests
  * @param root0.attendees
  * @param root0.withoutMatcher
+ * @returns JSX element.
  */
 export default async function ParticipantData({
   eventId,
@@ -26,7 +27,7 @@ export default async function ParticipantData({
   withoutMatcher?: boolean;
 }) {
   return (
-    <div className='flex flex-row gap-16'>
+    <div className='flex flex-col sm:flex-row gap-8 sm:gap-16'>
       <Participants list={guests} title={participants.guest} />
       <Participants list={attendees} title={participants.attendee} />
 

@@ -1,11 +1,13 @@
 'use client';
 
+import { Users } from 'lucide-react';
 import { useCallback } from 'react';
 
 import { loadTeamsChunk } from '@/features/teams/api/team';
 import { useTeamsStore } from '@/features/teams/model/teams-store';
 import { TeamItem } from '@/features/teams/ui/team-item';
 import { useCachedInfiniteScroll } from '@/shared/hooks/use-cached-infinite-scroll';
+import { EmptyState } from '@/shared/ui/feedback/empty-state';
 import { InfiniteScrollStatus } from '@/shared/ui/layout/infinite-scroll-status';
 import SpinLoader from '@/shared/ui/layout/spin-loader';
 
@@ -27,6 +29,7 @@ type Props = {
  * @param root0.organizationId
  * @param root0.actions
  * @param root0.href
+ * @returns JSX element.
  */
 export function TeamList({
   initialTeams,
@@ -58,6 +61,16 @@ export function TeamList({
     });
 
   if (!items) return null;
+
+  if (items.length === 0 && !isLoading) {
+    return (
+      <EmptyState
+        icon={Users}
+        title='No teams yet'
+        description='Create a team to get started'
+      />
+    );
+  }
 
   return (
     <div className='flex flex-col h-full'>

@@ -1,17 +1,19 @@
-import { LandingArtifacts } from '@/features/landing/ui/LandingArtifacts';
-import { LandingBackground } from '@/features/landing/ui/LandingBackground';
-import { LandingCta } from '@/features/landing/ui/LandingCta';
-import { LandingFeatures } from '@/features/landing/ui/LandingFeatures';
-import { LandingFooter } from '@/features/landing/ui/LandingFooter';
-import { LandingHero } from '@/features/landing/ui/LandingHero';
-import { LandingHowItWorks } from '@/features/landing/ui/LandingHowItWorks';
-import { LandingIntegrations } from '@/features/landing/ui/LandingIntegrations';
-import { LandingMethodology } from '@/features/landing/ui/LandingMethodology';
-import { LandingNav } from '@/features/landing/ui/LandingNav';
-import { LandingStats } from '@/features/landing/ui/LandingStats';
-import { LandingStyles } from '@/features/landing/ui/LandingStyles';
-import { PixelRobot } from '@/features/landing/ui/PixelRobot';
-import { ScrollReveal } from '@/features/landing/ui/ScrollReveal';
+import {
+  LandingArtifacts,
+  LandingBackground,
+  LandingCta,
+  LandingFeatures,
+  LandingFooter,
+  LandingHero,
+  LandingHowItWorks,
+  LandingIntegrations,
+  LandingMethodology,
+  LandingNav,
+  LandingStats,
+  LandingStyles,
+  PixelRobot,
+  ScrollReveal,
+} from '@/features/landing';
 
 import type { Metadata } from 'next';
 
@@ -44,7 +46,8 @@ export const metadata: Metadata = {
 };
 
 /**
- *
+ * Home page component.
+ * @returns JSX element.
  */
 export default function Home() {
   return (

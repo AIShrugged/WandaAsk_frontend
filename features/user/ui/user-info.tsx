@@ -17,6 +17,7 @@ interface UserInfoProps {
  * UserInfo component.
  * @param props - Component props.
  * @param props.user
+ * @returns JSX element.
  */
 export default function UserInfo({ user }: UserInfoProps) {
   const anchorRef = useRef<HTMLDivElement>(null);
@@ -43,7 +44,7 @@ export default function UserInfo({ user }: UserInfoProps) {
 
   return (
     <div className='flex gap-2 items-center justify-end'>
-      <div ref={anchorRef} className='hidden xs:flex flex-col text-right'>
+      <div ref={anchorRef} className='hidden lg:flex flex-col text-right'>
         <p className='text-foreground font-medium'>{user.name}</p>
         <p className='text-muted-foreground text-sm'>{user.email}</p>
       </div>

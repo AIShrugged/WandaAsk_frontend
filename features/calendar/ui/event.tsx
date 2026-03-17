@@ -5,11 +5,8 @@ import { Circle, CircleCheckBig } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useTransition } from 'react';
 
-import { EventPopup } from '@/features/event/ui/event-popup';
-import {
-  getAttendees,
-  getGuests,
-} from '@/features/participants/api/participants';
+import { EventPopup } from '@/features/event';
+import { getAttendees, getGuests } from '@/features/participants';
 import { useModal } from '@/shared/hooks/use-modal';
 import { formatDate } from '@/shared/lib/dateFormatter';
 import { isEventPast } from '@/shared/lib/isEventPast';
@@ -21,6 +18,7 @@ import type { EventProps } from '@/entities/event';
  * Event component.
  * @param props - Component props.
  * @param props.event
+ * @returns JSX element.
  */
 const Event = ({ event }: { event: EventProps }) => {
   const isPast = isEventPast(event.ends_at);

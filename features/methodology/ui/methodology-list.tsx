@@ -1,11 +1,13 @@
 'use client';
 
+import { BookOpen } from 'lucide-react';
 import { useCallback } from 'react';
 
 import { loadMethodologiesChunk } from '@/features/methodology/api/methodology';
 import { useMethodologyStore } from '@/features/methodology/model/methodology-store';
 import MethodologyItem from '@/features/methodology/ui/methodology-item';
 import { useCachedInfiniteScroll } from '@/shared/hooks/use-cached-infinite-scroll';
+import { EmptyState } from '@/shared/ui/feedback/empty-state';
 import { InfiniteScrollStatus } from '@/shared/ui/layout/infinite-scroll-status';
 import SpinLoader from '@/shared/ui/layout/spin-loader';
 
@@ -23,6 +25,7 @@ type Props = {
  * @param root0.initialMethodologies
  * @param root0.totalCount
  * @param root0.organizationId
+ * @returns JSX element.
  */
 export default function MethodologyList({
   initialMethodologies,
@@ -52,6 +55,16 @@ export default function MethodologyList({
     });
 
   if (!items) return null;
+
+  if (items.length === 0 && !isLoading) {
+    return (
+      <EmptyState
+        icon={BookOpen}
+        title='No methodologies yet'
+        description='Add a methodology to define your process'
+      />
+    );
+  }
 
   return (
     <div className='flex flex-col h-full'>

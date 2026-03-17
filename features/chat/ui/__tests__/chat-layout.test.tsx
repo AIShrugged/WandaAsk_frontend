@@ -87,7 +87,16 @@ const makeMessage = (id: number): Message => {
     id,
     chat_id: 1,
     role: 'user',
+    status: null,
     content: `msg ${id}`,
+    followup_data: null,
+    error_message: null,
+    failure_code: null,
+    agent_run_uuid: null,
+    current_attempt: null,
+    max_attempts: null,
+    completed_at: null,
+    next_retry_at: null,
     created_at: '2024-01-01T00:00:00Z',
   };
 };

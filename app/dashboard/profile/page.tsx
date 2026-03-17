@@ -1,11 +1,11 @@
-import { getUser } from '@/features/user/api/user';
-import { ChangePasswordForm } from '@/features/user-profile/ui/ChangePasswordForm';
-import { ProfileForm } from '@/features/user-profile/ui/ProfileForm';
+import { getUser } from '@/features/user';
+import { ChangePasswordForm, ProfileForm } from '@/features/user-profile';
 import Card from '@/shared/ui/card/Card';
 import PageHeader from '@/widgets/layout/ui/page-header';
 
 /**
  * ProfilePage component.
+ * @returns JSX element.
  */
 export default async function ProfilePage() {
   const { data: user } = await getUser();

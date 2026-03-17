@@ -9,12 +9,13 @@ import { Button } from '@/shared/ui/button/Button';
 
 /**
  * MethodologyCreate component.
+ * @returns JSX element.
  */
 export default function MethodologyCreate() {
   const route = `${ROUTES.DASHBOARD.METHODOLOGY}/create`;
 
   return (
-    <div className={'mt-auto ml-6 mr-8 mb-6 w-full md:w-[240px]'}>
+    <div className={'mt-auto mx-4 md:ml-6 md:mr-8 mb-6 w-auto md:w-[240px]'}>
       <Link href={route} className='cursor-pointer'>
         <Button type='submit'>
           <Plus /> {BUTTON.ADD} methodology

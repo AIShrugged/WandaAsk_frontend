@@ -157,6 +157,7 @@ export default defineConfig([
     'build/**',
     'public/**',
     'coverage/**',
+    'playwright-report/**',
     '*.d.ts',
   ]),
 ]);

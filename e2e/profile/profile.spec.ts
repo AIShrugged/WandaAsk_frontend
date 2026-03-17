@@ -24,6 +24,7 @@ async function clearInput(
 /**
  * Returns locators for all profile page form fields and buttons.
  * @param page
+ * @returns Locator object.
  */
 function getLocators(page: import('@playwright/test').Page) {
   return {
@@ -131,24 +132,53 @@ test.describe('Profile page — authenticated', () => {
   // The form intentionally keeps the new value in the input after save.
   // -------------------------------------------------------------------------
 
+  // eslint-disable-next-line max-statements
   test('shows success toast after saving name', async ({ page }) => {
     const { nameInput, saveBtn } = getLocators(page);
 
-    const originalName = await nameInput.inputValue();
+    // Use a fixed base name so repeated runs don't accumulate suffixes.
+    const FIXED_BASE = 'E2E Test User';
 
-    const newName = `${originalName} E2E`;
+    const TOAST_TIMEOUT = 15_000;
 
-    await nameInput.fill(newName);
-    await expect(saveBtn).toBeEnabled();
+    // Step 1: Save the fixed base name (restores clean state if a prior run left it dirty).
+    await nameInput.fill(FIXED_BASE);
+    // If already equal to defaultValues the button stays disabled — skip in that case.
+    const isEnabled = await saveBtn.isEnabled();
 
-    await saveBtn.click();
+    if (isEnabled) {
+      await saveBtn.click();
+      await expect(page.getByText(/profile updated successfully/i)).toBeVisible(
+        {
+          timeout: TOAST_TIMEOUT,
+        },
+      );
+    }
 
-    await expect(page.getByText(/profile updated successfully/i)).toBeVisible();
+    // Step 2: Save a modified name and assert toast.
+    await page.reload();
+    await expect(page.getByRole('heading', { name: /profile/i })).toBeVisible();
+    const { nameInput: reloadedInput, saveBtn: reloadedBtn } =
+      getLocators(page);
 
-    // Restore original name
-    await nameInput.fill(originalName);
-    await saveBtn.click();
-    await page.waitForTimeout(500);
+    await reloadedInput.fill(`${FIXED_BASE} Updated`);
+    await expect(reloadedBtn).toBeEnabled();
+    await reloadedBtn.click();
+    await expect(page.getByText(/profile updated successfully/i)).toBeVisible({
+      timeout: TOAST_TIMEOUT,
+    });
+
+    // Step 3: Restore to FIXED_BASE so next run starts clean.
+    await page.reload();
+    await expect(page.getByRole('heading', { name: /profile/i })).toBeVisible();
+    const { nameInput: restoreInput, saveBtn: restoreBtn } = getLocators(page);
+
+    await restoreInput.fill(FIXED_BASE);
+    await expect(restoreBtn).toBeEnabled({ timeout: 5000 });
+    await restoreBtn.click();
+    await expect(page.getByText(/profile updated successfully/i)).toBeVisible({
+      timeout: TOAST_TIMEOUT,
+    });
   });
 
   // -------------------------------------------------------------------------

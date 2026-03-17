@@ -1,9 +1,9 @@
 'use server';
 
-import { getChats } from '@/features/chat/api/chats';
-import { getMethodologies } from '@/features/methodology/api/methodology';
-import { getTeams } from '@/features/teams/api/team';
-import { getUser } from '@/features/user/api/user';
+import { getChats } from '@/features/chat';
+import { getMethodologies } from '@/features/methodology';
+import { getTeams } from '@/features/teams';
+import { getUser } from '@/features/user';
 import { getOrganizationId } from '@/shared/lib/getOrganizationId';
 
 /**

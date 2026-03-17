@@ -20,6 +20,16 @@ jest.mock('sonner', () => {
   };
 });
 
+const mockPush = jest.fn();
+
+jest.mock('next/navigation', () => {
+  return {
+    useRouter: () => {
+      return { push: mockPush };
+    },
+  };
+});
+
 jest.mock('next/link', () => {
   return {
     __esModule: true,

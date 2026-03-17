@@ -137,6 +137,20 @@ export function useMessages(
     });
   }, []);
 
+  /**
+   * updateMessage — patches a message in-place by id.
+   * @param id - ID of the message to update.
+   * @param patch - Partial fields to merge.
+   * @returns Result.
+   */
+  const updateMessage = useCallback((id: number, patch: Partial<Message>) => {
+    setMessages((prev) => {
+      return prev.map((m) => {
+        return m.id === id ? { ...m, ...patch } : m;
+      });
+    });
+  }, []);
+
   return {
     messages,
     isLoading,
@@ -145,5 +159,6 @@ export function useMessages(
     containerRef,
     addMessage,
     addMessages,
+    updateMessage,
   };
 }

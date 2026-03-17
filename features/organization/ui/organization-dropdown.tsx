@@ -2,7 +2,8 @@
 
 import { ChevronUp, ChevronDown, Settings } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useState, useActionState, useEffect } from 'react';
+import { useState, useActionState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { toast } from 'sonner';
 
 import { setActiveOrganization } from '@/features/organization/api/organization';
@@ -12,11 +13,66 @@ import { ROUTES } from '@/shared/lib/routes';
 import type { OrganizationProps } from '@/entities/organization';
 
 /**
+ * OrgItem — renders a single organization row inside the dropdown.
+ * @param root0 - Props.
+ * @param root0.organization - Organization to render.
+ * @param root0.isActive - Whether this org is currently active.
+ * @param root0.pending - Whether a form action is in flight.
+ * @param root0.onSettingsClick - Click handler for the settings icon.
+ * @returns JSX element.
+ */
+function OrgItem({
+  organization,
+  isActive,
+  pending,
+  onSettingsClick,
+}: {
+  organization: OrganizationProps;
+  isActive: boolean;
+  pending: boolean;
+  onSettingsClick: () => void;
+}) {
+  if (isActive) {
+    return (
+      <div className='gap-5 px-4 py-2.5 w-full flex flex-row justify-between items-center border-b border-border bg-accent/30'>
+        <div>
+          <p className='text-sm font-medium text-foreground'>
+            {organization.name}
+          </p>
+          <p className='text-xs text-muted-foreground'>
+            {organization.pivot.role}
+          </p>
+        </div>
+        <button
+          className='cursor-pointer text-muted-foreground hover:text-foreground transition-colors'
+          onClick={onSettingsClick}
+        >
+          <Settings size={16} />
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <button
+      type='submit'
+      disabled={pending}
+      className='flex flex-row gap-5 px-4 py-2.5 cursor-pointer w-full items-center justify-between hover:bg-accent transition-colors'
+    >
+      <p className='text-sm text-foreground'>{organization.name}</p>
+      <p className='text-xs text-muted-foreground'>{organization.pivot.role}</p>
+    </button>
+  );
+}
+
+/**
  * OrganizationDropdown component.
  * @param root0
  * @param root0.organizations
  * @param root0.organizationActiveId
+ * @returns JSX element.
  */
+// eslint-disable-next-line complexity
 export default function OrganizationDropdown({
   organizations,
   organizationActiveId,
@@ -32,6 +88,14 @@ export default function OrganizationDropdown({
 
   const { push } = useRouter();
 
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  const [dropdownPos, setDropdownPos] = useState<{
+    top: number;
+    left: number;
+    minWidth: number;
+  } | null>(null);
+
   const active = organizations.find((o) => {
     return String(o.id) === String(organizationActiveId);
   });
@@ -46,7 +110,9 @@ export default function OrganizationDropdown({
     : organizations;
 
   useEffect(() => {
-    if (!organizationActiveId && organizations.length > 0) {
+    const needsDefault = !organizationActiveId && organizations.length > 0;
+
+    if (needsDefault) {
       const formData = new FormData();
 
       formData.append('organization_id', String(organizations[0].id));
@@ -54,113 +120,135 @@ export default function OrganizationDropdown({
     }
   }, []);
 
+  useEffect(() => {
+    if (!open) return;
+
+    /**
+     * handleClickOutside.
+     * @param e - e.
+     * @returns Result.
+     */
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+
+      const isOutside =
+        !buttonRef.current?.contains(target) &&
+        !target.closest('[data-org-dropdown]');
+
+      if (isOutside) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      return document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [open]);
+
+  /**
+   * handleToggle.
+   */
+  const handleToggle = () => {
+    if (!open && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+
+      setDropdownPos({
+        top: rect.bottom + 4,
+        left: Math.min(rect.left, window.innerWidth - 280 - 8),
+        minWidth: rect.width,
+      });
+    }
+
+    setOpen((prev) => {
+      return !prev;
+    });
+  };
+
   return (
-    <div className='relative w-full max-w-[260px]'>
+    <div className='max-w-[130px] xs:max-w-[180px] sm:max-w-[260px]'>
       <button
-        onClick={() => {
-          return setOpen((prev) => {
-            return !prev;
-          });
-        }}
+        ref={buttonRef}
+        onClick={handleToggle}
         className='cursor-pointer w-full flex items-center justify-between gap-2
-                   rounded-[var(--radius-button)] bg-accent px-4 py-2
-                   hover:bg-accent/80 transition'
+                   rounded-[var(--radius-button)] bg-accent px-3 py-2
+                   hover:bg-accent/80 transition min-w-0'
       >
-        <div className='text-left'>
-          <div className='text-sm font-medium text-accent-foreground'>
+        <div className='text-left min-w-0 flex-1'>
+          <div className='text-sm font-medium text-accent-foreground truncate'>
             {active?.name ?? 'Select organization'}
           </div>
-          <div className='text-xs text-accent-foreground/70'>
+          <div className='text-xs text-accent-foreground/70 truncate'>
             {active?.pivot?.role}
           </div>
         </div>
 
         {open ? (
-          <ChevronUp size={18} className='text-primary' />
+          <ChevronUp size={18} className='text-primary flex-shrink-0' />
         ) : (
-          <ChevronDown size={18} className='text-primary' />
+          <ChevronDown size={18} className='text-primary flex-shrink-0' />
         )}
       </button>
 
-      {open && (
-        <div
-          className='absolute top-full left-0 mt-2 min-w-full w-max max-w-xs
-                     rounded-[var(--radius-card)] bg-popover border border-border shadow-card
-                     z-50 overflow-hidden'
-        >
-          {sortedOrganizations.map((organization) => {
-            return (
-              <form
-                key={organization.id}
-                action={(formData) => {
-                  action(formData);
-                  setOpen(false);
-                  toast.success(`Switched to: ${organization.name}`);
-                }}
-              >
-                <input
-                  type='hidden'
-                  name='organization_id'
-                  value={organization.id}
-                />
-
-                <>
-                  {organization.id === organizationActiveId ? (
-                    <div className='gap-5 px-4 py-2.5 w-full flex flex-row justify-between items-center border-b border-border bg-accent/30'>
-                      <div>
-                        <p className='text-sm font-medium text-foreground'>
-                          {organization.name}
-                        </p>
-                        <p className='text-xs text-muted-foreground'>
-                          {organization.pivot.role}
-                        </p>
-                      </div>
-
-                      <button
-                        className='cursor-pointer text-muted-foreground hover:text-foreground transition-colors'
-                        onClick={() => {
-                          setOpen(false);
-                          push(
-                            `${ROUTES.DASHBOARD.ORGANIZATION}/${organization.id}`,
-                          );
-                        }}
-                      >
-                        <Settings size={16} />
-                      </button>
-                    </div>
-                  ) : (
-                    <button
-                      type='submit'
-                      disabled={pending}
-                      className='flex flex-row gap-5 px-4 py-2.5 cursor-pointer w-full items-center justify-between hover:bg-accent transition-colors'
-                    >
-                      <p className='text-sm text-foreground'>
-                        {organization.name}
-                      </p>
-                      <p className='text-xs text-muted-foreground'>
-                        {organization.pivot.role}
-                      </p>
-                    </button>
-                  )}
-                </>
-              </form>
-            );
-          })}
-
-          <button
-            onClick={() => {
-              setOpen(false);
-              push(`${ROUTES.DASHBOARD.ORGANIZATION}/create`);
+      {open &&
+        dropdownPos &&
+        createPortal(
+          <div
+            data-org-dropdown=''
+            className='fixed z-[9999] rounded-[var(--radius-card)] bg-popover border border-border shadow-card overflow-hidden'
+            style={{
+              top: dropdownPos.top,
+              left: dropdownPos.left,
+              minWidth: dropdownPos.minWidth,
+              maxWidth: '280px',
             }}
-            type='button'
-            className='cursor-pointer w-full px-4 py-3 text-left
-                       text-sm font-medium text-primary
-                       hover:bg-accent transition-colors'
           >
-            + {BUTTON.CREATE}
-          </button>
-        </div>
-      )}
+            {sortedOrganizations.map((organization) => {
+              return (
+                <form
+                  key={organization.id}
+                  action={(formData) => {
+                    action(formData);
+                    setOpen(false);
+                    toast.success(`Switched to: ${organization.name}`);
+                  }}
+                >
+                  <input
+                    type='hidden'
+                    name='organization_id'
+                    value={organization.id}
+                  />
+                  <OrgItem
+                    organization={organization}
+                    isActive={organization.id === organizationActiveId}
+                    pending={pending}
+                    onSettingsClick={() => {
+                      setOpen(false);
+                      push(
+                        `${ROUTES.DASHBOARD.ORGANIZATION}/${organization.id}`,
+                      );
+                    }}
+                  />
+                </form>
+              );
+            })}
+
+            <button
+              onClick={() => {
+                setOpen(false);
+                push(`${ROUTES.DASHBOARD.ORGANIZATION}/create`);
+              }}
+              type='button'
+              className='cursor-pointer w-full px-4 py-3 text-left
+                         text-sm font-medium text-primary
+                         hover:bg-accent transition-colors'
+            >
+              + {BUTTON.CREATE}
+            </button>
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }

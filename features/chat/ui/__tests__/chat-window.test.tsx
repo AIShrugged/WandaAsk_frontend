@@ -116,7 +116,16 @@ const makeMessage = (
     id,
     chat_id: 1,
     role,
+    status: null,
     content: `message ${id}`,
+    followup_data: null,
+    error_message: null,
+    failure_code: null,
+    agent_run_uuid: null,
+    current_attempt: null,
+    max_attempts: null,
+    completed_at: null,
+    next_retry_at: null,
     created_at: '2024-01-01T00:00:00Z',
   };
 };
@@ -202,7 +211,7 @@ describe('ChatWindow', () => {
   });
 
   it('calls sendMessage and addMessage when send button clicked', async () => {
-    mockSendMessage.mockResolvedValueOnce([makeMessage(99, 'assistant')]);
+    mockSendMessage.mockResolvedValueOnce(makeMessage(99, 'assistant'));
 
     const user = userEvent.setup();
 
@@ -227,10 +236,10 @@ describe('ChatWindow', () => {
     expect(mockSendMessage).toHaveBeenCalledWith(5, 'hello world');
   });
 
-  it('adds assistant responses after send', async () => {
+  it('adds queued assistant message after send', async () => {
     const assistantMsg = makeMessage(99, 'assistant');
 
-    mockSendMessage.mockResolvedValueOnce([assistantMsg]);
+    mockSendMessage.mockResolvedValueOnce(assistantMsg);
 
     const user = userEvent.setup();
 
@@ -246,7 +255,7 @@ describe('ChatWindow', () => {
     await user.click(screen.getByTestId('send-btn'));
 
     await waitFor(() => {
-      expect(mockAddMessages).toHaveBeenCalledWith([assistantMsg]);
+      expect(mockAddMessage).toHaveBeenCalledWith(assistantMsg);
     });
   });
 

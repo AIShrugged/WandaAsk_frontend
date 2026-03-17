@@ -1,6 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
 import React, { useTransition } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 
@@ -20,6 +21,8 @@ const FORM_ID = 'login-form';
  * @returns Result.
  */
 export default function LoginForm() {
+  const router = useRouter();
+
   const [isPending, startTransition] = useTransition();
 
   const {
@@ -43,6 +46,7 @@ export default function LoginForm() {
     startTransition(async () => {
       try {
         await login(data);
+        router.push(ROUTES.AUTH.ORGANIZATION);
       } catch (error) {
         handleFormError(error, setError, 'Login failed. Please try again.');
       }

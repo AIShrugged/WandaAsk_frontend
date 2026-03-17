@@ -53,10 +53,11 @@ const makeFollowUp = (id: number, title: string): TeamFollowUpDTO => {
 };
 
 describe('FollowUpList', () => {
-  it('renders nothing for an empty array', () => {
-    const { container } = render(<FollowUpList followUps={[]} />);
+  it('renders empty state for an empty array', () => {
+    render(<FollowUpList followUps={[]} />);
 
-    expect(container.firstChild).toBeNull();
+    expect(screen.getByRole('status')).toBeInTheDocument();
+    expect(screen.getByText('No follow-ups yet')).toBeInTheDocument();
   });
 
   it('renders one item', () => {

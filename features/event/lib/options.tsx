@@ -70,8 +70,9 @@ export const items = [
      */
     value: (d: EventProps) => {
       return (
-        <div className={'flex flex-row gap-2.5 items-center'}>
-          {d.url} <ButtonCopy copyText={d.url} />
+        <div className={'flex flex-row gap-2.5 items-center min-w-0'}>
+          <span className='truncate'>{d.url}</span>
+          <ButtonCopy copyText={d.url} />
         </div>
       );
     },

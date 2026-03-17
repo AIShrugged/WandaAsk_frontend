@@ -176,7 +176,9 @@
   font-size: 0.875rem;
   line-height: 1.6;
   color: hsl(var(--foreground));
-  overflow-x: auto;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  min-width: 0;
 }
 
 .chat-html-content p {

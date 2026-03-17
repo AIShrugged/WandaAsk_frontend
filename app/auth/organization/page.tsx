@@ -8,6 +8,7 @@ import Card from '@/shared/ui/card/Card';
 
 /**
  * Page component.
+ * @returns JSX element.
  */
 export default async function Page() {
   const { data: organizations } = await getOrganizations();
@@ -29,7 +30,9 @@ export default async function Page() {
 
   return (
     <Card>
-      <div className={'w-[690px] py-[100px] px-[72px]'}>
+      <div
+        className={'w-full max-w-[690px] py-8 px-4 md:py-[100px] md:px-[72px]'}
+      >
         <AuthTitle type={AUTH_TITLE_VARIANT.ORGANIZATION} />
         <OrganizationList organizations={organizations} />
         <OrganizationCreateLink />

@@ -47,13 +47,19 @@ export function ChatLayout({
 
   return (
     <div className='flex h-full rounded-[var(--radius-card)] overflow-hidden border border-border bg-card shadow-card'>
-      <ChatList
-        initialChats={initialChats}
-        totalCount={totalCount}
-        activeChatId={activeChatId}
-      />
+      {/* Chat list — hidden on mobile, slide in at md+ */}
+      <div className='hidden md:flex flex-col h-full'>
+        <ChatList
+          initialChats={initialChats}
+          totalCount={totalCount}
+          activeChatId={activeChatId}
+        />
+      </div>
 
-      <ArtifactPanel chatId={chatId} initialArtifacts={initialArtifacts} />
+      {/* Artifact panel — desktop only */}
+      <div className='hidden lg:flex flex-col h-full'>
+        <ArtifactPanel chatId={chatId} initialArtifacts={initialArtifacts} />
+      </div>
 
       {isChatCollapsed ? (
         <CollapsedSidePanel

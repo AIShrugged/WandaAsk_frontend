@@ -6,7 +6,7 @@ import { API_URL } from '@/shared/lib/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 import { logApiError } from '@/shared/lib/logger';
 
-import type { Message } from '@/features/chat/types';
+import type { AgentRun, Message } from '@/features/chat/types';
 import type { ApiResponse } from '@/shared/types/common';
 
 /**
@@ -16,6 +16,7 @@ import type { ApiResponse } from '@/shared/types/common';
  * @param limit
  * @returns Promise.
  */
+// eslint-disable-next-line complexity
 export async function getMessages(
   chatId: number,
   offset = 0,
@@ -58,6 +59,8 @@ export async function getMessages(
 
 /**
  * sendMessage.
+ * POST /api/v1/chats/{chatId}/messages
+ * Returns the queued assistant placeholder message (status = 'queued').
  * @param chatId
  * @param content
  * @returns Promise.
@@ -65,12 +68,12 @@ export async function getMessages(
 export async function sendMessage(
   chatId: number,
   content: string,
-): Promise<Message[]> {
+): Promise<Message> {
   const authHeaders = await getAuthHeaders();
 
   const res = await fetch(`${API_URL}/chats/${chatId}/messages`, {
     method: 'POST',
-    headers: { ...authHeaders },
+    headers: { ...authHeaders, 'Content-Type': 'application/json' },
     body: JSON.stringify({ content }),
     cache: 'no-store',
   });
@@ -92,9 +95,44 @@ export async function sendMessage(
     );
   }
 
-  const json: ApiResponse<Message | Message[]> = await res.json();
+  const json: ApiResponse<Message> = await res.json();
 
-  const data = json.data!;
+  return json.data!;
+}
 
-  return Array.isArray(data) ? data : [data];
+/**
+ * pollRun.
+ * GET /api/v1/chats/{chatId}/runs/{runUuid}
+ * Returns the current run status and, when completed, the final message.
+ * @param chatId
+ * @param runUuid
+ * @returns Promise.
+ */
+export async function pollRun(
+  chatId: number,
+  runUuid: string,
+): Promise<AgentRun> {
+  const authHeaders = await getAuthHeaders();
+
+  const res = await fetch(`${API_URL}/chats/${chatId}/runs/${runUuid}`, {
+    headers: { ...authHeaders },
+    cache: 'no-store',
+  });
+
+  if (!res.ok) {
+    if (res.status === 401) redirect('/api/auth/clear-session');
+    const text = await res.text();
+
+    logApiError({
+      url: res.url,
+      status: res.status,
+      statusText: res.statusText,
+      body: text,
+    });
+    throw new Error(text || 'Failed to poll run status');
+  }
+
+  const json: ApiResponse<AgentRun> = await res.json();
+
+  return json.data!;
 }

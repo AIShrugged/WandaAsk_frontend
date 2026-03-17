@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 import { ROUTES } from '@/shared/lib/routes';
 
-import type { Chat } from '@/features/chat/types';
+import type { Chat } from '@/features/chat';
 
 interface RecentChatsProps {
   chats: Chat[];
@@ -14,6 +14,7 @@ interface RecentChatsProps {
  * RecentChats component.
  * @param props - Component props.
  * @param props.chats
+ * @returns JSX element.
  */
 export function RecentChats({ chats }: RecentChatsProps) {
   if (chats.length === 0) {

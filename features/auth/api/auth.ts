@@ -1,7 +1,6 @@
 'use server';
 
 import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
 
 import {
   LoginSchema,
@@ -10,7 +9,6 @@ import {
   type RegisterInput,
 } from '@/features/auth/model/schemas';
 import { API_URL } from '@/shared/lib/config';
-import { ROUTES } from '@/shared/lib/routes';
 
 const SESSION_COOKIE_OPTIONS = {
   httpOnly: true,
@@ -62,7 +60,11 @@ export async function login(data: LoginInput): Promise<void> {
     throw new Error('Login failed');
   }
 
-  if (typeof json.token !== 'string') {
+  const payload = json.data as Record<string, unknown> | null;
+
+  const token = payload?.token;
+
+  if (typeof token !== 'string') {
     throw new TypeError('Authentication failed. Please try again.');
   }
 
@@ -70,11 +72,9 @@ export async function login(data: LoginInput): Promise<void> {
 
   cookieStore.set({
     name: 'token',
-    value: json.token,
+    value: token,
     ...SESSION_COOKIE_OPTIONS,
   });
-
-  redirect(ROUTES.AUTH.ORGANIZATION);
 }
 
 /**
@@ -82,6 +82,7 @@ export async function login(data: LoginInput): Promise<void> {
  * @param data - data.
  * @returns Promise.
  */
+// eslint-disable-next-line max-statements
 export async function register(data: RegisterInput): Promise<void> {
   const validated = RegisterSchema.parse(data);
 
@@ -103,7 +104,11 @@ export async function register(data: RegisterInput): Promise<void> {
     throw new Error('Registration failed');
   }
 
-  if (typeof json.token !== 'string') {
+  const payload = json.data as Record<string, unknown> | null;
+
+  const token = payload?.token;
+
+  if (typeof token !== 'string') {
     throw new TypeError('Authentication failed. Please try again.');
   }
 
@@ -111,17 +116,17 @@ export async function register(data: RegisterInput): Promise<void> {
 
   cookieStore.set({
     name: 'token',
-    value: json.token,
+    value: token,
     ...SESSION_COOKIE_OPTIONS,
   });
 
-  if (typeof json.organization_id === 'string') {
+  const organizationId = payload?.organization_id;
+
+  if (typeof organizationId === 'number') {
     cookieStore.set({
       name: 'organization_id',
-      value: json.organization_id,
+      value: String(organizationId),
       ...SESSION_COOKIE_OPTIONS,
     });
   }
-
-  redirect(ROUTES.AUTH.ORGANIZATION);
 }

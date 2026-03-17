@@ -32,6 +32,26 @@ setup('authenticate', async ({ page }) => {
   // New users land on /auth/organization (onboarding), existing users on /dashboard.
   await expect(page).not.toHaveURL(/\/auth\/login/, { timeout: 15_000 });
 
-  // Save auth state (cookies incl. token) for reuse in all tests
+  // If the org selector appears, pick the first organization so that
+  // the organization_id cookie gets set and dashboard pages work correctly.
+  if (page.url().includes('/auth/organization')) {
+    const firstOrg = page
+      .locator('a, button')
+      .filter({ hasText: /your role/i })
+      .first();
+
+    if (
+      await firstOrg.isVisible({ timeout: 3000 }).catch(() => {
+        return false;
+      })
+    ) {
+      await firstOrg.click();
+      await expect(page).not.toHaveURL(/\/auth\/organization/, {
+        timeout: 10_000,
+      });
+    }
+  }
+
+  // Save auth state (cookies incl. token + organization_id) for reuse in all tests
   await page.context().storageState({ path: AUTH_FILE });
 });

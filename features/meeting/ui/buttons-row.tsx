@@ -28,28 +28,35 @@ const items = [
  * ButtonsRow component.
  * @param props - Component props.
  * @param props.currentTab
+ * @returns JSX element.
  */
 export default function ButtonsRow({ currentTab }: Props) {
-  return items.map((item, index) => {
-    const isActive = item.link === currentTab;
+  return (
+    <div className='flex overflow-x-auto'>
+      {items.map((item, index) => {
+        const isActive = item.link === currentTab;
 
-    return (
-      <TabLink key={index} tab={item.link}>
-        <button
-          className={`border border-border cursor-pointer px-3 py-1.5 text-center text-sm transition-all
+        return (
+          <TabLink key={index} tab={item.link}>
+            <button
+              className={`flex-shrink-0 border border-border cursor-pointer px-3 py-1.5 text-center text-sm transition-all
   ${isActive ? 'bg-primary text-primary-foreground border-primary' : 'bg-background hover:bg-accent'}
   ${index === 0 ? 'rounded-l-[var(--radius-button)]' : ''}
   ${index === items.length - 1 ? 'rounded-r-[var(--radius-button)]' : ''}
   ${index > 0 ? '-ml-px' : ''}`}
-          type='button'
-        >
-          <p
-            className={isActive ? 'text-primary-foreground' : 'text-foreground'}
-          >
-            {item.title}
-          </p>
-        </button>
-      </TabLink>
-    );
-  });
+              type='button'
+            >
+              <p
+                className={
+                  isActive ? 'text-primary-foreground' : 'text-foreground'
+                }
+              >
+                {item.title}
+              </p>
+            </button>
+          </TabLink>
+        );
+      })}
+    </div>
+  );
 }

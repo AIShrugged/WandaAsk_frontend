@@ -3,8 +3,10 @@ import React, { type JSX, useTransition } from 'react';
 
 import { switchBot } from '@/features/event/api/calendar-events';
 import EventSummary from '@/features/event/ui/event-summary';
-import { participants } from '@/features/participants/lib/options';
-import Participants from '@/features/participants/ui/participants';
+import {
+  participantLabels as participants,
+  Participants,
+} from '@/features/participants';
 import { Button } from '@/shared/ui/button/Button';
 import ModalBody from '@/shared/ui/modal/modal-body';
 import ModalFooter from '@/shared/ui/modal/modal-footer';
@@ -15,11 +17,12 @@ import type { AttendeeProps, GuestProps } from '@/entities/participant';
 
 /**
  * EventPopup component.
- * @param root0
- * @param root0.event
- * @param root0.close
- * @param root0.attendees
- * @param root0.guests
+ * @param root0 - Component props.
+ * @param root0.event - The event to display.
+ * @param root0.close - Callback to close the popup.
+ * @param root0.attendees - List of attendees.
+ * @param root0.guests - List of guests.
+ * @returns JSX element.
  */
 export function EventPopup({
   event,
@@ -50,6 +53,7 @@ export function EventPopup({
           return close();
         });
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.warn('name', {
           message: (error as Error).message,
         });

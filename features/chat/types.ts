@@ -6,15 +6,51 @@ export interface Chat {
   updated_at: string;
 }
 
+export type MessageStatus =
+  | 'queued'
+  | 'processing'
+  | 'retrying'
+  | 'completed'
+  | 'failed';
+
 /** A single message within a chat as returned by the messages sub-resource */
 export interface Message {
   id: number;
   chat_id: number;
   role: 'user' | 'assistant';
+  status: MessageStatus | null;
   content: string;
+  followup_data: unknown | null;
+  error_message: string | null;
+  failure_code: string | null;
+  agent_run_uuid: string | null;
+  current_attempt: number | null;
+  max_attempts: number | null;
+  completed_at: string | null;
+  next_retry_at: string | null;
   created_at: string;
-  /** Present in some response variants; not part of the core API spec */
-  followup_data?: unknown;
+}
+
+/** Response from GET /api/v1/chats/{chat}/runs/{runUuid} */
+export interface AgentRun {
+  agent_run_uuid: string;
+  chat_id: number;
+  message_id: number;
+  status: MessageStatus;
+  progress_percent: number;
+  current_step_label: string | null;
+  error_message: string | null;
+  failure_code: string | null;
+  current_attempt: number;
+  max_attempts: number;
+  completed_at: string | null;
+  next_retry_at: string | null;
+  message: {
+    id: number;
+    role: 'user' | 'assistant';
+    content: string;
+    created_at: string;
+  };
 }
 
 /** Envelope returned by paginated list endpoints */

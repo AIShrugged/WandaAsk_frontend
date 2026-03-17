@@ -1,13 +1,16 @@
 import Link from 'next/link';
 
-import { getDashboardData } from '@/features/dashboard/api/dashboard';
-import { DashboardStats } from '@/features/dashboard/ui/DashboardStats';
-import { RecentChats } from '@/features/dashboard/ui/RecentChats';
+import {
+  getDashboardData,
+  DashboardStats,
+  RecentChats,
+} from '@/features/dashboard';
 import { ROUTES } from '@/shared/lib/routes';
 import Card from '@/shared/ui/card/Card';
 
 /**
  * DashboardPage component.
+ * @returns JSX element.
  */
 export default async function DashboardPage() {
   const { user, teamsCount, chatsCount, methodologiesCount, recentChats } =

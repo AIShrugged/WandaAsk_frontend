@@ -12,6 +12,12 @@ import {
   YAxis,
 } from 'recharts';
 
+import {
+  CHART_CURSOR_BAR,
+  CHART_GRID_COLOR,
+  CHART_TICK_STYLE,
+  CHART_TOOLTIP_STYLE,
+} from '@/shared/lib/chart-theme';
 import Card from '@/shared/ui/card/Card';
 
 import type {
@@ -19,20 +25,6 @@ import type {
   MeetingMonthStat,
   RecentMeeting,
 } from '@/features/summary/types';
-
-// ------------------------------
-// Chart tooltip style (shared constant)
-// ------------------------------
-const TOOLTIP_STYLE = {
-  background: 'hsl(0 0% 100%)',
-  border: '1px solid hsl(240 5.9% 90%)',
-  borderRadius: '6px',
-  fontSize: 12,
-} as const;
-
-const TICK_STYLE = { fontSize: 11, fill: 'hsl(240 3.8% 46.1%)' } as const;
-
-const GRID_COLOR = 'hsl(240 5.9% 90%)';
 
 const BAR_COLOR = 'hsl(142 47% 45%)';
 
@@ -95,20 +87,20 @@ function MeetingMonthlyChart({ data }: MonthlyChartProps) {
         margin={{ top: 4, right: 4, left: -16, bottom: 0 }}
         barGap={2}
       >
-        <CartesianGrid strokeDasharray='3 3' stroke={GRID_COLOR} />
+        <CartesianGrid strokeDasharray='3 3' stroke={CHART_GRID_COLOR} />
         <XAxis
           dataKey='label'
-          tick={TICK_STYLE}
+          tick={CHART_TICK_STYLE}
           axisLine={false}
           tickLine={false}
         />
         <YAxis
-          tick={TICK_STYLE}
+          tick={CHART_TICK_STYLE}
           axisLine={false}
           tickLine={false}
           allowDecimals={false}
         />
-        <Tooltip contentStyle={TOOLTIP_STYLE} />
+        <Tooltip contentStyle={CHART_TOOLTIP_STYLE} cursor={CHART_CURSOR_BAR} />
         <Bar dataKey='Meetings' fill={BAR_COLOR} radius={[3, 3, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>

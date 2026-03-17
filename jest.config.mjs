@@ -7,6 +7,7 @@ export default createJestConfig({
   testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   moduleNameMapper: {
+    '^next/cache$': '<rootDir>/__mocks__/next-cache.js',
     '^@/(.*)$': '<rootDir>/$1',
   },
   testPathIgnorePatterns: [

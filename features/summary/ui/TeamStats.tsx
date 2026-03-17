@@ -12,26 +12,18 @@ import {
   YAxis,
 } from 'recharts';
 
+import {
+  CHART_CURSOR_BAR,
+  CHART_GRID_COLOR,
+  CHART_TICK_STYLE,
+  CHART_TOOLTIP_STYLE,
+} from '@/shared/lib/chart-theme';
 import Card from '@/shared/ui/card/Card';
 
 import type {
   TeamStats as TeamStatsType,
   TeamEntry,
 } from '@/features/summary/types';
-
-// ------------------------------
-// Constants
-// ------------------------------
-const TOOLTIP_STYLE = {
-  background: 'hsl(0 0% 100%)',
-  border: '1px solid hsl(240 5.9% 90%)',
-  borderRadius: '6px',
-  fontSize: 12,
-} as const;
-
-const TICK_STYLE = { fontSize: 11, fill: 'hsl(240 3.8% 46.1%)' } as const;
-
-const GRID_COLOR = 'hsl(240 5.9% 90%)';
 
 const BAR_COLOR = 'hsl(280 68% 60%)';
 
@@ -76,12 +68,12 @@ function TeamsChart({ teams }: TeamsChartProps) {
       >
         <CartesianGrid
           strokeDasharray='3 3'
-          stroke={GRID_COLOR}
+          stroke={CHART_GRID_COLOR}
           horizontal={false}
         />
         <XAxis
           type='number'
-          tick={TICK_STYLE}
+          tick={CHART_TICK_STYLE}
           axisLine={false}
           tickLine={false}
           allowDecimals={false}
@@ -89,12 +81,12 @@ function TeamsChart({ teams }: TeamsChartProps) {
         <YAxis
           type='category'
           dataKey='name'
-          tick={TICK_STYLE}
+          tick={CHART_TICK_STYLE}
           axisLine={false}
           tickLine={false}
           width={110}
         />
-        <Tooltip contentStyle={TOOLTIP_STYLE} />
+        <Tooltip contentStyle={CHART_TOOLTIP_STYLE} cursor={CHART_CURSOR_BAR} />
         <Bar dataKey='Members' radius={[0, 3, 3, 0]}>
           {chartData.map((entry) => {
             return <Cell key={entry.name} fill={BAR_COLOR} />;

@@ -28,6 +28,7 @@ const PAGE_SIZE = 20;
  * @param root0.activeChatId - ID of the currently active chat.
  * @returns Result.
  */
+// eslint-disable-next-line max-statements
 export function ChatList({
   initialChats,
   totalCount,
@@ -155,7 +156,7 @@ export function ChatList({
 
   // ── Open state ───────────────────────────────────────────────────────────────
   return (
-    <div className='flex flex-col h-full w-[260px] flex-shrink-0 border-r border-border bg-sidebar'>
+    <div className='flex flex-col h-full w-full md:w-[260px] flex-shrink-0 border-r border-border bg-sidebar'>
       {/* Header */}
       <div className='flex items-center justify-between px-4 h-[var(--topbar-height)] border-b border-border flex-shrink-0'>
         <div className='flex items-center gap-2'>

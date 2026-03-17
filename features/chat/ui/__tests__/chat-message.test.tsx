@@ -34,7 +34,16 @@ const baseMessage: Message = {
   id: 1,
   chat_id: 10,
   role: 'user',
+  status: null,
   content: MESSAGE_CONTENT,
+  followup_data: null,
+  error_message: null,
+  failure_code: null,
+  agent_run_uuid: null,
+  current_attempt: null,
+  max_attempts: null,
+  completed_at: null,
+  next_retry_at: null,
   created_at: '2024-01-15T12:00:00.000Z',
 };
 

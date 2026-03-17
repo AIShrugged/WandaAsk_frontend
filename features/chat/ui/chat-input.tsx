@@ -54,7 +54,7 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
           return setValue(e.target.value);
         }}
         rows={1}
-        placeholder='Type a message… (Enter to send, Shift+Enter for new line)'
+        placeholder='Message…'
         disabled={disabled}
         onKeyDown={handleKeyDown}
         className='flex-1 resize-none bg-transparent text-sm text-foreground placeholder:text-muted-foreground/50 outline-none leading-relaxed max-h-40 overflow-y-auto disabled:opacity-50'
