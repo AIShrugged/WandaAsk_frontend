@@ -6,6 +6,20 @@ import { ChatWindow } from '@/features/chat/ui/chat-window';
 
 import type { Message } from '@/features/chat/types';
 
+jest.mock('next/navigation', () => {
+  return {
+    useRouter: () => {
+      return { push: jest.fn(), replace: jest.fn(), back: jest.fn() };
+    },
+    usePathname: () => {
+      return '/dashboard/chat/1';
+    },
+    useSearchParams: () => {
+      return new URLSearchParams();
+    },
+  };
+});
+
 jest.mock('@/shared/lib/config', () => {
   return { API_URL: 'http://localhost' };
 });
