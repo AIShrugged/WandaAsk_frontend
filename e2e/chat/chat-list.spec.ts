@@ -97,7 +97,7 @@ test.describe('Chat list — authenticated', () => {
     const href = await link.getAttribute('href');
 
     await link.click();
-    // eslint-disable-next-line security/detect-non-literal-regexp
+
     await expect(page).toHaveURL(
       new RegExp(href!.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`)),
       { timeout: 8000 },
