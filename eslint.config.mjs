@@ -150,6 +150,14 @@ export default defineConfig([
     },
   },
 
+  // E2E spec files — conditional test.skip() inside beforeEach is an intentional pattern
+  {
+    files: ['e2e/**/*.spec.ts'],
+    rules: {
+      'sonarjs/no-skipped-tests': 'off',
+    },
+  },
+
   globalIgnores([
     '.next/**',
     'node_modules/**',
