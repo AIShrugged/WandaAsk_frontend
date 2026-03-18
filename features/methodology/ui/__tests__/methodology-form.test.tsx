@@ -150,9 +150,8 @@ const existingMethodology: MethodologyProps = {
   organization_id: ORG_ID,
   text: 'Follow agile practices',
   team_ids: ['1'],
-  teams: [
-    { id: 1, name: 'Team A', slug: 'team-a', employee_count: 3, members: [] },
-  ],
+  is_default: false,
+  teams: [{ id: 1, name: 'Team A', slug: 'team-a', employee_count: 3 }],
 };
 
 const user = userEvent.setup({ delay: null });

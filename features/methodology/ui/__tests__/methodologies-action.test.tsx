@@ -90,6 +90,7 @@ const makeMethodology = (id: number): MethodologyProps => {
     text: 'content',
     organization_id: '1',
     team_ids: [],
+    is_default: false,
     teams: [],
   };
 };

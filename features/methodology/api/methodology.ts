@@ -29,6 +29,7 @@ export async function createMethodology(data: MethodologyDTO): Promise<void> {
 
   const payload = {
     ...data,
+    organization_id: Number(data.organization_id),
     teams_ids: data.team_ids.map(Number),
   };
 
@@ -67,6 +68,7 @@ export async function updateMethodology(
 
   const payload = {
     ...data,
+    organization_id: Number(data.organization_id),
     teams_ids: data.team_ids.map(Number),
   };
 

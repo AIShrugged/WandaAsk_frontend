@@ -10,6 +10,7 @@ const makeMethodology = (id: number): MethodologyProps => {
     organization_id: String(id),
     text: `Text ${id}`,
     team_ids: [],
+    is_default: false,
     teams: [],
   };
 };

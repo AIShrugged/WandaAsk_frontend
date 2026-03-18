@@ -98,7 +98,10 @@ import type { OrganizationProps } from '@/entities/organization';
 const existingOrg: OrganizationProps = {
   id: 5,
   name: 'Acme Corp',
-  pivot: { role: 'admin' },
+  slug: 'acme-corp',
+  created_at: '2024-01-01T00:00:00Z',
+  updated_at: '2024-01-01T00:00:00Z',
+  pivot: { organization_id: 5, role: 'admin', user_id: 1 },
 };
 
 const FIELD_NAME = 'field-name';

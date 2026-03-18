@@ -17,7 +17,10 @@ const makeOrg = (
   return {
     id: 1,
     name: 'Acme Corp',
-    pivot: { role: 'admin' },
+    slug: 'acme-corp',
+    created_at: '2024-01-01T00:00:00Z',
+    updated_at: '2024-01-01T00:00:00Z',
+    pivot: { organization_id: 1, role: 'admin', user_id: 1 },
     ...overrides,
   };
 };

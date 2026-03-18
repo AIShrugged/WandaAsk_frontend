@@ -34,9 +34,9 @@ const makeUser = (overrides: Partial<UserProps> = {}): UserProps => {
     id: 1,
     name: 'Alice Smith',
     email: 'alice@example.com',
-    email_verified_at: new Date(),
-    created_at: new Date(),
-    updated_at: new Date(),
+    email_verified_at: null,
+    created_at: '2024-01-01T00:00:00Z',
+    updated_at: '2024-01-01T00:00:00Z',
     ...overrides,
   };
 };

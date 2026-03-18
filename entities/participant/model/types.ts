@@ -20,9 +20,9 @@ export interface GuestProps extends ProfileCore {
 /** Matches backend ProfileResource: { id, channel, channel_identifier, user_id } */
 export interface ProfileCore {
   id: number;
-  channel: string;
+  channel: string | null;
   channel_identifier: string;
-  user_id: number;
+  user_id: number | null;
 }
 
 /** @deprecated Use ProfileCore */

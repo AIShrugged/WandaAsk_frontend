@@ -30,8 +30,8 @@ export interface TeamFollowUpDTO {
   methodology_id: number | null;
   text: string;
   status: string;
-  created_at: Date;
-  updated_at: Date;
+  created_at: string;
+  updated_at: string;
   user: UserProps;
   calendar_event: EventProps;
 }

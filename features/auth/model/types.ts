@@ -11,8 +11,13 @@ export interface RegisterDTO {
 }
 
 export interface RegisterResponse {
-  success: boolean;
-  user: {
-    token: string;
-  };
+  token: string;
+  email_verification_sent: boolean;
+  invite_accepted?: true;
+  team_id?: number | null;
+  organization_id?: number | null;
+}
+
+export interface LoginResponse {
+  token: string;
 }

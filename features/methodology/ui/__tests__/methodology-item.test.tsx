@@ -41,6 +41,7 @@ const makeMethodology = (
     text: 'Description',
     organization_id: 'org-1',
     team_ids: [],
+    is_default: false,
     teams: [],
     ...overrides,
   };

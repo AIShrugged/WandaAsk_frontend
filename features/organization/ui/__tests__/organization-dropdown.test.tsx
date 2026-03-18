@@ -36,7 +36,10 @@ const makeOrg = (
   return {
     id,
     name,
-    pivot: { role },
+    slug: name.toLowerCase().replaceAll(/\s+/g, '-'),
+    created_at: '2024-01-01T00:00:00Z',
+    updated_at: '2024-01-01T00:00:00Z',
+    pivot: { organization_id: id, role, user_id: 1 },
   };
 };
 

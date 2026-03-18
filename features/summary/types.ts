@@ -1,4 +1,20 @@
 // ------------------------------
+// Meeting summary resource types
+// ------------------------------
+
+export interface MeetingSummary {
+  id: number;
+  calendar_event_id: number;
+  status: string;
+  title: string;
+  summary: string;
+  key_points: string[];
+  decisions: string[];
+  created_at: string;
+  updated_at: string;
+}
+
+// ------------------------------
 // Summary feature types
 // ------------------------------
 

@@ -16,7 +16,7 @@ export interface FollowUpDetailProps {
   user: { id: number; name: string; email: string };
   methodology_id: number | null;
   text: string;
-  status: string;
+  status: 'in_progress' | 'done' | 'failed';
   created_at: string;
   updated_at: string;
 }
