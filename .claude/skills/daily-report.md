@@ -2,9 +2,8 @@
 name: daily-report
 description:
   Generate today's changelog entry from git history and write it to
-  changelog/YYYY-MM-DD.md, then update the index in changelog/REPORT.md. Use
-  when closing a workday, summarizing today's changes, or adding a daily entry
-  to the project changelog.
+  changelog/YYYY-MM-DD.md. Use when closing a workday, summarizing today's
+  changes, or adding a daily entry to the project changelog.
 ---
 
 # Daily Report Skill
@@ -103,18 +102,7 @@ File format:
    участников по роли"
 5. Omit empty sections
 
-## Step 6 — Update changelog/REPORT.md index
-
-Read `changelog/REPORT.md`. Find the table of periods. Add a row for today if
-not already present:
-
-```markdown
-| [YYYY-MM-DD.md](./YYYY-MM-DD.md) | DD.MM.YYYY | N |
-```
-
-Insert the new row at the top of the table (most recent first).
-
-## Step 7 — Output summary
+## Step 6 — Output summary
 
 After writing, confirm:
 
@@ -124,7 +112,6 @@ After writing, confirm:
 📅 Date: YYYY-MM-DD
 📝 File: changelog/YYYY-MM-DD.md
 📊 Changes: ✨ N  🔧 N  🐛 N  🏗️ N
-🗂️ Index updated: changelog/REPORT.md
 ```
 
 Show the full generated entry for the user to review.

@@ -3,13 +3,13 @@ name: changelog-writer
 description: |
   Generates changelog entries for WandaAsk from git history and changed files.
   Reads all commits and diffs since the last release, understands the context of each change,
-  and writes a structured entry in the project's changelog/REPORT.md format.
+  and writes a structured entry in the project's changelog/YYYY-MM-DD.md format.
 
   Use when: closing a sprint, preparing a release, or after a significant batch of changes.
 
   <example>
   user: "Generate a changelog for everything since last week"
-  assistant: "I'll use changelog-writer to read the git history and generate a REPORT.md entry."
+  assistant: "I'll use changelog-writer to read the git history and generate a changelog entry."
   </example>
 
   <example>
@@ -18,8 +18,8 @@ description: |
   </example>
 
   <example>
-  user: "Update REPORT.md with today's changes"
-  assistant: "I'll use changelog-writer to generate and append the changelog entry."
+  user: "Add today's changes to the changelog"
+  assistant: "I'll use changelog-writer to generate and write the changelog entry."
   </example>
 model: sonnet
 color: blue
@@ -33,13 +33,16 @@ changelog is in Russian).
 ## Project Context
 
 - **Frontend root:** `/Users/slavapopov/Documents/WandaAsk_frontend`
-- **Changelog directory:** `changelog/` — all reports live here
-- **Changelog file:** `changelog/REPORT.md` (primary file) or a new dated file
-  in `changelog/` (e.g. `changelog/2026-03-12.md`) if the user asks for a
-  separate entry
+- **Changelog directory:** `changelog/` — all reports live here as daily files
+- **Changelog format:** `changelog/YYYY-MM-DD.md` — one file per day (e.g.
+  `changelog/2026-03-18.md`)
 - **Language:** Russian — changelog entries are written in Russian per project
   convention
 - **Git main branch:** `main`
+
+**IMPORTANT:** There is no `REPORT.md` file. Do NOT create `changelog/REPORT.md`
+or root `REPORT.md`. Every entry goes into its own `changelog/YYYY-MM-DD.md`
+file.
 
 ## Step 1 — Determine the scope
 
@@ -103,12 +106,31 @@ Group changes into categories:
 | Рефакторинг        | ♻️    | Code quality, no behavior change  |
 | Безопасность       | 🔒    | Security fixes                    |
 
-## Step 6 — Write the changelog entry
+## Step 6 — Determine the target date file
+
+```bash
+# Get today's date
+date +%Y-%m-%d
+```
+
+If writing about today's changes, use today's date. If writing about a specific
+date or period, use the most recent date in that range.
+
+## Step 7 — Check if the dated file already exists
+
+```bash
+ls changelog/YYYY-MM-DD.md 2>/dev/null && echo "exists" || echo "new"
+```
+
+- If **exists** — read it and **append** new sections, don't overwrite
+- If **new** — create it from scratch
+
+## Step 8 — Write the changelog entry
 
 ### Format:
 
 ```markdown
-## [vX.Y.Z] — YYYY-MM-DD
+# Отчёт — DD.MM.YYYY
 
 ### ✨ Новые функции
 
@@ -145,31 +167,8 @@ Group changes into categories:
 3. **Group related changes** — несколько коммитов об одной фиче = одна запись
 4. **Skip noise** — lint fixes, typo fixes, minor refactors → в "Инфраструктура"
    или пропустить
-5. **Version number** — если пользователь не указал версию, используй
-   `YYYY-MM-DD` или следующую patch-версию от последнего тега
-6. **Russian language** — весь текст на русском
-
-## Step 7 — Check existing changelog/REPORT.md
-
-```bash
-# Check if changelog/REPORT.md exists
-ls changelog/REPORT.md 2>&1
-```
-
-If it exists, read the first 50 lines to understand the format and prepend the
-new entry at the top. If it doesn't exist, create `changelog/REPORT.md` with the
-new entry.
-
-**IMPORTANT:** Always write to `changelog/REPORT.md`, NOT to the root
-`REPORT.md`. The root `REPORT.md` is a legacy file — do not modify it.
-
-If the user requests a separate file per sprint/date, create
-`changelog/YYYY-MM-DD.md` (or `changelog/sprint-N.md`) instead, and add a
-one-line reference in `changelog/REPORT.md`.
-
-## Step 8 — Write to changelog/REPORT.md
-
-Prepend the new entry before existing content. Never delete old entries.
+5. **Russian language** — весь текст на русском
+6. **Omit empty sections**
 
 ## Output
 
@@ -178,14 +177,14 @@ After writing:
 ```
 ## Changelog entry written
 
-**Version:** vX.Y.Z — YYYY-MM-DD
+**Date:** YYYY-MM-DD
 **Changes categorized:**
 - ✨ New features: N
 - 🔧 Improvements: N
 - 🐛 Bug fixes: N
 - 🏗️ Infrastructure: N
 
-**Written to:** changelog/REPORT.md
+**Written to:** changelog/YYYY-MM-DD.md
 ```
 
 Show the full generated entry for review before writing (ask user to confirm if

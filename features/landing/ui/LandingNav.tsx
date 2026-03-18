@@ -13,6 +13,7 @@ const NAV_LINKS = [
 export function LandingNav() {
   return (
     <nav
+      className='tribes-nav'
       style={{
         position: 'sticky',
         top: 0,
@@ -54,7 +55,10 @@ export function LandingNav() {
         </span>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '36px' }}>
+      <div
+        className='tribes-nav-links'
+        style={{ display: 'flex', alignItems: 'center', gap: '36px' }}
+      >
         {NAV_LINKS.map((link) => {
           return (
             <a
@@ -73,9 +77,13 @@ export function LandingNav() {
         })}
       </div>
 
-      <div style={{ display: 'flex', gap: '10px' }}>
+      <div
+        className='tribes-nav-actions'
+        style={{ display: 'flex', gap: '10px' }}
+      >
         <Link
           href='/auth/login'
+          className='tribes-nav-signin'
           style={{
             padding: '8px 20px',
             borderRadius: '8px',

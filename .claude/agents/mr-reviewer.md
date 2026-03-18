@@ -108,8 +108,8 @@ Scan staged files for:
 
 - [ ] Missing JSDoc on exported functions/components (`jsdoc/require-jsdoc`) —
       if missing, generate minimal JSDoc stubs and add them
-- [ ] Russian text in JSX output (not in comments/REPORT.md) — flag, do not
-      auto-fix
+- [ ] Russian text in JSX output (not in comments or changelog files) — flag, do
+      not auto-fix
 - [ ] `any` type — flag with exact location
 - [ ] Missing `cursor-pointer` on interactive elements — fix inline
 - [ ] Commented-out code blocks — flag, ask developer to remove
@@ -381,7 +381,7 @@ npm test -- --ci --passWithNoTests 2>&1 | tail -20
 ### C4.10 UI Language
 
 - [ ] All user-visible text in **English** — no Russian in JSX
-- [ ] Russian only in `changelog/REPORT.md` and code comments
+- [ ] Russian only in `changelog/YYYY-MM-DD.md` files and code comments
 - [ ] No `locale: ru` in `date-fns` calls
 
 ### C4.11 Code Style

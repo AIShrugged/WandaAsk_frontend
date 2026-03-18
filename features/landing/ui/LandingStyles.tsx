@@ -64,6 +64,30 @@ export function LandingStyles() {
         opacity: 1;
         transform: none;
       }
+
+      /* ── Mobile responsive ──────────────────────────────────────── */
+      @media (max-width: 768px) {
+        /* Nav: compact padding, hide anchor links */
+        .tribes-nav {
+          padding: 0 16px !important;
+        }
+        .tribes-nav-links {
+          display: none !important;
+        }
+
+        /* Sections & footer: reduce horizontal padding */
+        section, footer {
+          padding-left: 16px !important;
+          padding-right: 16px !important;
+        }
+      }
+
+      @media (max-width: 400px) {
+        /* Very small screens: hide Sign In to give Get Started more room */
+        .tribes-nav-signin {
+          display: none !important;
+        }
+      }
     `}</style>
   );
 }
