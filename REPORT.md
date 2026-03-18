@@ -1,5 +1,81 @@
 # WandaAsk Frontend — Отчёт о работе
 
+## [2026-03-18]
+
+### 🐛 Исправления контракта TypeScript ↔ Laravel (9 доменов)
+
+**`features/auth/model/types.ts`**
+
+- `RegisterResponse` имел ошибочную структуру с вложенным объектом
+  `user.{token}`; исправлен на плоское поле `token: string` согласно
+  `AuthResource`
+- Добавлен отсутствующий тип `LoginResponse`
+
+**`entities/user/model/types.ts`**
+
+- Поля `email_verified_at`, `created_at`, `updated_at` были типизированы как
+  `Date`; исправлены на `string | null` / `string` — бэкенд возвращает ISO 8601
+  строки, а не объекты Date
+
+**`entities/team/model/types.ts`**
+
+- `TeamFollowUpDTO.created_at` и `updated_at` исправлены с `Date` → `string`
+
+**`features/methodology/model/types.ts`**
+
+- Добавлено отсутствующее поле `is_default: boolean`
+- `MethodologyTeam` расширен полями `slug` и `employee_count` из
+  `MethodologyTeamResource`
+
+**`features/methodology/api/methodology.ts`**
+
+- Исправлена ошибка: `organization_id` передавался бэкенду как строка, тогда как
+  `FormRequest` ожидает integer; добавлено явное приведение через `Number()`
+
+**`entities/organization/model/types.ts`**
+
+- Добавлены отсутствующие поля `created_at` и `updated_at: string`
+
+**`entities/participant/model/types.ts`**
+
+- `ProfileCore.channel` и `user_id` сделаны nullable (`string | null`,
+  `number | null`) в соответствии с `ParticipantResource`
+
+**`features/follow-up/model/types.ts`**
+
+- `status: string` сужен до строгого union `'in_progress' | 'done' | 'failed'`
+
+**`features/summary/types.ts`**
+
+- Добавлен новый интерфейс `MeetingSummary`, соответствующий
+  `MeetingSummaryResource`
+
+Тестовые фикстуры обновлены в 10 файлах тестов в соответствии с исправленными
+типами.
+
+---
+
+### 🧪 Расширение покрытия Unit-тестами (+136 тестов)
+
+Добавлены 8 новых файлов тестов, покрывающих ранее не тестируемые Server Actions
+и API-модули:
+
+| Файл                                                       | Тестов | Что покрыто                        |
+| ---------------------------------------------------------- | -----: | ---------------------------------- |
+| `features/auth/api/__tests__/auth.test.ts`                 |     14 | login, register                    |
+| `features/chat/api/__tests__/chats.test.ts`                |     22 | CRUD чатов                         |
+| `features/chat/api/__tests__/messages.test.ts`             |     17 | отправка сообщений, polling        |
+| `features/chat/api/__tests__/artifacts.test.ts`            |      7 | загрузка артефактов                |
+| `features/teams/api/__tests__/team.test.ts`                |     27 | управление командой                |
+| `features/methodology/api/__tests__/methodology.test.ts`   |     22 | CRUD методологий                   |
+| `features/user-profile/api/__tests__/profile.test.ts`      |     12 | профиль, смена пароля              |
+| `features/organization/api/__tests__/organization.test.ts` |     15 | создание организации, переключение |
+
+**Итого: 169 test suites / 1158 тестов** (было 161 suite / 1022 теста; +8
+suites, +136 тестов).
+
+---
+
 ## [2026-03-12]
 
 ### 🤖 Агентная система — аудит и расширение
