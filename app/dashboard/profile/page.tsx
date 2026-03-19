@@ -1,5 +1,10 @@
 import { getUser } from '@/features/user';
-import { ChangePasswordForm, ProfileForm } from '@/features/user-profile';
+import {
+  ChangePasswordForm,
+  IdentitiesSection,
+  ProfileForm,
+} from '@/features/user-profile';
+import { getIdentities } from '@/features/user-profile/api/identities';
 import Card from '@/shared/ui/card/Card';
 import PageHeader from '@/widgets/layout/ui/page-header';
 
@@ -9,6 +14,8 @@ import PageHeader from '@/widgets/layout/ui/page-header';
  */
 export default async function ProfilePage() {
   const { data: user } = await getUser();
+
+  const identities = await getIdentities();
 
   return (
     <Card className='h-full flex flex-col overflow-y-auto'>
@@ -31,6 +38,14 @@ export default async function ProfilePage() {
                 Change password
               </h2>
               <ChangePasswordForm />
+            </section>
+
+            {/* Linked identities */}
+            <section className='flex flex-col gap-4'>
+              <h2 className='text-base font-semibold text-foreground border-b border-border pb-2'>
+                Linked accounts
+              </h2>
+              <IdentitiesSection initialIdentities={identities} />
             </section>
           </>
         ) : (

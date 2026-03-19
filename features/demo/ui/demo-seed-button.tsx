@@ -7,6 +7,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { toast } from 'sonner';
 
+import { deleteDemo } from '@/features/demo/api/delete-demo';
 import { getDemoStatus } from '@/features/demo/api/get-demo-status';
 import { seedDemo } from '@/features/demo/api/seed-demo';
 import { DemoDropdown } from '@/features/demo/ui/demo-dropdown';
@@ -37,6 +38,10 @@ export default function DemoSeedButton() {
   const [employeesPerTeam, setEmployeesPerTeam] = useState(7);
 
   const [meetingsPerTeam, setMeetingsPerTeam] = useState(3);
+
+  const [hasExistingDemo, setHasExistingDemo] = useState(false);
+
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -153,14 +158,15 @@ export default function DemoSeedButton() {
 
         if (!mountedRef.current) return;
 
-        if (
-          status !== null &&
-          (status.status === 'generating' || status.status === 'pending')
-        ) {
-          setProgressPercent(status.progress_percent);
-          setStepLabel(status.current_step_label);
-          setIsPending(true);
-          startPolling();
+        if (status !== null) {
+          setHasExistingDemo(true);
+
+          if (status.status === 'generating' || status.status === 'pending') {
+            setProgressPercent(status.progress_percent);
+            setStepLabel(status.current_step_label);
+            setIsPending(true);
+            startPolling();
+          }
         }
       } catch {
         // silently ignore — just show the normal button
@@ -200,6 +206,33 @@ export default function DemoSeedButton() {
       return document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isOpen]);
+
+  /**
+   * handleDelete.
+   * @returns Promise.
+   */
+  const handleDelete = async () => {
+    setIsDeleting(true);
+
+    try {
+      const result = await deleteDemo();
+
+      if (result.error) {
+        toast.error(result.error);
+
+        return;
+      }
+
+      setHasExistingDemo(false);
+      setIsOpen(false);
+      toast.success('Demo data deleted.');
+      router.refresh();
+    } catch {
+      toast.error('Failed to delete demo data.');
+    } finally {
+      if (mountedRef.current) setIsDeleting(false);
+    }
+  };
 
   /**
    * handleGenerate.
@@ -282,10 +315,13 @@ export default function DemoSeedButton() {
               teamsCount={teamsCount}
               employeesPerTeam={employeesPerTeam}
               meetingsPerTeam={meetingsPerTeam}
+              hasExistingDemo={hasExistingDemo}
+              isDeleting={isDeleting}
               onTeamsCountChange={setTeamsCount}
               onEmployeesPerTeamChange={setEmployeesPerTeam}
               onMeetingsPerTeamChange={setMeetingsPerTeam}
               onGenerate={handleGenerate}
+              onDelete={handleDelete}
             />
           </div>,
           document.body,

@@ -55,7 +55,7 @@ export function ChangePasswordForm() {
         return;
       }
 
-      toast.success('Password changed successfully');
+      toast.success('Password changed. Other sessions have been signed out.');
       reset();
     });
   };

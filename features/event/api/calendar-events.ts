@@ -6,6 +6,7 @@ import { API_URL } from '@/shared/lib/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 
 import type { EventProps } from '@/entities/event';
+import type { MeetingTask } from '@/features/meeting/types';
 import type { ApiResponse } from '@/shared/types/common';
 
 /**
@@ -161,3 +162,30 @@ export const getEventFollowUp = async (calendarEventId: number | string) => {
 
   return { data: json.data };
 };
+
+/**
+ * getMeetingTasks — fetches AI-extracted tasks for a calendar event.
+ * @param calendarEventId - The calendar event ID.
+ * @returns Array of MeetingTask objects.
+ */
+export async function getMeetingTasks(
+  calendarEventId: string,
+): Promise<MeetingTask[]> {
+  const authHeaders = await getAuthHeaders();
+
+  const res = await fetch(
+    `${API_URL}/calendar-events/${calendarEventId}/tasks`,
+    {
+      headers: { ...authHeaders },
+      cache: 'no-store',
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error(`Failed to load tasks: ${res.status}`);
+  }
+
+  const json: ApiResponse<MeetingTask[]> = await res.json();
+
+  return json.data ?? [];
+}

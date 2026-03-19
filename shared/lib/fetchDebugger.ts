@@ -107,6 +107,7 @@ const SKIP_PATTERNS = [
   '__nextjs',
   'webpack-hmr',
   '_rsc=',
+  'telemetry.nextjs.org',
 ];
 
 /**

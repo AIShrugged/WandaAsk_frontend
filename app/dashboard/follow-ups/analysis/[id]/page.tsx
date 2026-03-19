@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import React, { Suspense } from 'react';
 
+import { ExportButton } from '@/features/follow-up';
 import FollowUp from '@/features/follow-up/ui/follow-up';
 import {
   available_tabs,
@@ -41,7 +42,10 @@ export default async function Page({ params, searchParams }: PageProps) {
 
   return (
     <Card className='h-full flex flex-col overflow-y-scroll'>
-      <PageHeader hasButtonBack title={followUp.calendar_event.title} />
+      <div className='flex items-center justify-between pr-4'>
+        <PageHeader hasButtonBack title={followUp.calendar_event.title} />
+        <ExportButton followUpId={followUp.id} />
+      </div>
 
       <CardBody>
         <div>

@@ -37,6 +37,7 @@ const makeUser = (overrides: Partial<UserProps> = {}): UserProps => {
     email_verified_at: null,
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z',
+    is_demo: false,
     ...overrides,
   };
 };

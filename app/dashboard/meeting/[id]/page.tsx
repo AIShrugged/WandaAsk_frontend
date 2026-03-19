@@ -1,7 +1,11 @@
 import { redirect } from 'next/navigation';
 import React, { Suspense } from 'react';
 
-import { getEventFollowUp } from '@/features/event/api/calendar-events';
+import Analysis from '@/features/analysis/ui/analysis';
+import {
+  getEventFollowUp,
+  getMeetingTasks,
+} from '@/features/event/api/calendar-events';
 import FollowUp from '@/features/follow-up/ui/follow-up';
 import {
   available_tabs,
@@ -9,6 +13,7 @@ import {
   validTabs,
 } from '@/features/meeting/lib/options';
 import ButtonsRow from '@/features/meeting/ui/buttons-row';
+import MeetingTasks from '@/features/meeting/ui/meeting-tasks';
 import Transcript from '@/features/transcript/ui/transcript';
 import { ROUTES } from '@/shared/lib/routes';
 import Card from '@/shared/ui/card/Card';
@@ -17,9 +22,18 @@ import SpinLoader from '@/shared/ui/layout/spin-loader';
 import PageHeader from '@/widgets/layout/ui/page-header';
 import EventOverview from '@/widgets/meeting/ui/event-overview';
 
-import Analysis from '../../../../features/analysis/ui/analysis';
-
 import type { PageProps } from '@/shared/types/common';
+
+/**
+ *
+ * @param root0
+ * @param root0.id
+ */
+async function TasksTab({ id }: { id: string }) {
+  const tasks = await getMeetingTasks(id);
+
+  return <MeetingTasks tasks={tasks} />;
+}
 
 /**
  * Page component.
@@ -34,7 +48,7 @@ export default async function Page({ params, searchParams }: PageProps) {
 
   const { data: followUp } = await getEventFollowUp(id);
 
-  const currentTab = validTabs.includes(tab as Tab) ? tab : 'summary';
+  const currentTab = validTabs.includes(tab as Tab) ? (tab as Tab) : 'summary';
 
   if (tab !== currentTab)
     redirect(`${ROUTES.DASHBOARD.MEETING}/${id}?tab=${currentTab}`);
@@ -60,6 +74,7 @@ export default async function Page({ params, searchParams }: PageProps) {
             {currentTab === available_tabs.analysis && (
               <Analysis data={followUp?.text} />
             )}
+            {currentTab === available_tabs.tasks && <TasksTab id={id} />}
           </Suspense>
         </div>
       </CardBody>

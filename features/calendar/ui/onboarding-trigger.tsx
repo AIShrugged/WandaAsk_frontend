@@ -49,7 +49,7 @@ export default function OnboardingTrigger() {
           Redirecting to Google...
         </p>
       )}
-      {error && <p className='text-sm mt-4 text-red-500'>{error}</p>}
+      {error && <p className='text-sm mt-4 text-destructive'>{error}</p>}
     </div>
   );
 }

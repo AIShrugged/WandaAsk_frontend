@@ -22,6 +22,10 @@ const items = [
     title: 'Analysis',
     link: available_tabs.analysis,
   },
+  {
+    title: 'Tasks',
+    link: available_tabs.tasks,
+  },
 ];
 
 /**

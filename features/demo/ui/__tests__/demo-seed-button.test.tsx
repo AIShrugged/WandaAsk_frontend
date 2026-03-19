@@ -6,7 +6,7 @@ import React from 'react';
 jest.mock('next/navigation', () => {
   return {
     useRouter: () => {
-      return { push: jest.fn() };
+      return { push: jest.fn(), refresh: jest.fn() };
     },
   };
 });
@@ -20,6 +20,12 @@ jest.mock('@/features/demo/api/get-demo-status', () => {
 jest.mock('@/features/demo/api/seed-demo', () => {
   return {
     seedDemo: jest.fn(),
+  };
+});
+
+jest.mock('@/features/demo/api/delete-demo', () => {
+  return {
+    deleteDemo: jest.fn(),
   };
 });
 

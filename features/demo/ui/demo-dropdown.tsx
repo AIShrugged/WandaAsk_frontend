@@ -1,7 +1,7 @@
 'use client';
 
 import clsx from 'clsx';
-import { Minus, Plus, Sparkles } from 'lucide-react';
+import { Minus, Plus, Sparkles, Trash2 } from 'lucide-react';
 
 import { Button } from '@/shared/ui/button/Button';
 
@@ -19,10 +19,13 @@ interface DemoDropdownProps {
   teamsCount: number;
   employeesPerTeam: number;
   meetingsPerTeam: number;
+  hasExistingDemo: boolean;
+  isDeleting: boolean;
   onTeamsCountChange: (v: number) => void;
   onEmployeesPerTeamChange: (v: number) => void;
   onMeetingsPerTeamChange: (v: number) => void;
   onGenerate: () => void;
+  onDelete: () => void;
 }
 
 /**
@@ -122,20 +125,26 @@ function Stepper({
  * @param root0.teamsCount - Number of teams to generate.
  * @param root0.employeesPerTeam - Employees per team.
  * @param root0.meetingsPerTeam - Meetings per team.
+ * @param root0.hasExistingDemo - Whether demo data already exists.
+ * @param root0.isDeleting - Whether deletion is in progress.
  * @param root0.onTeamsCountChange - Handler for teams count change.
  * @param root0.onEmployeesPerTeamChange - Handler for employees per team change.
  * @param root0.onMeetingsPerTeamChange - Handler for meetings per team change.
  * @param root0.onGenerate - Handler for generate button click.
+ * @param root0.onDelete - Handler for delete button click.
  * @returns JSX element.
  */
 export function DemoDropdown({
   teamsCount,
   employeesPerTeam,
   meetingsPerTeam,
+  hasExistingDemo,
+  isDeleting,
   onTeamsCountChange,
   onEmployeesPerTeamChange,
   onMeetingsPerTeamChange,
   onGenerate,
+  onDelete,
 }: DemoDropdownProps) {
   return (
     <div className='w-72 bg-popover border border-border rounded-[var(--radius-card)] shadow-card p-4'>
@@ -193,10 +202,26 @@ export function DemoDropdown({
           />
         </div>
 
-        <div className='pt-1 border-t border-border'>
-          <Button type='button' onClick={onGenerate}>
+        <div className='pt-1 border-t border-border flex flex-col gap-2'>
+          <Button type='button' onClick={onGenerate} disabled={isDeleting}>
             Generate
           </Button>
+
+          {hasExistingDemo && (
+            <button
+              type='button'
+              onClick={onDelete}
+              disabled={isDeleting}
+              className='flex items-center justify-center gap-1.5 w-full h-8 rounded-[var(--radius-button)] text-xs font-medium text-destructive hover:bg-destructive/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer'
+            >
+              {isDeleting ? (
+                <div className='w-3 h-3 border-2 border-destructive border-t-transparent rounded-full animate-spin' />
+              ) : (
+                <Trash2 className='w-3 h-3' />
+              )}
+              {isDeleting ? 'Deleting\u2026' : 'Delete demo data'}
+            </button>
+          )}
         </div>
       </div>
     </div>

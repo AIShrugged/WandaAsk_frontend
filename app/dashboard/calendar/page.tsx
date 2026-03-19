@@ -3,6 +3,7 @@ import { type PropsWithChildren, Suspense } from 'react';
 
 import { getSources } from '@/features/calendar/api/source';
 import Calendar from '@/features/calendar/ui/calendar';
+import CalendarAttachedToast from '@/features/calendar/ui/calendar-attached-toast';
 import OnboardingTrigger from '@/features/calendar/ui/onboarding-trigger';
 import { getEvents } from '@/features/event/api/calendar-events';
 import Card from '@/shared/ui/card/Card';
@@ -37,16 +38,20 @@ const UnattachedView = () => {
  * @param root0
  * @param root0.events
  * @param root0.currentMonth
+ * @param root0.justAttached
  */
 const AttachedView = ({
   events,
   currentMonth,
+  justAttached,
 }: {
   events: EventProps[];
   currentMonth: string;
+  justAttached: boolean;
 }) => {
   return (
     <Wrapper>
+      {justAttached && <CalendarAttachedToast />}
       <Suspense
         fallback={
           <div className='flex flex-1 items-center justify-center'>
@@ -72,18 +77,18 @@ export default async function Page({
 }) {
   const params = await searchParams;
 
-  if (params?.attached === '1') {
-    redirect('/dashboard/calendar');
-  }
+  const justAttached = params?.attached === '1';
 
-  const { data } = await getSources();
+  const sources = await getSources();
 
-  const isCalendarAttached = data?.length > 0;
+  const isCalendarAttached = sources.length > 0;
 
   if (isCalendarAttached && !params.month) {
     const currentMonth = new Date().toISOString().slice(0, 7) + '-01';
 
-    redirect(`/dashboard/calendar?month=${currentMonth}`);
+    const suffix = justAttached ? '&attached=1' : '';
+
+    redirect(`/dashboard/calendar?month=${currentMonth}${suffix}`);
   }
 
   if (!isCalendarAttached) {
@@ -94,5 +99,11 @@ export default async function Page({
 
   const { data: events } = await getEvents();
 
-  return <AttachedView currentMonth={month} events={events} />;
+  return (
+    <AttachedView
+      currentMonth={month}
+      events={events}
+      justAttached={justAttached}
+    />
+  );
 }
