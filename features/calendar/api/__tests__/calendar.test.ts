@@ -60,13 +60,11 @@ describe('attachCalendar', () => {
   });
 
   it('returns redirect URL on success', async () => {
-    globalThis.fetch = jest
-      .fn()
-      .mockResolvedValue(
-        makeResponse(200, {
-          data: { redirect: 'https://accounts.google.com/oauth' },
-        }),
-      );
+    globalThis.fetch = jest.fn().mockResolvedValue(
+      makeResponse(200, {
+        data: { redirect: 'https://accounts.google.com/oauth' },
+      }),
+    );
     const url = await attachCalendar();
 
     expect(url).toBe('https://accounts.google.com/oauth');
