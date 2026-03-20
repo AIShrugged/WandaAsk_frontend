@@ -151,6 +151,19 @@ export function useMessages(
     });
   }, []);
 
+  /**
+   * removeMessage.
+   * @param id - message id.
+   * @returns Result.
+   */
+  const removeMessage = useCallback((id: number) => {
+    setMessages((prev) => {
+      return prev.filter((message) => {
+        return message.id !== id;
+      });
+    });
+  }, []);
+
   return {
     messages,
     isLoading,
@@ -160,5 +173,6 @@ export function useMessages(
     addMessage,
     addMessages,
     updateMessage,
+    removeMessage,
   };
 }

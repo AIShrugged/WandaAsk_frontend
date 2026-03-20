@@ -219,7 +219,7 @@ describe('createChat', () => {
     expect(body.title).toBe('Hello Chat');
   });
 
-  it('sends null title when no title given', async () => {
+  it('omits title when no title is given', async () => {
     globalThis.fetch = jest
       .fn()
       .mockResolvedValue(makeResponse(200, { success: true, data: mockChat }));
@@ -233,7 +233,7 @@ describe('createChat', () => {
 
     const body = JSON.parse(options.body as string) as Record<string, unknown>;
 
-    expect(body.title).toBeNull();
+    expect(body).not.toHaveProperty('title');
   });
 
   it('uses POST method', async () => {
@@ -278,14 +278,14 @@ describe('updateChatTitle', () => {
     jest.clearAllMocks();
   });
 
-  it('sends PUT request to correct URL', async () => {
+  it('sends PATCH request to correct URL', async () => {
     globalThis.fetch = jest.fn().mockResolvedValue(makeResponse(200, {}));
 
     await updateChatTitle(42, 'Updated Title');
 
     expect(globalThis.fetch).toHaveBeenCalledWith(
       'https://api.test/chats/42',
-      expect.objectContaining({ method: 'PUT' }),
+      expect.objectContaining({ method: 'PATCH' }),
     );
   });
 

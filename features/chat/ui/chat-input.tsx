@@ -6,6 +6,7 @@ import { useRef, useState } from 'react';
 interface ChatInputProps {
   onSend: (content: string) => void;
   disabled?: boolean;
+  placeholder?: string;
 }
 
 /**
@@ -13,9 +14,14 @@ interface ChatInputProps {
  * @param props - Component props.
  * @param props.onSend - Callback invoked with the trimmed message content when the user submits.
  * @param props.disabled - Disables the input and send button when true.
+ * @param props.placeholder
  * @returns Result.
  */
-export function ChatInput({ onSend, disabled }: ChatInputProps) {
+export function ChatInput({
+  onSend,
+  disabled,
+  placeholder = 'Message…',
+}: ChatInputProps) {
   const [value, setValue] = useState('');
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -54,7 +60,7 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
           return setValue(e.target.value);
         }}
         rows={1}
-        placeholder='Message…'
+        placeholder={placeholder}
         disabled={disabled}
         onKeyDown={handleKeyDown}
         className='flex-1 resize-none bg-transparent text-sm text-foreground placeholder:text-muted-foreground/50 outline-none leading-relaxed max-h-40 overflow-y-auto disabled:opacity-50'

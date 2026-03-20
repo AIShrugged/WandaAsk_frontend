@@ -170,7 +170,40 @@ if [ $OVERALL_EXIT -eq 0 ]; then
   echo "▶ Tests..."
   T=$(date +%s)
   TESTS_EXIT=0
-  TESTS_OUTPUT=$(./node_modules/.bin/jest --ci --passWithNoTests 2>&1) || TESTS_EXIT=$?
+  TESTS_OUTPUT=""
+  TEST_BATCH_SIZE=5
+
+  if command -v rg > /dev/null 2>&1; then
+    mapfile -t TEST_FILES < <(rg --files -g '*test.ts' -g '*test.tsx')
+  else
+    mapfile -t TEST_FILES < <(find . \
+      -type f \
+      \( -name '*test.ts' -o -name '*test.tsx' \) \
+      ! -path './node_modules/*' \
+      | sed 's#^\./##' \
+      | sort)
+  fi
+
+  if [ ${#TEST_FILES[@]} -eq 0 ]; then
+    TESTS_OUTPUT=$(NODE_OPTIONS="${NODE_OPTIONS:-} --max-old-space-size=4096" ./node_modules/.bin/jest --ci --passWithNoTests --runInBand 2>&1) || TESTS_EXIT=$?
+  else
+    TOTAL_BATCHES=$(( (${#TEST_FILES[@]} + TEST_BATCH_SIZE - 1) / TEST_BATCH_SIZE ))
+
+    for ((i=0; i<${#TEST_FILES[@]}; i+=TEST_BATCH_SIZE)); do
+      BATCH_INDEX=$(( i / TEST_BATCH_SIZE + 1 ))
+      BATCH_FILES=( "${TEST_FILES[@]:i:TEST_BATCH_SIZE}" )
+
+      echo "  • Batch ${BATCH_INDEX}/${TOTAL_BATCHES} (${#BATCH_FILES[@]} files)"
+
+      BATCH_OUTPUT=$(NODE_OPTIONS="${NODE_OPTIONS:-} --max-old-space-size=4096" ./node_modules/.bin/jest --ci --runInBand --passWithNoTests "${BATCH_FILES[@]}" 2>&1) || TESTS_EXIT=$?
+
+      TESTS_OUTPUT="${TESTS_OUTPUT}"$'\n'"${BATCH_OUTPUT}"
+
+      if [ $TESTS_EXIT -ne 0 ]; then
+        break
+      fi
+    done
+  fi
   TESTS_TIME=$(elapsed "$T")
 
   # Extract summary line (e.g. "Tests: 570 passed, 570 total")

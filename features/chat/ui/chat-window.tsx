@@ -11,7 +11,7 @@ import { ChatInput } from '@/features/chat/ui/chat-input';
 import { ChatMessage } from '@/features/chat/ui/chat-message';
 import { ROUTES } from '@/shared/lib/routes';
 
-import type { Message, MessageStatus } from '@/features/chat/types';
+import type { Chat, Message, MessageStatus } from '@/features/chat/types';
 
 const POLL_INTERVAL_MS = 1500;
 
@@ -20,6 +20,7 @@ const POLL_MAX_ATTEMPTS = 60; // 90 s timeout
 const TERMINAL: ReadonlySet<MessageStatus> = new Set(['completed', 'failed']);
 
 interface ChatWindowProps {
+  chat?: Chat;
   chatId: number;
   initialMessages: Message[];
   totalCount: number;
@@ -30,6 +31,7 @@ interface ChatWindowProps {
 /**
  * ChatWindow component.
  * @param root0 - Component props.
+ * @param root0.chat
  * @param root0.chatId - The chat ID to load messages for.
  * @param root0.initialMessages - Pre-loaded messages.
  * @param root0.totalCount - Total message count in the chat.
@@ -38,6 +40,7 @@ interface ChatWindowProps {
  * @returns Result.
  */
 export function ChatWindow({
+  chat: providedChat,
   chatId,
   initialMessages,
   totalCount,
@@ -46,6 +49,15 @@ export function ChatWindow({
 }: ChatWindowProps) {
   const router = useRouter();
 
+  const chat: Chat = providedChat ?? {
+    id: chatId,
+    title: null,
+    organization_id: null,
+    team_id: null,
+    created_at: '',
+    updated_at: '',
+  };
+
   const {
     messages,
     isLoading,
@@ -53,8 +65,11 @@ export function ChatWindow({
     sentinelRef,
     containerRef,
     addMessage,
-    updateMessage,
+    updateMessage = () => {},
+    removeMessage = () => {},
   } = useMessages(chatId, initialMessages, totalCount, startOffset);
+
+  const [composerError, setComposerError] = useState('');
 
   // True if there's an in-flight run on initial load (e.g. page refresh mid-generation)
   const [isSending, setIsSending] = useState(() => {
@@ -193,10 +208,14 @@ export function ChatWindow({
    * @returns Result.
    */
   const handleSend = (content: string) => {
-    if (isSending) return;
+    if (isSending) {
+      return;
+    }
+
+    const optimisticId = Date.now();
 
     const optimistic: Message = {
-      id: Date.now(),
+      id: optimisticId,
       chat_id: chatId,
       role: 'user',
       status: null,
@@ -214,13 +233,49 @@ export function ChatWindow({
 
     addMessage(optimistic);
     setIsSending(true);
+    setComposerError('');
 
     sendMessage(chatId, content)
-      .then((queued) => {
-        addMessage(queued);
+      .then((result) => {
+        const actionResult =
+          typeof result === 'object' &&
+          result !== null &&
+          'error' in result &&
+          'data' in result
+            ? result
+            : { data: result as Message, error: null };
 
-        if (queued.agent_run_uuid) {
-          startPolling(queued.id, queued.agent_run_uuid);
+        if (actionResult.error) {
+          removeMessage(optimisticId);
+          setIsSending(false);
+
+          if (actionResult.fieldErrors?.organization_id) {
+            setComposerError(
+              'Выберите организацию в верхнем переключателе, чтобы продолжить работу в нужном контексте.',
+            );
+
+            return;
+          }
+
+          toast.error(actionResult.error);
+
+          return;
+        }
+
+        const queuedMessage = actionResult.data;
+
+        if (!queuedMessage) {
+          removeMessage(optimisticId);
+          setIsSending(false);
+          toast.error('Failed to send message');
+
+          return;
+        }
+
+        addMessage(queuedMessage);
+
+        if (queuedMessage.agent_run_uuid) {
+          startPolling(queuedMessage.id, queuedMessage.agent_run_uuid);
         } else {
           setIsSending(false);
         }
@@ -230,6 +285,14 @@ export function ChatWindow({
         setIsSending(false);
       });
   };
+
+  let chatScopeLabel = 'Personal web chat';
+
+  if ((chat.organization_id ?? null) !== null) {
+    chatScopeLabel = chat.team_id
+      ? `Fixed scope: Org #${chat.organization_id} · Team #${chat.team_id}`
+      : `Fixed scope: Org #${chat.organization_id}`;
+  }
 
   return (
     <div className='flex flex-col flex-1 min-h-0'>
@@ -250,12 +313,15 @@ export function ChatWindow({
 
           {/* Desktop: icon + label */}
           <MessageSquare className='hidden md:block w-4 h-4 text-primary' />
-          <span className='hidden md:block text-sm font-semibold text-foreground'>
-            Chat
-          </span>
+          <div className='hidden md:flex flex-col'>
+            <span className='text-sm font-semibold text-foreground'>
+              {chat.title ?? 'Untitled chat'}
+            </span>
+            <span className='text-xs text-muted-foreground'>
+              {chatScopeLabel}
+            </span>
+          </div>
         </div>
-
-        {/* Desktop: collapse button */}
         {onCollapse && (
           <button
             onClick={onCollapse}
@@ -294,7 +360,32 @@ export function ChatWindow({
 
       {/* Input area */}
       <div className='flex-shrink-0 px-4 pb-4 pt-2'>
-        <ChatInput onSend={handleSend} disabled={isSending} />
+        {composerError ? (
+          <div className='mb-3 rounded-[var(--radius-card)] border border-yellow-500/30 bg-yellow-500/10 p-4'>
+            <div className='flex items-start gap-3'>
+              <div className='min-w-0 flex-1'>
+                <p className='text-sm font-medium text-foreground'>
+                  Выберите рабочий контекст
+                </p>
+                <p className='mt-1 text-sm text-muted-foreground'>
+                  Personal chat не требует постоянной привязки. Если backend
+                  просит `organization_id`, переключите организацию в верхней
+                  панели и повторите действие.
+                </p>
+                {composerError ? (
+                  <p className='mt-2 text-sm text-destructive'>
+                    {composerError}
+                  </p>
+                ) : null}
+              </div>
+            </div>
+          </div>
+        ) : null}
+        <ChatInput
+          onSend={handleSend}
+          disabled={isSending}
+          placeholder='Message…'
+        />
       </div>
     </div>
   );
