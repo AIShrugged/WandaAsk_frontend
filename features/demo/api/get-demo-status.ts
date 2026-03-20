@@ -25,7 +25,7 @@ type DemoStatusApiResponse = {
   data: DemoStatusResult | null;
   message: string;
   status: number;
-  meta: unknown[];
+  meta: Record<string, unknown>;
 };
 
 /**

@@ -25,7 +25,7 @@ type DemoSeedApiResponse = {
   } | null;
   message: string;
   status: number;
-  meta: Record<string, string> | unknown[];
+  meta: Record<string, unknown>;
 };
 
 /**
