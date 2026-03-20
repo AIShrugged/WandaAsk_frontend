@@ -137,15 +137,13 @@ describe('getFollowUp', () => {
   });
 
   it('throws when success=false in response', async () => {
-    globalThis.fetch = jest
-      .fn()
-      .mockResolvedValue(
-        makeResponse(200, {
-          success: false,
-          data: null,
-          error: 'Invalid follow-up',
-        }),
-      );
+    globalThis.fetch = jest.fn().mockResolvedValue(
+      makeResponse(200, {
+        success: false,
+        data: null,
+        error: 'Invalid follow-up',
+      }),
+    );
 
     await expect(getFollowUp(1)).rejects.toThrow('Invalid follow-up');
   });
