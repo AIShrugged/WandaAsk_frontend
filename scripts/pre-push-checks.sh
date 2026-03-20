@@ -171,7 +171,7 @@ if [ $OVERALL_EXIT -eq 0 ]; then
   T=$(date +%s)
   TESTS_EXIT=0
   TESTS_OUTPUT=""
-  TEST_BATCH_SIZE=10
+  TEST_BATCH_SIZE=5
 
   if command -v rg > /dev/null 2>&1; then
     mapfile -t TEST_FILES < <(rg --files -g '*test.ts' -g '*test.tsx')
@@ -195,7 +195,7 @@ if [ $OVERALL_EXIT -eq 0 ]; then
 
       echo "  • Batch ${BATCH_INDEX}/${TOTAL_BATCHES} (${#BATCH_FILES[@]} files)"
 
-      BATCH_OUTPUT=$(NODE_OPTIONS="${NODE_OPTIONS:-} --max-old-space-size=2048" ./node_modules/.bin/jest --ci --runInBand --passWithNoTests "${BATCH_FILES[@]}" 2>&1) || TESTS_EXIT=$?
+      BATCH_OUTPUT=$(NODE_OPTIONS="${NODE_OPTIONS:-} --max-old-space-size=4096" ./node_modules/.bin/jest --ci --runInBand --passWithNoTests "${BATCH_FILES[@]}" 2>&1) || TESTS_EXIT=$?
 
       TESTS_OUTPUT="${TESTS_OUTPUT}"$'\n'"${BATCH_OUTPUT}"
 
