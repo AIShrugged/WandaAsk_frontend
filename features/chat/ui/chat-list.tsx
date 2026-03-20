@@ -1,21 +1,25 @@
 'use client';
 
-import { ChevronLeft, Loader2, MessageSquare, Plus } from 'lucide-react';
+import { ChevronLeft, Loader2, MessageSquare, Plus, Send } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useRef, useState, useTransition } from 'react';
-import { toast } from 'sonner';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { createChat, getChats } from '@/features/chat/api/chats';
+import { getChats } from '@/features/chat/api/chats';
+import { ChatFormModal } from '@/features/chat/ui/chat-form-modal';
 import { ChatListItem } from '@/features/chat/ui/chat-list-item';
 import { ROUTES } from '@/shared/lib/routes';
 import { CollapsedSidePanel } from '@/shared/ui/layout/collapsed-side-panel';
 
+import type { OrganizationProps } from '@/entities/organization';
 import type { Chat } from '@/features/chat/types';
 
 interface ChatListProps {
   initialChats: Chat[];
   totalCount: number;
   activeChatId?: number;
+  organizations?: OrganizationProps[];
+  onActiveChatUpdate?: (chat: Chat) => void;
 }
 
 const PAGE_SIZE = 20;
@@ -26,6 +30,8 @@ const PAGE_SIZE = 20;
  * @param root0.initialChats - Initial list of chats.
  * @param root0.totalCount - Total number of chats available.
  * @param root0.activeChatId - ID of the currently active chat.
+ * @param root0.organizations
+ * @param root0.onActiveChatUpdate
  * @returns Result.
  */
 // eslint-disable-next-line max-statements
@@ -33,6 +39,8 @@ export function ChatList({
   initialChats,
   totalCount,
   activeChatId,
+  organizations = [],
+  onActiveChatUpdate,
 }: ChatListProps) {
   const router = useRouter();
 
@@ -44,11 +52,19 @@ export function ChatList({
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const [isCreating, startCreateTransition] = useTransition();
-
   const [isCollapsed, setIsCollapsed] = useState(false);
 
+  const [editingChat, setEditingChat] = useState<Chat | null>(null);
+
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
   const sentinelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setChats(initialChats);
+    setOffset(initialChats.length);
+    setHasMore(initialChats.length < totalCount);
+  }, [initialChats, totalCount]);
 
   /**
    * loadMore.
@@ -94,28 +110,8 @@ export function ChatList({
   }, [hasMore, isLoading, loadMore]);
 
   /**
-   * handleCreateChat.
-   * @returns Result.
-   */
-  const handleCreateChat = () => {
-    startCreateTransition(async () => {
-      try {
-        const chat = await createChat(null);
-
-        setChats((prev) => {
-          return [chat, ...prev];
-        });
-        router.push(`${ROUTES.DASHBOARD.CHAT}/${chat.id}`);
-      } catch (error) {
-        toast.error((error as Error).message);
-      }
-    });
-  };
-
-  /**
-   * handleUpdate.
-   * @param updated - updated.
-   * @returns Result.
+   *
+   * @param updated
    */
   const handleUpdate = (updated: Chat) => {
     setChats((prev) => {
@@ -123,6 +119,10 @@ export function ChatList({
         return c.id === updated.id ? updated : c;
       });
     });
+
+    if (updated.id === activeChatId) {
+      onActiveChatUpdate?.(updated);
+    }
   };
 
   /**
@@ -140,6 +140,25 @@ export function ChatList({
     if (id === activeChatId) {
       router.push(ROUTES.DASHBOARD.CHAT);
     }
+  };
+
+  /**
+   * handleSavedChat.
+   * @param chat - saved chat.
+   * @param mode - create or update.
+   * @returns Result.
+   */
+  const handleSavedChat = (chat: Chat, mode: 'create' | 'update') => {
+    if (mode === 'create') {
+      setChats((prev) => {
+        return [chat, ...prev];
+      });
+      router.push(`${ROUTES.DASHBOARD.CHAT}/${chat.id}`);
+
+      return;
+    }
+
+    handleUpdate(chat);
   };
 
   // ── Collapsed state ──────────────────────────────────────────────────────────
@@ -165,18 +184,22 @@ export function ChatList({
         </div>
         <div className='flex items-center gap-1'>
           <button
-            onClick={handleCreateChat}
-            disabled={isCreating}
-            className='flex items-center gap-1 text-xs text-primary hover:opacity-70 disabled:opacity-40 transition-opacity cursor-pointer disabled:cursor-default'
+            onClick={() => {
+              return setIsCreateModalOpen(true);
+            }}
+            className='flex items-center gap-1 text-xs text-primary hover:opacity-70 transition-opacity cursor-pointer'
             aria-label='New chat'
           >
-            {isCreating ? (
-              <Loader2 className='w-3.5 h-3.5 animate-spin' />
-            ) : (
-              <Plus className='w-3.5 h-3.5' />
-            )}
+            <Plus className='w-3.5 h-3.5' />
             New
           </button>
+          <Link
+            href={ROUTES.DASHBOARD.TELEGRAM_CHATS}
+            className='flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors'
+          >
+            <Send className='w-3.5 h-3.5' />
+            Telegram
+          </Link>
           <button
             onClick={() => {
               return setIsCollapsed(true);
@@ -203,6 +226,7 @@ export function ChatList({
               key={chat.id}
               chat={chat}
               isActive={chat.id === activeChatId}
+              onEdit={setEditingChat}
               onUpdate={handleUpdate}
               onDelete={handleDelete}
             />
@@ -218,6 +242,23 @@ export function ChatList({
           </div>
         )}
       </div>
+      <ChatFormModal
+        isOpen={isCreateModalOpen}
+        onClose={() => {
+          setIsCreateModalOpen(false);
+        }}
+        organizations={organizations}
+        onSaved={handleSavedChat}
+      />
+      <ChatFormModal
+        isOpen={editingChat !== null}
+        onClose={() => {
+          setEditingChat(null);
+        }}
+        organizations={organizations}
+        chat={editingChat}
+        onSaved={handleSavedChat}
+      />
     </div>
   );
 }

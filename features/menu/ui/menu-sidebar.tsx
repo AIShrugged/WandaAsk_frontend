@@ -1,13 +1,16 @@
-import { MENU_ITEMS } from '@/features/menu/lib/options';
+import { getAgentAccessContext } from '@/features/agents/lib/access';
+import { getMenuItems } from '@/features/menu/lib/options';
 import { MenuNested } from '@/features/menu/ui/menu-nested';
 
 /**
  * MenuSidebar component.
  */
-export default function MenuSidebar() {
+export default async function MenuSidebar() {
+  const { canManageAgents } = await getAgentAccessContext();
+
   return (
     <nav className='flex flex-col gap-1'>
-      <MenuNested items={MENU_ITEMS} />
+      <MenuNested items={getMenuItems({ canManageAgents })} />
     </nav>
   );
 }

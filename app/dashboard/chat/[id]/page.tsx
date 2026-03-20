@@ -3,9 +3,11 @@ import { notFound } from 'next/navigation';
 import {
   ChatLayout,
   getArtifacts,
+  getChat,
   getChats,
   getMessages,
 } from '@/features/chat';
+import { getOrganizations } from '@/features/organization/api/organization';
 
 import type { PageProps } from '@/shared/types/common';
 
@@ -25,14 +27,18 @@ export default async function ChatRoomPage({ params }: PageProps) {
 
   const [
     { chats, totalCount },
+    currentChat,
     { messages: oldest, totalCount: msgTotal },
     artifacts,
+    { data: organizations },
   ] = await Promise.all([
     getChats(0, 20),
+    getChat(chatId),
     getMessages(chatId, 0, INITIAL_LIMIT),
     getArtifacts(chatId).catch(() => {
       return null;
     }),
+    getOrganizations(),
   ]);
 
   // API returns messages oldest-first (ASC by created_at).
@@ -57,11 +63,13 @@ export default async function ChatRoomPage({ params }: PageProps) {
       initialChats={chats}
       totalCount={totalCount}
       activeChatId={chatId}
+      currentChat={currentChat}
       chatId={chatId}
       initialArtifacts={artifacts}
       initialMessages={initialMessages}
       totalMessagesCount={msgTotal}
       startOffset={startOffset}
+      organizations={organizations ?? []}
     />
   );
 }

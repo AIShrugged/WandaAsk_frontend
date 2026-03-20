@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';
-import { useSelectedLayoutSegment } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
 import { ICONS_MAP } from '@/features/menu/lib/options';
@@ -27,9 +27,13 @@ export function NestedMenuItem({
 
   const hasChildren = item.children && item.children.length > 0;
 
-  const segment = useSelectedLayoutSegment();
+  const pathname = usePathname();
 
-  const isActive = item.id === segment;
+  const activeHref = item.activeHref ?? item.href;
+
+  const isActive = activeHref
+    ? pathname === activeHref || pathname.startsWith(`${activeHref}/`)
+    : false;
 
   /**
    * handleToggle.

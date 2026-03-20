@@ -4,15 +4,10 @@ import userEvent from '@testing-library/user-event';
 
 import { ChatListItem } from '@/features/chat/ui/chat-list-item';
 
-const mockUpdateChatTitle = jest.fn();
-
 const mockDeleteChat = jest.fn();
 
 jest.mock('@/features/chat/api/chats', () => {
   return {
-    updateChatTitle: (...args: unknown[]) => {
-      return mockUpdateChatTitle(...args);
-    },
     deleteChat: (...args: unknown[]) => {
       return mockDeleteChat(...args);
     },
@@ -53,7 +48,6 @@ const makeChat = (overrides = {}) => {
 describe('ChatListItem', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUpdateChatTitle.mockResolvedValue({});
     mockDeleteChat.mockResolvedValue({});
   });
 
@@ -68,7 +62,9 @@ describe('ChatListItem', () => {
         onDelete={jest.fn()}
       />,
     );
-    expect(screen.getByRole('link', { name: 'My Chat' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: 'My Chat Personal chat' }),
+    ).toBeInTheDocument();
   });
 
   it('renders "Untitled chat" when title is null', () => {
@@ -111,101 +107,52 @@ describe('ChatListItem', () => {
     expect(container.firstChild).toHaveClass('bg-sidebar-accent');
   });
 
-  // ── Edit mode ────────────────────────────────────────────────────────────
-
-  it('switches to editing mode when edit button is clicked', async () => {
+  it('renders fixed-scope label when chat is attached to an organization', () => {
     render(
       <ChatListItem
-        chat={makeChat()}
+        chat={makeChat({ organization_id: 7 })}
         isActive={false}
         onUpdate={jest.fn()}
         onDelete={jest.fn()}
       />,
     );
-    await userEvent.click(screen.getByRole('button', { name: 'Edit title' }));
-    expect(screen.getByRole('textbox')).toBeInTheDocument();
+    expect(screen.getByText('Fixed scope: Org #7')).toBeInTheDocument();
   });
 
-  it('edit input is pre-filled with current title', async () => {
-    render(
-      <ChatListItem
-        chat={makeChat({ title: 'Old Title' })}
-        isActive={false}
-        onUpdate={jest.fn()}
-        onDelete={jest.fn()}
-      />,
-    );
-    await userEvent.click(screen.getByRole('button', { name: 'Edit title' }));
-    expect(screen.getByRole('textbox')).toHaveValue('Old Title');
-  });
+  // ── Edit action ──────────────────────────────────────────────────────────
 
-  it('cancel button in edit mode returns to idle', async () => {
-    render(
-      <ChatListItem
-        chat={makeChat()}
-        isActive={false}
-        onUpdate={jest.fn()}
-        onDelete={jest.fn()}
-      />,
-    );
-    await userEvent.click(screen.getByRole('button', { name: 'Edit title' }));
-    await userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
-    expect(screen.getByRole('link')).toBeInTheDocument();
-    expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
-  });
+  it('calls onEdit when edit button is clicked', async () => {
+    const onEdit = jest.fn();
 
-  it('pressing Escape cancels editing', async () => {
-    render(
-      <ChatListItem
-        chat={makeChat()}
-        isActive={false}
-        onUpdate={jest.fn()}
-        onDelete={jest.fn()}
-      />,
-    );
-    await userEvent.click(screen.getByRole('button', { name: 'Edit title' }));
-    await userEvent.keyboard('{Escape}');
-    expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
-  });
-
-  it('calls updateChatTitle and onUpdate on save with new title', async () => {
     const onUpdate = jest.fn();
 
     render(
       <ChatListItem
-        chat={makeChat({ title: 'Old' })}
+        chat={makeChat()}
+        isActive={false}
+        onEdit={onEdit}
+        onUpdate={onUpdate}
+        onDelete={jest.fn()}
+      />,
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'Edit chat' }));
+    expect(onEdit).toHaveBeenCalledWith(expect.objectContaining({ id: 1 }));
+    expect(onUpdate).not.toHaveBeenCalled();
+  });
+
+  it('falls back to onUpdate when onEdit is not provided', async () => {
+    const onUpdate = jest.fn();
+
+    render(
+      <ChatListItem
+        chat={makeChat()}
         isActive={false}
         onUpdate={onUpdate}
         onDelete={jest.fn()}
       />,
     );
-    await userEvent.click(screen.getByRole('button', { name: 'Edit title' }));
-    const input = screen.getByRole('textbox');
-
-    await userEvent.clear(input);
-    await userEvent.type(input, 'New Title');
-    await userEvent.click(screen.getByRole('button', { name: 'Save' }));
-    await waitFor(() => {
-      expect(mockUpdateChatTitle).toHaveBeenCalledWith(1, 'New Title');
-      expect(onUpdate).toHaveBeenCalledWith(
-        expect.objectContaining({ title: 'New Title' }),
-      );
-    });
-  });
-
-  it('cancels editing without API call when title unchanged', async () => {
-    render(
-      <ChatListItem
-        chat={makeChat({ title: 'Same' })}
-        isActive={false}
-        onUpdate={jest.fn()}
-        onDelete={jest.fn()}
-      />,
-    );
-    await userEvent.click(screen.getByRole('button', { name: 'Edit title' }));
-    await userEvent.click(screen.getByRole('button', { name: 'Save' }));
-    expect(mockUpdateChatTitle).not.toHaveBeenCalled();
-    expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Edit chat' }));
+    expect(onUpdate).toHaveBeenCalledWith(expect.objectContaining({ id: 1 }));
   });
 
   // ── Delete confirmation mode ─────────────────────────────────────────────

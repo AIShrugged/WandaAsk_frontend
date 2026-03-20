@@ -52,7 +52,7 @@ jest.mock('@/features/chat/api/chats', () => {
 
 jest.mock('sonner', () => {
   return {
-    toast: { error: jest.fn() },
+    toast: { error: jest.fn(), success: jest.fn() },
   };
 });
 
@@ -160,6 +160,9 @@ describe('ChatList', () => {
     );
     await act(async () => {
       await userEvent.click(screen.getByRole('button', { name: /new chat/i }));
+      await userEvent.click(
+        screen.getByRole('button', { name: /create chat/i }),
+      );
     });
     await waitFor(() => {
       expect(screen.getByTestId('chat-item-99')).toBeInTheDocument();
@@ -170,6 +173,9 @@ describe('ChatList', () => {
     render(<ChatList initialChats={[]} totalCount={0} />);
     await act(async () => {
       await userEvent.click(screen.getByRole('button', { name: /new chat/i }));
+      await userEvent.click(
+        screen.getByRole('button', { name: /create chat/i }),
+      );
     });
     await waitFor(() => {
       expect(mockPush).toHaveBeenCalledWith(expect.stringContaining('/99'));
@@ -185,6 +191,9 @@ describe('ChatList', () => {
     render(<ChatList initialChats={[]} totalCount={0} />);
     await act(async () => {
       await userEvent.click(screen.getByRole('button', { name: /new chat/i }));
+      await userEvent.click(
+        screen.getByRole('button', { name: /create chat/i }),
+      );
     });
     await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith('Server error');

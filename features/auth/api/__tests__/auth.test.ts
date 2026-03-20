@@ -174,6 +174,27 @@ describe('login', () => {
     expect(body.email).toBe('user@test.com');
     expect(body.password).toBe('pass123');
   });
+
+  it('converts timeout errors into plain login errors', async () => {
+    const timeoutError = Object.create(Error.prototype) as Error;
+
+    Object.defineProperty(timeoutError, 'name', {
+      value: 'TimeoutError',
+      configurable: true,
+    });
+    Object.defineProperty(timeoutError, 'message', {
+      value: 'The operation was aborted due to timeout',
+      configurable: true,
+    });
+
+    globalThis.fetch = jest.fn().mockRejectedValue(timeoutError);
+
+    await expect(
+      login({ email: 'user@example.com', password: 'password123' }),
+    ).rejects.toThrow(
+      'Request timed out during login. Please check the backend connection and try again.',
+    );
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -312,6 +333,31 @@ describe('register', () => {
     expect(globalThis.fetch).toHaveBeenCalledWith(
       'https://api.test/auth/register',
       expect.objectContaining({ method: 'POST' }),
+    );
+  });
+
+  it('converts timeout errors into plain registration errors', async () => {
+    const timeoutError = Object.create(Error.prototype) as Error;
+
+    Object.defineProperty(timeoutError, 'name', {
+      value: 'TimeoutError',
+      configurable: true,
+    });
+    Object.defineProperty(timeoutError, 'message', {
+      value: 'The operation was aborted due to timeout',
+      configurable: true,
+    });
+
+    globalThis.fetch = jest.fn().mockRejectedValue(timeoutError);
+
+    await expect(
+      register({
+        name: 'Test User',
+        email: 'new@example.com',
+        password: 'password123',
+      }),
+    ).rejects.toThrow(
+      'Request timed out during registration. Please check the backend connection and try again.',
     );
   });
 });

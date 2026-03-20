@@ -19,6 +19,35 @@ const SESSION_COOKIE_OPTIONS = {
 } as const;
 
 /**
+ * normalizeAuthRequestError converts DOMException/network failures into plain Error objects.
+ * This avoids passing native TimeoutError instances through server actions.
+ * @param error - unknown fetch error.
+ * @param action - action label.
+ * @returns Error.
+ */
+function normalizeAuthRequestError(
+  error: unknown,
+  action: 'login' | 'registration',
+): Error {
+  if (
+    error instanceof Error &&
+    (error.name === 'TimeoutError' ||
+      error.name === 'AbortError' ||
+      error.message.includes('aborted due to timeout'))
+  ) {
+    return new Error(
+      `Request timed out during ${action}. Please check the backend connection and try again.`,
+    );
+  }
+
+  if (error instanceof Error) {
+    return new Error(error.message);
+  }
+
+  return new Error(`Network error during ${action}. Please try again.`);
+}
+
+/**
  * parseJsonResponse.
  * @param res - res.
  * @returns Promise.
@@ -43,13 +72,19 @@ async function parseJsonResponse(
 export async function login(data: LoginInput): Promise<void> {
   const validated = LoginSchema.parse(data);
 
-  const res = await fetch(`${API_URL}/auth/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(validated),
-    cache: 'no-store',
-    signal: AbortSignal.timeout(10_000),
-  });
+  let res: Response;
+
+  try {
+    res = await fetch(`${API_URL}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(validated),
+      cache: 'no-store',
+      signal: AbortSignal.timeout(10_000),
+    });
+  } catch (error) {
+    throw normalizeAuthRequestError(error, 'login');
+  }
 
   const json = await parseJsonResponse(res);
 
@@ -86,13 +121,19 @@ export async function login(data: LoginInput): Promise<void> {
 export async function register(data: RegisterInput): Promise<void> {
   const validated = RegisterSchema.parse(data);
 
-  const res = await fetch(`${API_URL}/auth/register`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(validated),
-    cache: 'no-store',
-    signal: AbortSignal.timeout(10_000),
-  });
+  let res: Response;
+
+  try {
+    res = await fetch(`${API_URL}/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(validated),
+      cache: 'no-store',
+      signal: AbortSignal.timeout(10_000),
+    });
+  } catch (error) {
+    throw normalizeAuthRequestError(error, 'registration');
+  }
 
   const json = await parseJsonResponse(res);
 

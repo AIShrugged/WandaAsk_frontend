@@ -2,12 +2,19 @@
 
 import { redirect } from 'next/navigation';
 
+import { parseApiError } from '@/shared/lib/apiError';
 import { API_URL } from '@/shared/lib/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 import { logApiError } from '@/shared/lib/logger';
 
 import type { AgentRun, Message } from '@/features/chat/types';
 import type { ApiResponse } from '@/shared/types/common';
+
+type MessageActionError = {
+  data: null;
+  error: string;
+  fieldErrors?: Record<string, string>;
+};
 
 /**
  * getMessages.
@@ -68,7 +75,7 @@ export async function getMessages(
 export async function sendMessage(
   chatId: number,
   content: string,
-): Promise<Message> {
+): Promise<Message | MessageActionError> {
   const authHeaders = await getAuthHeaders();
 
   const res = await fetch(`${API_URL}/chats/${chatId}/messages`, {
@@ -89,10 +96,18 @@ export async function sendMessage(
       statusText: res.statusText,
       body: text,
     });
-    throw new Error(
-      (JSON.parse(text) as { message?: string })?.message ??
-        'Failed to send message',
-    );
+
+    const parsed = parseApiError(text, 'Failed to send message');
+
+    if (res.status === 422) {
+      return {
+        data: null,
+        error: parsed.message,
+        fieldErrors: parsed.fieldErrors,
+      };
+    }
+
+    throw new Error(parsed.message);
   }
 
   const json: ApiResponse<Message> = await res.json();

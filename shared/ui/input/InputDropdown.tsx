@@ -63,6 +63,8 @@ const InputDropdown = forwardRef<
 
   const errorId = `${inputId}-error`;
 
+  const listboxId = `${inputId}-listbox`;
+
   const [isOpen, setIsOpen] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -108,7 +110,7 @@ const InputDropdown = forwardRef<
 
   const hasValue = displayedLabel.length > 0;
 
-  const floatingActive = isOpen || hasValue;
+  const floatingActive = isOpen || hasValue || Boolean(label && placeholder);
 
   const filteredOptions = options.filter((option) => {
     return option.label.toLowerCase().includes(searchQuery.toLowerCase());
@@ -258,6 +260,7 @@ const InputDropdown = forwardRef<
         tabIndex={disabled ? undefined : 0}
         role='combobox'
         aria-expanded={isOpen}
+        aria-controls={listboxId}
         aria-haspopup='listbox'
         aria-invalid={!!error}
         aria-describedby={error ? errorId : undefined}
@@ -320,6 +323,7 @@ const InputDropdown = forwardRef<
       {isOpen && (
         <div
           ref={dropdownRef}
+          id={listboxId}
           role='listbox'
           className='absolute z-50 w-full top-[44px] bg-popover border border-border rounded-[var(--radius-card)] shadow-card max-h-80 overflow-auto'
         >

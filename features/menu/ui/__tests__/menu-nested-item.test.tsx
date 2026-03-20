@@ -22,8 +22,8 @@ jest.mock('next/link', () => {
 
 jest.mock('next/navigation', () => {
   return {
-    useSelectedLayoutSegment: () => {
-      return null;
+    usePathname: () => {
+      return '/';
     },
   };
 });

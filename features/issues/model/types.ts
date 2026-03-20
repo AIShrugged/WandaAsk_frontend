@@ -1,0 +1,75 @@
+export type IssueStatus = 'open' | 'in_progress' | 'paused' | 'done';
+
+export const ISSUE_STATUS_OPTIONS: { value: IssueStatus; label: string }[] = [
+  { value: 'open', label: 'Open' },
+  { value: 'in_progress', label: 'In progress' },
+  { value: 'paused', label: 'Paused' },
+  { value: 'done', label: 'Done' },
+];
+
+/**
+ * isIssueStatus.
+ * @param value - raw value.
+ * @returns Result.
+ */
+export function isIssueStatus(value: string): value is IssueStatus {
+  return ISSUE_STATUS_OPTIONS.some((option) => {
+    return option.value === value;
+  });
+}
+
+export interface PersonOption {
+  id: number;
+  name: string;
+  email?: string | null;
+  organization_id?: number | null;
+  team_id?: number | null;
+}
+
+export interface Issue {
+  id: number;
+  name: string;
+  description: string | null;
+  type: string;
+  status: IssueStatus;
+  organization_id: number | null;
+  team_id: number | null;
+  assignee_id: number | null;
+  assignee?: PersonOption | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface IssueAttachment {
+  id: number;
+  issue_id?: number | null;
+  name?: string | null;
+  file_name?: string | null;
+  original_name?: string | null;
+  file_path?: string | null;
+  file_url?: string | null;
+  url?: string | null;
+  uploaded_at?: string | null;
+  created_at?: string | null;
+  updated_at?: string | null;
+}
+
+export interface IssueFilters {
+  organization_id?: number | null;
+  team_id?: number | null;
+  status?: IssueStatus | '';
+  type?: string;
+  assignee?: number | null;
+  offset?: number;
+  limit?: number;
+}
+
+export interface IssueUpsertDTO {
+  name: string;
+  description: string | null;
+  type: string;
+  status: IssueStatus;
+  organization_id: number | null;
+  team_id: number | null;
+  assignee_id: number | null;
+}
