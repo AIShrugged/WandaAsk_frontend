@@ -132,6 +132,13 @@ ls changelog/YYYY-MM-DD.md 2>/dev/null && echo "exists" || echo "new"
 ```markdown
 # Отчёт — DD.MM.YYYY
 
+## Кратко
+
+- ✨ Название фичи
+- 🔧 Улучшение X
+- 🐛 Исправление Y
+- 🧪 N новых тест-сьютов (+M тестов)
+
 ### ✨ Новые функции
 
 - **Название фичи**: краткое описание что теперь умеет пользователь делать.
@@ -157,6 +164,9 @@ ls changelog/YYYY-MM-DD.md 2>/dev/null && echo "exists" || echo "new"
 
 - Технические изменения без влияния на пользователя.
 ```
+
+The `## Кратко` block is a mandatory TL;DR at the top — one line per logical
+change, with emoji prefix matching its category. Omit sections with no changes.
 
 ### Writing rules:
 

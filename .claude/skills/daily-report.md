@@ -71,6 +71,13 @@ File format:
 ```markdown
 # Отчёт — DD.MM.YYYY
 
+## Кратко
+
+- ✨ Название фичи
+- 🔧 Улучшение X
+- 🐛 Исправление Y
+- 🧪 N новых тест-сьютов (+M тестов)
+
 ### ✨ Новые функции
 
 - **Название**: что теперь умеет пользователь делать. Технические детали
@@ -92,6 +99,9 @@ File format:
 
 - Технические изменения без влияния на пользователя.
 ```
+
+The `## Кратко` block is **mandatory** — a one-line-per-item TL;DR at the top of
+every report. Emoji prefix matches the category. Omit empty categories.
 
 **Writing rules:**
 
