@@ -331,7 +331,10 @@ export function patchServerFetch(): void {
       const durationMs = Math.round(performance.now() - start);
 
       const errText =
-        'Network error after ' + String(durationMs) + 'ms \u2014 ' + String(error);
+        'Network error after ' +
+        String(durationMs) +
+        'ms \u2014 ' +
+        String(error);
 
       logApiError({
         method,

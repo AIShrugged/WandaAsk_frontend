@@ -419,8 +419,9 @@ export function installClientFetchDebugger(): () => void {
   const original = globalThis.fetch.bind(globalThis);
 
   // Store original fetch so sendToBuffer can bypass the wrapper.
-  (globalThis as typeof globalThis & { __tribes_original_fetch?: typeof fetch }).__tribes_original_fetch =
-    original;
+  (
+    globalThis as typeof globalThis & { __tribes_original_fetch?: typeof fetch }
+  ).__tribes_original_fetch = original;
 
   globalThis.fetch = async function debugFetch(
     input: RequestInfo | URL,
@@ -428,7 +429,8 @@ export function installClientFetchDebugger(): () => void {
   ): Promise<Response> {
     const url = extractUrl(input);
 
-    if (shouldSkip(url) || url.includes(SKIP_BUFFER_URL)) return original(input, init);
+    if (shouldSkip(url) || url.includes(SKIP_BUFFER_URL))
+      return original(input, init);
 
     // Capture caller stack and timestamp BEFORE the async boundary
     // so the stack reflects the actual call site.
@@ -546,7 +548,11 @@ export function installClientFetchDebugger(): () => void {
   return function cleanup(): void {
     globalThis.fetch = original;
     delete g[PATCHED_KEY];
-    delete (globalThis as typeof globalThis & { __tribes_original_fetch?: typeof fetch }).__tribes_original_fetch;
+    delete (
+      globalThis as typeof globalThis & {
+        __tribes_original_fetch?: typeof fetch;
+      }
+    ).__tribes_original_fetch;
     _counter = 0;
   };
 }

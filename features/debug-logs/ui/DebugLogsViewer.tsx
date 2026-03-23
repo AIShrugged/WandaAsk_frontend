@@ -61,9 +61,11 @@ function sourceBadge(source: string): string {
  * @param kind
  */
 function kindBadge(kind: string): string {
-  if (kind === 'error') return 'bg-red-900/60 text-red-300 border border-red-700/40';
+  if (kind === 'error')
+    return 'bg-red-900/60 text-red-300 border border-red-700/40';
 
-  if (kind === 'request') return 'bg-slate-800/60 text-slate-400 border border-slate-700/40';
+  if (kind === 'request')
+    return 'bg-slate-800/60 text-slate-400 border border-slate-700/40';
 
   return 'bg-emerald-900/40 text-emerald-300 border border-emerald-700/40';
 }
@@ -123,11 +125,16 @@ function LogRow({ entry }: { entry: DebugLogEntry }) {
           hasDetail ? 'cursor-pointer hover:bg-white/5' : 'cursor-default',
         ].join(' ')}
         onClick={() => {
-          if (hasDetail) setOpen((o) => {return !o});
+          if (hasDetail)
+            setOpen((o) => {
+              return !o;
+            });
         }}
       >
         {/* Time */}
-        <span className='text-slate-500 shrink-0 w-[90px]'>{entry.timestamp}</span>
+        <span className='text-slate-500 shrink-0 w-[90px]'>
+          {entry.timestamp}
+        </span>
 
         {/* Source badge */}
         <span
@@ -150,13 +157,22 @@ function LogRow({ entry }: { entry: DebugLogEntry }) {
         </span>
 
         {/* Method */}
-        <span className={['shrink-0 font-bold w-[52px]', methodColor(entry.method)].join(' ')}>
+        <span
+          className={[
+            'shrink-0 font-bold w-[52px]',
+            methodColor(entry.method),
+          ].join(' ')}
+        >
           {entry.method}
         </span>
 
         {/* Status */}
         {entry.status !== undefined && (
-          <span className={['shrink-0 w-[36px]', statusColor(entry.status)].join(' ')}>
+          <span
+            className={['shrink-0 w-[36px]', statusColor(entry.status)].join(
+              ' ',
+            )}
+          >
             {entry.status || 'ERR'}
           </span>
         )}
@@ -168,8 +184,14 @@ function LogRow({ entry }: { entry: DebugLogEntry }) {
 
         {/* Duration */}
         {entry.durationMs !== undefined && (
-          <span className={['shrink-0', entry.slow ? 'text-orange-400 font-bold' : 'text-slate-500'].join(' ')}>
-            {entry.slow ? '\u26A0 ' : ''}{entry.durationMs}ms
+          <span
+            className={[
+              'shrink-0',
+              entry.slow ? 'text-orange-400 font-bold' : 'text-slate-500',
+            ].join(' ')}
+          >
+            {entry.slow ? '\u26A0 ' : ''}
+            {entry.durationMs}ms
           </span>
         )}
 
@@ -194,7 +216,9 @@ function LogRow({ entry }: { entry: DebugLogEntry }) {
 
         {/* Expand arrow */}
         {hasDetail && (
-          <span className='shrink-0 text-slate-600 ml-1'>{open ? '▲' : '▼'}</span>
+          <span className='shrink-0 text-slate-600 ml-1'>
+            {open ? '▲' : '▼'}
+          </span>
         )}
       </button>
 
@@ -234,7 +258,9 @@ function LogRow({ entry }: { entry: DebugLogEntry }) {
           {entry.caller && (
             <div>
               <span className='text-slate-500 block mb-0.5'>Caller</span>
-              <pre className='text-slate-400 whitespace-pre-wrap'>{entry.caller}</pre>
+              <pre className='text-slate-400 whitespace-pre-wrap'>
+                {entry.caller}
+              </pre>
             </div>
           )}
         </div>
@@ -275,8 +301,7 @@ function FilterBar({
   const btnBase =
     'px-2.5 py-1 rounded text-xs font-medium border transition-colors';
 
-  const activeBtn =
-    'bg-violet-700/80 border-violet-500 text-white';
+  const activeBtn = 'bg-violet-700/80 border-violet-500 text-white';
 
   const inactiveBtn =
     'bg-white/5 border-white/10 text-slate-400 hover:border-white/20';
@@ -285,32 +310,46 @@ function FilterBar({
     <div className='flex flex-wrap items-center gap-2 px-3 py-2 border-b border-white/10 bg-black/20'>
       {/* Source filter */}
       <div className='flex gap-1'>
-        {(['all', 'server', 'client'] as SourceFilter[]).map((s) => {return (
-          <button
-            key={s}
-            type='button'
-            className={[btnBase, filters.source === s ? activeBtn : inactiveBtn].join(' ')}
-            onClick={() => {return onChange({ source: s })}}
-          >
-            {s}
-          </button>
-        )})}
+        {(['all', 'server', 'client'] as SourceFilter[]).map((s) => {
+          return (
+            <button
+              key={s}
+              type='button'
+              className={[
+                btnBase,
+                filters.source === s ? activeBtn : inactiveBtn,
+              ].join(' ')}
+              onClick={() => {
+                return onChange({ source: s });
+              }}
+            >
+              {s}
+            </button>
+          );
+        })}
       </div>
 
       <div className='w-px h-4 bg-white/10' />
 
       {/* Kind filter */}
       <div className='flex gap-1'>
-        {(['all', 'request', 'response', 'error'] as KindFilter[]).map((k) => {return (
-          <button
-            key={k}
-            type='button'
-            className={[btnBase, filters.kind === k ? activeBtn : inactiveBtn].join(' ')}
-            onClick={() => {return onChange({ kind: k })}}
-          >
-            {k}
-          </button>
-        )})}
+        {(['all', 'request', 'response', 'error'] as KindFilter[]).map((k) => {
+          return (
+            <button
+              key={k}
+              type='button'
+              className={[
+                btnBase,
+                filters.kind === k ? activeBtn : inactiveBtn,
+              ].join(' ')}
+              onClick={() => {
+                return onChange({ kind: k });
+              }}
+            >
+              {k}
+            </button>
+          );
+        })}
       </div>
 
       <div className='w-px h-4 bg-white/10' />
@@ -319,12 +358,18 @@ function FilterBar({
       <select
         className='bg-white/5 border border-white/10 rounded text-xs text-slate-300 px-2 py-1'
         value={filters.method}
-        onChange={(e) => {return onChange({ method: e.target.value })}}
+        onChange={(e) => {
+          return onChange({ method: e.target.value });
+        }}
       >
         <option value=''>All methods</option>
-        {['GET', 'POST', 'PUT', 'PATCH', 'DELETE'].map((m) => {return (
-          <option key={m} value={m}>{m}</option>
-        )})}
+        {['GET', 'POST', 'PUT', 'PATCH', 'DELETE'].map((m) => {
+          return (
+            <option key={m} value={m}>
+              {m}
+            </option>
+          );
+        })}
       </select>
 
       {/* Slow only */}
@@ -333,7 +378,9 @@ function FilterBar({
           type='checkbox'
           className='accent-orange-500'
           checked={filters.slowOnly}
-          onChange={(e) => {return onChange({ slowOnly: e.target.checked })}}
+          onChange={(e) => {
+            return onChange({ slowOnly: e.target.checked });
+          }}
         />
         Slow only
       </label>
@@ -344,7 +391,9 @@ function FilterBar({
         placeholder='Filter URL…'
         className='flex-1 min-w-[160px] bg-white/5 border border-white/10 rounded text-xs text-slate-300 placeholder:text-slate-600 px-2.5 py-1 focus:outline-none focus:border-violet-500/60'
         value={filters.search}
-        onChange={(e) => {return onChange({ search: e.target.value })}}
+        onChange={(e) => {
+          return onChange({ search: e.target.value });
+        }}
       />
 
       {/* Clear logs */}
@@ -402,11 +451,12 @@ export function DebugLogsViewer() {
     void fetchLogs();
 
     const id = setInterval(() => {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       void fetchLogs();
     }, POLL_INTERVAL_MS);
 
-    return () => {return clearInterval(id)};
+    return () => {
+      return clearInterval(id);
+    };
   }, [fetchLogs]);
 
   // Auto-scroll to newest
@@ -431,7 +481,9 @@ export function DebugLogsViewer() {
   }, []);
 
   const updateFilters = useCallback((patch: Partial<Filters>) => {
-    setFilters((f) => {return { ...f, ...patch }});
+    setFilters((f) => {
+      return { ...f, ...patch };
+    });
   }, []);
 
   // Apply filters
@@ -489,7 +541,11 @@ export function DebugLogsViewer() {
       </div>
 
       {/* Filter bar */}
-      <FilterBar filters={filters} onChange={updateFilters} onClear={clearLogs} />
+      <FilterBar
+        filters={filters}
+        onChange={updateFilters}
+        onClear={clearLogs}
+      />
 
       {/* Log list */}
       <div
@@ -499,13 +555,20 @@ export function DebugLogsViewer() {
       >
         {visible.length === 0 ? (
           <div className='flex items-center justify-center h-32 text-slate-600 text-sm font-mono'>
-            {logs.length === 0 ? 'No logs yet — make some requests.' : 'No entries match current filters.'}
+            {logs.length === 0
+              ? 'No logs yet — make some requests.'
+              : 'No entries match current filters.'}
           </div>
         ) : (
           // Logs are stored newest-first, show oldest first so new arrive at bottom
-          visible.toReversed().map((entry) => {return (
-            <LogRow key={`${entry.id}-${entry.kind}-${entry.source}-${entry.createdAt}`} entry={entry} />
-          )})
+          visible.toReversed().map((entry) => {
+            return (
+              <LogRow
+                key={`${entry.id}-${entry.kind}-${entry.source}-${entry.createdAt}`}
+                entry={entry}
+              />
+            );
+          })
         )}
         <div ref={bottomRef} />
       </div>
