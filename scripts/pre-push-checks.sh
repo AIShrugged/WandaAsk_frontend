@@ -174,9 +174,9 @@ if [ $OVERALL_EXIT -eq 0 ]; then
   TEST_BATCH_SIZE=5
 
   if command -v rg > /dev/null 2>&1; then
-    mapfile -t TEST_FILES < <(rg --files -g '*test.ts' -g '*test.tsx')
+    while IFS= read -r line; do TEST_FILES+=("$line"); done < <(rg --files -g '*test.ts' -g '*test.tsx')
   else
-    mapfile -t TEST_FILES < <(find . \
+    while IFS= read -r line; do TEST_FILES+=("$line"); done < <(find . \
       -type f \
       \( -name '*test.ts' -o -name '*test.tsx' \) \
       ! -path './node_modules/*' \
