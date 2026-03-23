@@ -163,19 +163,39 @@ describe('installClientFetchDebugger', () => {
   });
 
   it('injects X-Debug-Request-ID header into the underlying request', async () => {
-    let capturedInit: RequestInit | undefined;
+    // sendToBuffer() also calls the underlying fetch (for /api/debug-logs),
+    // so we capture all calls and find the one for our actual URL.
+    const calls: Array<{ url: string; init: RequestInit | undefined }> = [];
     globalThis.fetch = jest
       .fn()
-      .mockImplementation((_input: RequestInfo | URL, init?: RequestInit) => {
-        capturedInit = init;
+      .mockImplementation((input: RequestInfo | URL, init?: RequestInit) => {
+        const url =
+          typeof input === 'string'
+            ? input
+            : input instanceof URL
+              ? input.href
+              : (input as Request).url;
+
+        calls.push({ url, init });
 
         return Promise.resolve(makeRes());
       });
     installClientFetchDebugger();
     await globalThis.fetch('http://example.com/api');
-    const headers = capturedInit?.headers as Headers;
 
-    expect(headers.get('X-Debug-Request-ID')).toBeTruthy();
+    const realCall = calls.find((c) => {
+      return c.url === 'http://example.com/api';
+    });
+    const h = realCall?.init?.headers;
+
+    // h is a Headers instance — read the injected debug ID directly
+    const debugId =
+      h != null && typeof (h as Headers).get === 'function'
+        ? (h as Headers).get('X-Debug-Request-ID')
+        : ((h as Record<string, string>)?.['X-Debug-Request-ID'] ??
+          (h as Record<string, string>)?.['x-debug-request-id']);
+
+    expect(debugId).toBeTruthy();
   });
 
   it('logs an error group when fetch throws', async () => {

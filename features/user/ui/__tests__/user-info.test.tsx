@@ -84,7 +84,7 @@ describe('UserInfo', () => {
       { width: number; preferredPosition: string },
     ];
 
-    expect(options.width).toBe(200);
+    expect(options.width).toBe(220);
     expect(options.preferredPosition).toBe('bottom');
   });
 });

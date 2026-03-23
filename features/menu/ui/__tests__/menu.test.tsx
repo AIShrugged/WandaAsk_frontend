@@ -40,6 +40,17 @@ jest.mock('next/navigation', () => {
     useSelectedLayoutSegment: () => {
       return null;
     },
+    usePathname: () => {
+      return '/dashboard';
+    },
+  };
+});
+
+jest.mock('@/features/agents/lib/access', () => {
+  return {
+    getAgentAccessContext: jest.fn(() => {
+      return Promise.resolve({ canManageAgents: false });
+    }),
   };
 });
 
@@ -125,13 +136,13 @@ describe('MenuNested', () => {
 });
 
 describe('MenuSidebar', () => {
-  it('renders inside a nav element', () => {
-    render(<MenuSidebar />);
+  it('renders inside a nav element', async () => {
+    render(await MenuSidebar());
     expect(screen.getByRole('navigation')).toBeInTheDocument();
   });
 
-  it('renders all default menu items', () => {
-    render(<MenuSidebar />);
+  it('renders all default menu items', async () => {
+    render(await MenuSidebar());
     expect(screen.getByText('AI Chat')).toBeInTheDocument();
     expect(screen.getByText('Teams')).toBeInTheDocument();
     expect(screen.getByText('Methodologies')).toBeInTheDocument();
