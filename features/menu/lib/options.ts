@@ -6,6 +6,7 @@ import {
   MessageSquare,
   SquareKanban,
   File,
+  Terminal,
   UsersRound,
 } from 'lucide-react';
 
@@ -68,6 +69,19 @@ export function getMenuItems({
     },
   ];
 
+  const isDev =
+    process.env.NODE_ENV === 'development' ||
+    process.env.NEXT_PUBLIC_APP_ENV === 'development';
+
+  if (isDev) {
+    items.push({
+      id: 'debug-logs',
+      label: 'Debug Logs',
+      icon: 'terminal',
+      href: ROUTES.DASHBOARD.DEBUG_LOGS,
+    });
+  }
+
   if (canManageAgents) {
     items.splice(3, 0, {
       id: 'agent-tasks',
@@ -97,4 +111,5 @@ export const ICONS_MAP = {
   kanban: SquareKanban,
   messageSquare: MessageSquare,
   bug: Bug,
+  terminal: Terminal,
 } as const;

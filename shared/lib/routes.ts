@@ -22,5 +22,6 @@ export const ROUTES = {
     ORGANIZATION: '/dashboard/organization',
     PROFILE: '/dashboard/profile',
     SUMMARY: '/dashboard/summary',
+    DEBUG_LOGS: '/dashboard/debug-logs',
   },
 } as const;

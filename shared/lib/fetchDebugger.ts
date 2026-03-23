@@ -7,6 +7,7 @@
  * Active only when `NODE_ENV === 'development'`.
  */
 
+import { pushLog } from '@/shared/lib/debugLogBuffer';
 import {
   SLOW_THRESHOLD_MS,
   captureCallerStack,
@@ -233,15 +234,31 @@ export function patchServerFetch(): void {
 
     const body = extractBodyText(init);
 
+    const sanitizedHeaders = sanitizeHeaders(rawHeaders);
+
     logRequest({
       id,
       method,
       url,
-      headers: sanitizeHeaders(rawHeaders),
+      headers: sanitizedHeaders,
       body,
       timestamp,
       caller,
       tag: resolveTag(url),
+    });
+
+    pushLog({
+      id,
+      kind: 'request',
+      source: 'server',
+      timestamp,
+      method,
+      url,
+      headers: sanitizedHeaders,
+      body,
+      caller,
+      tag: resolveTag(url),
+      createdAt: Date.now(),
     });
 
     // Inject X-Debug-Request-ID so the backend can correlate logs.
@@ -279,6 +296,8 @@ export function patchServerFetch(): void {
 
       const cacheStatus = rawCache ?? undefined;
 
+      const isSlow = durationMs > SLOW_THRESHOLD_MS;
+
       logResponse({
         id,
         method,
@@ -286,25 +305,54 @@ export function patchServerFetch(): void {
         status: res.status,
         durationMs,
         body: responseBody,
-        slow: durationMs > SLOW_THRESHOLD_MS,
+        slow: isSlow,
         size,
         cacheStatus,
+      });
+
+      pushLog({
+        id,
+        kind: 'response',
+        source: 'server',
+        timestamp: formatTimestamp(),
+        method,
+        url,
+        status: res.status,
+        durationMs,
+        body: responseBody,
+        slow: isSlow,
+        size,
+        cacheStatus: cacheStatus ?? undefined,
+        createdAt: Date.now(),
       });
 
       return res;
     } catch (error) {
       const durationMs = Math.round(performance.now() - start);
 
+      const errText =
+        'Network error after ' + String(durationMs) + 'ms \u2014 ' + String(error);
+
       logApiError({
         method,
         url,
         status: 0,
-        statusText:
-          'Network error after ' +
-          String(durationMs) +
-          'ms \u2014 ' +
-          String(error),
+        statusText: errText,
       });
+
+      pushLog({
+        id,
+        kind: 'error',
+        source: 'server',
+        timestamp: formatTimestamp(),
+        method,
+        url,
+        status: 0,
+        durationMs,
+        body: errText,
+        createdAt: Date.now(),
+      });
+
       throw error;
     }
   };

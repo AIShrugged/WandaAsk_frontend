@@ -371,6 +371,37 @@ async function logResGroup(
   console.groupEnd();
 }
 
+// ── Buffer forwarding ──────────────────────────────────────────────────────
+
+import type { DebugLogEntry } from '@/shared/lib/debugLogBuffer';
+
+const SKIP_BUFFER_URL = '/api/debug-logs';
+
+/**
+ * Fire-and-forget: sends a log entry to the server-side ring buffer via API.
+ * Skips itself to avoid infinite loops.
+ * @param entry
+ */
+function sendToBuffer(entry: DebugLogEntry): void {
+  if (typeof globalThis.fetch !== 'function') return;
+
+  // Use the *original* fetch stored below — avoids re-entering the wrapper.
+  // We reference it via the global key set before patching.
+  const nativeFetch = (
+    globalThis as typeof globalThis & { __tribes_original_fetch?: typeof fetch }
+  ).__tribes_original_fetch;
+
+  const sender = nativeFetch ?? globalThis.fetch;
+
+  sender('/api/debug-logs', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(entry),
+  }).catch(() => {
+    /* silent — debug tooling must not break the app */
+  });
+}
+
 // ── Public API ─────────────────────────────────────────────────────────────
 
 /**
@@ -387,13 +418,17 @@ export function installClientFetchDebugger(): () => void {
 
   const original = globalThis.fetch.bind(globalThis);
 
+  // Store original fetch so sendToBuffer can bypass the wrapper.
+  (globalThis as typeof globalThis & { __tribes_original_fetch?: typeof fetch }).__tribes_original_fetch =
+    original;
+
   globalThis.fetch = async function debugFetch(
     input: RequestInfo | URL,
     init: RequestInit = {},
   ): Promise<Response> {
     const url = extractUrl(input);
 
-    if (shouldSkip(url)) return original(input, init);
+    if (shouldSkip(url) || url.includes(SKIP_BUFFER_URL)) return original(input, init);
 
     // Capture caller stack and timestamp BEFORE the async boundary
     // so the stack reflects the actual call site.
@@ -409,6 +444,25 @@ export function installClientFetchDebugger(): () => void {
 
     logReqGroup(id, method, url, timestamp, init, caller, tag);
 
+    let reqBody: string | undefined;
+
+    if (init.body !== undefined && init.body !== null) {
+      reqBody = typeof init.body === 'string' ? init.body : '(non-string body)';
+    }
+
+    sendToBuffer({
+      id,
+      kind: 'request',
+      source: 'client',
+      timestamp,
+      method,
+      url,
+      body: reqBody,
+      caller,
+      tag,
+      createdAt: Date.now(),
+    });
+
     // Inject X-Debug-Request-ID so the backend can correlate logs.
     const patchedInit = withDebugHeader(init, id);
 
@@ -421,6 +475,43 @@ export function installClientFetchDebugger(): () => void {
 
       await logResGroup(id, method, url, res, durationMs);
 
+      const slow = durationMs > SLOW_THRESHOLD_MS;
+
+      const cacheStatus = res.headers.get('x-nextjs-cache') ?? undefined;
+
+      // Clone body for buffer (best-effort).
+      let resBodyText: string | undefined;
+      const ct = res.headers.get('content-type') ?? '';
+
+      const isStream =
+        ct.includes('text/event-stream') || ct.includes('octet-stream');
+
+      if (!isStream) {
+        try {
+          resBodyText = await res.clone().text();
+        } catch {
+          /* ignore */
+        }
+      }
+
+      const size = computeResponseSize(res, resBodyText);
+
+      sendToBuffer({
+        id,
+        kind: 'response',
+        source: 'client',
+        timestamp: formatTimestamp(),
+        method,
+        url,
+        status: res.status,
+        durationMs,
+        slow,
+        size,
+        cacheStatus,
+        body: resBodyText,
+        createdAt: Date.now(),
+      });
+
       return res;
     } catch (error) {
       const durationMs = Math.round(performance.now() - start);
@@ -432,6 +523,20 @@ export function installClientFetchDebugger(): () => void {
         'color:#6b7280',
         error,
       );
+
+      sendToBuffer({
+        id,
+        kind: 'error',
+        source: 'client',
+        timestamp: formatTimestamp(),
+        method,
+        url,
+        status: 0,
+        durationMs,
+        body: String(error),
+        createdAt: Date.now(),
+      });
+
       throw error;
     }
   };
@@ -441,6 +546,7 @@ export function installClientFetchDebugger(): () => void {
   return function cleanup(): void {
     globalThis.fetch = original;
     delete g[PATCHED_KEY];
+    delete (globalThis as typeof globalThis & { __tribes_original_fetch?: typeof fetch }).__tribes_original_fetch;
     _counter = 0;
   };
 }
