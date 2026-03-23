@@ -201,8 +201,7 @@ describe('installClientFetchDebugger', () => {
     } else {
       const plain = h as Record<string, string> | undefined;
 
-      debugId =
-        plain?.['X-Debug-Request-ID'] ?? plain?.['x-debug-request-id'];
+      debugId = plain?.['X-Debug-Request-ID'] ?? plain?.['x-debug-request-id'];
     }
 
     expect(debugId).toBeTruthy();
