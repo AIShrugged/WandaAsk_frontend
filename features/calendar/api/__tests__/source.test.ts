@@ -180,11 +180,10 @@ describe('detachCalendar', () => {
 
   it('does not call revalidatePath or redirect on failure', async () => {
     const { revalidatePath } = await import('next/cache');
+
     const { redirect } = await import('next/navigation');
 
-    globalThis.fetch = jest
-      .fn()
-      .mockResolvedValue(makeResponse(500, 'error'));
+    globalThis.fetch = jest.fn().mockResolvedValue(makeResponse(500, 'error'));
 
     await detachCalendar(1);
 

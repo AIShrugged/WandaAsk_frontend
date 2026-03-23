@@ -17,8 +17,12 @@ export default function DetachCalendarButton({
   sourceId: number;
 }) {
   const [confirming, setConfirming] = useState(false);
+
   const [isPending, setIsPending] = useState(false);
 
+  /**
+   *
+   */
   const handleDisconnect = async () => {
     setIsPending(true);
 

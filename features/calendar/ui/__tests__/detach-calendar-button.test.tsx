@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
@@ -44,9 +43,7 @@ describe('DetachCalendarButton', () => {
     expect(
       screen.getByRole('button', { name: /yes, disconnect/i }),
     ).toBeInTheDocument();
-    expect(
-      screen.getByRole('button', { name: /cancel/i }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /cancel/i })).toBeInTheDocument();
   });
 
   it('cancels and returns to initial state', async () => {

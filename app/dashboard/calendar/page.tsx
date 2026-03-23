@@ -10,8 +10,8 @@ import { getEvents } from '@/features/event/api/calendar-events';
 import Card from '@/shared/ui/card/Card';
 import SpinLoader from '@/shared/ui/layout/spin-loader';
 
-import type { Source } from '@/entities/source';
 import type { EventProps } from '@/entities/event';
+import type { Source } from '@/entities/source';
 
 /**
  * Wrapper component.
