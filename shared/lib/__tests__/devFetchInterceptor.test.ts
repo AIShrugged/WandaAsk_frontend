@@ -170,12 +170,15 @@ describe('installClientFetchDebugger', () => {
     globalThis.fetch = jest
       .fn()
       .mockImplementation((input: RequestInfo | URL, init?: RequestInit) => {
-        const url =
-          typeof input === 'string'
-            ? input
-            : input instanceof URL
-              ? input.href
-              : (input as Request).url;
+        let url: string;
+
+        if (typeof input === 'string') {
+          url = input;
+        } else if (input instanceof URL) {
+          url = input.href;
+        } else {
+          url = (input as Request).url;
+        }
 
         calls.push({ url, init });
 
@@ -190,12 +193,17 @@ describe('installClientFetchDebugger', () => {
 
     const h = realCall?.init?.headers;
 
-    // h is a Headers instance — read the injected debug ID directly
-    const debugId =
-      h != null && typeof (h as Headers).get === 'function'
-        ? (h as Headers).get('X-Debug-Request-ID')
-        : ((h as Record<string, string>)?.['X-Debug-Request-ID'] ??
-          (h as Record<string, string>)?.['x-debug-request-id']);
+    // h may be a Headers instance or a plain object depending on the environment
+    let debugId: string | null | undefined;
+
+    if (h != null && typeof (h as Headers).get === 'function') {
+      debugId = (h as Headers).get('X-Debug-Request-ID');
+    } else {
+      const plain = h as Record<string, string> | undefined;
+
+      debugId =
+        plain?.['X-Debug-Request-ID'] ?? plain?.['x-debug-request-id'];
+    }
 
     expect(debugId).toBeTruthy();
   });
