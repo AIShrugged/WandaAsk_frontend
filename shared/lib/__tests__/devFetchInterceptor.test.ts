@@ -166,6 +166,7 @@ describe('installClientFetchDebugger', () => {
     // sendToBuffer() also calls the underlying fetch (for /api/debug-logs),
     // so we capture all calls and find the one for our actual URL.
     const calls: Array<{ url: string; init: RequestInit | undefined }> = [];
+
     globalThis.fetch = jest
       .fn()
       .mockImplementation((input: RequestInfo | URL, init?: RequestInit) => {
@@ -186,6 +187,7 @@ describe('installClientFetchDebugger', () => {
     const realCall = calls.find((c) => {
       return c.url === 'http://example.com/api';
     });
+
     const h = realCall?.init?.headers;
 
     // h is a Headers instance — read the injected debug ID directly
