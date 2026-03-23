@@ -1,5 +1,6 @@
 'use client';
 
+import { Sparkles } from 'lucide-react';
 import { useState } from 'react';
 
 import { ArtifactPanel } from '@/features/chat/ui/artifact-panel';
@@ -9,6 +10,8 @@ import { CollapsedSidePanel } from '@/shared/ui/layout/collapsed-side-panel';
 
 import type { OrganizationProps } from '@/entities/organization';
 import type { ArtifactsResponse, Chat, Message } from '@/features/chat/types';
+
+type MobileTab = 'chats' | 'artifacts' | 'chat';
 
 interface ChatLayoutProps {
   initialChats: Chat[];
@@ -52,6 +55,9 @@ export function ChatLayout({
 }: ChatLayoutProps) {
   const [isChatCollapsed, setIsChatCollapsed] = useState(false);
 
+  const [mobileTab, setMobileTab] = useState<MobileTab>('chat');
+  // Default to 'chat' tab so the conversation is the first thing the user sees
+
   const [chat, setChat] = useState<Chat>(
     currentChat ?? {
       id: chatId,
@@ -64,44 +70,126 @@ export function ChatLayout({
   );
 
   return (
-    <div className='flex h-full rounded-[var(--radius-card)] overflow-hidden border border-border bg-card shadow-card'>
-      {/* Chat list — hidden on mobile, slide in at md+ */}
-      <div className='hidden md:flex flex-col h-full'>
-        <ChatList
-          initialChats={initialChats}
-          totalCount={totalCount}
-          activeChatId={activeChatId}
-          organizations={organizations}
-          onActiveChatUpdate={setChat}
-        />
-      </div>
-
-      {/* Artifact panel — desktop only */}
-      <div className='hidden lg:flex flex-col h-full'>
-        <ArtifactPanel chatId={chatId} initialArtifacts={initialArtifacts} />
-      </div>
-
-      {isChatCollapsed ? (
-        <CollapsedSidePanel
-          label='Chat'
-          onExpand={() => {
-            return setIsChatCollapsed(false);
+    <div className='flex flex-col h-full rounded-[var(--radius-card)] overflow-hidden border border-border bg-card shadow-card'>
+      {/* ── Mobile tab bar (< lg): Chats | Artifacts | Chat ── */}
+      <div className='flex lg:hidden border-b border-border flex-shrink-0'>
+        <button
+          type='button'
+          className={[
+            'flex-1 py-2.5 text-sm font-medium transition-colors',
+            mobileTab === 'chats'
+              ? 'text-primary border-b-2 border-primary'
+              : 'text-muted-foreground hover:text-foreground',
+          ].join(' ')}
+          onClick={() => {
+            setMobileTab('chats');
           }}
-        />
-      ) : (
-        <div className='flex-1 min-w-0 flex flex-col'>
-          <ChatWindow
-            chat={chat}
-            chatId={chatId}
-            initialMessages={initialMessages}
-            totalCount={totalMessagesCount}
-            startOffset={startOffset}
-            onCollapse={() => {
-              return setIsChatCollapsed(true);
-            }}
+        >
+          Chats
+        </button>
+        <button
+          type='button'
+          className={[
+            'flex-1 py-2.5 text-sm font-medium transition-colors flex items-center justify-center gap-1.5',
+            mobileTab === 'artifacts'
+              ? 'text-primary border-b-2 border-primary'
+              : 'text-muted-foreground hover:text-foreground',
+          ].join(' ')}
+          onClick={() => {
+            setMobileTab('artifacts');
+          }}
+        >
+          <Sparkles className='w-3.5 h-3.5' />
+          Artifacts
+        </button>
+        <button
+          type='button'
+          className={[
+            'flex-1 py-2.5 text-sm font-medium transition-colors',
+            mobileTab === 'chat'
+              ? 'text-primary border-b-2 border-primary'
+              : 'text-muted-foreground hover:text-foreground',
+          ].join(' ')}
+          onClick={() => {
+            setMobileTab('chat');
+          }}
+        >
+          Chat
+        </button>
+      </div>
+
+      {/* ── Main body ────────────────────────────────────────────────── */}
+      <div className='flex flex-1 min-h-0'>
+        {/* Chat list sidebar — desktop only (lg+); on mobile shown via tab */}
+        <div className='hidden lg:flex flex-col h-full'>
+          <ChatList
+            initialChats={initialChats}
+            totalCount={totalCount}
+            activeChatId={activeChatId}
+            organizations={organizations}
+            onActiveChatUpdate={setChat}
           />
         </div>
-      )}
+
+        {/* ── Mobile/tablet (< lg): one panel at a time via tabs ── */}
+        <div className='flex lg:hidden flex-1 min-w-0 flex-col min-h-0'>
+          {mobileTab === 'chats' && (
+            <ChatList
+              initialChats={initialChats}
+              totalCount={totalCount}
+              activeChatId={activeChatId}
+              organizations={organizations}
+              onActiveChatUpdate={(updated) => {
+                setChat(updated);
+                setMobileTab('chat');
+              }}
+            />
+          )}
+          {mobileTab === 'artifacts' && (
+            <ArtifactPanel
+              chatId={chatId}
+              initialArtifacts={initialArtifacts}
+            />
+          )}
+          {mobileTab === 'chat' && (
+            <ChatWindow
+              chat={chat}
+              chatId={chatId}
+              initialMessages={initialMessages}
+              totalCount={totalMessagesCount}
+              startOffset={startOffset}
+            />
+          )}
+        </div>
+
+        {/* ── Desktop (lg+): Artifacts then Chat side by side ── */}
+        <div className='hidden lg:flex w-72 xl:w-80 flex-shrink-0 flex-col h-full'>
+          <ArtifactPanel chatId={chatId} initialArtifacts={initialArtifacts} />
+        </div>
+        {isChatCollapsed ? (
+          <CollapsedSidePanel
+            label='Chat'
+            icon='right'
+            className='hidden lg:flex border-r border-border'
+            onExpand={() => {
+              setIsChatCollapsed(false);
+            }}
+          />
+        ) : (
+          <div className='hidden lg:flex flex-1 min-w-0 flex-col min-h-0'>
+            <ChatWindow
+              chat={chat}
+              chatId={chatId}
+              initialMessages={initialMessages}
+              totalCount={totalMessagesCount}
+              startOffset={startOffset}
+              onCollapse={() => {
+                setIsChatCollapsed(true);
+              }}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 }

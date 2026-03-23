@@ -13,7 +13,7 @@ export interface DebugLogEntry {
   id: string;
   kind: LogEntryKind;
   source: LogSource;
-  /** HH:MM:SS.mmm */
+  /** DD/MM HH:MM:SS.mmm */
   timestamp: string;
   method: string;
   url: string;
@@ -29,6 +29,12 @@ export interface DebugLogEntry {
   body?: string;
   caller?: string;
   tag?: string;
+  /** Originating client IP (x-forwarded-for / x-real-ip). */
+  clientIp?: string;
+  /** Browser User-Agent string. */
+  userAgent?: string;
+  /** Referer header from the page that triggered the request. */
+  referer?: string;
   /** ISO timestamp for sorting */
   createdAt: number;
 }

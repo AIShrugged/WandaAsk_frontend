@@ -40,14 +40,14 @@ export function AgentProfileActions({
     <div className='flex flex-wrap gap-3'>
       <Link
         href={backHref}
-        className='inline-flex h-10 items-center justify-center rounded-[var(--radius-button)] border border-input bg-background px-4 text-sm text-foreground hover:bg-accent'
+        className='inline-flex h-10 items-center justify-center rounded-[var(--radius-button)] border border-input bg-background px-4 text-sm text-foreground hover:bg-accent w-full sm:w-auto'
       >
         Back to profiles
       </Link>
       <Button
         type='button'
         variant={BUTTON_VARIANT.danger}
-        className='w-auto'
+        className='w-full sm:w-auto'
         loading={isPending}
         onClick={() => {
           if (!isConfirmingDelete) {
@@ -77,7 +77,7 @@ export function AgentProfileActions({
         <Button
           type='button'
           variant={BUTTON_VARIANT.secondary}
-          className='w-auto'
+          className='w-full sm:w-auto'
           onClick={() => {
             setIsConfirmingDelete(false);
           }}
@@ -116,13 +116,13 @@ export function AgentTaskActions({
     <div className='flex flex-wrap gap-3'>
       <Link
         href={`${ROUTES.DASHBOARD.AGENT_TASKS}/${id}?tab=config`}
-        className='inline-flex h-10 items-center justify-center rounded-[var(--radius-button)] border border-input bg-background px-4 text-sm text-foreground hover:bg-accent'
+        className='inline-flex h-10 items-center justify-center rounded-[var(--radius-button)] border border-input bg-background px-4 text-sm text-foreground hover:bg-accent w-full sm:w-auto'
       >
         Edit
       </Link>
       <Button
         type='button'
-        className='w-auto'
+        className='w-full sm:w-auto'
         loading={isPending}
         onClick={() => {
           startTransition(async () => {
@@ -144,7 +144,7 @@ export function AgentTaskActions({
       <Button
         type='button'
         variant={BUTTON_VARIANT.secondary}
-        className='w-auto'
+        className='w-full sm:w-auto'
         loading={isPending}
         onClick={() => {
           startTransition(async () => {
@@ -166,7 +166,7 @@ export function AgentTaskActions({
       <Button
         type='button'
         variant={BUTTON_VARIANT.danger}
-        className='w-auto'
+        className='w-full sm:w-auto'
         loading={isDeletePending}
         onClick={() => {
           if (!isConfirmingDelete) {
@@ -200,7 +200,7 @@ export function AgentTaskActions({
         <Button
           type='button'
           variant={BUTTON_VARIANT.secondary}
-          className='w-auto'
+          className='w-full sm:w-auto'
           onClick={() => {
             setIsConfirmingDelete(false);
           }}

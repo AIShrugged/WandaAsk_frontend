@@ -94,8 +94,8 @@ export default async function AgentProfileDetailPage({
       <PageHeader hasButtonBack title={profile.name} />
       <div className='h-full overflow-y-auto'>
         <CardBody>
-          <div className='mb-6 flex flex-wrap items-start justify-between gap-4'>
-            <div className='flex flex-col gap-2'>
+          <div className='mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between'>
+            <div className='flex flex-col gap-2 min-w-0'>
               <p className='text-sm text-muted-foreground'>
                 Created {formatDateTime(profile.created_at)} · Updated{' '}
                 {formatDateTime(profile.updated_at)}
@@ -106,13 +106,15 @@ export default async function AgentProfileDetailPage({
                 })}
               </div>
             </div>
-            <AgentProfileActions
-              id={profile.id}
-              backHref={ROUTES.DASHBOARD.AGENT_PROFILES}
-            />
+            <div className='shrink-0'>
+              <AgentProfileActions
+                id={profile.id}
+                backHref={ROUTES.DASHBOARD.AGENT_PROFILES}
+              />
+            </div>
           </div>
 
-          <div className='grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]'>
+          <div className='grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(280px,1fr)]'>
             <div className='rounded-[var(--radius-card)] border border-border p-4'>
               <AgentProfileForm
                 profile={profile}

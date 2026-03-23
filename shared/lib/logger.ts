@@ -44,10 +44,14 @@ export function createRequestId(): string {
 // ── Timestamp ──────────────────────────────────────────────────────────────
 
 /**
- * formatTimestamp.
+ * formatTimestamp — returns "DD/MM HH:MM:SS.mmm" (local time).
  */
 export function formatTimestamp(): string {
   const d = new Date();
+
+  const day = String(d.getDate()).padStart(2, '0');
+
+  const month = String(d.getMonth() + 1).padStart(2, '0');
 
   const hh = String(d.getHours()).padStart(2, '0');
 
@@ -57,7 +61,7 @@ export function formatTimestamp(): string {
 
   const ms = String(d.getMilliseconds()).padStart(3, '0');
 
-  return hh + ':' + mm + ':' + ss + '.' + ms;
+  return day + '/' + month + ' ' + hh + ':' + mm + ':' + ss + '.' + ms;
 }
 
 // ── Byte formatter ─────────────────────────────────────────────────────────
@@ -233,7 +237,7 @@ export interface RequestLogContext {
   url: string;
   headers?: Record<string, string>;
   body?: string;
-  /** Formatted HH:MM:SS.mmm timestamp captured at request time. */
+  /** Formatted DD/MM HH:MM:SS.mmm timestamp captured at request time. */
   timestamp?: string;
   /** Formatted caller stack frames from captureCallerStack(). */
   caller?: string;
@@ -243,6 +247,12 @@ export interface RequestLogContext {
    * are shown in the header for readability.
    */
   tag?: string;
+  /** IP address of the originating client (x-forwarded-for or x-real-ip). */
+  clientIp?: string;
+  /** User-Agent of the originating browser/client. */
+  userAgent?: string;
+  /** Referer header from the originating request. */
+  referer?: string;
 }
 
 export interface ResponseLogContext {
@@ -291,7 +301,19 @@ function tagColour(tag: string): string {
 export function logRequest(ctx: RequestLogContext): void {
   if (!isDev) return;
 
-  const { id, method, url, headers = {}, body, timestamp, caller, tag } = ctx;
+  const {
+    id,
+    method,
+    url,
+    headers = {},
+    body,
+    timestamp,
+    caller,
+    tag,
+    clientIp,
+    userAgent,
+    referer,
+  } = ctx;
 
   const sanitized = sanitizeHeaders(headers);
 
@@ -338,6 +360,28 @@ export function logRequest(ctx: RequestLogContext): void {
 
   if (tag) {
     out += C.dim + '  URL' + C.reset + '      ' + C.gray + url + C.reset + '\n';
+  }
+
+  if (clientIp) {
+    out +=
+      C.dim + '  IP' + C.reset + '       ' + C.cyan + clientIp + C.reset + '\n';
+  }
+
+  if (userAgent) {
+    out +=
+      C.dim +
+      '  Agent' +
+      C.reset +
+      '    ' +
+      C.gray +
+      userAgent +
+      C.reset +
+      '\n';
+  }
+
+  if (referer) {
+    out +=
+      C.dim + '  Referer' + C.reset + '  ' + C.gray + referer + C.reset + '\n';
   }
 
   out += C.dim + '  Headers' + C.reset + '\n' + hdrsStr + '\n';

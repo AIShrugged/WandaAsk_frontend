@@ -144,8 +144,8 @@ export default async function AgentTaskDetailPage({
       <PageHeader hasButtonBack title={task.name} />
       <div className='h-full overflow-y-auto'>
         <CardBody>
-          <div className='mb-6 flex flex-wrap items-start justify-between gap-4'>
-            <div className='flex flex-col gap-2'>
+          <div className='mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between'>
+            <div className='flex flex-col gap-2 min-w-0'>
               <div className='flex flex-wrap items-center gap-2'>
                 <Badge variant={task.enabled ? 'success' : 'warning'}>
                   {task.enabled ? 'Enabled' : 'Disabled'}
@@ -158,11 +158,13 @@ export default async function AgentTaskDetailPage({
                 {formatDateTime(task.updated_at)}
               </p>
             </div>
-            <AgentTaskActions
-              id={task.id}
-              enabled={task.enabled}
-              backHref={ROUTES.DASHBOARD.AGENT_TASKS}
-            />
+            <div className='shrink-0'>
+              <AgentTaskActions
+                id={task.id}
+                enabled={task.enabled}
+                backHref={ROUTES.DASHBOARD.AGENT_TASKS}
+              />
+            </div>
           </div>
 
           <div className='mb-6'>

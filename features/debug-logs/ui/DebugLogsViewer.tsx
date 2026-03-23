@@ -107,7 +107,13 @@ function LogRow({ entry }: { entry: DebugLogEntry }) {
   const [open, setOpen] = useState(false);
 
   const hasDetail =
-    entry.body || entry.headers || entry.caller || entry.cacheStatus;
+    entry.body ||
+    entry.headers ||
+    entry.caller ||
+    entry.cacheStatus ||
+    entry.clientIp ||
+    entry.userAgent ||
+    entry.referer;
 
   return (
     <div
@@ -132,7 +138,7 @@ function LogRow({ entry }: { entry: DebugLogEntry }) {
         }}
       >
         {/* Time */}
-        <span className='text-slate-500 shrink-0 w-[90px]'>
+        <span className='text-slate-500 shrink-0 w-[148px]'>
           {entry.timestamp}
         </span>
 
@@ -230,6 +236,34 @@ function LogRow({ entry }: { entry: DebugLogEntry }) {
             <div>
               <span className='text-slate-500 mr-2'>URL</span>
               <span className='text-slate-300 break-all'>{entry.url}</span>
+            </div>
+          )}
+
+          {/* Client metadata */}
+          {(entry.clientIp ?? entry.userAgent ?? entry.referer) && (
+            <div className='flex flex-wrap gap-x-4 gap-y-1'>
+              {entry.clientIp && (
+                <div>
+                  <span className='text-slate-500 mr-1.5'>IP</span>
+                  <span className='text-cyan-400'>{entry.clientIp}</span>
+                </div>
+              )}
+              {entry.referer && (
+                <div>
+                  <span className='text-slate-500 mr-1.5'>Referer</span>
+                  <span className='text-slate-300 break-all'>
+                    {entry.referer}
+                  </span>
+                </div>
+              )}
+              {entry.userAgent && (
+                <div className='w-full'>
+                  <span className='text-slate-500 mr-1.5'>User-Agent</span>
+                  <span className='text-slate-400 break-all'>
+                    {entry.userAgent}
+                  </span>
+                </div>
+              )}
             </div>
           )}
 

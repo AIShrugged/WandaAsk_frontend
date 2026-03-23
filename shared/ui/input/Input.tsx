@@ -130,7 +130,7 @@ const Input = forwardRef<HTMLInputElement, Props>(function Input(
             className={cn(
               'absolute left-3 transition-all pointer-events-none select-none text-sm',
               floatingActive
-                ? '-translate-y-5 scale-90 px-[4px] bg-background text-xs text-muted-foreground'
+                ? '-translate-y-5 scale-90 px-1 bg-background text-xs text-muted-foreground'
                 : 'translate-y-0 scale-100 text-muted-foreground',
               startAdornment ? 'left-8' : 'left-4',
               error ? 'text-destructive' : '',
@@ -138,7 +138,7 @@ const Input = forwardRef<HTMLInputElement, Props>(function Input(
             style={
               {
                 zIndex: 10,
-                top: floatingActive ? -2 : '50%',
+                top: floatingActive ? -9 : '50%',
                 transformOrigin: 'left center',
                 translate: floatingActive ? '0' : '0 -50%',
               } as React.CSSProperties

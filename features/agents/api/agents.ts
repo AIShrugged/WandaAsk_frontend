@@ -145,7 +145,7 @@ async function actionAgentApi<T>(
  */
 export async function getAgentProfiles() {
   const { response, json } = await requestAgentApi<AgentProfile[]>(
-    '/api/v1/agent-profiles',
+    '/agent-profiles',
     { method: 'GET' },
     'Failed to load agent profiles',
   );
@@ -162,7 +162,7 @@ export async function getAgentProfiles() {
  */
 export async function getAgentProfile(id: number) {
   const { json } = await requestAgentApi<AgentProfile>(
-    `/api/v1/agent-profiles/${id}`,
+    `/agent-profiles/${id}`,
     { method: 'GET' },
     'Failed to load agent profile',
   );
@@ -176,7 +176,7 @@ export async function getAgentProfile(id: number) {
  */
 export async function createAgentProfile(payload: AgentProfilePayload) {
   return actionAgentApi<AgentProfile>(
-    '/api/v1/agent-profiles',
+    '/agent-profiles',
     {
       method: 'POST',
       body: JSON.stringify(payload),
@@ -195,7 +195,7 @@ export async function updateAgentProfile(
   payload: Partial<AgentProfilePayload>,
 ) {
   return actionAgentApi<AgentProfile>(
-    `/api/v1/agent-profiles/${id}`,
+    `/agent-profiles/${id}`,
     {
       method: 'PATCH',
       body: JSON.stringify(payload),
@@ -211,7 +211,7 @@ export async function updateAgentProfile(
 export async function deleteAgentProfile(id: number) {
   const authHeaders = await getAuthHeaders();
 
-  const response = await fetch(`${API_URL}/api/v1/agent-profiles/${id}`, {
+  const response = await fetch(`${API_URL}/agent-profiles/${id}`, {
     method: 'DELETE',
     headers: {
       ...authHeaders,
@@ -243,7 +243,7 @@ export async function validateAgentProfilePayload(
   payload: Record<string, unknown> | null,
 ) {
   return actionAgentApi<unknown>(
-    `/api/v1/agent-profiles/${id}/validate-payload`,
+    `/agent-profiles/${id}/validate-payload`,
     {
       method: 'POST',
       body: JSON.stringify({ payload }),
@@ -257,7 +257,7 @@ export async function validateAgentProfilePayload(
  */
 export async function getAgentTasks() {
   const { response, json } = await requestAgentApi<AgentTask[]>(
-    '/api/v1/agent-tasks',
+    '/agent-tasks',
     { method: 'GET' },
     'Failed to load agent tasks',
   );
@@ -274,7 +274,7 @@ export async function getAgentTasks() {
  */
 export async function getAgentTask(id: number) {
   const { json } = await requestAgentApi<AgentTask>(
-    `/api/v1/agent-tasks/${id}`,
+    `/agent-tasks/${id}`,
     { method: 'GET' },
     'Failed to load agent task',
   );
@@ -288,7 +288,7 @@ export async function getAgentTask(id: number) {
  */
 export async function createAgentTask(payload: AgentTaskPayload) {
   return actionAgentApi<AgentTask>(
-    '/api/v1/agent-tasks',
+    '/agent-tasks',
     {
       method: 'POST',
       body: JSON.stringify(payload),
@@ -307,7 +307,7 @@ export async function updateAgentTask(
   payload: Partial<AgentTaskPayload>,
 ) {
   return actionAgentApi<AgentTask>(
-    `/api/v1/agent-tasks/${id}`,
+    `/agent-tasks/${id}`,
     {
       method: 'PATCH',
       body: JSON.stringify(payload),
@@ -323,7 +323,7 @@ export async function updateAgentTask(
 export async function deleteAgentTask(id: number) {
   const authHeaders = await getAuthHeaders();
 
-  const response = await fetch(`${API_URL}/api/v1/agent-tasks/${id}`, {
+  const response = await fetch(`${API_URL}/agent-tasks/${id}`, {
     method: 'DELETE',
     headers: {
       ...authHeaders,
@@ -351,7 +351,7 @@ export async function deleteAgentTask(id: number) {
  */
 export async function dispatchAgentTask(id: number) {
   return actionAgentApi<unknown>(
-    `/api/v1/agent-tasks/${id}/dispatch`,
+    `/agent-tasks/${id}/dispatch`,
     {
       method: 'POST',
       body: JSON.stringify({}),
@@ -365,7 +365,7 @@ export async function dispatchAgentTask(id: number) {
  */
 export async function getAgentTasksMeta() {
   const { json } = await requestAgentApi<AgentTasksMeta>(
-    '/api/v1/agent-tasks/meta',
+    '/agent-tasks/meta',
     { method: 'GET' },
     'Failed to load agent task metadata',
   );
@@ -378,7 +378,7 @@ export async function getAgentTasksMeta() {
  */
 export async function getAgentTools() {
   const { json } = await requestAgentApi<AgentToolDefinition[]>(
-    '/api/v1/agent-tools',
+    '/agent-tools',
     { method: 'GET' },
     'Failed to load agent tools',
   );
@@ -392,7 +392,7 @@ export async function getAgentTools() {
  */
 export async function getAgentTaskRuns(id: number) {
   const { response, json } = await requestAgentApi<AgentTaskRun[]>(
-    `/api/v1/agent-tasks/${id}/runs`,
+    `/agent-tasks/${id}/runs`,
     { method: 'GET' },
     'Failed to load task runs',
   );
@@ -410,7 +410,7 @@ export async function getAgentTaskRuns(id: number) {
  */
 export async function getAgentTaskRun(id: number, runId: number) {
   const { json } = await requestAgentApi<AgentTaskRun>(
-    `/api/v1/agent-tasks/${id}/runs/${runId}`,
+    `/agent-tasks/${id}/runs/${runId}`,
     { method: 'GET' },
     'Failed to load task run',
   );

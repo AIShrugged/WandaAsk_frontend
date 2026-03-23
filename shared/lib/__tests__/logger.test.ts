@@ -29,10 +29,10 @@ describe('createRequestId', () => {
 });
 
 describe('formatTimestamp', () => {
-  it('returns a string matching HH:MM:SS.mmm format', () => {
+  it('returns a string matching DD/MM HH:MM:SS.mmm format', () => {
     const ts = formatTimestamp();
 
-    expect(ts).toMatch(/^\d{2}:\d{2}:\d{2}\.\d{3}$/);
+    expect(ts).toMatch(/^\d{2}\/\d{2} \d{2}:\d{2}:\d{2}\.\d{3}$/);
   });
 });
 

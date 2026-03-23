@@ -88,14 +88,14 @@ export function getMenuItems({
       label: 'Agent Tasks',
       icon: 'bot',
       href: ROUTES.DASHBOARD.AGENT_TASKS,
-      activeHref: '/dashboard/agents',
+      activeHref: ROUTES.DASHBOARD.AGENT_TASKS,
     });
     items.splice(4, 0, {
       id: 'agent-profiles',
       label: 'Agent Profiles',
       icon: 'bot',
       href: ROUTES.DASHBOARD.AGENT_PROFILES,
-      activeHref: '/dashboard/agents',
+      activeHref: ROUTES.DASHBOARD.AGENT_PROFILES,
     });
   }
 

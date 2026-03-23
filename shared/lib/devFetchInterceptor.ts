@@ -218,6 +218,8 @@ function tagStyle(tag: ClientTag | undefined): string {
  * @param init
  * @param caller
  * @param tag
+ * @param userAgent
+ * @param referer
  */
 function logReqGroup(
   id: string,
@@ -227,6 +229,8 @@ function logReqGroup(
   init: RequestInit,
   caller: string | undefined,
   tag: ClientTag | undefined,
+  userAgent: string | undefined,
+  referer: string | undefined,
 ): void {
   // When a tag exists, show short path in the label and full URL inside the group.
   let urlDisplay = url;
@@ -265,6 +269,16 @@ function logReqGroup(
 
     // eslint-disable-next-line no-console
     console.log('%cBody', LABEL, body);
+  }
+
+  if (userAgent) {
+    // eslint-disable-next-line no-console
+    console.log('%cUser-Agent', LABEL, userAgent);
+  }
+
+  if (referer) {
+    // eslint-disable-next-line no-console
+    console.log('%cReferer', LABEL, referer);
   }
 
   if (caller) {
@@ -444,7 +458,21 @@ export function installClientFetchDebugger(): () => void {
 
     const tag = resolveClientTag(url);
 
-    logReqGroup(id, method, url, timestamp, init, caller, tag);
+    const userAgent = globalThis.navigator?.userAgent;
+
+    const referer = globalThis.document?.referrer || undefined;
+
+    logReqGroup(
+      id,
+      method,
+      url,
+      timestamp,
+      init,
+      caller,
+      tag,
+      userAgent,
+      referer,
+    );
 
     let reqBody: string | undefined;
 
@@ -462,6 +490,8 @@ export function installClientFetchDebugger(): () => void {
       body: reqBody,
       caller,
       tag,
+      userAgent: globalThis.navigator?.userAgent,
+      referer: globalThis.document?.referrer || undefined,
       createdAt: Date.now(),
     });
 
