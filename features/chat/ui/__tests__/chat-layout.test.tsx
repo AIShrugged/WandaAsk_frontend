@@ -42,12 +42,12 @@ jest.mock('@/features/chat/ui/chat-window', () => {
       onCollapse,
     }: {
       chatId: number;
-      onCollapse: () => void;
+      onCollapse?: () => void;
     }) => {
       return (
         <div data-testid={CHAT_WINDOW_TESTID}>
           window:{chatId}
-          <button onClick={onCollapse}>collapse</button>
+          {onCollapse && <button onClick={onCollapse}>collapse</button>}
         </div>
       );
     },
@@ -140,7 +140,8 @@ describe('ChatLayout', () => {
   it('renders ChatWindow by default (not collapsed)', () => {
     render(<ChatLayout {...defaultProps} />);
 
-    expect(screen.getByTestId(CHAT_WINDOW_TESTID)).toBeInTheDocument();
+    // Component renders ChatWindow in both mobile tab and desktop panel
+    expect(screen.getAllByTestId(CHAT_WINDOW_TESTID).length).toBeGreaterThan(0);
     expect(
       screen.queryByTestId(COLLAPSED_PANEL_TESTID),
     ).not.toBeInTheDocument();
@@ -151,10 +152,16 @@ describe('ChatLayout', () => {
 
     render(<ChatLayout {...defaultProps} />);
 
+    // Only the desktop ChatWindow receives onCollapse, so there is exactly one collapse button
     await user.click(screen.getByRole('button', { name: 'collapse' }));
 
     expect(screen.getByTestId(COLLAPSED_PANEL_TESTID)).toBeInTheDocument();
-    expect(screen.queryByTestId(CHAT_WINDOW_TESTID)).not.toBeInTheDocument();
+    // Desktop ChatWindow is replaced by CollapsedSidePanel; mobile tab ChatWindow remains
+    expect(screen.getAllByTestId(CHAT_WINDOW_TESTID)).toHaveLength(1);
+    // No collapse button should remain (only desktop ChatWindow had it)
+    expect(
+      screen.queryByRole('button', { name: 'collapse' }),
+    ).not.toBeInTheDocument();
   });
 
   it('expands chat window when onExpand is triggered', async () => {
@@ -165,7 +172,7 @@ describe('ChatLayout', () => {
     await user.click(screen.getByRole('button', { name: 'collapse' }));
     await user.click(screen.getByRole('button', { name: 'expand' }));
 
-    expect(screen.getByTestId(CHAT_WINDOW_TESTID)).toBeInTheDocument();
+    expect(screen.getAllByTestId(CHAT_WINDOW_TESTID).length).toBeGreaterThan(0);
     expect(
       screen.queryByTestId(COLLAPSED_PANEL_TESTID),
     ).not.toBeInTheDocument();
