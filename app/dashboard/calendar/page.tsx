@@ -4,11 +4,13 @@ import { type PropsWithChildren, Suspense } from 'react';
 import { getSources } from '@/features/calendar/api/source';
 import Calendar from '@/features/calendar/ui/calendar';
 import CalendarAttachedToast from '@/features/calendar/ui/calendar-attached-toast';
+import DetachCalendarButton from '@/features/calendar/ui/detach-calendar-button';
 import OnboardingTrigger from '@/features/calendar/ui/onboarding-trigger';
 import { getEvents } from '@/features/event/api/calendar-events';
 import Card from '@/shared/ui/card/Card';
 import SpinLoader from '@/shared/ui/layout/spin-loader';
 
+import type { Source } from '@/entities/source';
 import type { EventProps } from '@/entities/event';
 
 /**
@@ -39,19 +41,25 @@ const UnattachedView = () => {
  * @param root0.events
  * @param root0.currentMonth
  * @param root0.justAttached
+ * @param root0.source
  */
 const AttachedView = ({
   events,
   currentMonth,
   justAttached,
+  source,
 }: {
   events: EventProps[];
   currentMonth: string;
   justAttached: boolean;
+  source: Source;
 }) => {
   return (
     <Wrapper>
       {justAttached && <CalendarAttachedToast />}
+      <div className='flex justify-end px-4 pt-3'>
+        <DetachCalendarButton sourceId={source.id} />
+      </div>
       <Suspense
         fallback={
           <div className='flex flex-1 items-center justify-center'>
@@ -104,6 +112,7 @@ export default async function Page({
       currentMonth={month}
       events={events}
       justAttached={justAttached}
+      source={sources[0]}
     />
   );
 }
