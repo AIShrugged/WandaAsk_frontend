@@ -117,7 +117,7 @@ describe('httpClient', () => {
     );
 
     await expect(httpClient(API_RESOURCE_URL)).rejects.toThrow(
-      'REDIRECT:/api/auth/clear-session',
+      'REDIRECT:/auth/login',
     );
   });
 
@@ -216,7 +216,7 @@ describe('httpClientList', () => {
     );
 
     await expect(httpClientList(API_LIST_URL)).rejects.toThrow(
-      'REDIRECT:/api/auth/clear-session',
+      'REDIRECT:/auth/login',
     );
   });
 });
