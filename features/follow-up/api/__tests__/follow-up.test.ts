@@ -1,5 +1,3 @@
-import { getFollowUp } from '@/features/follow-up/api/follow-up';
-
 // ---------------------------------------------------------------------------
 // Mocks
 // ---------------------------------------------------------------------------
@@ -25,6 +23,11 @@ jest.mock('@/shared/lib/logger', () => {
 
 import { redirect } from 'next/navigation';
 
+import {
+  getFollowUp,
+  pollFollowUp,
+  regenerateFollowUp,
+} from '@/features/follow-up/api/follow-up';
 import { logApiError } from '@/shared/lib/logger';
 
 const mockRedirect = redirect as jest.Mock;
@@ -37,6 +40,7 @@ const mockLogApiError = logApiError as jest.Mock;
 /**
  * @param status
  * @param body
+ * @returns Response.
  */
 function makeResponse(status: number, body: unknown): Response {
   const text = typeof body === 'string' ? body : JSON.stringify(body);
@@ -46,13 +50,13 @@ function makeResponse(status: number, body: unknown): Response {
     status,
     statusText: status === 200 ? 'OK' : 'Error',
     /**
-     *
+     * @returns Promise<string>.
      */
     text: () => {
       return Promise.resolve(text);
     },
     /**
-     *
+     * @returns Promise<unknown>.
      */
     json: () => {
       return Promise.resolve(
@@ -66,6 +70,10 @@ const mockFollowUp = {
   id: 7,
   event_id: 3,
   team_id: 1,
+  methodology_id: 2,
+  is_deprecated: false,
+  status: 'done',
+  text: 'Follow-up text',
   created_at: '2026-03-01T10:00:00Z',
 };
 
@@ -180,6 +188,76 @@ describe('getFollowUp', () => {
 
     expect((options.headers as Record<string, string>).Authorization).toBe(
       'Bearer test-token',
+    );
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Tests — regenerateFollowUp
+// ---------------------------------------------------------------------------
+describe('regenerateFollowUp', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('posts to the regenerate endpoint and returns the follow-up', async () => {
+    globalThis.fetch = jest
+      .fn()
+      .mockResolvedValue(
+        makeResponse(200, { success: true, data: mockFollowUp }),
+      );
+
+    const result = await regenerateFollowUp(7);
+
+    expect(result.data).toEqual(mockFollowUp);
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      'https://api.test/followups/7/regenerate',
+      expect.objectContaining({ method: 'POST' }),
+    );
+  });
+
+  it('throws on failed regenerate response', async () => {
+    globalThis.fetch = jest
+      .fn()
+      .mockResolvedValue(makeResponse(500, 'Server Error'));
+
+    await expect(regenerateFollowUp(1)).rejects.toThrow(
+      'Failed to regenerate follow-up. Please try again.',
+    );
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Tests — pollFollowUp
+// ---------------------------------------------------------------------------
+describe('pollFollowUp', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('fetches follow-up status from the correct URL', async () => {
+    globalThis.fetch = jest
+      .fn()
+      .mockResolvedValue(
+        makeResponse(200, { success: true, data: mockFollowUp }),
+      );
+
+    const result = await pollFollowUp(11);
+
+    expect(result.data).toEqual(mockFollowUp);
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      'https://api.test/followups/11',
+      expect.anything(),
+    );
+  });
+
+  it('throws on non-ok polling response', async () => {
+    globalThis.fetch = jest
+      .fn()
+      .mockResolvedValue(makeResponse(500, 'Server Error'));
+
+    await expect(pollFollowUp(1)).rejects.toThrow(
+      'Failed to fetch follow-up status.',
     );
   });
 });

@@ -1,7 +1,7 @@
 'use client';
 
 import { ChevronLeft, MessageSquare } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -9,6 +9,7 @@ import { pollRun, sendMessage } from '@/features/chat/api/messages';
 import { useMessages } from '@/features/chat/hooks/use-messages';
 import { ChatInput } from '@/features/chat/ui/chat-input';
 import { ChatMessage } from '@/features/chat/ui/chat-message';
+import { ChatSuggestions } from '@/features/chat/ui/chat-suggestions';
 import { ROUTES } from '@/shared/lib/routes';
 
 import type { Chat, Message, MessageStatus } from '@/features/chat/types';
@@ -68,6 +69,8 @@ export function ChatWindow({
     updateMessage = () => {},
     removeMessage = () => {},
   } = useMessages(chatId, initialMessages, totalCount, startOffset);
+
+  const searchParams = useSearchParams();
 
   const [composerError, setComposerError] = useState('');
 
@@ -286,6 +289,25 @@ export function ChatWindow({
       });
   };
 
+  // Auto-send prompt from query param (e.g. ?prompt=...) on empty chat
+  const autoPromptFired = useRef(false);
+
+  useEffect(() => {
+    const prompt = searchParams.get('prompt');
+
+    if (!prompt || autoPromptFired.current || initialMessages.length > 0)
+      return;
+
+    autoPromptFired.current = true;
+
+    // Clean URL without triggering navigation
+    globalThis.history.replaceState(null, '', globalThis.location.pathname);
+
+    setTimeout(() => {
+      handleSend(prompt);
+    }, 100);
+  }, [searchParams]);
+
   let chatScopeLabel = 'Personal web chat';
 
   if ((chat.organization_id ?? null) !== null) {
@@ -348,9 +370,7 @@ export function ChatWindow({
         )}
 
         {!hasMore && messages.length === 0 && !isSending && (
-          <div className='flex-1 flex items-center justify-center text-muted-foreground text-sm'>
-            No messages yet. Say hello!
-          </div>
+          <ChatSuggestions onSelect={handleSend} disabled={isSending} />
         )}
 
         {messages.map((msg) => {

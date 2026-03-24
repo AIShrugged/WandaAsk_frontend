@@ -24,7 +24,9 @@ export function selectMinMaxMetric(
     updateMinMax(group);
 
     // Проверяем все submetrics
-    for (const submetric of group.submetrics) {
+    const submetrics = Array.isArray(group.submetrics) ? group.submetrics : [];
+
+    for (const submetric of submetrics) {
       updateMinMax(submetric);
     }
   }

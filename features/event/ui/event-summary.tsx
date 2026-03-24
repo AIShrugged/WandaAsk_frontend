@@ -21,7 +21,7 @@ export default function EventSummary({ event }: { event: EventProps }) {
         return (
           <div key={label} className='flex items-center gap-4 min-w-0'>
             <Icon className={iconClass} />
-            <p className={textClass}>{value(event)}</p>
+            <div className={textClass}>{value(event)}</div>
           </div>
         );
       })}

@@ -12,6 +12,8 @@ import type { MetricGroup } from '@/features/analysis/model/types';
  * @param root0.submetrics
  */
 export default function Linear({ display_name, submetrics }: MetricGroup) {
+  const safeSubmetrics = Array.isArray(submetrics) ? submetrics : [];
+
   const lgCols = (
     [
       'lg:grid-cols-1',
@@ -19,14 +21,14 @@ export default function Linear({ display_name, submetrics }: MetricGroup) {
       'lg:grid-cols-3',
       'lg:grid-cols-4',
     ] as const
-  )[Math.min(submetrics.length, 4) - 1];
+  )[Math.min(safeSubmetrics.length, 4) - 1];
 
   return (
     <div className={'flex flex-col gap-2'}>
       <LinearProgressTitle title={display_name} />
 
       <div className={`grid gap-4 grid-cols-1 phone:grid-cols-2 ${lgCols}`}>
-        {submetrics.map((v) => {
+        {safeSubmetrics.map((v) => {
           return (
             <ComponentCard key={v.display_name}>
               <LinearProgressAgenda {...v} />

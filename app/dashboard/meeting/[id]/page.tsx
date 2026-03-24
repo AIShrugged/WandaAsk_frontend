@@ -6,6 +6,7 @@ import {
   getEventFollowUp,
   getMeetingTasks,
 } from '@/features/event/api/calendar-events';
+import { DeprecatedFollowUpModal } from '@/features/follow-up';
 import FollowUp from '@/features/follow-up/ui/follow-up';
 import {
   available_tabs,
@@ -28,6 +29,7 @@ import type { PageProps } from '@/shared/types/common';
  *
  * @param root0
  * @param root0.id
+ * @returns JSX element.
  */
 async function TasksTab({ id }: { id: string }) {
   const tasks = await getMeetingTasks(id);
@@ -40,6 +42,7 @@ async function TasksTab({ id }: { id: string }) {
  * @param searchParams.params
  * @param searchParams - searchParams.
  * @param searchParams.searchParams
+ * @returns JSX element.
  */
 export default async function Page({ params, searchParams }: PageProps) {
   const { id } = await params;
@@ -71,6 +74,10 @@ export default async function Page({ params, searchParams }: PageProps) {
       <PageHeader hasButtonBack title={followUp.calendar_event.title} />
 
       <CardBody>
+        {followUp.is_deprecated && (
+          <DeprecatedFollowUpModal followUpId={followUp.id} />
+        )}
+
         <div>
           <ButtonsRow currentTab={tab} />
         </div>
