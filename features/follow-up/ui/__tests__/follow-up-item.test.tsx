@@ -27,6 +27,7 @@ const makeFollowUp = (
     id: 1,
     team_id: 10,
     methodology_id: null,
+    is_deprecated: false,
     text: '',
     status: 'in_progress',
     created_at: '2024-05-20T12:00:00Z',
@@ -78,5 +79,19 @@ describe('FollowUpItem', () => {
       'href',
       '/dashboard/follow-ups/analysis/7',
     );
+  });
+
+  it('shows deprecated badge when is_deprecated is true', () => {
+    render(<FollowUpItem followUp={makeFollowUp({ is_deprecated: true })} />);
+    expect(
+      screen.getByText('Created with outdated methodology'),
+    ).toBeInTheDocument();
+  });
+
+  it('does not show deprecated badge when is_deprecated is false', () => {
+    render(<FollowUpItem followUp={makeFollowUp({ is_deprecated: false })} />);
+    expect(
+      screen.queryByText('Created with outdated methodology'),
+    ).not.toBeInTheDocument();
   });
 });

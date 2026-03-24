@@ -61,6 +61,18 @@ describe('selectMinMaxMetric', () => {
     expect(maxItem?.current_value).toBe(9);
   });
 
+  it('treats missing submetrics as an empty array', () => {
+    const group = {
+      ...makeGroup(5),
+      submetrics: undefined,
+    } as unknown as MetricGroup;
+
+    const { minItem, maxItem } = selectMinMaxMetric([group]);
+
+    expect(minItem?.current_value).toBe(5);
+    expect(maxItem?.current_value).toBe(5);
+  });
+
   it('skips NaN current_value entries', () => {
     const groups = [makeGroup(Number.NaN), makeGroup(5)];
 

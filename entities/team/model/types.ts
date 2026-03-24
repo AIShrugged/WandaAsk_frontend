@@ -28,6 +28,7 @@ export interface TeamFollowUpDTO {
   id: number;
   team_id: number;
   methodology_id: number | null;
+  is_deprecated: boolean;
   text: string;
   status: string;
   created_at: string;

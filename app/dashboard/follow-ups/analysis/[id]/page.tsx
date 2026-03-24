@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import React, { Suspense } from 'react';
 
-import { ExportButton } from '@/features/follow-up';
+import { DeprecatedFollowUpModal, ExportButton } from '@/features/follow-up';
 import FollowUp from '@/features/follow-up/ui/follow-up';
 import {
   available_tabs,
@@ -27,6 +27,7 @@ import type { PageProps } from '@/shared/types/common';
  * @param searchParams.params
  * @param searchParams - searchParams.
  * @param searchParams.searchParams
+ * @returns JSX element.
  */
 export default async function Page({ params, searchParams }: PageProps) {
   const { id } = await params;
@@ -48,6 +49,10 @@ export default async function Page({ params, searchParams }: PageProps) {
       </div>
 
       <CardBody>
+        {followUp.is_deprecated && (
+          <DeprecatedFollowUpModal followUpId={followUp.id} />
+        )}
+
         <div>
           <ButtonsRow currentTab={tab} />
         </div>

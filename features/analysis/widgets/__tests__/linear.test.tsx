@@ -89,4 +89,15 @@ describe('Linear widget', () => {
     render(<Linear {...makeMetricGroup({ submetrics: [] })} />);
     expect(screen.queryAllByTestId('component-card')).toHaveLength(0);
   });
+
+  it('renders empty grid when submetrics is missing', () => {
+    const group = {
+      ...makeMetricGroup(),
+      submetrics: undefined,
+    } as unknown as MetricGroup;
+
+    render(<Linear {...group} />);
+
+    expect(screen.queryAllByTestId('component-card')).toHaveLength(0);
+  });
 });

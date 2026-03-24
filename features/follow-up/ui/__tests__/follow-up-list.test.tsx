@@ -25,6 +25,7 @@ const makeFollowUp = (id: number, title: string): TeamFollowUpDTO => {
     id,
     team_id: 1,
     methodology_id: null,
+    is_deprecated: false,
     text: '',
     status: 'in_progress',
     created_at: '2024-01-01T00:00:00Z',

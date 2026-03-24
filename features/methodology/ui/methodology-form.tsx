@@ -33,6 +33,7 @@ const FORM_ID = 'methodology-form';
  * @param root0.organization_id
  * @param root0.teams
  * @param root0.values
+ * @returns JSX element.
  */
 export default function MethodologyForm({
   values,
@@ -65,7 +66,6 @@ export default function MethodologyForm({
   const {
     control,
     handleSubmit,
-    reset,
     setError,
     formState: { isDirty },
   } = useForm<MethodologyDTO>({
@@ -102,7 +102,6 @@ export default function MethodologyForm({
         } else {
           await createMethodology(data);
           toast.success(`Methodology created`);
-          reset();
         }
         push(ROUTES.DASHBOARD.METHODOLOGY);
       } catch (error) {

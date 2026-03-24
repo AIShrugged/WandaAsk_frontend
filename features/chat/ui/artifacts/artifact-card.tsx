@@ -3,6 +3,7 @@
 import {
   BarChart2,
   ClipboardList,
+  FileCheck,
   FileText,
   Loader2,
   Users,
@@ -14,6 +15,7 @@ import React from 'react';
 
 import { InsightCard } from '@/features/chat/ui/artifacts/insight-card';
 import { MeetingCard } from '@/features/chat/ui/artifacts/meeting-card';
+import { MethodologyCriteria } from '@/features/chat/ui/artifacts/methodology-criteria';
 import { PeopleList } from '@/features/chat/ui/artifacts/people-list';
 import { TaskTable } from '@/features/chat/ui/artifacts/task-table';
 import { TranscriptView } from '@/features/chat/ui/artifacts/transcript-view';
@@ -25,6 +27,7 @@ import type {
   ChartArtifact,
   InsightCardArtifact,
   MeetingCardArtifact,
+  MethodologyCriteriaArtifact,
   PeopleListArtifact,
   TaskTableArtifact,
   TranscriptArtifact,
@@ -62,6 +65,10 @@ const TYPE_META: Record<
     label: 'Transcript',
     icon: <FileText className='w-3.5 h-3.5' />,
   },
+  methodology_criteria: {
+    label: 'Methodology',
+    icon: <FileCheck className='w-3.5 h-3.5' />,
+  },
 };
 
 /**
@@ -89,6 +96,13 @@ function ArtifactContent({ artifact }: { artifact: Artifact }) {
     }
     case 'transcript_view': {
       return <TranscriptView data={(artifact as TranscriptArtifact).data} />;
+    }
+    case 'methodology_criteria': {
+      return (
+        <MethodologyCriteria
+          data={(artifact as MethodologyCriteriaArtifact).data}
+        />
+      );
     }
     default: {
       return (

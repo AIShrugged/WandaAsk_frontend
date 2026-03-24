@@ -221,7 +221,7 @@ describe('ChatWindow', () => {
       />,
     );
 
-    expect(screen.getByText(/no messages yet/i)).toBeInTheDocument();
+    expect(screen.getByText(/чем могу помочь/i)).toBeInTheDocument();
   });
 
   it('calls sendMessage and addMessage when send button clicked', async () => {
