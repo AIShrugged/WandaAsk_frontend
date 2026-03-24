@@ -62,6 +62,18 @@ jest.mock('lucide-react', () => {
     CircleCheckBig: () => {
       return <span data-testid='check-icon' />;
     },
+    CircleDashed: () => {
+      return <span data-testid='dashed-icon' />;
+    },
+    Clock4: () => {
+      return null;
+    },
+    Video: () => {
+      return null;
+    },
+    Bot: () => {
+      return null;
+    },
   };
 });
 
@@ -85,9 +97,15 @@ const makeEvent = (id: number = 1): EventProps => {
   return {
     id,
     title: EVENT_TITLE,
-    starts_at: '2024-03-15T10:00:00Z',
-    ends_at: '2024-03-15T11:00:00Z',
+    starts_at: '2024-03-15 10:00:00',
+    ends_at: '2024-03-15 11:00:00',
     color: '#ff0000',
+    has_summary: true,
+    description: '',
+    external_id: '',
+    platform: 'google',
+    required_bot: false,
+    assignee_id: null,
   };
 };
 
@@ -101,7 +119,7 @@ describe('Event', () => {
 
   it('renders the event title', () => {
     render(<Event event={makeEvent()} />);
-    expect(screen.getByText(EVENT_TITLE)).toBeInTheDocument();
+    expect(screen.getAllByText(EVENT_TITLE)[0]).toBeInTheDocument();
   });
 
   it('shows a circle icon for future events', () => {
@@ -119,7 +137,7 @@ describe('Event', () => {
   it('navigates to meeting summary page when past event is clicked', async () => {
     (isEventPast as jest.Mock).mockReturnValue(true);
     render(<Event event={makeEvent(1)} />);
-    await user.click(screen.getByText(EVENT_TITLE));
+    await user.click(screen.getAllByText(EVENT_TITLE)[0]);
     expect(mockPush).toHaveBeenCalledWith(expect.stringContaining('/1'));
   });
 
@@ -127,7 +145,7 @@ describe('Event', () => {
     (isEventPast as jest.Mock).mockReturnValue(false);
     render(<Event event={makeEvent()} />);
     await act(async () => {
-      await user.click(screen.getByText(EVENT_TITLE));
+      await user.click(screen.getAllByText(EVENT_TITLE)[0]);
     });
     await waitFor(() => {
       expect(mockOpen).toHaveBeenCalled();
