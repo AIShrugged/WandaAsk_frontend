@@ -39,10 +39,13 @@ function formatTime(dateString: string): string {
  * @returns plain text.
  */
 function stripHtml(html: string): string {
-  return html
-    .replaceAll(/<[^>]*>/g, ' ')
-    .replaceAll(/\s+/g, ' ')
-    .trim();
+  return (
+    html
+      // eslint-disable-next-line sonarjs/slow-regex
+      .replaceAll(/<[^>]*>/g, ' ')
+      .replaceAll(/\s+/g, ' ')
+      .trim()
+  );
 }
 
 /**
@@ -116,7 +119,7 @@ const Event = ({ event }: { event: EventProps }) => {
         )}
       >
         <div className='flex flex-row items-center gap-2 flex-shrink-0'>
-          {/* eslint-disable-next-line no-nested-ternary */}
+          {/* eslint-disable no-nested-ternary, sonarjs/no-nested-conditional */}
           {isPast ? (
             noSummary ? (
               <CircleDashed className='text-muted-foreground/60' size={14} />
@@ -126,6 +129,7 @@ const Event = ({ event }: { event: EventProps }) => {
           ) : (
             <Circle size={14} />
           )}
+          {/* eslint-enable no-nested-ternary, sonarjs/no-nested-conditional */}
           {isPast && (
             <p className='text-xs text-muted-foreground line-through whitespace-nowrap'>
               {formatDate(event.starts_at)}
