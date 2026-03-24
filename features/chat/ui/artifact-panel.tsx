@@ -109,7 +109,7 @@ export function ArtifactPanel({
 
   // ── Open state ───────────────────────────────────────────────────────────────
   return (
-    <div className='flex-1 min-w-0 flex flex-col border-r border-border bg-sidebar'>
+    <div className='flex-1 min-w-0 min-h-0 flex flex-col border-r border-border bg-sidebar'>
       {/* Header */}
       <div className='flex items-center justify-between px-4 h-[var(--topbar-height)] border-b border-border flex-shrink-0'>
         <div className='flex items-center gap-2'>

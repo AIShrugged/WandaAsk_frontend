@@ -17,7 +17,7 @@ interface ErrorPageProps {
  */
 export default function ErrorPage({ error, reset }: ErrorPageProps) {
   return (
-    <div className='flex h-full items-center justify-center p-4'>
+    <div className='flex h-full min-h-0 items-start justify-center overflow-y-auto p-4'>
       <div className='w-full max-w-2xl overflow-hidden rounded-xl border border-border bg-card shadow-sm'>
         <ErrorDisplay error={error as RichError} reset={reset} />
       </div>

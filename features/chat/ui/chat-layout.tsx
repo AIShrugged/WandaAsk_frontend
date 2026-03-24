@@ -1,7 +1,7 @@
 'use client';
 
 import { Sparkles } from 'lucide-react';
-import { useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import { ArtifactPanel } from '@/features/chat/ui/artifact-panel';
 import { ChatList } from '@/features/chat/ui/chat-list';
@@ -56,7 +56,62 @@ export function ChatLayout({
   const [isChatCollapsed, setIsChatCollapsed] = useState(false);
 
   const [mobileTab, setMobileTab] = useState<MobileTab>('chat');
-  // Default to 'chat' tab so the conversation is the first thing the user sees
+
+  const ARTIFACTS_MIN_WIDTH = 240;
+
+  const ARTIFACTS_MAX_WIDTH = 960;
+
+  const ARTIFACTS_DEFAULT_WIDTH = 360;
+
+  const [artifactsWidth, setArtifactsWidth] = useState(ARTIFACTS_DEFAULT_WIDTH);
+
+  const isDraggingRef = useRef(false);
+
+  const dragStartXRef = useRef(0);
+
+  const dragStartWidthRef = useRef(0);
+
+  const handleDividerMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      isDraggingRef.current = true;
+      dragStartXRef.current = e.clientX;
+      dragStartWidthRef.current = artifactsWidth;
+
+      /**
+       *
+       * @param ev
+       */
+      const onMouseMove = (ev: MouseEvent) => {
+        if (!isDraggingRef.current) return;
+        const delta = ev.clientX - dragStartXRef.current;
+
+        const next = Math.min(
+          ARTIFACTS_MAX_WIDTH,
+          Math.max(ARTIFACTS_MIN_WIDTH, dragStartWidthRef.current + delta),
+        );
+
+        setArtifactsWidth(next);
+      };
+
+      /**
+       *
+       */
+      const onMouseUp = () => {
+        isDraggingRef.current = false;
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+      };
+
+      document.body.style.cursor = 'col-resize';
+      document.body.style.userSelect = 'none';
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
+    },
+    [artifactsWidth],
+  );
 
   const [chat, setChat] = useState<Chat>(
     currentChat ?? {
@@ -163,9 +218,19 @@ export function ChatLayout({
         </div>
 
         {/* ── Desktop (lg+): Artifacts then Chat side by side ── */}
-        <div className='hidden lg:flex w-72 xl:w-80 flex-shrink-0 flex-col h-full'>
+        <div
+          className='hidden lg:flex flex-shrink-0 flex-col min-h-0'
+          style={{ width: artifactsWidth }}
+        >
           <ArtifactPanel chatId={chatId} initialArtifacts={initialArtifacts} />
         </div>
+
+        {/* Drag divider */}
+        <div
+          className='hidden lg:flex w-1 flex-shrink-0 cursor-col-resize bg-border hover:bg-primary/40 transition-colors active:bg-primary/60 select-none'
+          onMouseDown={handleDividerMouseDown}
+        />
+
         {isChatCollapsed ? (
           <CollapsedSidePanel
             label='Chat'

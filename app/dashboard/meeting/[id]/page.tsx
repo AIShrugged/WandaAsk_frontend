@@ -48,6 +48,19 @@ export default async function Page({ params, searchParams }: PageProps) {
 
   const { data: followUp } = await getEventFollowUp(id);
 
+  if (!followUp) {
+    return (
+      <Card className='h-full flex flex-col overflow-y-scroll'>
+        <PageHeader hasButtonBack title='Meeting' />
+        <CardBody>
+          <p className='text-sm text-muted-foreground'>
+            No summary available for this meeting yet.
+          </p>
+        </CardBody>
+      </Card>
+    );
+  }
+
   const currentTab = validTabs.includes(tab as Tab) ? (tab as Tab) : 'summary';
 
   if (tab !== currentTab)

@@ -22,7 +22,7 @@ export async function getEvent(id: string) {
     headers: {
       ...authHeaders,
     },
-    next: { revalidate: 60 },
+    cache: 'no-store',
   });
 
   if (!res.ok) {
@@ -53,7 +53,7 @@ export async function getEvents() {
     headers: {
       ...authHeaders,
     },
-    next: { revalidate: 60 },
+    cache: 'no-store',
   });
 
   if (!res.ok) {
@@ -119,7 +119,7 @@ export async function getFollowUps(id: number) {
       headers: {
         ...authHeaders,
       },
-      next: { revalidate: 60 },
+      cache: 'no-store',
     },
   );
 
@@ -147,6 +147,10 @@ export const getEventFollowUp = async (calendarEventId: number | string) => {
       cache: 'no-store',
     },
   );
+
+  if (res.status === 404) {
+    return { data: null };
+  }
 
   if (!res.ok) {
     const text = await res.text();

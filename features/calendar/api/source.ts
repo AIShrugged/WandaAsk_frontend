@@ -79,3 +79,45 @@ export async function detachCalendar(sourceId: number): Promise<ActionResult> {
   revalidatePath('/dashboard/profile', 'layout');
   redirect('/dashboard/calendar');
 }
+
+/**
+ * detachCalendarFromProfile — removes a calendar source without redirecting.
+ * Used on the Profile page where navigation should stay on /dashboard/profile.
+ * @param sourceId - The numeric ID of the Source to delete.
+ * @returns ActionResult.
+ */
+export async function detachCalendarFromProfile(
+  sourceId: number,
+): Promise<ActionResult> {
+  const authHeaders = await getAuthHeaders();
+
+  const url = `${API_URL}/sources/${sourceId}`;
+
+  const res = await fetch(url, {
+    method: 'DELETE',
+    headers: { ...authHeaders },
+    cache: 'no-store',
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+
+    logApiError({
+      method: 'DELETE',
+      url,
+      status: res.status,
+      statusText: res.statusText,
+      body: text,
+    });
+
+    return {
+      data: null,
+      error: 'Failed to disconnect Google Calendar. Please try again.',
+    };
+  }
+
+  revalidatePath('/dashboard/calendar', 'layout');
+  revalidatePath('/dashboard/profile', 'layout');
+
+  return { data: undefined, error: null };
+}

@@ -147,6 +147,53 @@ export async function getIssues(filters: IssueFilters = {}) {
 }
 
 /**
+ * loadIssuesChunk loads a page of issues for infinite scroll.
+ * @param filters - list filters including offset and limit.
+ * @returns paginated chunk.
+ */
+export async function loadIssuesChunk(filters: IssueFilters = {}) {
+  const authHeaders = await getAuthHeaders();
+
+  const query = buildIssuesQuery(filters);
+
+  const res = await fetch(`${API_URL}/issues?${query}`, {
+    headers: { ...authHeaders },
+    cache: 'no-store',
+  });
+
+  if (!res.ok) {
+    if (res.status === 401) redirect('/api/auth/clear-session');
+    const text = await res.text();
+
+    logApiError({
+      method: 'GET',
+      url: res.url,
+      status: res.status,
+      statusText: res.statusText,
+      body: text,
+    });
+    throw new Error(parseApiError(text, 'Failed to load issues').message);
+  }
+
+  const json: ApiResponse<Issue[]> = await res.json();
+
+  if (!json.success || !json.data) {
+    throw new Error(json.error ?? 'Invalid API response');
+  }
+
+  const totalCount = Number(res.headers.get('Items-Count') || '0');
+
+  const limit = filters.limit ?? 20;
+
+  const offset = filters.offset ?? 0;
+
+  return {
+    items: json.data,
+    hasMore: offset + limit < totalCount,
+  };
+}
+
+/**
  * getIssue.
  * @param id - issue id.
  * @returns issue resource.

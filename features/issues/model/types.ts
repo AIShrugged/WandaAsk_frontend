@@ -32,6 +32,7 @@ export interface Issue {
   description: string | null;
   type: string;
   status: IssueStatus;
+  priority?: IssuePriority | null;
   organization_id: number | null;
   team_id: number | null;
   assignee_id: number | null;
@@ -53,6 +54,15 @@ export interface IssueAttachment {
   created_at?: string | null;
   updated_at?: string | null;
 }
+
+export type IssuePriority = 'low' | 'medium' | 'high' | 'critical';
+
+export const ISSUE_PRIORITY_LABELS: Record<IssuePriority, string> = {
+  low: 'Low',
+  medium: 'Medium',
+  high: 'High',
+  critical: 'Critical',
+};
 
 export interface IssueFilters {
   organization_id?: number | null;

@@ -22,6 +22,7 @@ export const ROUTES = {
     ORGANIZATION: '/dashboard/organization',
     PROFILE: '/dashboard/profile',
     SUMMARY: '/dashboard/summary',
+    KANBAN: '/dashboard/kanban',
     DEBUG_LOGS: '/dashboard/debug-logs',
   },
 } as const;

@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation';
 import { ServerError } from '@/shared/lib/errors';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 import { logApiError } from '@/shared/lib/logger';
+import { ROUTES } from '@/shared/lib/routes';
 
 import type { ApiResponse, PaginatedResult } from '@/shared/types/common';
 
@@ -32,7 +33,7 @@ export async function httpClient<T>(
 
   if (!res.ok) {
     if (res.status === 401) {
-      redirect('/api/auth/clear-session');
+      redirect(ROUTES.AUTH.LOGIN);
     }
 
     const text = await res.text();
@@ -86,7 +87,7 @@ export async function httpClientList<T>(
 
   if (!res.ok) {
     if (res.status === 401) {
-      redirect('/api/auth/clear-session');
+      redirect(ROUTES.AUTH.LOGIN);
     }
 
     const text = await res.text();

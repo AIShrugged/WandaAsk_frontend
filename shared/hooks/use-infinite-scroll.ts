@@ -29,6 +29,12 @@ export function useInfiniteScroll<T>({
 
   const [hasMore, setHasMore] = useState(initialHasMore);
 
+  useEffect(() => {
+    setItems(initialItems);
+    setOffset(initialItems.length);
+    setHasMore(initialHasMore);
+  }, [initialItems]);
+
   const [isLoading, setIsLoading] = useState(false);
 
   const sentinelRef = useRef<HTMLDivElement>(null);

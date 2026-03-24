@@ -1,5 +1,7 @@
 import { format, isSameMonth, parseISO } from 'date-fns';
 
+import { isEventPast } from '@/shared/lib/isEventPast';
+
 import type { EventProps } from '@/entities/event';
 
 // currentMonth is always "yyyy-MM-dd" (e.g. "2026-03-01")
@@ -68,12 +70,19 @@ export default function CalendarAgenda({
             </p>
             <div className='flex flex-col gap-1'>
               {dayEvents.map((ev) => {
+                const noSummary = isEventPast(ev.ends_at) && !ev.has_summary;
+
                 return (
                   <div
                     key={ev.id}
-                    className='px-3 py-2 rounded-md bg-muted text-sm text-foreground truncate'
+                    className='px-3 py-2 rounded-md bg-muted text-sm text-foreground flex items-center gap-2'
                   >
-                    {ev.title}
+                    <span className='truncate flex-1'>{ev.title}</span>
+                    {noSummary && (
+                      <span className='text-xs text-muted-foreground/60 whitespace-nowrap flex-shrink-0'>
+                        No summary
+                      </span>
+                    )}
                   </div>
                 );
               })}

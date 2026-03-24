@@ -1,5 +1,7 @@
+import { getSources } from '@/features/calendar/api/source';
 import { getUser } from '@/features/user';
 import {
+  CalendarSection,
   ChangePasswordForm,
   IdentitiesSection,
   ProfileForm,
@@ -16,6 +18,10 @@ export default async function ProfilePage() {
   const { data: user } = await getUser();
 
   const identities = await getIdentities();
+
+  const sources = await getSources();
+
+  const calendarSource = sources[0] ?? null;
 
   return (
     <Card className='h-full flex flex-col overflow-y-auto'>
@@ -46,6 +52,14 @@ export default async function ProfilePage() {
                 Linked accounts
               </h2>
               <IdentitiesSection initialIdentities={identities} />
+            </section>
+
+            {/* Calendar */}
+            <section className='flex flex-col gap-4'>
+              <h2 className='text-base font-semibold text-foreground border-b border-border pb-2'>
+                Calendar
+              </h2>
+              <CalendarSection source={calendarSource} />
             </section>
           </>
         ) : (

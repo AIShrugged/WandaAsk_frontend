@@ -1,4 +1,5 @@
 import {
+  BarChart2,
   Bot,
   Bug,
   Calendar,
@@ -62,9 +63,15 @@ export function getMenuItems({
       href: ROUTES.DASHBOARD.FOLLOWUPS,
     },
     {
+      id: 'kanban',
+      label: 'Kanban',
+      icon: 'kanban',
+      href: ROUTES.DASHBOARD.KANBAN,
+    },
+    {
       id: 'statistics',
       label: 'Statistics',
-      icon: 'kanban',
+      icon: 'barChart',
       href: ROUTES.DASHBOARD.SUMMARY,
     },
   ];
@@ -109,6 +116,7 @@ export const ICONS_MAP = {
   calendar: Calendar,
   file: File,
   kanban: SquareKanban,
+  barChart: BarChart2,
   messageSquare: MessageSquare,
   bug: Bug,
   terminal: Terminal,

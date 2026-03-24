@@ -1,45 +1,37 @@
 'use client';
 
 import { format } from 'date-fns';
-import {
-  AlertCircle,
-  Bug,
-  ChevronLeft,
-  ChevronRight,
-  Plus,
-} from 'lucide-react';
+import { Bug, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useMemo, useState, useTransition } from 'react';
+import { useCallback, useMemo, useRef, useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
-import { getIssues, updateIssue } from '@/features/issues/api/issues';
-import { ISSUE_STATUS_OPTIONS } from '@/features/issues/model/types';
+import { loadIssuesChunk, updateIssue } from '@/features/issues/api/issues';
+import {
+  ISSUE_PRIORITY_LABELS,
+  ISSUE_STATUS_OPTIONS,
+} from '@/features/issues/model/types';
+import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
 import { ROUTES } from '@/shared/lib/routes';
 import { BUTTON_VARIANT } from '@/shared/types/button';
 import { Badge } from '@/shared/ui/badge';
 import { Button } from '@/shared/ui/button/Button';
 import { EmptyState } from '@/shared/ui/feedback/empty-state';
-import Input from '@/shared/ui/input/Input';
 import InputDropdown from '@/shared/ui/input/InputDropdown';
 import { TenantScopeFields } from '@/shared/ui/input/tenant-scope-fields';
+import { InfiniteScrollStatus } from '@/shared/ui/layout/infinite-scroll-status';
+import SpinLoader from '@/shared/ui/layout/spin-loader';
 
 import type { OrganizationProps } from '@/entities/organization';
 import type {
   Issue,
+  IssuePriority,
   IssueStatus,
   PersonOption,
 } from '@/features/issues/model/types';
 
-type SortKey =
-  | 'updated_desc'
-  | 'updated_asc'
-  | 'created_desc'
-  | 'created_asc'
-  | 'name_asc'
-  | 'name_desc'
-  | 'status_asc'
-  | 'status_desc';
+const PAGE_SIZE = 20;
 
 interface IssuesPageProps {
   initialIssues: Issue[];
@@ -52,9 +44,7 @@ interface IssuesPageProps {
     status: IssueStatus | '';
     type: string;
     assignee: string;
-    page: number;
-    pageSize: number;
-    sort: SortKey;
+    priority: IssuePriority | '';
   };
 }
 
@@ -65,50 +55,6 @@ interface IssuesPageProps {
  */
 function formatIssueDate(value: string) {
   return format(new Date(value), 'dd.MM.yyyy HH:mm');
-}
-
-/**
- * sortIssues sorts current page items client-side.
- * @param issues - issues.
- * @param sort - sort key.
- * @returns sorted issues.
- */
-function sortIssues(issues: Issue[], sort: SortKey) {
-  const copy = [...issues];
-
-  copy.sort((left, right) => {
-    switch (sort) {
-      case 'updated_asc': {
-        return left.updated_at.localeCompare(right.updated_at);
-      }
-      case 'updated_desc': {
-        return right.updated_at.localeCompare(left.updated_at);
-      }
-      case 'created_asc': {
-        return left.created_at.localeCompare(right.created_at);
-      }
-      case 'created_desc': {
-        return right.created_at.localeCompare(left.created_at);
-      }
-      case 'name_asc': {
-        return left.name.localeCompare(right.name);
-      }
-      case 'name_desc': {
-        return right.name.localeCompare(left.name);
-      }
-      case 'status_asc': {
-        return left.status.localeCompare(right.status);
-      }
-      case 'status_desc': {
-        return right.status.localeCompare(left.status);
-      }
-      default: {
-        return 0;
-      }
-    }
-  });
-
-  return copy;
 }
 
 /**
@@ -175,7 +121,7 @@ function replaceIssueInList(issues: Issue[], updatedIssue: Issue) {
 }
 
 /**
- * IssuesPage renders list, filters, sort and pagination.
+ * IssuesPage renders list with filters and infinite scroll.
  * @param props - component props.
  * @param props.initialIssues
  * @param props.initialTotalCount
@@ -197,13 +143,7 @@ export function IssuesPage({
 
   const searchParams = useSearchParams();
 
-  const [issues, setIssues] = useState(initialIssues);
-
-  const [totalCount, setTotalCount] = useState(initialTotalCount);
-
   const [isPending, startTransition] = useTransition();
-
-  const [loadError, setLoadError] = useState('');
 
   const [organizationId, setOrganizationId] = useState(
     initialFilters.organization_id,
@@ -217,11 +157,9 @@ export function IssuesPage({
 
   const [assignee, setAssignee] = useState(initialFilters.assignee);
 
-  const [page, setPage] = useState(initialFilters.page);
-
-  const [pageSize, setPageSize] = useState(initialFilters.pageSize);
-
-  const [sort, setSort] = useState<SortKey>(initialFilters.sort);
+  const [priority, setPriority] = useState<IssuePriority | ''>(
+    initialFilters.priority,
+  );
 
   const [updatingIssueId, setUpdatingIssueId] = useState<number | null>(null);
 
@@ -233,109 +171,124 @@ export function IssuesPage({
     number | null
   >(null);
 
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setIssues(initialIssues);
+  // Filters ref — used inside fetchMore without triggering re-renders
+  const filtersRef = useRef({
+    organization_id: organizationId,
+    team_id: teamId,
+    status,
+    type,
+    assignee,
+  });
 
-    setTotalCount(initialTotalCount);
-  }, [initialIssues, initialTotalCount]);
+  // resetKey increments on filter change to reset the infinite scroll list
+  const [resetKey, setResetKey] = useState(0);
 
-  /**
-   *
-   * @param nextState
-   * @param nextState.organization_id
-   * @param nextState.team_id
-   * @param nextState.status
-   * @param nextState.type
-   * @param nextState.assignee
-   * @param nextState.page
-   * @param nextState.pageSize
-   * @param nextState.sort
-   */
-  const updateUrl = (nextState: {
-    organization_id: string;
-    team_id: string;
-    status: IssueStatus | '';
-    type: string;
-    assignee: string;
-    page: number;
-    pageSize: number;
-    sort: SortKey;
-  }) => {
-    const params = new URLSearchParams(searchParams.toString());
+  // resetKey changes force useInfiniteScroll to start fresh with new initialItems
 
-    const pairs: Record<string, string> = {
-      organization_id: nextState.organization_id,
-      team_id: nextState.team_id,
-      status: nextState.status,
-      type: nextState.type,
-      assignee: nextState.assignee,
-      page: String(nextState.page),
-      pageSize: String(nextState.pageSize),
-      sort: nextState.sort,
-    };
+  const scrollInitialItems = useMemo(() => {
+    return initialIssues;
+  }, [resetKey]);
 
-    for (const [key, value] of Object.entries(pairs)) {
-      if (value) {
-        params.set(key, value);
-      } else {
-        params.delete(key);
+  const fetchMore = useCallback(
+    async (offset: number) => {
+      const f = filtersRef.current;
+
+      return loadIssuesChunk({
+        organization_id: f.organization_id ? Number(f.organization_id) : null,
+        team_id: f.team_id ? Number(f.team_id) : null,
+        status: f.status || undefined,
+        type: f.type || undefined,
+        assignee: f.assignee ? Number(f.assignee) : null,
+        offset,
+        limit: PAGE_SIZE,
+      });
+    },
+    // resetKey forces useInfiniteScroll to re-instantiate with fresh initialItems
+
+    [resetKey],
+  );
+
+  const {
+    items: rawItems,
+    isLoading,
+    hasMore,
+    sentinelRef,
+  } = useInfiniteScroll<Issue>({
+    fetchMore,
+    initialItems: scrollInitialItems,
+    initialHasMore: initialTotalCount > initialIssues.length,
+  });
+
+  // Client-side priority filter (backend doesn't support priority filtering)
+  const items = priority
+    ? rawItems.filter((issue) => {
+        return issue.priority === priority;
+      })
+    : rawItems;
+
+  const updateUrl = useCallback(
+    (patch: Record<string, string>) => {
+      const params = new URLSearchParams(searchParams.toString());
+
+      for (const [key, value] of Object.entries(patch)) {
+        if (value) {
+          params.set(key, value);
+        } else {
+          params.delete(key);
+        }
       }
-    }
 
-    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
-  };
+      router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+    },
+    [router, pathname, searchParams],
+  );
 
-  /**
-   *
-   * @param nextState
-   * @param nextState.organization_id
-   * @param nextState.team_id
-   * @param nextState.status
-   * @param nextState.type
-   * @param nextState.assignee
-   * @param nextState.page
-   * @param nextState.pageSize
-   * @param nextState.sort
-   */
-  const fetchPage = (nextState: {
-    organization_id: string;
-    team_id: string;
-    status: IssueStatus | '';
-    type: string;
-    assignee: string;
-    page: number;
-    pageSize: number;
-    sort: SortKey;
-  }) => {
-    setLoadError('');
-    updateUrl(nextState);
+  const applyFilter = useCallback(
+    (patch: {
+      organization_id?: string;
+      team_id?: string;
+      status?: IssueStatus | '';
+      type?: string;
+      assignee?: string;
+    }) => {
+      const next = {
+        organization_id:
+          patch.organization_id === undefined
+            ? organizationId
+            : patch.organization_id,
+        team_id: patch.team_id === undefined ? teamId : patch.team_id,
+        status: patch.status === undefined ? status : patch.status,
+        type: patch.type === undefined ? type : patch.type,
+        assignee: patch.assignee === undefined ? assignee : patch.assignee,
+      };
 
-    startTransition(async () => {
-      try {
-        const offset = (nextState.page - 1) * nextState.pageSize;
+      filtersRef.current = next;
 
-        const result = await getIssues({
-          organization_id: nextState.organization_id
-            ? Number(nextState.organization_id)
-            : null,
-          team_id: nextState.team_id ? Number(nextState.team_id) : null,
-          status: nextState.status || undefined,
-          type: nextState.type || undefined,
-          assignee: nextState.assignee ? Number(nextState.assignee) : null,
-          offset,
-          limit: nextState.pageSize,
-        });
+      if (patch.organization_id !== undefined)
+        setOrganizationId(next.organization_id);
 
-        setIssues(result.data);
-        setTotalCount(result.totalCount);
-        setEditingStatusIssueId(null);
-        setEditingAssigneeIssueId(null);
-      } catch (error) {
-        setLoadError((error as Error).message);
-      }
-    });
-  };
+      if (patch.team_id !== undefined) setTeamId(next.team_id);
+
+      if (patch.status !== undefined) setStatus(next.status);
+
+      if (patch.type !== undefined) setType(next.type);
+
+      if (patch.assignee !== undefined) setAssignee(next.assignee);
+
+      updateUrl({
+        organization_id: next.organization_id,
+        team_id: next.team_id,
+        status: next.status,
+        type: next.type,
+        assignee: next.assignee,
+      });
+
+      setResetKey((k) => {
+        return k + 1;
+      });
+    },
+    [organizationId, teamId, status, type, assignee, updateUrl],
+  );
 
   const personOptions = [
     { value: '', label: 'Any assignee' },
@@ -352,15 +305,17 @@ export function IssuesPage({
     ...ISSUE_STATUS_OPTIONS,
   ];
 
-  const sortOptions = [
-    { value: 'updated_desc', label: 'Updated: newest first' },
-    { value: 'updated_asc', label: 'Updated: oldest first' },
-    { value: 'created_desc', label: 'Created: newest first' },
-    { value: 'created_asc', label: 'Created: oldest first' },
-    { value: 'name_asc', label: 'Name: A to Z' },
-    { value: 'name_desc', label: 'Name: Z to A' },
-    { value: 'status_asc', label: 'Status: A to Z' },
-    { value: 'status_desc', label: 'Status: Z to A' },
+  const typeOptions = [
+    { value: '', label: 'Any type' },
+    { value: 'task', label: 'Task' },
+    { value: 'bug', label: 'Bug' },
+  ];
+
+  const priorityOptions = [
+    { value: '', label: 'Any priority' },
+    ...Object.entries(ISSUE_PRIORITY_LABELS).map(([value, label]) => {
+      return { value, label };
+    }),
   ];
 
   const rowStatusOptions = ISSUE_STATUS_OPTIONS;
@@ -410,9 +365,6 @@ export function IssuesPage({
           return;
         }
 
-        setIssues((current) => {
-          return replaceIssueInList(current, result);
-        });
         setUpdatingIssueId(null);
         setEditingStatusIssueId(null);
         setEditingAssigneeIssueId(null);
@@ -424,23 +376,13 @@ export function IssuesPage({
     });
   };
 
-  const sortedIssues = useMemo(() => {
-    return sortIssues(issues, sort);
-  }, [issues, sort]);
-
-  const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
-
-  const pageStart = totalCount === 0 ? 0 : (page - 1) * pageSize + 1;
-
-  const pageEnd = Math.min(totalCount, page * pageSize);
-
   return (
     <div className='flex flex-col gap-6'>
       <div className='flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between'>
         <div>
           <h2 className='text-2xl font-semibold text-foreground'>Issues</h2>
           <p className='mt-1 text-sm text-muted-foreground'>
-            Tenant-aware tasks with filters, sorting and attachments.
+            Tenant-aware tasks with filters and attachments.
           </p>
         </div>
 
@@ -459,81 +401,29 @@ export function IssuesPage({
           organizationId={organizationId}
           teamId={teamId}
           onOrganizationChange={(value) => {
-            const next = {
-              organization_id: value,
-              team_id: '',
-              status,
-              type,
-              assignee,
-              page: 1,
-              pageSize,
-              sort,
-            };
-
-            setOrganizationId(value);
-            setTeamId('');
-            setPage(1);
-            fetchPage(next);
+            applyFilter({ organization_id: value, team_id: '' });
           }}
           onTeamChange={(value) => {
-            const next = {
-              organization_id: organizationId,
-              team_id: value,
-              status,
-              type,
-              assignee,
-              page: 1,
-              pageSize,
-              sort,
-            };
-
-            setTeamId(value);
-            setPage(1);
-            fetchPage(next);
+            applyFilter({ team_id: value });
           }}
           disabled={isPending}
         />
 
-        <div className='grid gap-4 md:grid-cols-2 xl:grid-cols-4'>
+        <div className='grid gap-4 sm:grid-cols-2 xl:grid-cols-4'>
+          <InputDropdown
+            label='Type'
+            options={typeOptions}
+            value={type}
+            onChange={(value) => {
+              applyFilter({ type: value as string });
+            }}
+          />
           <InputDropdown
             label='Status'
             options={statusOptions}
             value={status}
             onChange={(value) => {
-              const next = {
-                organization_id: organizationId,
-                team_id: teamId,
-                status: value as IssueStatus | '',
-                type,
-                assignee,
-                page: 1,
-                pageSize,
-                sort,
-              };
-
-              setStatus(value as IssueStatus | '');
-              setPage(1);
-              fetchPage(next);
-            }}
-          />
-          <Input
-            label='Type'
-            value={type}
-            onChange={(event) => {
-              setType(event.target.value);
-            }}
-            onBlur={() => {
-              fetchPage({
-                organization_id: organizationId,
-                team_id: teamId,
-                status,
-                type,
-                assignee,
-                page: 1,
-                pageSize,
-                sort,
-              });
-              setPage(1);
+              applyFilter({ status: value as IssueStatus | '' });
             }}
           />
           <InputDropdown
@@ -541,53 +431,23 @@ export function IssuesPage({
             options={personOptions}
             value={assignee}
             onChange={(value) => {
-              const next = {
-                organization_id: organizationId,
-                team_id: teamId,
-                status,
-                type,
-                assignee: value as string,
-                page: 1,
-                pageSize,
-                sort,
-              };
-
-              setAssignee(value as string);
-              setPage(1);
-              fetchPage(next);
+              applyFilter({ assignee: value as string });
             }}
             searchable
           />
           <InputDropdown
-            label='Sort'
-            options={sortOptions}
-            value={sort}
+            label='Priority'
+            options={priorityOptions}
+            value={priority}
             onChange={(value) => {
-              const nextSort = value as SortKey;
-
-              setSort(nextSort);
-              updateUrl({
-                organization_id: organizationId,
-                team_id: teamId,
-                status,
-                type,
-                assignee,
-                page,
-                pageSize,
-                sort: nextSort,
-              });
+              setPriority(value as IssuePriority | '');
+              updateUrl({ priority: value as string });
             }}
           />
         </div>
       </div>
 
-      {loadError ? (
-        <div className='rounded-[var(--radius-card)] border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive'>
-          {loadError}
-        </div>
-      ) : null}
-
-      {sortedIssues.length === 0 && !isPending ? (
+      {items.length === 0 && !isLoading ? (
         <div className='rounded-[var(--radius-card)] border border-border bg-card p-6'>
           <EmptyState
             icon={Bug}
@@ -610,7 +470,7 @@ export function IssuesPage({
                 </tr>
               </thead>
               <tbody>
-                {sortedIssues.map((issue) => {
+                {items.map((issue) => {
                   return (
                     <tr
                       key={issue.id}
@@ -752,108 +612,21 @@ export function IssuesPage({
             </table>
           </div>
 
-          <div className='flex flex-col gap-4 border-t border-border px-4 py-4 md:flex-row md:items-center md:justify-between'>
-            <div className='flex flex-wrap items-center gap-3 text-sm text-muted-foreground'>
-              <span>
-                Showing {pageStart}-{pageEnd} of {totalCount}
-              </span>
-              <InputDropdown
-                options={[
-                  { value: '10', label: '10 / page' },
-                  { value: '20', label: '20 / page' },
-                  { value: '50', label: '50 / page' },
-                ]}
-                value={String(pageSize)}
-                onChange={(value) => {
-                  const nextPageSize = Number(value);
-
-                  const next = {
-                    organization_id: organizationId,
-                    team_id: teamId,
-                    status,
-                    type,
-                    assignee,
-                    page: 1,
-                    pageSize: nextPageSize,
-                    sort,
-                  };
-
-                  setPageSize(nextPageSize);
-                  setPage(1);
-                  fetchPage(next);
-                }}
-                className='w-[160px]'
-              />
+          {isLoading ? (
+            <div className='flex justify-center py-4'>
+              <SpinLoader />
             </div>
+          ) : null}
 
-            <div className='flex items-center gap-2'>
-              <Button
-                type='button'
-                variant={BUTTON_VARIANT.secondary}
-                className='w-auto px-3'
-                disabled={page <= 1 || isPending}
-                onClick={() => {
-                  const next = {
-                    organization_id: organizationId,
-                    team_id: teamId,
-                    status,
-                    type,
-                    assignee,
-                    page: page - 1,
-                    pageSize,
-                    sort,
-                  };
-
-                  setPage((current) => {
-                    return current - 1;
-                  });
-                  fetchPage(next);
-                }}
-              >
-                <ChevronLeft className='h-4 w-4' />
-                Prev
-              </Button>
-              <span className='px-2 text-sm text-muted-foreground'>
-                Page {page} / {totalPages}
-              </span>
-              <Button
-                type='button'
-                variant={BUTTON_VARIANT.secondary}
-                className='w-auto px-3'
-                disabled={page >= totalPages || isPending}
-                onClick={() => {
-                  const next = {
-                    organization_id: organizationId,
-                    team_id: teamId,
-                    status,
-                    type,
-                    assignee,
-                    page: page + 1,
-                    pageSize,
-                    sort,
-                  };
-
-                  setPage((current) => {
-                    return current + 1;
-                  });
-                  fetchPage(next);
-                }}
-              >
-                Next
-                <ChevronRight className='h-4 w-4' />
-              </Button>
+          {!hasMore && items.length > 0 ? (
+            <div className='py-4'>
+              <InfiniteScrollStatus itemCount={items.length} />
             </div>
-          </div>
+          ) : (
+            <div ref={sentinelRef} className='h-10' />
+          )}
         </div>
       )}
-
-      <div className='rounded-[var(--radius-card)] border border-border bg-card p-4 text-xs text-muted-foreground'>
-        <div className='flex items-center gap-2'>
-          <AlertCircle className='h-4 w-4' />
-          Sorting is applied on the current page; pagination and filters are
-          backed by the API via `offset`/`limit`.
-        </div>
-      </div>
     </div>
   );
 }
