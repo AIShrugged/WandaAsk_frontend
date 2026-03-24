@@ -39,7 +39,6 @@ function formatTime(dateString: string): string {
  * @returns plain text.
  */
 function stripHtml(html: string): string {
-  // eslint-disable-next-line sonarjs/slow-regex
   return html
     .replaceAll(/<[^>]*>/g, ' ')
     .replaceAll(/\s+/g, ' ')
@@ -117,7 +116,7 @@ const Event = ({ event }: { event: EventProps }) => {
         )}
       >
         <div className='flex flex-row items-center gap-2 flex-shrink-0'>
-          {/* eslint-disable-next-line no-nested-ternary, sonarjs/no-nested-conditional */}
+          {/* eslint-disable-next-line no-nested-ternary */}
           {isPast ? (
             noSummary ? (
               <CircleDashed className='text-muted-foreground/60' size={14} />
