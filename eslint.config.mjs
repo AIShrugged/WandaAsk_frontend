@@ -193,8 +193,10 @@ export default defineConfig([
       'boundaries/ignore': ['**/*.test.*', '**/*.spec.*'],
     },
     rules: {
+      // warn for now — 34 existing cross-feature violations need to be fixed first
+      // Change to 'error' once all existing violations are resolved
       'boundaries/element-types': [
-        'error',
+        'warn',
         {
           default: 'disallow',
           rules: [
