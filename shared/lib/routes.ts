@@ -13,6 +13,7 @@ export const ROUTES = {
     AGENT_PROFILES_NEW: '/dashboard/agents/profiles/new',
     AGENT_TASKS: '/dashboard/agents/tasks',
     AGENT_TASKS_NEW: '/dashboard/agents/tasks/new',
+    AGENT_ACTIVITY: '/dashboard/agents/activity',
     TELEGRAM_CHATS: '/dashboard/chat/telegram',
     MEETING: '/dashboard/meeting',
     TEAMS: '/dashboard/teams',

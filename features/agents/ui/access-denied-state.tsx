@@ -10,7 +10,7 @@ import { EmptyState } from '@/shared/ui/feedback/empty-state';
  */
 export function AccessDeniedState({
   title = 'Access denied',
-  description = 'Only organization managers can access agents, tasks, and runs for the active organization.',
+  description = 'Only organization managers can access agents, tasks, runs, and activity for the active organization.',
 }: {
   title?: string;
   description?: string;

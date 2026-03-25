@@ -1,5 +1,6 @@
 import {
   BarChart2,
+  Activity,
   Bot,
   Bug,
   Calendar,
@@ -104,6 +105,13 @@ export function getMenuItems({
       href: ROUTES.DASHBOARD.AGENT_PROFILES,
       activeHref: ROUTES.DASHBOARD.AGENT_PROFILES,
     });
+    items.splice(5, 0, {
+      id: 'agent-activity',
+      label: 'Agent Activity',
+      icon: 'activity',
+      href: ROUTES.DASHBOARD.AGENT_ACTIVITY,
+      activeHref: ROUTES.DASHBOARD.AGENT_ACTIVITY,
+    });
   }
 
   return items;
@@ -117,6 +125,7 @@ export const ICONS_MAP = {
   file: File,
   kanban: SquareKanban,
   barChart: BarChart2,
+  activity: Activity,
   messageSquare: MessageSquare,
   bug: Bug,
   terminal: Terminal,

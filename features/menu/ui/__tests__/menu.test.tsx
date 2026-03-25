@@ -71,6 +71,9 @@ jest.mock('lucide-react', () => {
     SquareKanban: () => {
       return <span />;
     },
+    Activity: () => {
+      return <span />;
+    },
     File: () => {
       return <span />;
     },
@@ -80,6 +83,7 @@ jest.mock('lucide-react', () => {
   };
 });
 
+import { getMenuItems } from '@/features/menu/lib/options';
 import { MenuNested } from '@/features/menu/ui/menu-nested';
 import MenuSidebar from '@/features/menu/ui/menu-sidebar';
 
@@ -149,5 +153,17 @@ describe('MenuSidebar', () => {
     expect(screen.getByText('Calendar')).toBeInTheDocument();
     expect(screen.getByText('Follow ups (meetings)')).toBeInTheDocument();
     expect(screen.getByText('Statistics')).toBeInTheDocument();
+  });
+});
+
+describe('getMenuItems', () => {
+  it('includes Agent Activity for agent managers', () => {
+    const items = getMenuItems({ canManageAgents: true });
+
+    const labels = items.map((item) => {
+      return item.label;
+    });
+
+    expect(labels).toContain('Agent Activity');
   });
 });
