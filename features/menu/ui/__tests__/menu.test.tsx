@@ -147,12 +147,12 @@ describe('MenuSidebar', () => {
 
   it('renders all default menu items', async () => {
     render(await MenuSidebar());
+    expect(screen.getByText('Dashboard')).toBeInTheDocument();
     expect(screen.getByText('AI Chat')).toBeInTheDocument();
     expect(screen.getByText('Teams')).toBeInTheDocument();
     expect(screen.getByText('Methodologies')).toBeInTheDocument();
     expect(screen.getByText('Calendar')).toBeInTheDocument();
     expect(screen.getByText('Follow ups (meetings)')).toBeInTheDocument();
-    expect(screen.getByText('Statistics')).toBeInTheDocument();
   });
 });
 
