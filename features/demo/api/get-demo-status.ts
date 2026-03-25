@@ -6,19 +6,7 @@ import { API_URL } from '@/shared/lib/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 import { logApiError } from '@/shared/lib/logger';
 
-export type DemoGenerationStatus =
-  | 'generating'
-  | 'ready'
-  | 'failed'
-  | 'pending';
-
-export interface DemoStatusResult {
-  status: DemoGenerationStatus;
-  progress_percent: number | null;
-  current_step_label: string | null;
-  error: string | null;
-  completed_at: string | null;
-}
+import type { DemoStatusResult } from '@/features/demo/model/types';
 
 type DemoStatusApiResponse = {
   success: boolean;

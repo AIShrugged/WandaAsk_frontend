@@ -6,15 +6,10 @@ import { API_URL } from '@/shared/lib/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 import { logApiError } from '@/shared/lib/logger';
 
-export interface SeedDemoParams {
-  teams_count?: number;
-  employees_per_team?: number;
-  meetings_per_team?: number;
-}
-
-export interface SeedDemoResult {
-  message: string;
-}
+import type {
+  SeedDemoParams,
+  SeedDemoResult,
+} from '@/features/demo/model/types';
 
 type DemoSeedApiResponse = {
   success: boolean;

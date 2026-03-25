@@ -1,8 +1,5 @@
 'use client';
 
-import { EventPopupAll } from '@/features/event/ui/event-popup-all';
-import { useModal } from '@/shared/hooks/use-modal';
-
 import type { EventProps } from '@/entities/event';
 
 /**
@@ -10,16 +7,18 @@ import type { EventProps } from '@/entities/event';
  * @param root0
  * @param root0.count
  * @param root0.dayEvents
+ * @param root0.onShowAll - Callback invoked when user clicks "+N more".
+ * @returns JSX element.
  */
 export default function EventExtraButton({
   count,
   dayEvents,
+  onShowAll,
 }: {
   count: number;
   dayEvents: EventProps[];
+  onShowAll?: (events: EventProps[]) => void;
 }) {
-  const { open, close } = useModal();
-
   /**
    * handleClick.
    * @param e - e.
@@ -28,7 +27,7 @@ export default function EventExtraButton({
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
 
-    if (open) open(<EventPopupAll list={dayEvents} close={close} />);
+    onShowAll?.(dayEvents);
   };
 
   return (

@@ -5,6 +5,7 @@ import { cache } from 'react';
 
 import { API_URL } from '@/shared/lib/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
+import { ROUTES } from '@/shared/lib/routes';
 
 import type {
   MethodologyDTO,
@@ -16,7 +17,7 @@ import type { ApiResponse } from '@/shared/types/common';
  * afterMethodologyMutate.
  */
 const afterMethodologyMutate = () => {
-  revalidatePath('/dashboard/methodology');
+  revalidatePath(ROUTES.DASHBOARD.METHODOLOGY);
 };
 
 /**
@@ -51,7 +52,7 @@ export async function createMethodology(data: MethodologyDTO): Promise<void> {
     );
   }
 
-  revalidatePath('/methodology');
+  revalidatePath(ROUTES.DASHBOARD.METHODOLOGY);
 }
 
 /**

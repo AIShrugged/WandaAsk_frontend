@@ -1,6 +1,1 @@
-export interface Identity {
-  id: number;
-  channel: string;
-  channel_identifier: string;
-  user_id: number;
-}
+export type { Identity } from '@/features/user-profile/model/types';

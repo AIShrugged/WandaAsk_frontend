@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 
-import { DebugLogsViewer } from '@/features/debug-logs/ui/DebugLogsViewer';
+import { DebugLogsViewer } from '@/features/debug-logs';
 import { isDev } from '@/shared/lib/logger';
 
 /**

@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { API_URL } from '@/shared/lib/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 import { logApiError } from '@/shared/lib/logger';
+import { ROUTES } from '@/shared/lib/routes';
 
 import type { ActionResult } from '@/shared/types/server-action';
 
@@ -40,7 +41,7 @@ export async function updateProfile(data: {
     return { data: null, error: 'Failed to update profile. Please try again.' };
   }
 
-  revalidatePath('/dashboard');
+  revalidatePath(ROUTES.DASHBOARD.PROFILE);
 
   return { data: undefined, error: null };
 }

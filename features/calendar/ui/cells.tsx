@@ -10,24 +10,34 @@ import {
 } from 'date-fns';
 
 import Day from '@/features/calendar/ui/day';
-import Event from '@/features/calendar/ui/event';
 import EventExtraButton from '@/features/calendar/ui/event-extra-button';
 
 import type { EventProps } from '@/entities/event';
+import type { ReactNode } from 'react';
+
+interface CellsProps {
+  currentMonth: string;
+  events?: EventProps[];
+  renderEvent?: (event: EventProps) => ReactNode;
+  onShowAll?: (events: EventProps[]) => void;
+}
 
 /**
- * Cells component.
+ * Cells component — pure calendar grid. Accepts renderEvent and onShowAll
+ * as dependency-injection props to avoid cross-feature imports.
  * @param root0
  * @param root0.currentMonth
  * @param root0.events
+ * @param root0.renderEvent
+ * @param root0.onShowAll
+ * @returns JSX element.
  */
 export default function Cells({
   currentMonth,
   events = [],
-}: {
-  currentMonth: string;
-  events: EventProps[];
-}) {
+  renderEvent,
+  onShowAll,
+}: CellsProps) {
   const monthStart = startOfMonth(currentMonth);
 
   const monthEnd = endOfMonth(monthStart);
@@ -81,12 +91,13 @@ export default function Cells({
             <Day currentDay={day} />
             <div className='flex-1 min-h-0'>
               {dayEvents.slice(0, 3).map((event) => {
-                return <Event key={event.id} event={event} />;
+                return renderEvent ? renderEvent(event) : null;
               })}
               {dayEvents.length > 3 && (
                 <EventExtraButton
                   dayEvents={dayEvents}
                   count={dayEvents.length - 3}
+                  onShowAll={onShowAll}
                 />
               )}
             </div>

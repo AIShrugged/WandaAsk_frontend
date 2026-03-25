@@ -12,6 +12,7 @@ import { getDemoStatus } from '@/features/demo/api/get-demo-status';
 import { seedDemo } from '@/features/demo/api/seed-demo';
 import { DemoDropdown } from '@/features/demo/ui/demo-dropdown';
 import { DemoOverlay } from '@/features/demo/ui/demo-overlay';
+import { ROUTES } from '@/shared/lib/routes';
 
 const POLLING_INTERVAL_MS = 2000;
 
@@ -118,7 +119,7 @@ export default function DemoSeedButton() {
             setProgressPercent(null);
             setStepLabel(null);
             toast.success('Demo data is ready!');
-            router.push('/auth/organization');
+            router.push(ROUTES.AUTH.ORGANIZATION);
           }, 600);
 
           return;

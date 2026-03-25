@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 
 import { API_URL } from '@/shared/lib/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
+import { ROUTES } from '@/shared/lib/routes';
 
 import type { EventProps } from '@/entities/event';
 import type { MeetingTask } from '@/features/meeting/types';
@@ -99,7 +100,7 @@ export async function switchBot(eventId: number, botRequired: boolean) {
     throw new Error('Failed to switchBot');
   }
 
-  revalidatePath('/dashboard/calendar');
+  revalidatePath(ROUTES.DASHBOARD.CALENDAR);
 
   return await res.json();
 }

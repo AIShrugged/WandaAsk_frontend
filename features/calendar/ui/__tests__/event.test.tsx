@@ -1,41 +1,14 @@
 /* eslint-disable jsdoc/require-jsdoc */
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 
 const mockPush = jest.fn();
 
-const mockOpen = jest.fn();
-
-const mockClose = jest.fn();
-
 jest.mock('next/navigation', () => {
   return {
     useRouter: () => {
       return { push: mockPush };
-    },
-  };
-});
-
-jest.mock('@/shared/hooks/use-modal', () => {
-  return {
-    useModal: () => {
-      return { open: mockOpen, close: mockClose };
-    },
-  };
-});
-
-jest.mock('@/features/participants/api/participants', () => {
-  return {
-    getAttendees: jest.fn().mockResolvedValue({ data: [] }),
-    getGuests: jest.fn().mockResolvedValue({ data: [] }),
-  };
-});
-
-jest.mock('@/features/event/ui/event-popup', () => {
-  return {
-    EventPopup: () => {
-      return <div data-testid='event-popup' />;
     },
   };
 });
@@ -141,14 +114,16 @@ describe('Event', () => {
     expect(mockPush).toHaveBeenCalledWith(expect.stringContaining('/1'));
   });
 
-  it('opens a popup when a future event is clicked', async () => {
+  it('calls onFutureEventClick when a future event is clicked', async () => {
     (isEventPast as jest.Mock).mockReturnValue(false);
-    render(<Event event={makeEvent()} />);
+    const onFutureEventClick = jest.fn();
+
+    render(
+      <Event event={makeEvent()} onFutureEventClick={onFutureEventClick} />,
+    );
     await act(async () => {
       await user.click(screen.getAllByText(EVENT_TITLE)[0]);
     });
-    await waitFor(() => {
-      expect(mockOpen).toHaveBeenCalled();
-    });
+    expect(onFutureEventClick).toHaveBeenCalledWith(makeEvent());
   });
 });

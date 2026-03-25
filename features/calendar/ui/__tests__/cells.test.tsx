@@ -12,15 +12,6 @@ jest.mock('@/features/calendar/ui/day', () => {
   };
 });
 
-jest.mock('@/features/calendar/ui/event', () => {
-  return {
-    __esModule: true,
-    default: ({ event }: { event: { id: number; title: string } }) => {
-      return <div data-testid={`event-${event.id}`}>{event.title}</div>;
-    },
-  };
-});
-
 jest.mock('@/features/calendar/ui/event-extra-button', () => {
   return {
     __esModule: true,
@@ -44,9 +35,19 @@ const makeEvent = (id: number, startsAt: string): EventProps => {
   };
 };
 
+const renderEvent = (event: EventProps) => {
+  return (
+    <div key={event.id} data-testid={`event-${event.id}`}>
+      {event.title}
+    </div>
+  );
+};
+
 describe('Cells', () => {
   it('renders day cells for the month', () => {
-    render(<Cells currentMonth='2024-03-01' events={[]} />);
+    render(
+      <Cells currentMonth='2024-03-01' events={[]} renderEvent={renderEvent} />,
+    );
     const days = screen.getAllByTestId('day');
 
     // March 2024 grid: 5 or 6 weeks × 7 = 35 or 42 days
@@ -56,14 +57,26 @@ describe('Cells', () => {
   it('renders events on the correct day', () => {
     const events = [makeEvent(1, '2024-03-15T10:00:00Z')];
 
-    render(<Cells currentMonth='2024-03-01' events={events} />);
+    render(
+      <Cells
+        currentMonth='2024-03-01'
+        events={events}
+        renderEvent={renderEvent}
+      />,
+    );
     expect(screen.getByTestId('event-1')).toBeInTheDocument();
   });
 
   it('renders nothing when no events match', () => {
     const events = [makeEvent(1, '2024-04-01T10:00:00Z')];
 
-    render(<Cells currentMonth='2024-03-01' events={events} />);
+    render(
+      <Cells
+        currentMonth='2024-03-01'
+        events={events}
+        renderEvent={renderEvent}
+      />,
+    );
     expect(screen.queryByTestId('event-1')).not.toBeInTheDocument();
   });
 
@@ -75,7 +88,13 @@ describe('Cells', () => {
       makeEvent(4, '2024-03-10T13:00:00Z'),
     ];
 
-    render(<Cells currentMonth='2024-03-01' events={events} />);
+    render(
+      <Cells
+        currentMonth='2024-03-01'
+        events={events}
+        renderEvent={renderEvent}
+      />,
+    );
     expect(screen.getByTestId('extra-button')).toHaveTextContent('+1 more');
   });
 
@@ -86,7 +105,13 @@ describe('Cells', () => {
       makeEvent(3, '2024-03-10T12:00:00Z'),
     ];
 
-    render(<Cells currentMonth='2024-03-01' events={events} />);
+    render(
+      <Cells
+        currentMonth='2024-03-01'
+        events={events}
+        renderEvent={renderEvent}
+      />,
+    );
     expect(screen.queryByTestId('extra-button')).not.toBeInTheDocument();
   });
 });

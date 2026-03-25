@@ -23,6 +23,7 @@ import {
   getTelegramChats,
   issueTelegramAttachCode,
 } from '@/features/chat/api/telegram';
+import { getTeams } from '@/features/teams/api/team';
 import { BUTTON_VARIANT } from '@/shared/types/button';
 import { Badge } from '@/shared/ui/badge';
 import { Button } from '@/shared/ui/button/Button';
@@ -327,6 +328,7 @@ function TelegramChatCard({
               organizations={organizations}
               organizationId={organizationId}
               teamId={teamId}
+              fetchTeams={getTeams}
               onOrganizationChange={(value) => {
                 setOrganizationId(value);
                 setTeamId('');

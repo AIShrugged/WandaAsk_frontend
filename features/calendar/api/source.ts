@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation';
 import { API_URL } from '@/shared/lib/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 import { logApiError } from '@/shared/lib/logger';
+import { ROUTES } from '@/shared/lib/routes';
 
 import type { Source } from '@/entities/source';
 import type { ApiResponse } from '@/shared/types/common';
@@ -75,9 +76,9 @@ export async function detachCalendar(sourceId: number): Promise<ActionResult> {
     };
   }
 
-  revalidatePath('/dashboard/calendar', 'layout');
-  revalidatePath('/dashboard/profile', 'layout');
-  redirect('/dashboard/calendar');
+  revalidatePath(ROUTES.DASHBOARD.CALENDAR, 'layout');
+  revalidatePath(ROUTES.DASHBOARD.PROFILE, 'layout');
+  redirect(ROUTES.DASHBOARD.CALENDAR);
 }
 
 /**
@@ -116,8 +117,8 @@ export async function detachCalendarFromProfile(
     };
   }
 
-  revalidatePath('/dashboard/calendar', 'layout');
-  revalidatePath('/dashboard/profile', 'layout');
+  revalidatePath(ROUTES.DASHBOARD.CALENDAR, 'layout');
+  revalidatePath(ROUTES.DASHBOARD.PROFILE, 'layout');
 
   return { data: undefined, error: null };
 }

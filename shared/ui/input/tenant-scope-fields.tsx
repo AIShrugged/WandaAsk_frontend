@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from 'react';
 
-import { getTeams } from '@/features/teams/api/team';
 import InputDropdown from '@/shared/ui/input/InputDropdown';
 
+// eslint-disable-next-line boundaries/element-types
 import type { OrganizationProps } from '@/entities/organization';
+// eslint-disable-next-line boundaries/element-types
 import type { TeamProps } from '@/entities/team';
 
 interface TenantScopeFieldsProps {
@@ -14,6 +15,7 @@ interface TenantScopeFieldsProps {
   teamId: string;
   onOrganizationChange: (value: string) => void;
   onTeamChange: (value: string) => void;
+  fetchTeams: (organizationId: string) => Promise<{ data: TeamProps[] | null }>;
   organizationError?: string;
   teamError?: string;
   disabled?: boolean;
@@ -27,6 +29,7 @@ interface TenantScopeFieldsProps {
  * @param props.teamId
  * @param props.onOrganizationChange
  * @param props.onTeamChange
+ * @param props.fetchTeams
  * @param props.organizationError
  * @param props.teamError
  * @param props.disabled
@@ -38,6 +41,7 @@ export function TenantScopeFields({
   teamId,
   onOrganizationChange,
   onTeamChange,
+  fetchTeams,
   organizationError,
   teamError,
   disabled,
@@ -56,7 +60,7 @@ export function TenantScopeFields({
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsTeamsLoading(true);
 
-    getTeams(organizationId)
+    fetchTeams(organizationId)
       .then(({ data }) => {
         setTeams(data ?? []);
       })

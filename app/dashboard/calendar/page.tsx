@@ -2,12 +2,12 @@ import { redirect } from 'next/navigation';
 import { type PropsWithChildren, Suspense } from 'react';
 
 import { getSources } from '@/features/calendar/api/source';
-import Calendar from '@/features/calendar/ui/calendar';
 import CalendarAttachedToast from '@/features/calendar/ui/calendar-attached-toast';
 import OnboardingTrigger from '@/features/calendar/ui/onboarding-trigger';
 import { getEvents } from '@/features/event/api/calendar-events';
 import Card from '@/shared/ui/card/Card';
 import SpinLoader from '@/shared/ui/layout/spin-loader';
+import { CalendarPage } from '@/widgets/calendar-view';
 
 import type { EventProps } from '@/entities/event';
 
@@ -59,7 +59,7 @@ const AttachedView = ({
           </div>
         }
       >
-        <Calendar currentMonth={currentMonth} events={events} />
+        <CalendarPage currentMonth={currentMonth} events={events} />
       </Suspense>
     </Wrapper>
   );

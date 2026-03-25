@@ -20,8 +20,6 @@ export type {
   Chat,
   ChatUpsertDTO,
   Message,
-  PaginatedResponse,
-  SingleResponse,
   Artifact,
   ArtifactsResponse,
   TelegramChatRegistration,

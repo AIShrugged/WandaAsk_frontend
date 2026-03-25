@@ -12,6 +12,7 @@ import {
   ISSUE_PRIORITY_LABELS,
   ISSUE_STATUS_OPTIONS,
 } from '@/features/issues/model/types';
+import { getTeams } from '@/features/teams/api/team';
 import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
 import { ROUTES } from '@/shared/lib/routes';
 import { BUTTON_VARIANT } from '@/shared/types/button';
@@ -400,6 +401,7 @@ export function IssuesPage({
           organizations={organizations}
           organizationId={organizationId}
           teamId={teamId}
+          fetchTeams={getTeams}
           onOrganizationChange={(value) => {
             applyFilter({ organization_id: value, team_id: '' });
           }}

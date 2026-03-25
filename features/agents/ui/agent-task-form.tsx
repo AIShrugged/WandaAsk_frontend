@@ -12,6 +12,7 @@ import {
 } from '@/features/agents/api/agents';
 import { parseJsonInput, stringifyJson } from '@/features/agents/lib/json';
 import { isAgentActionError } from '@/features/agents/model/types';
+import { getTeams } from '@/features/teams/api/team';
 import { ROUTES } from '@/shared/lib/routes';
 import { BUTTON_VARIANT } from '@/shared/types/button';
 import { Button } from '@/shared/ui/button/Button';
@@ -249,6 +250,7 @@ export function AgentTaskForm({
         organizations={organizations}
         organizationId={watch('organization_id')}
         teamId={watch('team_id')}
+        fetchTeams={getTeams}
         onOrganizationChange={(value) => {
           setValue('organization_id', value, { shouldDirty: true });
           setValue('team_id', '', { shouldDirty: true });

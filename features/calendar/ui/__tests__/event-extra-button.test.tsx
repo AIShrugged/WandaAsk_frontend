@@ -3,26 +3,6 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 
-const mockOpen = jest.fn();
-
-const mockClose = jest.fn();
-
-jest.mock('@/shared/hooks/use-modal', () => {
-  return {
-    useModal: () => {
-      return { open: mockOpen, close: mockClose };
-    },
-  };
-});
-
-jest.mock('@/features/event/ui/event-popup-all', () => {
-  return {
-    EventPopupAll: () => {
-      return <div data-testid='event-popup-all' />;
-    },
-  };
-});
-
 import EventExtraButton from '@/features/calendar/ui/event-extra-button';
 
 import type { EventProps } from '@/entities/event';
@@ -40,21 +20,22 @@ const makeEvent = (id: number): EventProps => {
 const user = userEvent.setup({ delay: null });
 
 describe('EventExtraButton', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
   it('renders "+N more" text', () => {
     render(<EventExtraButton count={3} dayEvents={[makeEvent(1)]} />);
     expect(screen.getByText('+3 more')).toBeInTheDocument();
   });
 
-  it('calls open() with EventPopupAll when clicked', async () => {
+  it('calls onShowAll with dayEvents when clicked', async () => {
     const events = [makeEvent(1), makeEvent(2)];
 
-    render(<EventExtraButton count={2} dayEvents={events} />);
+    const onShowAll = jest.fn();
+
+    render(
+      <EventExtraButton count={2} dayEvents={events} onShowAll={onShowAll} />,
+    );
     await user.click(screen.getByText('+2 more'));
-    expect(mockOpen).toHaveBeenCalledTimes(1);
+    expect(onShowAll).toHaveBeenCalledTimes(1);
+    expect(onShowAll).toHaveBeenCalledWith(events);
   });
 
   it('displays the correct count in the label', () => {

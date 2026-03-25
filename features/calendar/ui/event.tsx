@@ -11,11 +11,7 @@ import {
   Video,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useTransition } from 'react';
 
-import { EventPopup } from '@/features/event';
-import { getAttendees, getGuests } from '@/features/participants';
-import { useModal } from '@/shared/hooks/use-modal';
 import { formatDate } from '@/shared/lib/dateFormatter';
 import { isEventPast } from '@/shared/lib/isEventPast';
 import { ROUTES } from '@/shared/lib/routes';
@@ -48,61 +44,49 @@ function stripHtml(html: string): string {
   );
 }
 
+interface EventComponentProps {
+  event: EventProps;
+  onFutureEventClick?: (event: EventProps) => void;
+}
+
 /**
  * Event component.
  * @param props - Component props.
  * @param props.event
+ * @param props.onFutureEventClick - Callback invoked when clicking a future event (opens popup).
  * @returns JSX element.
  */
-const Event = ({ event }: { event: EventProps }) => {
+// eslint-disable-next-line complexity
+const Event = ({ event, onFutureEventClick }: EventComponentProps) => {
   const isPast = isEventPast(event.ends_at);
 
   const noSummary = isPast && !event.has_summary;
 
   const { push } = useRouter();
 
-  const { open, close } = useModal();
-
-  const [isPending, startTransition] = useTransition();
+  /**
+   * navigateToMeeting navigates to the meeting summary page.
+   * @returns void.
+   */
+  const navigateToMeeting = () => {
+    push(`${ROUTES.DASHBOARD.MEETING}/${event.id}?tab=summary`);
+  };
 
   /**
-   * handleClick.
-   * @param e - e.
-   * @returns Result.
+   * handleClick handles event pill click.
+   * @param e - mouse event.
+   * @returns void.
    */
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
 
     if (isPast) {
-      push(`${ROUTES.DASHBOARD.MEETING}/${event.id}?tab=summary`);
+      navigateToMeeting();
 
       return;
     }
 
-    if (!open) return;
-
-    startTransition(async () => {
-      try {
-        const [{ data: attendees = [] }, { data: guests = [] }] =
-          await Promise.all([
-            getAttendees(String(event.id)),
-            getGuests(String(event.id)),
-          ]);
-
-        open(
-          <EventPopup
-            attendees={attendees}
-            guests={guests}
-            event={event}
-            close={close}
-          />,
-        );
-      } catch {
-        open(
-          <EventPopup attendees={[]} guests={[]} event={event} close={close} />,
-        );
-      }
-    });
+    onFutureEventClick?.(event);
   };
 
   return (
@@ -115,7 +99,6 @@ const Event = ({ event }: { event: EventProps }) => {
           isPast
             ? 'bg-muted text-muted-foreground'
             : 'bg-primary text-primary-foreground',
-          isPending && 'opacity-60',
         )}
       >
         <div className='flex flex-row items-center gap-2 flex-shrink-0'>

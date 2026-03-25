@@ -5,6 +5,7 @@ import { cache } from 'react';
 
 import { API_URL } from '@/shared/lib/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
+import { ROUTES } from '@/shared/lib/routes';
 
 import type { AttendeeProps, GuestProps } from '@/entities/participant';
 import type { ApiResponse } from '@/shared/types/common';
@@ -107,7 +108,7 @@ export async function setProfile(
     throw new Error('Failed to save participant mapping');
   }
 
-  revalidatePath('/dashboard/meeting');
+  revalidatePath(ROUTES.DASHBOARD.MEETING);
 
   return { success: true };
 }
