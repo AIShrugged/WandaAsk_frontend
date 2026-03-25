@@ -5,6 +5,7 @@ import {
   Bug,
   Calendar,
   BookOpen,
+  LayoutDashboard,
   MessageSquare,
   SquareKanban,
   File,
@@ -17,9 +18,10 @@ import { ROUTES } from '@/shared/lib/routes';
 import type { MenuProps } from '@/features/menu/model/types';
 
 /**
- *
- * @param root0
- * @param root0.canManageAgents
+ * Builds the sidebar navigation items for the current user.
+ * @param root0 - Options object.
+ * @param root0.canManageAgents - Whether the user has the agent-management permission.
+ * @returns Array of menu item descriptors to render in the sidebar.
  */
 export function getMenuItems({
   canManageAgents,
@@ -27,6 +29,12 @@ export function getMenuItems({
   canManageAgents: boolean;
 }): MenuProps[] {
   const items: MenuProps[] = [
+    {
+      id: 'main-dashboard',
+      label: 'Dashboard',
+      icon: 'layoutDashboard',
+      href: ROUTES.DASHBOARD.MAIN,
+    },
     {
       id: 'chat',
       label: 'AI Chat',
@@ -68,12 +76,6 @@ export function getMenuItems({
       label: 'Kanban',
       icon: 'kanban',
       href: ROUTES.DASHBOARD.KANBAN,
-    },
-    {
-      id: 'statistics',
-      label: 'Statistics',
-      icon: 'barChart',
-      href: ROUTES.DASHBOARD.SUMMARY,
     },
   ];
 
@@ -119,6 +121,7 @@ export function getMenuItems({
 
 export const ICONS_MAP = {
   bot: Bot,
+  layoutDashboard: LayoutDashboard,
   teams: UsersRound,
   bookOpen: BookOpen,
   calendar: Calendar,

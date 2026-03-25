@@ -118,7 +118,7 @@ test.describe('Meeting detail — authenticated', () => {
     });
   });
 
-  test('renders tab buttons (Overview, Follow-up, Transcript, Analysis)', async ({
+  test('renders tab buttons (Overview, Follow-up, Transcript, Tasks)', async ({
     page,
   }) => {
     if (!meetingId) return;
@@ -131,7 +131,7 @@ test.describe('Meeting detail — authenticated', () => {
     await expect(page.getByRole('button', { name: /transcript/i })).toBeVisible(
       { timeout: 10_000 },
     );
-    await expect(page.getByRole('button', { name: /analysis/i })).toBeVisible({
+    await expect(page.getByRole('button', { name: /tasks/i })).toBeVisible({
       timeout: 10_000,
     });
   });
@@ -140,12 +140,11 @@ test.describe('Meeting detail — authenticated', () => {
     if (!meetingId) return;
     const url = page.url();
 
-    expect(url).not.toMatch(/tab=followup/);
     expect(url).not.toMatch(/tab=transcript/);
     expect(url).not.toMatch(/tab=analysis/);
   });
 
-  test('clicking "Follow-up" tab updates URL with ?tab=followup', async ({
+  test('clicking "Follow-up" tab updates URL with ?tab=analysis', async ({
     page,
   }) => {
     if (!meetingId) return;
@@ -153,7 +152,7 @@ test.describe('Meeting detail — authenticated', () => {
 
     await expect(followUpBtn).toBeVisible({ timeout: 10_000 });
     await followUpBtn.click();
-    await expect(page).toHaveURL(/tab=followup/, { timeout: 8000 });
+    await expect(page).toHaveURL(/tab=analysis/, { timeout: 8000 });
   });
 
   test('clicking "Transcript" tab updates URL with ?tab=transcript', async ({
@@ -165,16 +164,5 @@ test.describe('Meeting detail — authenticated', () => {
     await expect(transcriptBtn).toBeVisible({ timeout: 10_000 });
     await transcriptBtn.click();
     await expect(page).toHaveURL(/tab=transcript/, { timeout: 8000 });
-  });
-
-  test('clicking "Analysis" tab updates URL with ?tab=analysis', async ({
-    page,
-  }) => {
-    if (!meetingId) return;
-    const analysisBtn = page.getByRole('button', { name: /analysis/i });
-
-    await expect(analysisBtn).toBeVisible({ timeout: 10_000 });
-    await analysisBtn.click();
-    await expect(page).toHaveURL(/tab=analysis/, { timeout: 8000 });
   });
 });

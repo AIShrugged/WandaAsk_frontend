@@ -1,6 +1,5 @@
 export const available_tabs = {
   summary: 'summary',
-  followup: 'followup',
   transcript: 'transcript',
   analysis: 'analysis',
   tasks: 'tasks',
@@ -8,7 +7,6 @@ export const available_tabs = {
 
 export const validTabs = [
   'summary',
-  'followup',
   'transcript',
   'analysis',
   'tasks',

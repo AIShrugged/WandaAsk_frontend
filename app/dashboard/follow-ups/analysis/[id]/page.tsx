@@ -2,7 +2,6 @@ import { redirect } from 'next/navigation';
 import React, { Suspense } from 'react';
 
 import { DeprecatedFollowUpModal, ExportButton } from '@/features/follow-up';
-import FollowUp from '@/features/follow-up/ui/follow-up';
 import {
   available_tabs,
   type Tab,
@@ -65,9 +64,6 @@ export default async function Page({ params, searchParams }: PageProps) {
                 event={followUp.calendar_event}
                 withoutMatcher
               />
-            )}
-            {currentTab === available_tabs.followup && (
-              <FollowUp data={followUp?.text} />
             )}
             {currentTab === available_tabs.transcript && <Transcript id={id} />}
             {currentTab === available_tabs.analysis && (

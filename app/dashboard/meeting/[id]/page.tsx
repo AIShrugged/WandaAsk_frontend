@@ -7,7 +7,6 @@ import {
   getMeetingTasks,
 } from '@/features/event/api/calendar-events';
 import { DeprecatedFollowUpModal } from '@/features/follow-up';
-import FollowUp from '@/features/follow-up/ui/follow-up';
 import {
   available_tabs,
   type Tab,
@@ -86,9 +85,6 @@ export default async function Page({ params, searchParams }: PageProps) {
           <Suspense fallback={<SpinLoader />} key={currentTab}>
             {currentTab === available_tabs.summary && (
               <EventOverview id={id} event={followUp.calendar_event} />
-            )}
-            {currentTab === available_tabs.followup && (
-              <FollowUp data={followUp?.text} />
             )}
             {currentTab === available_tabs.transcript && <Transcript id={id} />}
             {currentTab === available_tabs.analysis && (

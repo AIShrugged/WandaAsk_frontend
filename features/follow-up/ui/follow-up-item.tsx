@@ -3,7 +3,6 @@ import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 
 import { ROUTES } from '@/shared/lib/routes';
-import { Badge } from '@/shared/ui/badge/Badge';
 import { H3 } from '@/shared/ui/typography/H3';
 
 import type { TeamFollowUpDTO } from '@/entities/team';
@@ -26,9 +25,6 @@ export function FollowUpItem({ followUp }: { followUp: TeamFollowUpDTO }) {
         <div className='flex-1'>
           <div className='flex items-center gap-2'>
             <H3>{followUp?.calendar_event.title}</H3>
-            {followUp.is_deprecated && (
-              <Badge variant='warning'>Created with outdated methodology</Badge>
-            )}
           </div>
           <p className='text-sm text-muted-foreground'>
             Organizer: {followUp?.user.name}

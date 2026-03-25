@@ -30,9 +30,7 @@ describe('ButtonsRow', () => {
     expect(
       screen.getByRole('button', { name: 'Transcript' }),
     ).toBeInTheDocument();
-    expect(
-      screen.getByRole('button', { name: 'Analysis' }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Tasks' })).toBeInTheDocument();
   });
 
   it('marks the active tab with primary style', () => {
@@ -51,7 +49,7 @@ describe('ButtonsRow', () => {
 
   it('navigates to correct tab on click', async () => {
     render(<ButtonsRow currentTab='summary' />);
-    await userEvent.click(screen.getByRole('link', { name: 'Analysis' }));
+    await userEvent.click(screen.getByRole('link', { name: 'Follow-up' }));
     expect(mockReplace).toHaveBeenCalledWith('?tab=analysis', {
       scroll: false,
     });

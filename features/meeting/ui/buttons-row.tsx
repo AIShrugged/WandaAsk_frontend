@@ -12,15 +12,11 @@ const items = [
   },
   {
     title: 'Follow-up',
-    link: available_tabs.followup,
+    link: available_tabs.analysis,
   },
   {
     title: 'Transcript',
     link: available_tabs.transcript,
-  },
-  {
-    title: 'Analysis',
-    link: available_tabs.analysis,
   },
   {
     title: 'Tasks',

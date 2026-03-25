@@ -19,6 +19,7 @@ export const getAttendees = cache(
         ...authHeaders,
         'Content-Type': 'application/json',
       },
+      cache: 'no-store',
     });
 
     if (!res.ok) {
@@ -49,6 +50,7 @@ export const getGuests = cache(
         ...authHeaders,
         'Content-Type': 'application/json',
       },
+      cache: 'no-store',
     });
 
     if (!res.ok) {
@@ -102,7 +104,7 @@ export async function setProfile(
   );
 
   if (!res.ok) {
-    throw new Error('Не удалось сохранить сопоставление');
+    throw new Error('Failed to save participant mapping');
   }
 
   revalidatePath('/dashboard/meeting');

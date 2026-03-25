@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useRef, useState, useTransition } from 'react';
+import { useCallback, useEffect, useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
 import { moveKanbanCard } from '@/features/kanban/api/kanban';
@@ -76,11 +76,18 @@ function getInitials(name: string): string {
 }
 
 /**
- * TaskPreviewPanel shows a detailed preview of a hovered kanban card.
+ * TaskPreviewPanel shows a detailed preview of a clicked kanban card.
  * @param props - component props.
- * @param props.card - card to preview, or null when nothing is hovered.
+ * @param props.card - card to preview, or null when none is selected.
+ * @param props.onClose - called to close the panel.
  */
-function TaskPreviewPanel({ card }: { card: KanbanCard | null }) {
+function TaskPreviewPanel({
+  card,
+  onClose,
+}: {
+  card: KanbanCard | null;
+  onClose: () => void;
+}) {
   const priorityConfig: Record<
     KanbanPriority,
     { label: string; color: string }
@@ -125,9 +132,17 @@ function TaskPreviewPanel({ card }: { card: KanbanCard | null }) {
             <span className='text-xs font-semibold uppercase tracking-wider text-muted-foreground truncate'>
               {colConfig?.label}
             </span>
-            <span className='ml-auto text-xs text-muted-foreground/60 font-mono flex-shrink-0'>
+            <span className='text-xs text-muted-foreground/60 font-mono flex-shrink-0'>
               I{card.id}
             </span>
+            <button
+              type='button'
+              onClick={onClose}
+              className='ml-auto p-0.5 rounded text-muted-foreground hover:text-foreground hover:bg-accent/40 transition-colors'
+              aria-label='Close preview'
+            >
+              ✕
+            </button>
           </div>
 
           {/* Body */}
@@ -244,24 +259,22 @@ function TaskPreviewPanel({ card }: { card: KanbanCard | null }) {
  * @param props.onMoveToColumn - move card handler.
  * @param props.columns - available target columns.
  * @param props.isMoving - whether card is being moved.
- * @param props.onHover - called with card when hovered, null when left.
+ * @param props.onCardClick - called with card when clicked to show preview.
  */
 function KanbanCardItem({
   card,
   onMoveToColumn,
   columns,
   isMoving,
-  onHover,
+  onCardClick,
 }: {
   card: KanbanCard;
   onMoveToColumn: (card: KanbanCard, status: IssueStatus) => void;
   columns: typeof KANBAN_COLUMNS;
   isMoving: boolean;
-  onHover: (card: KanbanCard | null) => void;
+  onCardClick: (card: KanbanCard) => void;
 }) {
   const [dragOver] = useState(false);
-
-  const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const typeColors: Record<string, string> = {
     task: 'bg-blue-500/20 text-blue-300',
@@ -275,34 +288,19 @@ function KanbanCardItem({
     return col.id !== card.status;
   });
 
-  /**
-   *
-   */
-  const handleMouseEnter = () => {
-    hoverTimerRef.current = setTimeout(() => {
-      onHover(card);
-    }, 150);
-  };
-
-  /**
-   *
-   */
-  const handleMouseLeave = () => {
-    if (hoverTimerRef.current !== null) {
-      clearTimeout(hoverTimerRef.current);
-      hoverTimerRef.current = null;
-    }
-  };
-
   return (
     <div
       draggable
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+      onClick={(event) => {
+        // Don't open preview when clicking the title link or move buttons
+        const target = event.target as HTMLElement;
+
+        if (target.closest('a') ?? target.closest('button')) return;
+        onCardClick(card);
+      }}
       onDragStart={(event) => {
         event.dataTransfer.setData('cardId', String(card.id));
         event.dataTransfer.setData('sourceStatus', card.status);
-        onHover(null);
       }}
       className={[
         'group rounded-lg border bg-card p-3 cursor-grab active:cursor-grabbing transition-all',
@@ -399,6 +397,7 @@ function KanbanCardItem({
  * @param props.onMoveToColumn - move handler.
  * @param props.movingCardId - id of card being moved.
  * @param props.onCardHover
+ * @param props.onCardClick
  */
 function KanbanColumnComponent({
   id,
@@ -408,7 +407,7 @@ function KanbanColumnComponent({
   onDrop,
   onMoveToColumn,
   movingCardId,
-  onCardHover,
+  onCardClick,
 }: {
   id: IssueStatus;
   label: string;
@@ -421,7 +420,7 @@ function KanbanColumnComponent({
   ) => void;
   onMoveToColumn: (card: KanbanCard, status: IssueStatus) => void;
   movingCardId: number | null;
-  onCardHover: (card: KanbanCard | null) => void;
+  onCardClick: (card: KanbanCard) => void;
 }) {
   const [isDragOver, setIsDragOver] = useState(false);
 
@@ -488,7 +487,7 @@ function KanbanColumnComponent({
               onMoveToColumn={onMoveToColumn}
               columns={KANBAN_COLUMNS}
               isMoving={movingCardId === card.id}
-              onHover={onCardHover}
+              onCardClick={onCardClick}
             />
           );
         })}
@@ -885,12 +884,7 @@ export function KanbanBoard({
 
       {/* Board: columns + preview panel */}
       <div className='flex gap-3 flex-1 min-h-0'>
-        <div
-          className='flex gap-3 overflow-x-auto pb-4 flex-1 min-h-0'
-          onMouseLeave={() => {
-            setHoveredCard(null);
-          }}
-        >
+        <div className='flex gap-3 overflow-x-auto pb-4 flex-1 min-h-0'>
           {KANBAN_COLUMNS.map((col) => {
             return (
               <KanbanColumnComponent
@@ -902,20 +896,29 @@ export function KanbanBoard({
                 onDrop={handleDrop}
                 onMoveToColumn={handleMoveToColumn}
                 movingCardId={movingCardId}
-                onCardHover={setHoveredCard}
+                onCardClick={(card) => {
+                  setHoveredCard((prev) => {
+                    return prev?.id === card.id ? null : card;
+                  });
+                }}
               />
             );
           })}
         </div>
 
-        {/* Preview panel — hidden on small screens, revealed on hover */}
+        {/* Preview panel — hidden on small screens, revealed on card click */}
         <div
           className={[
             'hidden lg:flex pb-4 flex-shrink-0 self-stretch items-stretch overflow-hidden transition-all duration-200',
             hoveredCard ? 'w-[260px] xl:w-[300px]' : 'w-0',
           ].join(' ')}
         >
-          <TaskPreviewPanel card={hoveredCard} />
+          <TaskPreviewPanel
+            card={hoveredCard}
+            onClose={() => {
+              setHoveredCard(null);
+            }}
+          />
         </div>
       </div>
     </div>

@@ -25,5 +25,6 @@ export const ROUTES = {
     SUMMARY: '/dashboard/summary',
     KANBAN: '/dashboard/kanban',
     DEBUG_LOGS: '/dashboard/debug-logs',
+    MAIN: '/dashboard/main',
   },
 } as const;
