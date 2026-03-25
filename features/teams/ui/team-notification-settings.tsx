@@ -272,6 +272,8 @@ export default function TeamNotificationSettings({
    *
    */
   const handleAdd = () => {
+    if (!open) return;
+
     open(
       <AddNotificationModal
         close={close}
