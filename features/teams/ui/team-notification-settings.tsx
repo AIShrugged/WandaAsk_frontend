@@ -15,8 +15,8 @@ import ModalBody from '@/shared/ui/modal/modal-body';
 import ModalFooter from '@/shared/ui/modal/modal-footer';
 import ModalHeader from '@/shared/ui/modal/modal-header';
 
-import type { TeamNotificationSetting } from '@/features/teams/model/types';
 import type { TelegramChatRegistration } from '@/features/chat/types';
+import type { TeamNotificationSetting } from '@/features/teams/model/types';
 import type { ModalContextValue } from '@/shared/types/modal';
 
 // ─── Event type labels ────────────────────────────────────────────────────────
@@ -32,12 +32,27 @@ interface AddModalProps extends ModalContextValue {
   availableChats: TelegramChatRegistration[];
 }
 
-function AddNotificationModal({ close, teamId, availableChats }: AddModalProps) {
+/**
+ *
+ * @param root0
+ * @param root0.close
+ * @param root0.teamId
+ * @param root0.availableChats
+ */
+function AddNotificationModal({
+  close,
+  teamId,
+  availableChats,
+}: AddModalProps) {
   const [selectedChatId, setSelectedChatId] = useState<string>(
     availableChats[0] ? String(availableChats[0].id) : '',
   );
+
   const [isPending, startTransition] = useTransition();
 
+  /**
+   *
+   */
   const handleSubmit = () => {
     if (!selectedChatId) return;
 
@@ -65,7 +80,9 @@ function AddNotificationModal({ close, teamId, availableChats }: AddModalProps) 
         <div className='flex flex-col gap-6'>
           <div className='flex flex-col gap-1.5'>
             <p className='text-sm text-muted-foreground'>Event</p>
-            <p className='text-sm font-medium text-foreground'>Meeting summary</p>
+            <p className='text-sm font-medium text-foreground'>
+              Meeting summary
+            </p>
           </div>
 
           <div className='flex flex-col gap-1.5'>
@@ -74,7 +91,10 @@ function AddNotificationModal({ close, teamId, availableChats }: AddModalProps) 
           </div>
 
           <div className='flex flex-col gap-1.5'>
-            <label className='text-sm text-muted-foreground' htmlFor='chat-select'>
+            <label
+              className='text-sm text-muted-foreground'
+              htmlFor='chat-select'
+            >
               Telegram chat
             </label>
             {availableChats.length === 0 ? (
@@ -86,14 +106,18 @@ function AddNotificationModal({ close, teamId, availableChats }: AddModalProps) 
               <select
                 id='chat-select'
                 value={selectedChatId}
-                onChange={(e) => setSelectedChatId(e.target.value)}
+                onChange={(e) => {
+                  return setSelectedChatId(e.target.value);
+                }}
                 className='w-full h-10 px-3 rounded-[var(--radius-button)] border border-input bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring'
               >
-                {availableChats.map((chat) => (
-                  <option key={chat.id} value={String(chat.id)}>
-                    {chat.chat_title ?? `Chat #${chat.id}`}
-                  </option>
-                ))}
+                {availableChats.map((chat) => {
+                  return (
+                    <option key={chat.id} value={String(chat.id)}>
+                      {chat.chat_title ?? `Chat #${chat.id}`}
+                    </option>
+                  );
+                })}
               </select>
             )}
           </div>
@@ -111,7 +135,9 @@ function AddNotificationModal({ close, teamId, availableChats }: AddModalProps) 
           </Button>
           <Button
             onClick={handleSubmit}
-            disabled={isPending || !selectedChatId || availableChats.length === 0}
+            disabled={
+              isPending || !selectedChatId || availableChats.length === 0
+            }
             loading={isPending}
             loadingText='Saving...'
             type='button'
@@ -131,14 +157,24 @@ interface SettingRowProps {
   teamId: number;
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.setting
+ * @param root0.teamId
+ */
 function SettingRow({ setting, teamId }: SettingRowProps) {
   const [isPending, startTransition] = useTransition();
 
   const chatTitle =
     setting.notifiable?.data?.chat_title ?? `Chat #${setting.notifiable?.id}`;
 
-  const eventLabel = EVENT_TYPE_LABELS[setting.event_type] ?? setting.event_type;
+  const eventLabel =
+    EVENT_TYPE_LABELS[setting.event_type] ?? setting.event_type;
 
+  /**
+   *
+   */
   const handleToggle = () => {
     startTransition(async () => {
       const result = await updateTeamNotificationSetting(
@@ -151,6 +187,9 @@ function SettingRow({ setting, teamId }: SettingRowProps) {
     });
   };
 
+  /**
+   *
+   */
   const handleDelete = () => {
     startTransition(async () => {
       const result = await deleteTeamNotificationSetting(teamId, setting.id);
@@ -165,7 +204,9 @@ function SettingRow({ setting, teamId }: SettingRowProps) {
       <div className='flex items-center gap-3 min-w-0'>
         <Bell className='size-4 text-muted-foreground flex-shrink-0' />
         <div className='min-w-0'>
-          <p className='text-sm font-medium text-foreground truncate'>{eventLabel}</p>
+          <p className='text-sm font-medium text-foreground truncate'>
+            {eventLabel}
+          </p>
           <p className='text-xs text-muted-foreground truncate'>
             Telegram · {chatTitle}
           </p>
@@ -213,6 +254,13 @@ interface Props {
   availableChats: TelegramChatRegistration[];
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.teamId
+ * @param root0.settings
+ * @param root0.availableChats
+ */
 export default function TeamNotificationSettings({
   teamId,
   settings,
@@ -220,6 +268,9 @@ export default function TeamNotificationSettings({
 }: Props) {
   const { open, close } = useModal();
 
+  /**
+   *
+   */
   const handleAdd = () => {
     open(
       <AddNotificationModal
@@ -256,9 +307,11 @@ export default function TeamNotificationSettings({
         </p>
       ) : (
         <div className='flex flex-col gap-2'>
-          {settings.map((setting) => (
-            <SettingRow key={setting.id} setting={setting} teamId={teamId} />
-          ))}
+          {settings.map((setting) => {
+            return (
+              <SettingRow key={setting.id} setting={setting} teamId={teamId} />
+            );
+          })}
         </div>
       )}
     </div>

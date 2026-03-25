@@ -14,6 +14,10 @@ import type {
 } from '@/features/teams/model/types';
 import type { ApiResponse } from '@/shared/types/common';
 
+/**
+ *
+ * @param teamId
+ */
 export async function getTeamNotificationSettings(
   teamId: number | string,
 ): Promise<TeamNotificationSetting[]> {
@@ -29,7 +33,12 @@ export async function getTeamNotificationSettings(
 
     const text = await res.text();
 
-    logApiError({ url: res.url, status: res.status, statusText: res.statusText, body: text });
+    logApiError({
+      url: res.url,
+      status: res.status,
+      statusText: res.statusText,
+      body: text,
+    });
     throw new Error('Failed to load notification settings');
   }
 
@@ -40,6 +49,11 @@ export async function getTeamNotificationSettings(
   return json.data;
 }
 
+/**
+ *
+ * @param teamId
+ * @param data
+ */
 export async function createTeamNotificationSetting(
   teamId: number | string,
   data: TeamNotificationSettingCreateDTO,
@@ -57,6 +71,7 @@ export async function createTeamNotificationSetting(
     if (res.status === 401) redirect('/api/auth/clear-session');
 
     const text = await res.text();
+
     const parsed = parseApiError(text, 'Failed to create notification setting');
 
     if (res.status === 422) {
@@ -71,6 +86,12 @@ export async function createTeamNotificationSetting(
   return {};
 }
 
+/**
+ *
+ * @param teamId
+ * @param settingId
+ * @param enabled
+ */
 export async function updateTeamNotificationSetting(
   teamId: number | string,
   settingId: number,
@@ -99,6 +120,11 @@ export async function updateTeamNotificationSetting(
   return {};
 }
 
+/**
+ *
+ * @param teamId
+ * @param settingId
+ */
 export async function deleteTeamNotificationSetting(
   teamId: number | string,
   settingId: number,

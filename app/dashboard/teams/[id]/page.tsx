@@ -28,12 +28,14 @@ export default async function Page({ params }: PageProps) {
 
   if (!team) return null;
 
-  const settings = settingsResult.status === 'fulfilled' ? settingsResult.value : [];
+  const settings =
+    settingsResult.status === 'fulfilled' ? settingsResult.value : [];
+
   const allChats = chatsResult.status === 'fulfilled' ? chatsResult.value : [];
 
-  const teamChats = allChats.filter(
-    (c) => c.team_id === team.id && c.bound_at !== null,
-  );
+  const teamChats = allChats.filter((c) => {
+    return c.team_id === team.id && c.bound_at !== null;
+  });
 
   return (
     <Card className='min-h-full h-full overflow-x-hidden overflow-y-scroll'>
