@@ -111,6 +111,21 @@ export interface AgentTasksMeta {
   [key: string]: unknown;
 }
 
+export interface AgentActivityItem {
+  id: number;
+  tool_name: string;
+  description: string;
+  success: boolean;
+  agent_run_uuid: string | null;
+  created_at: string;
+}
+
+export interface AgentActivityResponse {
+  items: AgentActivityItem[];
+  totalCount: number;
+  hasMore: boolean;
+}
+
 export interface AgentSelectOption {
   value: string;
   label: string;

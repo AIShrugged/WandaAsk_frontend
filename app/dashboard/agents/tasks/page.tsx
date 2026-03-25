@@ -76,7 +76,7 @@ export default async function AgentTasksPage() {
           </div>
 
           {tasks.length > 0 ? (
-            <AgentTasksList tasks={tasks} />
+            <AgentTasksList initialTasks={tasks} totalCount={totalCount} />
           ) : (
             <EmptyState
               icon={Bot}

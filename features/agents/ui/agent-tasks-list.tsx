@@ -1,5 +1,9 @@
-import Link from 'next/link';
+'use client';
 
+import Link from 'next/link';
+import { useCallback } from 'react';
+
+import { getAgentTasks } from '@/features/agents/api/agents';
 import {
   formatBooleanLabel,
   formatDateTime,
@@ -7,10 +11,15 @@ import {
   getOrganizationLabel,
   getTeamLabel,
 } from '@/features/agents/lib/format';
+import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
 import { ROUTES } from '@/shared/lib/routes';
 import { Badge } from '@/shared/ui/badge';
+import { InfiniteScrollStatus } from '@/shared/ui/layout/infinite-scroll-status';
+import SpinLoader from '@/shared/ui/layout/spin-loader';
 
 import type { AgentTask } from '@/features/agents/model/types';
+
+const PAGE_SIZE = 20;
 
 /**
  *
@@ -20,12 +29,35 @@ function getTaskStatusVariant(enabled: boolean) {
   return enabled ? 'success' : 'warning';
 }
 
+type Props = {
+  initialTasks: AgentTask[];
+  totalCount: number;
+};
+
 /**
  *
  * @param root0
- * @param root0.tasks
+ * @param root0.initialTasks
+ * @param root0.totalCount
  */
-export function AgentTasksList({ tasks }: { tasks: AgentTask[] }) {
+export function AgentTasksList({ initialTasks, totalCount }: Props) {
+  const fetchMore = useCallback(async (offset: number) => {
+    const result = await getAgentTasks(offset, PAGE_SIZE);
+
+    return { items: result.data, hasMore: result.hasMore };
+  }, []);
+
+  const {
+    items: tasks,
+    isLoading,
+    hasMore,
+    sentinelRef,
+  } = useInfiniteScroll({
+    fetchMore,
+    initialItems: initialTasks,
+    initialHasMore: initialTasks.length < totalCount,
+  });
+
   return (
     <>
       {/* Mobile card list — hidden on md+ */}
@@ -141,6 +173,20 @@ export function AgentTasksList({ tasks }: { tasks: AgentTask[] }) {
           </tbody>
         </table>
       </div>
+
+      {!hasMore && tasks.length > 0 ? (
+        <div className='py-4'>
+          <InfiniteScrollStatus itemCount={tasks.length} />
+        </div>
+      ) : (
+        <div ref={sentinelRef} className='h-10' />
+      )}
+
+      {isLoading && (
+        <div className='flex justify-center py-4'>
+          <SpinLoader />
+        </div>
+      )}
     </>
   );
 }

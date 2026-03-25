@@ -254,17 +254,29 @@ export async function validateAgentProfilePayload(
 
 /**
  *
+ * @param offset
+ * @param limit
  */
-export async function getAgentTasks() {
+export async function getAgentTasks(offset = 0, limit = 20) {
+  const params = new URLSearchParams({
+    offset: String(offset),
+    limit: String(limit),
+  });
+
   const { response, json } = await requestAgentApi<AgentTask[]>(
-    '/agent-tasks',
+    `/agent-tasks?${params}`,
     { method: 'GET' },
     'Failed to load agent tasks',
   );
 
+  const data = json.data ?? [];
+
+  const totalCount = Number(response.headers.get('Items-Count') ?? '0');
+
   return {
-    data: json.data ?? [],
-    totalCount: Number(response.headers.get('Items-Count') ?? '0'),
+    data,
+    totalCount,
+    hasMore: offset + data.length < totalCount,
   };
 }
 
