@@ -1,11 +1,14 @@
 import { defineConfig, globalIgnores } from 'eslint/config';
 import nextVitals from 'eslint-config-next/core-web-vitals';
 import nextTs from 'eslint-config-next/typescript';
+import boundariesPlugin from 'eslint-plugin-boundaries';
 import importPlugin from 'eslint-plugin-import';
 import jsdocPlugin from 'eslint-plugin-jsdoc';
 import securityPlugin from 'eslint-plugin-security';
 import sonarjsPlugin from 'eslint-plugin-sonarjs';
 import unicornPlugin from 'eslint-plugin-unicorn';
+
+import { useServerInApi } from './eslint-rules/use-server-in-api.mjs';
 
 export default defineConfig([
   ...nextVitals,
@@ -155,6 +158,65 @@ export default defineConfig([
     files: ['e2e/**/*.spec.ts'],
     rules: {
       'sonarjs/no-skipped-tests': 'off',
+    },
+  },
+
+  // ------------------------------
+  // Custom local rules
+  // ------------------------------
+  {
+    plugins: {
+      local: { rules: { 'use-server-in-api': useServerInApi } },
+    },
+    files: ['features/*/api/*.ts', 'features/*/api/*.tsx'],
+    rules: {
+      'local/use-server-in-api': 'error',
+    },
+  },
+
+  // ------------------------------
+  // FSD layer boundary enforcement
+  // Prevents cross-feature imports and upward layer violations
+  // ------------------------------
+  {
+    plugins: {
+      boundaries: boundariesPlugin,
+    },
+    settings: {
+      'boundaries/elements': [
+        { type: 'app', pattern: 'app/**/*' },
+        { type: 'widgets', pattern: 'widgets/**/*' },
+        { type: 'features', pattern: 'features/**/*' },
+        { type: 'entities', pattern: 'entities/**/*' },
+        { type: 'shared', pattern: 'shared/**/*' },
+      ],
+      'boundaries/ignore': ['**/*.test.*', '**/*.spec.*'],
+    },
+    rules: {
+      'boundaries/element-types': [
+        'error',
+        {
+          default: 'disallow',
+          rules: [
+            // app can import from anything
+            {
+              from: 'app',
+              allow: ['app', 'widgets', 'features', 'entities', 'shared'],
+            },
+            // widgets can import from features, entities, shared (not app)
+            {
+              from: 'widgets',
+              allow: ['widgets', 'features', 'entities', 'shared'],
+            },
+            // features can import from entities and shared only (not other features)
+            { from: 'features', allow: ['entities', 'shared'] },
+            // entities can import from entities and shared
+            { from: 'entities', allow: ['entities', 'shared'] },
+            // shared cannot import from any upper layer
+            { from: 'shared', allow: ['shared'] },
+          ],
+        },
+      ],
     },
   },
 
