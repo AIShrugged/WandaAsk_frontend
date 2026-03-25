@@ -257,3 +257,166 @@ src/
 - Server Actions for data mutations; keep API calls server-side
 - Toast notifications via `useToast()` from `@/shared/ui` for network/server
   errors
+
+## API Layer Conventions (features/\*/api/)
+
+Every file under `features/<name>/api/` **must** follow these rules. No
+exceptions.
+
+### Rule 1 — Always `'use server'` at the top
+
+Every `features/<name>/api/*.ts` file must begin with `'use server';`. This
+marks all exports as Server Actions, preventing accidental client-side
+execution.
+
+### Rule 2 — Use shared HTTP clients, never raw `fetch`
+
+**Do not** call `fetch(...)` directly. Use the clients from
+`@/shared/lib/httpClient`:
+
+| Client                             | When to use                                     |
+| ---------------------------------- | ----------------------------------------------- |
+| `httpClient<T>(url, options?)`     | Single-item GET, POST, PUT, PATCH, DELETE       |
+| `httpClientList<T>(url, options?)` | List endpoints that return `Items-Count` header |
+
+Both clients handle auth headers, 401 redirect, error logging, and `ServerError`
+throwing automatically. Raw `fetch` must only appear in `shared/lib/` itself.
+
+```ts
+// ✅ Correct
+import { httpClient, httpClientList } from '@/shared/lib/httpClient';
+
+export async function getTeam(id: number) {
+  const { data } = await httpClient<TeamProps>(`${API_URL}/teams/${id}`);
+  return data;
+}
+
+export async function getTeams(orgId: number) {
+  return httpClientList<TeamProps>(`${API_URL}/organizations/${orgId}/teams`);
+}
+
+// ❌ Wrong — raw fetch, manual auth headers, manual error handling
+export async function getTeam(id: number) {
+  const authHeaders = await getAuthHeaders();
+  const res = await fetch(`${API_URL}/teams/${id}`, { headers: authHeaders });
+  if (!res.ok) throw new Error(await res.text());
+  ...
+}
+```
+
+### Rule 3 — Action functions (mutations that return errors to UI)
+
+For mutations where the UI needs to handle validation/permission errors without
+throwing (forms, modals), return `ActionResult<T>` from
+`@/shared/types/server-action`:
+
+```ts
+import type { ActionResult } from '@/shared/types/server-action';
+import { parseApiError } from '@/shared/lib/apiError';
+import { ServerError } from '@/shared/lib/errors';
+
+export async function createTeam(
+  payload: TeamCreatePayload,
+): Promise<ActionResult<TeamProps>> {
+  try {
+    const { data } = await httpClient<TeamProps>(`${API_URL}/teams`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return { data, error: null };
+  } catch (error) {
+    if (error instanceof ServerError) {
+      const parsed = parseApiError(
+        error.responseBody ?? '',
+        'Failed to create team',
+      );
+      return {
+        data: null,
+        error: parsed.message,
+        fieldErrors: parsed.fieldErrors,
+      };
+    }
+    throw error; // re-throw unexpected errors
+  }
+}
+```
+
+For read-only actions (GET) that are called from Server Components — just throw,
+let the error boundary handle it. Do not wrap in try/catch.
+
+### Rule 4 — File naming and splitting
+
+One file per resource. If a feature has multiple distinct backend resources,
+split into separate files:
+
+```
+features/agents/api/
+  agent-profiles.ts   # /agent-profiles endpoints
+  agent-tasks.ts      # /agent-tasks endpoints
+  agent-tools.ts      # /agent-tools endpoints
+```
+
+Do not put all resources in a single `agents.ts` when there are 3+ distinct
+resources with their own CRUD.
+
+### Rule 5 — Revalidation
+
+Call `revalidatePath(...)` after every mutation that changes data visible
+elsewhere in the UI. Use the most specific path possible.
+
+```ts
+revalidatePath('/dashboard/teams'); // ✅ specific
+revalidatePath('/'); // ❌ too broad
+```
+
+### Rule 6 — Types live in model/, not api/
+
+Never define types inside `api/` files. All interfaces and types go in:
+
+- `features/<name>/model/types.ts` — feature-local types
+- `entities/<name>/model/types.ts` — shared domain types used across features
+
+Import them explicitly; never re-export from `api/`.
+
+### Rule 7 — No private helper functions duplicating shared/lib
+
+Do not write local helper functions that replicate what `httpClient`,
+`parseApiError`, `logApiError`, or `ServerError` already do. If a new pattern
+appears in multiple api/ files, add it to `shared/lib/httpClient.ts` instead.
+
+## FSD Layer Rules
+
+### Import direction (strict)
+
+```
+app → features → entities → shared
+widgets → features → entities → shared
+```
+
+- `features/A` must NOT import from `features/B` — put shared logic in
+  `entities/` or `shared/`
+- `entities/` must NOT import from `features/`
+- `shared/` must NOT import from `entities/` or `features/`
+- `app/` imports only from feature `index.ts` public APIs, never deep paths
+
+### Each feature must have index.ts
+
+Every `features/<name>/` and `entities/<name>/` directory must have an
+`index.ts` that explicitly re-exports its public API. Consumers import from
+`@/features/<name>` — never from deep paths like
+`@/features/<name>/model/types`.
+
+Exception: `api/` files are Server Actions — they can be imported directly by
+`app/` pages since they are not bundled client-side.
+
+### What goes where
+
+| Code                                            | Layer                            |
+| ----------------------------------------------- | -------------------------------- |
+| Page layout, routing                            | `app/`                           |
+| Feature-specific UI, logic, API                 | `features/<name>/`               |
+| Domain types shared across features             | `entities/<name>/model/types.ts` |
+| Reusable UI primitives (Button, Input)          | `shared/ui/`                     |
+| Generic utilities, HTTP client, logger          | `shared/lib/`                    |
+| Composite page sections (use multiple features) | `widgets/`                       |
