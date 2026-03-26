@@ -22,9 +22,7 @@ const FORM_ID = 'login-form';
  */
 export default function LoginForm() {
   const router = useRouter();
-
   const [isPending, startTransition] = useTransition();
-
   const {
     control,
     handleSubmit,
@@ -36,7 +34,6 @@ export default function LoginForm() {
     mode: 'onBlur',
     reValidateMode: 'onChange',
   });
-
   /**
    * onSubmit.
    * @param data - data.
@@ -79,7 +76,6 @@ export default function LoginForm() {
               control={control}
               render={({ field: hookField, fieldState }) => {
                 const variant: VariantType = field.variant;
-
                 const Component = VARIANT_MAPPER[variant];
 
                 return (

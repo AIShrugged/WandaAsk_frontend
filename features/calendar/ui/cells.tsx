@@ -39,23 +39,16 @@ export default function Cells({
   onShowAll,
 }: CellsProps) {
   const monthStart = startOfMonth(currentMonth);
-
   const monthEnd = endOfMonth(monthStart);
-
   const startDate = startOfWeek(monthStart, { weekStartsOn: 1 });
-
   const endDate = endOfWeek(monthEnd, { weekStartsOn: 1 });
-
   const totalDays = differenceInCalendarDays(endDate, startDate) + 1;
-
   const weeksCount = Math.ceil(totalDays / 7);
-
   // Build date→events map once; use slice(0,10) — faster than split(' ')[0]
   const eventsByDate = new Map<string, EventProps[]>();
 
   for (const ev of events) {
     const key = ev.starts_at.slice(0, 10);
-
     const existing = eventsByDate.get(key);
 
     if (existing) {
@@ -72,11 +65,8 @@ export default function Cells({
     >
       {Array.from({ length: totalDays }, (_, i) => {
         const day = addDays(startDate, i);
-
         const dateKey = format(day, 'yyyy-MM-dd');
-
         const dayEvents = eventsByDate.get(dateKey) ?? [];
-
         const isCurrentMonth = isSameMonth(day, monthStart);
 
         return (

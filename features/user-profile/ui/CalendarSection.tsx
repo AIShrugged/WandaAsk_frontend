@@ -20,9 +20,7 @@ interface CalendarSectionProps {
  */
 export function CalendarSection({ source }: CalendarSectionProps) {
   const [confirming, setConfirming] = useState(false);
-
   const [isPending, setIsPending] = useState(false);
-
   /**
    *
    */

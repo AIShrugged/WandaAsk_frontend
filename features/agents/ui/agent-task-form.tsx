@@ -77,11 +77,8 @@ export function AgentTaskForm({
   toolOptions: AgentSelectOption[];
 }) {
   const router = useRouter();
-
   const [isPending, startTransition] = useTransition();
-
   const isEdit = Boolean(task?.id);
-
   const defaultValues = useMemo<AgentTaskFormValues>(() => {
     return {
       name: task?.name ?? '',
@@ -106,7 +103,6 @@ export function AgentTaskForm({
       enabled: task?.enabled ?? true,
     };
   }, [task]);
-
   const {
     register,
     watch,
@@ -120,11 +116,9 @@ export function AgentTaskForm({
     mode: 'onBlur',
     reValidateMode: 'onChange',
   });
-
   const profileOptions = profiles.map((profile) => {
     return { value: String(profile.id), label: profile.name };
   });
-
   /**
    *
    * @param values
@@ -181,7 +175,6 @@ export function AgentTaskForm({
         metadata,
         enabled: values.enabled,
       };
-
       const result =
         isEdit && task
           ? await updateAgentTask(task.id, payload)
@@ -205,7 +198,6 @@ export function AgentTaskForm({
       router.refresh();
     });
   };
-
   const allowedToolOptions = toolOptions.map((tool) => {
     return {
       value: tool.value,
@@ -366,7 +358,6 @@ export function AgentTaskForm({
                 }
 
                 const payload = parseJsonInput(watch('input_payload'));
-
                 const result = await validateAgentProfilePayload(
                   Number(watch('agent_profile_id')),
                   payload,

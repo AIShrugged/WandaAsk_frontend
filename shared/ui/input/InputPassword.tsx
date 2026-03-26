@@ -13,7 +13,6 @@ type Props = Omit<InputProps, 'type'>;
  */
 export default function PasswordInput(props: Props) {
   const [visible, setVisible] = useState(false);
-
   const shouldShowToggle = props.value?.length >= 1;
 
   return (

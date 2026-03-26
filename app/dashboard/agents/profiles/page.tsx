@@ -80,9 +80,7 @@ export default async function AgentProfilesPage() {
   }
 
   const profiles = profilesResponse.data;
-
   const toolOptions = normalizeToolOptions(tools);
-
   const sandboxOptions = normalizeMetaOptions(meta.sandbox_profiles);
 
   return (

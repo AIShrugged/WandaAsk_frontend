@@ -12,7 +12,6 @@ import PageHeader from '@/widgets/layout/ui/page-header';
  */
 export default async function Page() {
   const organizationId = await getOrganizationId();
-
   const { data: teams } = await getTeams(organizationId);
 
   return (

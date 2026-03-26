@@ -25,7 +25,6 @@ export async function getArtifacts(
   chatId: number,
 ): Promise<ArtifactsResponse | null> {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(`${API_URL}/chats/${chatId}/artifacts`, {
     headers: { ...authHeaders },
     cache: 'no-store',

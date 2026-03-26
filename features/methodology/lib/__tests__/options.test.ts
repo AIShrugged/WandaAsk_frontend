@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import {
   getFormFields,
   METHODOLOGY_FIELDS,
@@ -24,7 +23,6 @@ describe('getFormFields', () => {
 
   it('passes teamOptions to the first field', () => {
     const options = [makeOption(1, 'Team A'), makeOption(2, 'Team B')];
-
     const [first] = getFormFields(options);
 
     expect(first.options).toEqual(options);
@@ -73,7 +71,6 @@ describe('getFormFields', () => {
 
   it('returns new array each call (referential independence)', () => {
     const result1 = getFormFields([]);
-
     const result2 = getFormFields([]);
 
     expect(result1).not.toBe(result2);

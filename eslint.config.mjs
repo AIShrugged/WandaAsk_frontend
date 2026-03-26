@@ -3,7 +3,6 @@ import nextVitals from 'eslint-config-next/core-web-vitals';
 import nextTs from 'eslint-config-next/typescript';
 import boundariesPlugin from 'eslint-plugin-boundaries';
 import importPlugin from 'eslint-plugin-import';
-import jsdocPlugin from 'eslint-plugin-jsdoc';
 import securityPlugin from 'eslint-plugin-security';
 import sonarjsPlugin from 'eslint-plugin-sonarjs';
 import unicornPlugin from 'eslint-plugin-unicorn';
@@ -30,7 +29,6 @@ export default defineConfig([
     plugins: {
       unicorn: unicornPlugin,
       sonarjs: sonarjsPlugin,
-      jsdoc: jsdocPlugin,
     },
     rules: {
       ...unicornPlugin.configs.recommended.rules,
@@ -55,33 +53,6 @@ export default defineConfig([
       'max-params': ['warn', 4],
       'max-statements': ['warn', 15],
       complexity: ['warn', 8],
-
-      /*
-       * Encourage vertical spacing
-       */
-      'padding-line-between-statements': [
-        'warn',
-        { blankLine: 'always', prev: '*', next: 'return' },
-        { blankLine: 'always', prev: 'const', next: '*' },
-        { blankLine: 'always', prev: '*', next: 'if' },
-      ],
-
-      /*
-       * JSDoc requirements (warn only, safe for existing codebase)
-       */
-      'jsdoc/require-jsdoc': [
-        'warn',
-        {
-          require: {
-            FunctionDeclaration: true,
-            MethodDefinition: true,
-            ClassDeclaration: true,
-            ArrowFunctionExpression: true,
-          },
-        },
-      ],
-      'jsdoc/require-param': 'warn',
-      'jsdoc/require-returns': 'warn',
     },
   },
 

@@ -70,17 +70,12 @@ function statusVariant(status: IssueStatus) {
  */
 export function IssueOverviewPanel({ issue }: IssueOverviewPanelProps) {
   const router = useRouter();
-
   const [status, setStatus] = useState<IssueStatus>(issue.status);
-
   const [rootError, setRootError] = useState('');
-
   const [isPending, startTransition] = useTransition();
-
   const statusOptions = useMemo(() => {
     return ISSUE_STATUS_OPTIONS;
   }, []);
-
   let scopeValue = '—';
 
   if (issue.organization_id) {
@@ -104,7 +99,6 @@ export function IssueOverviewPanel({ issue }: IssueOverviewPanelProps) {
     { label: 'Created', value: formatDateTime(issue.created_at) },
     { label: 'Updated', value: formatDateTime(issue.updated_at) },
   ];
-
   /**
    *
    * @param nextStatus

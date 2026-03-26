@@ -9,7 +9,6 @@ describe('ThinkingIndicator', () => {
 
   it('displays animated dots', () => {
     const { container } = render(<ThinkingIndicator />);
-
     const dots = container.querySelectorAll('.animate-bounce');
 
     expect(dots.length).toBeGreaterThan(0);
@@ -56,7 +55,6 @@ describe('ThinkingIndicator', () => {
   it('cleans up timers on unmount', () => {
     jest.useFakeTimers();
     const clearSpy = jest.spyOn(globalThis, 'clearTimeout');
-
     const { unmount } = render(<ThinkingIndicator />);
 
     unmount();

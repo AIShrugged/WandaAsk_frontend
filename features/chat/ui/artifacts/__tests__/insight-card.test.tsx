@@ -105,7 +105,6 @@ describe('InsightCard', () => {
         }}
       />,
     );
-
     // No badge spans rendered for empty array
     const badges = container.querySelectorAll('.rounded-full');
 

@@ -37,7 +37,6 @@ export async function GET(
   }
 
   const cookieStore = await cookies();
-
   const token = cookieStore.get('token')?.value;
 
   if (!token) {
@@ -74,11 +73,9 @@ export async function GET(
 
   const contentType =
     backendRes.headers.get('Content-Type') ?? 'application/octet-stream';
-
   const contentDisposition =
     backendRes.headers.get('Content-Disposition') ??
     `attachment; filename="followup.${format}"`;
-
   const blob = await backendRes.blob();
 
   return new NextResponse(blob, {

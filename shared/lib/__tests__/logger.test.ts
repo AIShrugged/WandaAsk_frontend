@@ -17,11 +17,8 @@ describe('createRequestId', () => {
 
   it('increments with each call', () => {
     const first = createRequestId();
-
     const second = createRequestId();
-
     const n1 = Number(first.slice(1));
-
     const n2 = Number(second.slice(1));
 
     expect(n2).toBe(n1 + 1);
@@ -67,7 +64,6 @@ describe('sanitizeHeaders', () => {
 
   it('truncates Authorization header value', () => {
     const token = 'Bearer supersecrettoken123456';
-
     const result = sanitizeHeaders({ authorization: token });
 
     expect(result.authorization).not.toBe(token);
@@ -76,7 +72,6 @@ describe('sanitizeHeaders', () => {
 
   it('truncates cookie header', () => {
     const cookie = 'session=verylongsecretcookievalue';
-
     const result = sanitizeHeaders({ cookie });
 
     expect(result.cookie).not.toBe(cookie);

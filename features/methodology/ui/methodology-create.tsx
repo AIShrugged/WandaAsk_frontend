@@ -18,9 +18,7 @@ const AUTO_PROMPT = 'Помоги создать методологию оцен
  */
 export default function MethodologyCreate() {
   const router = useRouter();
-
   const [isCreating, setIsCreating] = useState(false);
-
   /**
    * handleCreate — creates a new chat and navigates to it with an auto-prompt.
    */

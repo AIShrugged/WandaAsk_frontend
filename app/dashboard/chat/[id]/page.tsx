@@ -18,13 +18,11 @@ import type { PageProps } from '@/shared/types/common';
  */
 export default async function ChatRoomPage({ params }: PageProps) {
   const { id } = await params;
-
   const chatId = Number(id);
 
   if (!Number.isFinite(chatId) || chatId <= 0) notFound();
 
   const INITIAL_LIMIT = 20;
-
   const [
     { chats, totalCount },
     currentChat,
@@ -40,7 +38,6 @@ export default async function ChatRoomPage({ params }: PageProps) {
     }),
     getOrganizations(),
   ]);
-
   // API returns messages oldest-first (ASC by created_at).
   // If there are more messages than INITIAL_LIMIT, fetch from the end
   // so the user sees the newest messages on open.

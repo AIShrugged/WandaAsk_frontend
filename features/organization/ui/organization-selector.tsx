@@ -8,9 +8,7 @@ import OrganizationDropdown from '@/features/organization/ui/organization-dropdo
  */
 export default async function OrganizationSelector() {
   const { data: organizations } = await getOrganizations();
-
   const cookieStore = await cookies();
-
   const organization_id = cookieStore.get('organization_id')?.value;
 
   if (!organizations) return null;

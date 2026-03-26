@@ -30,7 +30,6 @@ export async function getMessages(
   limit = 50,
 ): Promise<{ messages: Message[]; totalCount: number; hasMore: boolean }> {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(
     `${API_URL}/chats/${chatId}/messages?offset=${offset}&limit=${limit}`,
     { headers: { ...authHeaders }, cache: 'no-store' },
@@ -77,7 +76,6 @@ export async function sendMessage(
   content: string,
 ): Promise<Message | MessageActionError> {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(`${API_URL}/chats/${chatId}/messages`, {
     method: 'POST',
     headers: { ...authHeaders, 'Content-Type': 'application/json' },
@@ -128,7 +126,6 @@ export async function pollRun(
   runUuid: string,
 ): Promise<AgentRun> {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(`${API_URL}/chats/${chatId}/runs/${runUuid}`, {
     headers: { ...authHeaders },
     cache: 'no-store',

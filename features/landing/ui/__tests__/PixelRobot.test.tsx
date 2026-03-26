@@ -55,7 +55,6 @@ describe('PixelRobot', () => {
 
   it('cleans up the root timer on unmount', () => {
     const clearSpy = jest.spyOn(globalThis, 'clearTimeout');
-
     const { unmount } = render(<PixelRobot />);
 
     unmount();

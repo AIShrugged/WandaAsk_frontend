@@ -40,7 +40,6 @@ export interface DebugLogEntry {
 }
 
 const MAX_ENTRIES = 300;
-
 // Single global buffer — lives for the lifetime of the Node.js process.
 const SYM = Symbol.for('__tribes_debug_log_buffer');
 

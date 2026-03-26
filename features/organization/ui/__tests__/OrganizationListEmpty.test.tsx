@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { render, screen } from '@testing-library/react';
 
 import OrganizationListEmpty from '@/features/organization/ui/organization-list-empty';

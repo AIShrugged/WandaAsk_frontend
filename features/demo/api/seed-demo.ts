@@ -32,7 +32,6 @@ export async function seedDemo(
   params: SeedDemoParams,
 ): Promise<SeedDemoResult> {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(`${API_URL}/demo/seed`, {
     method: 'POST',
     headers: {
@@ -42,9 +41,7 @@ export async function seedDemo(
     body: JSON.stringify(params),
     cache: 'no-store',
   });
-
   const text = await res.text();
-
   let json: DemoSeedApiResponse | undefined;
   try {
     json = JSON.parse(text) as DemoSeedApiResponse;

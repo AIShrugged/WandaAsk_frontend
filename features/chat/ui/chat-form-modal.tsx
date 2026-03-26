@@ -47,17 +47,12 @@ export function ChatFormModal({
   onSaved,
 }: ChatFormModalProps) {
   const isEdit = Boolean(chat);
-
   const hasOrganizationContext = organizations.length > 0;
-
   const hasAssignedScope =
     (chat?.organization_id ?? null) !== null ||
     (chat?.team_id ?? null) !== null;
-
   const [isPending, startTransition] = useTransition();
-
   const [rootError, setRootError] = useState('');
-
   const defaultValues = useMemo<ChatFormValues>(() => {
     if (!chat) {
       return EMPTY_VALUES;
@@ -67,7 +62,6 @@ export function ChatFormModal({
       title: chat.title ?? '',
     };
   }, [chat]);
-
   const {
     register,
     watch,
@@ -102,7 +96,6 @@ export function ChatFormModal({
         const payload = {
           title: values.title.trim() || null,
         };
-
         const result = chat
           ? await updateChat(chat.id, payload)
           : await createChat(payload);
@@ -133,7 +126,6 @@ export function ChatFormModal({
       }
     });
   };
-
   let helperText = `Personal web chats are not permanently bound. They use the current ${
     hasOrganizationContext
       ? 'organization context selected in the app header.'

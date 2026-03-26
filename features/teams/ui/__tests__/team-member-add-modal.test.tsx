@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { render, screen } from '@testing-library/react';
 
 import TeamMemberAddModal from '@/features/teams/ui/team-member-add-modal';

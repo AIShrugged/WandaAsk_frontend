@@ -139,39 +139,26 @@ export function IssuesPage({
   initialFilters,
 }: IssuesPageProps) {
   const router = useRouter();
-
   const pathname = usePathname();
-
   const searchParams = useSearchParams();
-
   const [isPending, startTransition] = useTransition();
-
   const [organizationId, setOrganizationId] = useState(
     initialFilters.organization_id,
   );
-
   const [teamId, setTeamId] = useState(initialFilters.team_id);
-
   const [status, setStatus] = useState(initialFilters.status);
-
   const [type, setType] = useState(initialFilters.type);
-
   const [assignee, setAssignee] = useState(initialFilters.assignee);
-
   const [priority, setPriority] = useState<IssuePriority | ''>(
     initialFilters.priority,
   );
-
   const [updatingIssueId, setUpdatingIssueId] = useState<number | null>(null);
-
   const [editingStatusIssueId, setEditingStatusIssueId] = useState<
     number | null
   >(null);
-
   const [editingAssigneeIssueId, setEditingAssigneeIssueId] = useState<
     number | null
   >(null);
-
   // Filters ref — used inside fetchMore without triggering re-renders
   const filtersRef = useRef({
     organization_id: organizationId,
@@ -180,7 +167,6 @@ export function IssuesPage({
     type,
     assignee,
   });
-
   // resetKey increments on filter change to reset the infinite scroll list
   const [resetKey, setResetKey] = useState(0);
 
@@ -189,7 +175,6 @@ export function IssuesPage({
   const scrollInitialItems = useMemo(() => {
     return initialIssues;
   }, [resetKey]);
-
   const fetchMore = useCallback(
     async (offset: number) => {
       const f = filtersRef.current;
@@ -208,7 +193,6 @@ export function IssuesPage({
 
     [resetKey],
   );
-
   const {
     items: rawItems,
     isLoading,
@@ -219,14 +203,12 @@ export function IssuesPage({
     initialItems: scrollInitialItems,
     initialHasMore: initialTotalCount > initialIssues.length,
   });
-
   // Client-side priority filter (backend doesn't support priority filtering)
   const items = priority
     ? rawItems.filter((issue) => {
         return issue.priority === priority;
       })
     : rawItems;
-
   const updateUrl = useCallback(
     (patch: Record<string, string>) => {
       const params = new URLSearchParams(searchParams.toString());
@@ -243,7 +225,6 @@ export function IssuesPage({
     },
     [router, pathname, searchParams],
   );
-
   const applyFilter = useCallback(
     (patch: {
       organization_id?: string;
@@ -290,7 +271,6 @@ export function IssuesPage({
     },
     [organizationId, teamId, status, type, assignee, updateUrl],
   );
-
   const personOptions = [
     { value: '', label: 'Any assignee' },
     ...persons.map((person) => {
@@ -300,27 +280,22 @@ export function IssuesPage({
       };
     }),
   ];
-
   const statusOptions = [
     { value: '', label: 'Any status' },
     ...ISSUE_STATUS_OPTIONS,
   ];
-
   const typeOptions = [
     { value: '', label: 'Any type' },
     { value: 'task', label: 'Task' },
     { value: 'bug', label: 'Bug' },
   ];
-
   const priorityOptions = [
     { value: '', label: 'Any priority' },
     ...Object.entries(ISSUE_PRIORITY_LABELS).map(([value, label]) => {
       return { value, label };
     }),
   ];
-
   const rowStatusOptions = ISSUE_STATUS_OPTIONS;
-
   const rowAssigneeOptions = [
     { value: '', label: 'Unassigned' },
     ...persons.map((person) => {
@@ -330,7 +305,6 @@ export function IssuesPage({
       };
     }),
   ];
-
   /**
    *
    * @param issue
@@ -341,7 +315,6 @@ export function IssuesPage({
     patch: Partial<Pick<Issue, 'status' | 'assignee_id'>>,
   ) => {
     const nextStatus = (patch.status ?? issue.status) as IssueStatus;
-
     const nextAssigneeId =
       patch.assignee_id === undefined ? issue.assignee_id : patch.assignee_id;
 

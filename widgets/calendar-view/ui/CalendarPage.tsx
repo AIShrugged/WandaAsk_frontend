@@ -23,7 +23,6 @@ export function CalendarPage({
   currentMonth: string;
 }) {
   const { open, close } = useModal();
-
   /**
    * handleShowAll.
    * @param dayEvents - events for the day.

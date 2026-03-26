@@ -19,7 +19,6 @@ describe('getMenuItems', () => {
 
   it('all ids are unique', () => {
     const items = getMenuItems({ canManageAgents: true });
-
     const ids = items.map((item) => {
       return item.id;
     });

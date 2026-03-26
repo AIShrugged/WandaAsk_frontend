@@ -5,7 +5,6 @@ import SpinLoader from '@/shared/ui/layout/spin-loader';
 describe('SpinLoader', () => {
   it('renders a spinning element', () => {
     const { container } = render(<SpinLoader />);
-
     const el = container.firstChild as HTMLElement;
 
     expect(el).toBeInTheDocument();

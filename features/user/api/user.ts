@@ -10,7 +10,6 @@ import type { UserProps } from '@/entities/user';
 
 export const getUser = cache(async () => {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(`${API_URL}/users/me`, {
     method: 'GET',
     headers: { ...authHeaders },

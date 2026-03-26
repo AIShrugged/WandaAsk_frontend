@@ -48,9 +48,7 @@ async function TasksTab({ id }: { id: string }) {
  */
 export default async function Page({ params, searchParams }: PageProps) {
   const { id } = await params;
-
   const { tab = available_tabs.summary } = await searchParams;
-
   const { data: followUp } = await getEventFollowUp(id);
 
   if (!followUp) {

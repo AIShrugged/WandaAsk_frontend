@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { render, screen } from '@testing-library/react';
 
 import CalendarAgenda from '@/features/calendar/ui/calendar-agenda';
@@ -19,7 +18,6 @@ const makeEvent = (id: number, title: string, startsAt: string): EventProps => {
     source_id: 1,
   };
 };
-
 const CURRENT_MONTH = '2026-03-01';
 
 describe('CalendarAgenda', () => {

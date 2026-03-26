@@ -150,7 +150,6 @@ export function normalizeMetaOptions(input: unknown): AgentSelectOption[] {
       if (!item || typeof item !== 'object') return null;
 
       const record = item as Record<string, unknown>;
-
       const value = record.value ?? record.name ?? record.key ?? record.id;
 
       if (typeof value !== 'string' && typeof value !== 'number') return null;
@@ -174,7 +173,6 @@ export function normalizeMetaOptions(input: unknown): AgentSelectOption[] {
  */
 export function getToolCalls(run: AgentTaskRun) {
   const metadata = run.metadata ?? {};
-
   const toolCalls = metadata.tool_calls;
 
   return Array.isArray(toolCalls) ? toolCalls : [];

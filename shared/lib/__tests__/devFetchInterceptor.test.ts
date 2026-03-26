@@ -1,9 +1,7 @@
-/* eslint-disable jsdoc/require-jsdoc, jsdoc/require-returns, max-statements */
+/* eslint-disable max-statements */
 
 const mockCaptureCallerStack = jest.fn().mockReturnValue();
-
 const mockFormatTimestamp = jest.fn().mockReturnValue('10:00:00.000');
-
 const mockFormatBytes = jest.fn((n: number) => {
   return `${String(n)} B`;
 });
@@ -190,9 +188,7 @@ describe('installClientFetchDebugger', () => {
     const realCall = calls.find((c) => {
       return c.url === 'http://example.com/api';
     });
-
     const h = realCall?.init?.headers;
-
     // h may be a Headers instance or a plain object depending on the environment
     let debugId: string | null | undefined;
 
@@ -231,7 +227,6 @@ describe('installClientFetchDebugger', () => {
 
   it('does not clone body for streaming responses', async () => {
     const cloneSpy = jest.fn();
-
     const streamRes = makeRes('data: hi\n\n', 200, {
       'content-type': 'text/event-stream',
     });

@@ -27,7 +27,6 @@ export async function getChats(
   limit = 20,
 ): Promise<{ chats: Chat[]; totalCount: number; hasMore: boolean }> {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(`${API_URL}/chats?offset=${offset}&limit=${limit}`, {
     headers: { ...authHeaders },
     cache: 'no-store',
@@ -68,7 +67,6 @@ export async function getChats(
  */
 export async function getChat(id: number): Promise<Chat> {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(`${API_URL}/chats/${id}`, {
     headers: { ...authHeaders },
     cache: 'no-store',
@@ -103,12 +101,10 @@ export async function createChat(
   payloadOrTitle: Partial<ChatUpsertDTO> | string | null = {},
 ): Promise<Chat | ChatActionError> {
   const authHeaders = await getAuthHeaders();
-
   const payload =
     typeof payloadOrTitle === 'string' || payloadOrTitle === null
       ? { title: payloadOrTitle }
       : payloadOrTitle;
-
   const body: Record<string, number | string | null> = {};
 
   if ('title' in payload) {
@@ -171,7 +167,6 @@ export async function updateChat(
   payload: Partial<ChatUpsertDTO>,
 ): Promise<Chat | ChatActionError> {
   const authHeaders = await getAuthHeaders();
-
   const body: Record<string, number | string | null> = {};
 
   if ('title' in payload) {
@@ -247,7 +242,6 @@ export async function updateChatTitle(
  */
 export async function deleteChat(id: number): Promise<void> {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(`${API_URL}/chats/${id}`, {
     method: 'DELETE',
     headers: { ...authHeaders },

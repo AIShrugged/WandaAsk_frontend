@@ -26,15 +26,10 @@ type Props = Pick<TeamProps, 'id'> & {
  */
 export function TeamActions({ id, actions }: Props) {
   const [isPending, startTransition] = useTransition();
-
   const { push, replace } = useRouter();
-
   const pathname = usePathname();
-
   const searchParams = useSearchParams();
-
   const { open, close } = useModal();
-
   const handleClose = useCallback(() => {
     const params = new URLSearchParams(searchParams.toString());
 
@@ -42,7 +37,6 @@ export function TeamActions({ id, actions }: Props) {
     replace(`${pathname}?${params.toString()}`);
     close();
   }, [close, pathname, replace, searchParams]);
-
   /**
    * handleOpenModal.
    */
@@ -55,7 +49,6 @@ export function TeamActions({ id, actions }: Props) {
       open(<TeamMemberAddModal close={handleClose} />);
     }
   };
-
   /**
    * handleDelete.
    */
@@ -75,14 +68,12 @@ export function TeamActions({ id, actions }: Props) {
       }
     });
   };
-
   /**
    * handleViewTeamFollowUp.
    */
   const handleViewTeamFollowUp = () => {
     push(`${ROUTES.DASHBOARD.FOLLOWUPS}/${String(id)}`);
   };
-
   const actionMap: Record<TeamActionType, ReactNode> = {
     'add-member': (
       <ButtonIcon

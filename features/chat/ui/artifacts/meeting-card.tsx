@@ -37,9 +37,7 @@ function formatDate(iso: string): string {
  */
 export function MeetingCard({ data }: { data: MeetingCardArtifact['data'] }) {
   const participants = data.participants ?? [];
-
   const keyPoints = data.key_points ?? [];
-
   const decisions = data.decisions ?? [];
 
   return (

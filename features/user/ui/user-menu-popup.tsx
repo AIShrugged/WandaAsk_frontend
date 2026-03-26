@@ -18,9 +18,7 @@ interface MenuItem {
  */
 export function UserMenuPopup({ close }: { close: () => void }) {
   const [isPending, startTransition] = useTransition();
-
   const router = useRouter();
-
   /**
    * handleAction.
    * @param action - action.

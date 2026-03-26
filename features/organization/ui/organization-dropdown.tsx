@@ -24,14 +24,12 @@ import type { OrganizationProps } from '@/entities/organization';
 const subscribeToMount = () => {
   return noop;
 };
-
 /**
  *
  */
 const getMountedSnapshot = () => {
   return true;
 };
-
 /**
  *
  */
@@ -113,31 +111,24 @@ export default function OrganizationDropdown({
   organizationActiveId: number | null;
 }) {
   const [open, setOpen] = useState(false);
-
   const isMounted = useSyncExternalStore(
     subscribeToMount,
     getMountedSnapshot,
     getServerMountedSnapshot,
   );
-
   const [, action, pending] = useActionState(setActiveOrganization, {
     ok: false,
   });
-
   const { push } = useRouter();
-
   const buttonRef = useRef<HTMLButtonElement>(null);
-
   const [dropdownPos, setDropdownPos] = useState<{
     top: number;
     left: number;
     minWidth: number;
   } | null>(null);
-
   const active = organizations.find((o) => {
     return String(o.id) === String(organizationActiveId);
   });
-
   const sortedOrganizations = active
     ? [
         active,
@@ -168,7 +159,6 @@ export default function OrganizationDropdown({
      */
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-
       const isOutside =
         !buttonRef.current?.contains(target) &&
         !target.closest('[data-org-dropdown]');

@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { render, screen } from '@testing-library/react';
 
 import PageHeader from '@/widgets/layout/ui/page-header';

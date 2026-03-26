@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { render, screen } from '@testing-library/react';
 
 import { RecentChats } from '@/features/dashboard/ui/RecentChats';

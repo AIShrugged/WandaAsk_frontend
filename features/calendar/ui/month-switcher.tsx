@@ -19,9 +19,7 @@ const NAV_BUTTONS = [
  */
 export const MonthSwitcher = ({ currentMonth }: { currentMonth: string }) => {
   const { push } = useRouter();
-
   const params = useSearchParams();
-
   /**
    * setMonth.
    * @param date - date.

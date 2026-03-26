@@ -17,22 +17,18 @@ import type { PageProps } from '@/shared/types/common';
  */
 export default async function Page({ params }: PageProps) {
   const { id } = await params;
-
   const [teamResult, settingsResult, chatsResult] = await Promise.allSettled([
     getTeam(id),
     getTeamNotificationSettings(id),
     getTelegramChats(),
   ]);
-
   const team = teamResult.status === 'fulfilled' ? teamResult.value.data : null;
 
   if (!team) return null;
 
   const settings =
     settingsResult.status === 'fulfilled' ? settingsResult.value : [];
-
   const allChats = chatsResult.status === 'fulfilled' ? chatsResult.value : [];
-
   const teamChats = allChats.filter((c) => {
     return c.team_id === team.id && c.bound_at !== null;
   });

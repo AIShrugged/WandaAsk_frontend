@@ -51,9 +51,7 @@ function normalizeIssueAttachment(
   attachment: IssueAttachmentApiResource,
 ): IssueAttachment {
   const filePath = attachment.file_path ?? null;
-
   const baseUrl = getFilesBaseUrl();
-
   const normalizedFilePath = filePath ? filePath.replace(/^\/+/, '') : null;
 
   return {
@@ -109,9 +107,7 @@ function buildIssuesQuery(filters: IssueFilters = {}) {
  */
 export async function getIssues(filters: IssueFilters = {}) {
   const authHeaders = await getAuthHeaders();
-
   const query = buildIssuesQuery(filters);
-
   const res = await fetch(`${API_URL}/issues?${query}`, {
     headers: { ...authHeaders },
     cache: 'no-store',
@@ -153,9 +149,7 @@ export async function getIssues(filters: IssueFilters = {}) {
  */
 export async function loadIssuesChunk(filters: IssueFilters = {}) {
   const authHeaders = await getAuthHeaders();
-
   const query = buildIssuesQuery(filters);
-
   const res = await fetch(`${API_URL}/issues?${query}`, {
     headers: { ...authHeaders },
     cache: 'no-store',
@@ -182,9 +176,7 @@ export async function loadIssuesChunk(filters: IssueFilters = {}) {
   }
 
   const totalCount = Number(res.headers.get('Items-Count') || '0');
-
   const limit = filters.limit ?? 20;
-
   const offset = filters.offset ?? 0;
 
   return {
@@ -200,7 +192,6 @@ export async function loadIssuesChunk(filters: IssueFilters = {}) {
  */
 export async function getIssue(id: number): Promise<Issue> {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(`${API_URL}/issues/${id}`, {
     headers: { ...authHeaders },
     cache: 'no-store',
@@ -234,7 +225,6 @@ export async function createIssue(
   payload: IssueUpsertDTO,
 ): Promise<Issue | IssueActionError> {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(`${API_URL}/issues`, {
     method: 'POST',
     headers: { ...authHeaders, 'Content-Type': 'application/json' },
@@ -245,7 +235,6 @@ export async function createIssue(
   if (!res.ok) {
     if (res.status === 401) redirect('/api/auth/clear-session');
     const text = await res.text();
-
     const parsed = parseApiError(text, 'Failed to create issue');
 
     logApiError({
@@ -283,7 +272,6 @@ export async function updateIssue(
   payload: IssueUpsertDTO,
 ): Promise<Issue | IssueActionError> {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(`${API_URL}/issues/${id}`, {
     method: 'PATCH',
     headers: { ...authHeaders, 'Content-Type': 'application/json' },
@@ -294,7 +282,6 @@ export async function updateIssue(
   if (!res.ok) {
     if (res.status === 401) redirect('/api/auth/clear-session');
     const text = await res.text();
-
     const parsed = parseApiError(text, 'Failed to update issue');
 
     logApiError({
@@ -328,7 +315,6 @@ export async function updateIssue(
  */
 export async function deleteIssue(id: number): Promise<void> {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(`${API_URL}/issues/${id}`, {
     method: 'DELETE',
     headers: { ...authHeaders },
@@ -356,7 +342,6 @@ export async function deleteIssue(id: number): Promise<void> {
  */
 export async function getPersons(): Promise<PersonOption[]> {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(`${API_URL}/persons`, {
     headers: { ...authHeaders },
     cache: 'no-store',
@@ -390,7 +375,6 @@ export async function getIssueAttachments(
   issueId: number,
 ): Promise<IssueAttachment[]> {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(`${API_URL}/issues/${issueId}/attachments`, {
     headers: { ...authHeaders },
     cache: 'no-store',
@@ -428,7 +412,6 @@ export async function uploadIssueAttachment(
   formData: FormData,
 ): Promise<IssueAttachment | IssueActionError> {
   const authHeaders = await getAuthHeaders();
-
   const headers = new Headers(authHeaders);
 
   headers.delete('Content-Type');
@@ -443,7 +426,6 @@ export async function uploadIssueAttachment(
   if (!res.ok) {
     if (res.status === 401) redirect('/api/auth/clear-session');
     const text = await res.text();
-
     const parsed = parseApiError(text, 'Failed to upload attachment');
 
     logApiError({
@@ -477,7 +459,6 @@ export async function uploadIssueAttachment(
  */
 export async function deleteAttachment(attachmentId: number): Promise<void> {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(`${API_URL}/attachments/${attachmentId}`, {
     method: 'DELETE',
     headers: { ...authHeaders },

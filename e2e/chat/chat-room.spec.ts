@@ -33,7 +33,6 @@ test.describe('Chat room — authenticated', () => {
     const link = page
       .locator('a[href*="/dashboard/chat/"]:not([href="/dashboard/chat"])')
       .first();
-
     const href = await link.getAttribute('href').catch(() => {
       return null;
     });

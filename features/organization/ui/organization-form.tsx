@@ -30,11 +30,8 @@ export default function OrganizationForm({
   values?: OrganizationProps;
 }) {
   const FORM_ID = 'organization-form';
-
   const isEdit = Boolean(values?.id);
-
   const [isPending, startTransition] = useTransition();
-
   const {
     control,
     handleSubmit,
@@ -45,7 +42,6 @@ export default function OrganizationForm({
     mode: 'onBlur',
     reValidateMode: 'onChange',
   });
-
   /**
    * onSubmit.
    * @param data - data.
@@ -79,7 +75,6 @@ export default function OrganizationForm({
               rules={field.rules}
               render={({ field: hookField, fieldState }) => {
                 const variant: VariantType = field.variant;
-
                 const Component = VARIANT_MAPPER[variant];
 
                 return (

@@ -20,7 +20,6 @@ export function AgentPageTabs({
     <div className='flex overflow-x-auto'>
       {tabs.map((tab, index) => {
         const isActive = tab.key === currentTab;
-
         const href =
           tab.key === tabs[0]?.key ? baseHref : `${baseHref}?tab=${tab.key}`;
 

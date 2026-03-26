@@ -12,7 +12,6 @@ import { logApiError } from '@/shared/lib/logger';
  */
 export async function attachCalendar(): Promise<string> {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(`${API_URL}/google/oauth`, {
     method: 'POST',
     headers: { ...authHeaders },

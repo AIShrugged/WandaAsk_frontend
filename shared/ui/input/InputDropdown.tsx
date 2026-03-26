@@ -39,7 +39,6 @@ interface InputDropdownProps {
 const cn = (...parts: Array<string | false | null | undefined>) => {
   return parts.filter(Boolean).join(' ');
 };
-
 const InputDropdown = forwardRef<
   { focus: () => void; clear: () => void },
   InputDropdownProps
@@ -56,27 +55,16 @@ const InputDropdown = forwardRef<
     className,
     error,
   } = props;
-
   const autoId = useId();
-
   const inputId = `dropdown-${autoId}`;
-
   const errorId = `${inputId}-error`;
-
   const listboxId = `${inputId}-listbox`;
-
   const [isOpen, setIsOpen] = useState(false);
-
   const [searchQuery, setSearchQuery] = useState('');
-
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
-
   const triggerRef = useRef<HTMLDivElement>(null);
-
   const searchInputRef = useRef<HTMLInputElement>(null);
-
   const dropdownRef = useRef<HTMLDivElement>(null);
-
   let selectedValues: string[];
 
   if (multiple) {
@@ -92,7 +80,6 @@ const InputDropdown = forwardRef<
       })?.label;
     })
     .filter(Boolean);
-
   /**
    * getMultipleDisplayLabel.
    */
@@ -103,19 +90,14 @@ const InputDropdown = forwardRef<
 
     return `${selectedLabels[0]} +${selectedLabels.length - 1}`;
   };
-
   const displayedLabel = multiple
     ? getMultipleDisplayLabel()
     : (selectedLabels[0] ?? '');
-
   const hasValue = displayedLabel.length > 0;
-
   const floatingActive = isOpen || hasValue || Boolean(label && placeholder);
-
   const filteredOptions = options.filter((option) => {
     return option.label.toLowerCase().includes(searchQuery.toLowerCase());
   });
-
   /**
    * selectOption.
    * @param option - option.
@@ -128,7 +110,6 @@ const InputDropdown = forwardRef<
 
     if (multiple) {
       const current = Array.isArray(value) ? value : [];
-
       const exists = current.includes(option.value);
 
       newValue = exists
@@ -144,7 +125,6 @@ const InputDropdown = forwardRef<
 
     onChange?.(newValue);
   };
-
   /**
    * toggleOpen.
    */
@@ -354,7 +334,6 @@ const InputDropdown = forwardRef<
             ) : (
               filteredOptions.map((option, index) => {
                 const isSelected = selectedValues.includes(option.value);
-
                 const isHighlighted = index === highlightedIndex;
 
                 return (

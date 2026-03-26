@@ -48,16 +48,11 @@ const STATUS_CONTENT: Record<InviteStatus, { title: string; message: string }> =
  */
 export default function Page() {
   const { push } = useRouter();
-
   const searchParams = useSearchParams();
-
   const rawStatus = searchParams.get('status') ?? 'success';
-
   const status: InviteStatus =
     rawStatus in STATUS_CONTENT ? (rawStatus as InviteStatus) : 'success';
-
   const { title, message } = STATUS_CONTENT[status];
-
   const isSuccess = status === 'success' || status === 'already_accepted';
 
   return (

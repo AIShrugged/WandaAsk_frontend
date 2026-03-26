@@ -35,7 +35,6 @@ test.describe('Meeting detail — authenticated', () => {
       storageState: 'e2e/.auth/user.json',
       baseURL: 'http://localhost:8080',
     });
-
     const page = await context.newPage();
 
     try {
@@ -50,7 +49,6 @@ test.describe('Meeting detail — authenticated', () => {
           'a[href*="/dashboard/follow-ups/"]:not([href="/dashboard/follow-ups"])',
         )
         .first();
-
       const teamHref = await teamLink
         .getAttribute('href', { timeout: 5000 })
         .catch(() => {
@@ -69,7 +67,6 @@ test.describe('Meeting detail — authenticated', () => {
       const analysisLink = page
         .locator('a[href*="/dashboard/follow-ups/analysis/"]')
         .first();
-
       const analysisHref = await analysisLink
         .getAttribute('href', { timeout: 3000 })
         .catch(() => {

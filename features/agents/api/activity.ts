@@ -15,7 +15,6 @@ import type {
 import type { ApiResponse } from '@/shared/types/common';
 
 const DEFAULT_LIMIT = 50;
-
 const MAX_LIMIT = 200;
 
 /**
@@ -31,11 +30,8 @@ export async function getAgentActivity(
   agentRunUuid?: string,
 ): Promise<AgentActivityResponse> {
   const authHeaders = await getAuthHeaders();
-
   const safeLimit = Math.min(Math.max(limit, 1), MAX_LIMIT);
-
   const safeOffset = Math.max(offset, 0);
-
   const searchParams = new URLSearchParams({
     offset: String(safeOffset),
     limit: String(safeLimit),
@@ -83,7 +79,6 @@ export async function getAgentActivity(
   }
 
   const items = json.data ?? [];
-
   const totalCount = Number(response.headers.get('Items-Count') ?? '0');
 
   return {

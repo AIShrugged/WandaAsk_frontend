@@ -21,9 +21,7 @@ interface UserInfoProps {
  */
 export default function UserInfo({ user }: UserInfoProps) {
   const anchorRef = useRef<HTMLButtonElement>(null);
-
   const { open, close } = usePopup();
-
   /**
    * handleOpen.
    * @param e - e.

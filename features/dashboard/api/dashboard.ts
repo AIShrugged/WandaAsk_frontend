@@ -12,7 +12,6 @@ import { getOrganizationId } from '@/shared/lib/getOrganizationId';
  */
 export async function getDashboardData() {
   const organizationId = await getOrganizationId();
-
   const [userResult, teamsResult, methodologiesResult, chatsResult] =
     await Promise.allSettled([
       getUser(),

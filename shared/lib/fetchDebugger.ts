@@ -24,7 +24,6 @@ import {
 // ── Startup banner ─────────────────────────────────────────────────────────
 
 const ESC = '\u001B[';
-
 const B = {
   reset: `${ESC}0m`,
   bold: `${ESC}1m`,
@@ -39,9 +38,7 @@ const B = {
  */
 function logDebugBanner(): void {
   const backendUrl = process.env.API_URL ?? '(not set)';
-
   const threshold = String(SLOW_THRESHOLD_MS) + 'ms';
-
   const line = B.dim + '─'.repeat(60) + B.reset;
 
   // eslint-disable-next-line no-console
@@ -100,7 +97,6 @@ function resolveTag(url: string): RequestTag | undefined {
 
 // Symbol used to mark the fetch wrapper so double-patching is detected.
 const PATCHED_SYM = Symbol.for('__tribes_fetch_debug_patched');
-
 // URL substrings that should NOT be logged (internal Next.js plumbing).
 const SKIP_PATTERNS = [
   '/_next/',
@@ -223,17 +219,11 @@ export function patchServerFetch(): void {
     // Capture caller stack and timestamp BEFORE the async boundary
     // so the stack reflects the actual call site.
     const caller = captureCallerStack('fetchDebugger');
-
     const timestamp = formatTimestamp();
-
     const id = createRequestId();
-
     const method = ((init.method ?? 'GET') as string).toUpperCase();
-
     const rawHeaders = extractHeaders(init);
-
     const body = extractBodyText(init);
-
     const sanitizedHeaders = sanitizeHeaders(rawHeaders);
 
     logRequest({
@@ -263,14 +253,11 @@ export function patchServerFetch(): void {
 
     // Inject X-Debug-Request-ID so the backend can correlate logs.
     const patchedInit = withDebugHeader(init, id);
-
     const start = performance.now();
 
     try {
       const res = await original(input, patchedInit);
-
       const durationMs = Math.round(performance.now() - start);
-
       // Clone before reading so the caller's response stream is untouched.
       let responseBody: string | undefined;
 
@@ -284,18 +271,13 @@ export function patchServerFetch(): void {
 
       // Response size: prefer Content-Length header, fall back to body length.
       const contentLength = res.headers.get('content-length');
-
       const byteCount = contentLength
         ? Number(contentLength)
         : (responseBody?.length ?? 0);
-
       const size = byteCount > 0 ? formatBytes(byteCount) : undefined;
-
       // Next.js Data Cache status.
       const rawCache = res.headers.get('x-nextjs-cache');
-
       const cacheStatus = rawCache ?? undefined;
-
       const isSlow = durationMs > SLOW_THRESHOLD_MS;
 
       logResponse({
@@ -329,7 +311,6 @@ export function patchServerFetch(): void {
       return res;
     } catch (error) {
       const durationMs = Math.round(performance.now() - start);
-
       const errText =
         'Network error after ' +
         String(durationMs) +

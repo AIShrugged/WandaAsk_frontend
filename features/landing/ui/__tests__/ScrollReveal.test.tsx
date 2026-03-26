@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { act, render } from '@testing-library/react';
 import React from 'react';
 
@@ -10,7 +9,6 @@ type IntersectionObserverCallback = (
 
 /** Captured observer callbacks keyed by observed element. */
 const observerCallbacks: IntersectionObserverCallback[] = [];
-
 let disconnectMock: jest.Mock;
 let observeMock: jest.Mock;
 let unobserveMock: jest.Mock;

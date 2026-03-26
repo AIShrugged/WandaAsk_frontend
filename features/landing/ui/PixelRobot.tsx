@@ -3,9 +3,7 @@
 import { useEffect, useState } from 'react';
 
 const MIN_DELAY_MS = 4000;
-
 const MAX_EXTRA_MS = 8000;
-
 const SESSION_KEY = 'tribes-robot-shown';
 
 /**
@@ -14,9 +12,7 @@ const SESSION_KEY = 'tribes-robot-shown';
  */
 export function PixelRobot() {
   const [visible, setVisible] = useState(false);
-
   const [winking, setWinking] = useState(false);
-
   const [leaving, setLeaving] = useState(false);
 
   useEffect(() => {
@@ -24,7 +20,6 @@ export function PixelRobot() {
 
     // eslint-disable-next-line sonarjs/pseudo-random
     const delay = MIN_DELAY_MS + Math.random() * MAX_EXTRA_MS;
-
     const root = setTimeout(() => {
       sessionStorage.setItem(SESSION_KEY, '1');
       setVisible(true);

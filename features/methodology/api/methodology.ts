@@ -27,13 +27,11 @@ const afterMethodologyMutate = () => {
  */
 export async function createMethodology(data: MethodologyDTO): Promise<void> {
   const authHeaders = await getAuthHeaders();
-
   const payload = {
     ...data,
     organization_id: Number(data.organization_id),
     teams_ids: data.team_ids.map(Number),
   };
-
   const res = await fetch(`${API_URL}/methodologies`, {
     method: 'POST',
     headers: {
@@ -66,13 +64,11 @@ export async function updateMethodology(
   data: MethodologyDTO,
 ): Promise<void> {
   const authHeaders = await getAuthHeaders();
-
   const payload = {
     ...data,
     organization_id: Number(data.organization_id),
     teams_ids: data.team_ids.map(Number),
   };
-
   const res = await fetch(`${API_URL}/methodologies/${methodology_id}`, {
     method: 'PUT',
     headers: {
@@ -107,7 +103,6 @@ export async function loadMethodologiesChunk(
   limit: number,
 ) {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(
     `${API_URL}/organizations/${organizationId}/methodologies?offset=${offset}&limit=${limit}`,
     {
@@ -157,7 +152,6 @@ export const getMethodologies = async (organizationId: string) => {
 export const getMethodology = cache(
   async (methodology_id: string): Promise<ApiResponse<MethodologyProps>> => {
     const authHeaders = await getAuthHeaders();
-
     const res = await fetch(`${API_URL}/methodologies/${methodology_id}`, {
       method: 'GET',
       headers: {
@@ -191,7 +185,6 @@ export const getMethodology = cache(
  */
 export async function deleteMethodology(id: number) {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(`${API_URL}/methodologies/${id}`, {
     method: 'DELETE',
     headers: {

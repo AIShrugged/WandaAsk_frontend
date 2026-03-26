@@ -55,7 +55,6 @@ function TopParticipantsChart({ participants }: TopParticipantsChartProps) {
       Meetings: p.meetings_count,
     };
   });
-
   const chartHeight = Math.max(200, chartData.length * 36);
 
   return (

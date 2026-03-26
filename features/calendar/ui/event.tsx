@@ -59,11 +59,8 @@ interface EventComponentProps {
 // eslint-disable-next-line complexity
 const Event = ({ event, onFutureEventClick }: EventComponentProps) => {
   const isPast = isEventPast(event.ends_at);
-
   const noSummary = isPast && !event.has_summary;
-
   const { push } = useRouter();
-
   /**
    * navigateToMeeting navigates to the meeting summary page.
    * @returns void.
@@ -71,7 +68,6 @@ const Event = ({ event, onFutureEventClick }: EventComponentProps) => {
   const navigateToMeeting = () => {
     push(`${ROUTES.DASHBOARD.MEETING}/${event.id}?tab=summary`);
   };
-
   /**
    * handleClick handles event pill click.
    * @param e - mouse event.

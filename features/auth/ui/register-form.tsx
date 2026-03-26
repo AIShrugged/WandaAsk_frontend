@@ -28,13 +28,9 @@ const FORM_ID = 'register-form';
  */
 export default function RegisterForm() {
   const router = useRouter();
-
   const [isPending, startTransition] = useTransition();
-
   const searchParams = useSearchParams();
-
   const invite = searchParams.get('invite');
-
   const {
     control,
     handleSubmit,
@@ -46,7 +42,6 @@ export default function RegisterForm() {
     mode: 'onBlur',
     reValidateMode: 'onChange',
   });
-
   /**
    * onSubmit.
    * @param data - data.
@@ -93,7 +88,6 @@ export default function RegisterForm() {
               control={control}
               render={({ field: hookField, fieldState }) => {
                 const variant: VariantType = field.variant;
-
                 const Component = VARIANT_MAPPER[variant];
 
                 return (

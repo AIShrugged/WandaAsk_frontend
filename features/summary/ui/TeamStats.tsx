@@ -55,7 +55,6 @@ function TeamsChart({ teams }: TeamsChartProps) {
       Members: t.members_count,
     };
   });
-
   const chartHeight = Math.max(200, chartData.length * 36);
 
   return (

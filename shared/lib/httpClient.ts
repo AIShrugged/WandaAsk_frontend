@@ -21,7 +21,6 @@ export async function httpClient<T>(
   options: RequestInit = {},
 ): Promise<ApiResponse<T>> {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(url, {
     ...options,
     headers: {
@@ -75,7 +74,6 @@ export async function httpClientList<T>(
   options: RequestInit = {},
 ): Promise<PaginatedResult<T>> {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(url, {
     ...options,
     headers: {

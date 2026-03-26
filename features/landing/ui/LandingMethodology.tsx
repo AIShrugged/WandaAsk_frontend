@@ -4,7 +4,6 @@ const METHODOLOGY_ITEMS = [
   'Reusable methodology library',
   'Per-team methodology assignment',
 ];
-
 const METHODOLOGY_EXAMPLES = [
   { name: 'Sprint Retrospective', tag: 'Engineering', color: '#7c3aed' },
   { name: 'Weekly 1-on-1', tag: 'HR', color: '#0891b2' },

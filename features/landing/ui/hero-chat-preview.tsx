@@ -16,7 +16,6 @@ const CHAT_MESSAGES = [
     text: 'David raised timeline concerns at 14:23, suggesting the launch date may need 2 extra weeks for full QA validation.',
   },
 ];
-
 const MAC_DOTS = ['#ff5f57', '#ffbd2e', '#28c840'];
 
 /**

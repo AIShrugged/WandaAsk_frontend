@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
@@ -27,9 +26,7 @@ jest.mock('lucide-react', () => {
 });
 
 const user = userEvent.setup({ delay: null });
-
 const MESSAGE_CONTENT = 'Hello world';
-
 const baseMessage: Message = {
   id: 1,
   chat_id: 10,
@@ -73,7 +70,6 @@ describe('ChatMessage', () => {
       role: 'assistant',
       content: 'Hi there',
     };
-
     const { container } = render(<ChatMessage message={assistantMessage} />);
 
     expect(container.firstChild).toHaveClass('justify-start');

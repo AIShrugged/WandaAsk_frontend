@@ -1,7 +1,6 @@
 export { APP_NAME } from './app-name';
 
 const rawApiUrl = process.env.API_URL;
-
 const rawFilesUrl = process.env.FILES_URL ?? process.env.NEXT_PUBLIC_FILES_URL;
 
 // Skip the throw during `next build` (NEXT_PHASE = 'phase-production-build').

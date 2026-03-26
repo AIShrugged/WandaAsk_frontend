@@ -16,7 +16,6 @@ export async function loadTranscriptChunk(
   limit: number,
 ) {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(
     `${API_URL}/calendar-events/${id}/transcript?offset=${offset}&limit=${limit}`,
     {
@@ -33,7 +32,6 @@ export async function loadTranscriptChunk(
   }
 
   const data = await res.json();
-
   const totalCount = Number(res.headers.get('Items-Count') || '0');
 
   return { data, totalCount, hasMore: offset + limit < totalCount };

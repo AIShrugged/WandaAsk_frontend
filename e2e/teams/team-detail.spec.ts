@@ -34,7 +34,6 @@ test.describe('Team detail — authenticated', () => {
         'a[href*="/dashboard/teams/"]:not([href="/dashboard/teams"]):not([href*="/create"])',
       )
       .first();
-
     const href = await link.getAttribute('href').catch(() => {
       return null;
     });
@@ -81,15 +80,12 @@ test.describe('Team detail — authenticated', () => {
     if (!teamId) return;
     // Either member cards are visible or "No members yet" empty state
     const membersGrid = page.locator('div.grid').first();
-
     const emptyState = page.getByText(/no members yet/i);
-
     const hasMembers = await membersGrid
       .isVisible({ timeout: 5000 })
       .catch(() => {
         return false;
       });
-
     const isEmpty = await emptyState.isVisible({ timeout: 3000 }).catch(() => {
       return false;
     });

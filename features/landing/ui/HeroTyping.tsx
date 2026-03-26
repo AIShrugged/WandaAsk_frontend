@@ -9,13 +9,9 @@ const PHRASES = [
   'Your AI Co-Pilot for Every Call',
   'Make Every Meeting Count',
 ];
-
 const TYPE_MS = 52;
-
 const DELETE_MS = 28;
-
 const PAUSE_TYPED_MS = 2300;
-
 const PAUSE_DELETED_MS = 420;
 
 /**
@@ -23,11 +19,8 @@ const PAUSE_DELETED_MS = 420;
  */
 export function HeroTyping() {
   const [text, setText] = useState('');
-
   const [phraseIdx, setPhraseIdx] = useState(0);
-
   const [deleting, setDeleting] = useState(false);
-
   const [cursorOn, setCursorOn] = useState(true);
 
   // Cursor blink

@@ -65,7 +65,6 @@ export function AgentActivityFeed({
     },
     [agentRunUuid],
   );
-
   const { items, isLoading, hasMore, sentinelRef } = useInfiniteScroll({
     fetchMore,
     initialItems,

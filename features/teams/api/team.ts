@@ -41,7 +41,6 @@ export async function loadTeamsChunk(
   limit: number,
 ) {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(
     `${API_URL}/organizations/${organizationId}/teams?offset=${offset}&limit=${limit}`,
     {
@@ -85,7 +84,6 @@ export const getTeam = async (teamId: string) => {
  */
 export async function deleteTeam(teamId: number) {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(`${API_URL}/teams/${teamId}`, {
     method: 'DELETE',
     headers: {
@@ -111,7 +109,6 @@ export async function deleteTeam(teamId: number) {
  */
 export async function createTeam(organizationId: string, data: TeamCreateDTO) {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(`${API_URL}/teams`, {
     method: 'POST',
     headers: {
@@ -159,7 +156,6 @@ export const getTeamFollowUps = async (
   teamId: number | string,
 ): Promise<{ data: TeamFollowUpDTO[] }> => {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(`${API_URL}/teams/${teamId}/followups`, {
     headers: {
       ...authHeaders,
@@ -189,7 +185,6 @@ export const getTeamFollowUps = async (
  */
 export const getTeamFollowUp = async (calendarEventId: number | string) => {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(
     `${API_URL}/calendar-events/${calendarEventId}/followup`,
     {
@@ -223,7 +218,6 @@ export const getTeamFollowUp = async (calendarEventId: number | string) => {
  */
 export const sendInvite = async (teamId: number, data: TeamAddMemberDTO) => {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(`${API_URL}/teams/${teamId}/invites`, {
     method: 'POST',
     headers: {
@@ -232,7 +226,6 @@ export const sendInvite = async (teamId: number, data: TeamAddMemberDTO) => {
     body: JSON.stringify(data),
     cache: 'no-store',
   });
-
   const json = await res.json();
 
   if (!res.ok || !json.success) {

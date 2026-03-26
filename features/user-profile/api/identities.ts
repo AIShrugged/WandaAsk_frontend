@@ -16,7 +16,6 @@ const IDENTITIES_URL = `${API_URL}/users/me/identities`;
  */
 export async function getIdentities(): Promise<Identity[]> {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(IDENTITIES_URL, {
     headers: authHeaders,
     cache: 'no-store',
@@ -53,7 +52,6 @@ export async function linkIdentity(data: {
   identifier: string;
 }): Promise<ActionResult<Identity>> {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(IDENTITIES_URL, {
     method: 'POST',
     headers: { ...authHeaders, 'Content-Type': 'application/json' },
@@ -109,9 +107,7 @@ export async function linkIdentity(data: {
  */
 export async function unlinkIdentity(profileId: number): Promise<ActionResult> {
   const authHeaders = await getAuthHeaders();
-
   const url = `${IDENTITIES_URL}/${profileId}`;
-
   const res = await fetch(url, {
     method: 'DELETE',
     headers: authHeaders,

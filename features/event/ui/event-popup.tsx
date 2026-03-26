@@ -36,13 +36,9 @@ export function EventPopup({
   guests: GuestProps[];
 }): JSX.Element {
   const [isPending, startTransition] = useTransition();
-
   const isBotAdded = event.required_bot;
-
   const Icon = isBotAdded ? Minus : Plus;
-
   const actionText = isBotAdded ? 'remove bot' : 'add bot';
-
   /**
    * handleSwitchBot.
    */

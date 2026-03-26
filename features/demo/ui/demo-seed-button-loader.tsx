@@ -11,7 +11,6 @@ const DemoSeedButton = dynamic(
   },
   {
     ssr: false,
-    // eslint-disable-next-line jsdoc/require-jsdoc
     loading: () => {
       return null;
     },

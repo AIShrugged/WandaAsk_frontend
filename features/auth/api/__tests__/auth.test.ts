@@ -168,7 +168,6 @@ describe('login', () => {
       string,
       RequestInit,
     ];
-
     const body = JSON.parse(options.body as string) as Record<string, unknown>;
 
     expect(body.email).toBe('user@test.com');

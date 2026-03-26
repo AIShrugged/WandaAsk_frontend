@@ -3,7 +3,6 @@ import { act, render, screen } from '@testing-library/react';
 import { HeroTyping } from '@/features/landing/ui/HeroTyping';
 
 const PHRASE_0 = 'Stop Losing Ideas After Every Meeting';
-
 const TYPED_SPAN = 'span:first-child';
 
 // PHRASES[0] = 'Stop Losing Ideas After Every Meeting' (37 chars)
@@ -51,7 +50,6 @@ describe('HeroTyping', () => {
 
   it('cursor element is rendered (aria-hidden span)', () => {
     const { container } = render(<HeroTyping />);
-
     const ariaHiddenEls = container.querySelectorAll('[aria-hidden="true"]');
 
     expect(ariaHiddenEls.length).toBeGreaterThanOrEqual(1);
@@ -61,7 +59,6 @@ describe('HeroTyping', () => {
     render(<HeroTyping />);
     tickType(1);
     const heading = screen.getByRole('heading', { level: 1 });
-
     const span = heading.querySelector(TYPED_SPAN) as HTMLElement;
 
     expect(span.textContent).toBe('S');
@@ -73,7 +70,6 @@ describe('HeroTyping', () => {
 
     tickType(phrase.length);
     const heading = screen.getByRole('heading', { level: 1 });
-
     const span = heading.querySelector(TYPED_SPAN) as HTMLElement;
 
     expect(span.textContent).toBe(phrase);
@@ -91,7 +87,6 @@ describe('HeroTyping', () => {
     // Delete a few chars
     tickDelete(5);
     const heading = screen.getByRole('heading', { level: 1 });
-
     const span = heading.querySelector(TYPED_SPAN) as HTMLElement;
 
     expect(span.textContent?.length ?? 0).toBeLessThan(phrase.length);
@@ -115,7 +110,6 @@ describe('HeroTyping', () => {
     // Type a couple of chars of phrase[1]
     tickType(3);
     const heading = screen.getByRole('heading', { level: 1 });
-
     const span = heading.querySelector(TYPED_SPAN) as HTMLElement;
 
     expect(
@@ -125,7 +119,6 @@ describe('HeroTyping', () => {
 
   it('cleans up timers on unmount', () => {
     const clearSpy = jest.spyOn(globalThis, 'clearTimeout');
-
     const { unmount } = render(<HeroTyping />);
 
     unmount();

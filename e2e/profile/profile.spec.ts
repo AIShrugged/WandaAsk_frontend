@@ -135,10 +135,8 @@ test.describe('Profile page — authenticated', () => {
   // eslint-disable-next-line max-statements
   test('shows success toast after saving name', async ({ page }) => {
     const { nameInput, saveBtn } = getLocators(page);
-
     // Use a fixed base name so repeated runs don't accumulate suffixes.
     const FIXED_BASE = 'E2E Test User';
-
     const TOAST_TIMEOUT = 15_000;
 
     // Step 1: Save the fixed base name (restores clean state if a prior run left it dirty).

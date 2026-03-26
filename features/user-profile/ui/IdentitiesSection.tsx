@@ -17,7 +17,6 @@ const CHANNEL_OPTIONS = [
   { value: 'zoom', label: 'Zoom' },
   { value: 'google_calendar', label: 'Google Calendar' },
 ] as const;
-
 const INPUT_CLASS =
   'rounded-[var(--radius-button)] border border-input bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30';
 
@@ -52,7 +51,6 @@ export function IdentitiesSection({
   initialIdentities,
 }: IdentitiesSectionProps) {
   const [isPending, startTransition] = useTransition();
-
   const [optimisticIdentities, applyOptimistic] = useOptimistic(
     initialIdentities,
     (
@@ -70,7 +68,6 @@ export function IdentitiesSection({
       return [...current, action.identity];
     },
   );
-
   const {
     register,
     handleSubmit,
@@ -80,7 +77,6 @@ export function IdentitiesSection({
   } = useForm<LinkFormData>({
     defaultValues: { channel: 'telegram', identifier: '' },
   });
-
   /**
    * handleUnlink — optimistically removes an identity and calls the server action.
    * @param id - Identity record ID to unlink.
@@ -99,7 +95,6 @@ export function IdentitiesSection({
       }
     });
   };
-
   /**
    * onLinkSubmit — submits the link form, handles conflict and generic errors.
    * @param data - Form data containing channel and identifier.

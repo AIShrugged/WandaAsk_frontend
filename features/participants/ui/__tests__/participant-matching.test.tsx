@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
@@ -73,7 +72,6 @@ const makeGuest = (id: number, identifier: string): GuestProps => {
     user_id: 0,
   };
 };
-
 const makeAttendee = (
   id: number,
   name: string,
@@ -107,7 +105,6 @@ describe('ParticipantMatching', () => {
       makeGuest(1, 'alice@example.com'),
       makeGuest(2, 'bob@example.com'),
     ];
-
     const attendees = [makeAttendee(1, 'Person')];
 
     render(
@@ -127,7 +124,6 @@ describe('ParticipantMatching', () => {
 
   it('pre-selects matched profile in dropdown', () => {
     const guests = [makeGuest(5, 'matched@example.com')];
-
     const attendees = [makeAttendee(1, 'Alice', 5)];
 
     render(
@@ -142,7 +138,6 @@ describe('ParticipantMatching', () => {
 
   it('calls setProfile when a guest is selected', async () => {
     const guests = [makeGuest(7, 'guest@example.com')];
-
     const attendees = [makeAttendee(3, 'Bob')];
 
     render(

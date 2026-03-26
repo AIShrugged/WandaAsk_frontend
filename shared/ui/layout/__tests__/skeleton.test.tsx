@@ -19,7 +19,6 @@ describe('Skeleton', () => {
 describe('SkeletonList', () => {
   it('renders 5 rows by default', () => {
     const { container } = render(<SkeletonList />);
-
     // Each row has one round skeleton + two line skeletons = 3 per row × 5 = 15
     const skeletons = container.querySelectorAll('.animate-pulse');
 
@@ -28,7 +27,6 @@ describe('SkeletonList', () => {
 
   it('renders the specified number of rows', () => {
     const { container } = render(<SkeletonList rows={3} />);
-
     const skeletons = container.querySelectorAll('.animate-pulse');
 
     expect(skeletons.length).toBe(9); // 3 rows × 3 skeletons each

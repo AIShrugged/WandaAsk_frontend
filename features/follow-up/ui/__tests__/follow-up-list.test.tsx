@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { render, screen } from '@testing-library/react';
 
 import { FollowUpList } from '@/features/follow-up/ui/follow-up-list';

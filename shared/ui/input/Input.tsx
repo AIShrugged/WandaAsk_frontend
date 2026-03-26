@@ -22,7 +22,6 @@ export interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
 const cn = (...parts: Array<string | false | null | undefined>) => {
   return parts.filter(Boolean).join(' ');
 };
-
 const Input = forwardRef<HTMLInputElement, Props>(function Input(
   {
     id,
@@ -43,13 +42,9 @@ const Input = forwardRef<HTMLInputElement, Props>(function Input(
   ref,
 ) {
   const autoId = useId();
-
   const inputId = id ?? `input-${autoId}`;
-
   const errorId = `${inputId}-error`;
-
   const [isFocused, setIsFocused] = useState(false);
-
   const hasValue =
     (value || rest.placeholder) !== undefined && (value || '').length > 0;
 

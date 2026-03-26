@@ -18,7 +18,6 @@ export function TabLink({
   children: ReactNode;
 }) {
   const router = useRouter();
-
   /**
    * handleClick.
    * @param e - e.

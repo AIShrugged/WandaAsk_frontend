@@ -105,7 +105,6 @@ function shortUrl(url: string): string {
  */
 function LogRow({ entry }: { entry: DebugLogEntry }) {
   const [open, setOpen] = useState(false);
-
   const hasDetail =
     entry.body ||
     entry.headers ||
@@ -334,9 +333,7 @@ function FilterBar({
 }) {
   const btnBase =
     'px-2.5 py-1 rounded text-xs font-medium border transition-colors';
-
   const activeBtn = 'bg-violet-700/80 border-violet-500 text-white';
-
   const inactiveBtn =
     'bg-white/5 border-white/10 text-slate-400 hover:border-white/20';
 
@@ -451,7 +448,6 @@ const POLL_INTERVAL_MS = 2000;
  */
 export function DebugLogsViewer() {
   const [logs, setLogs] = useState<DebugLogEntry[]>([]);
-
   const [filters, setFilters] = useState<Filters>({
     source: 'all',
     kind: 'all',
@@ -459,17 +455,12 @@ export function DebugLogsViewer() {
     search: '',
     slowOnly: false,
   });
-
   const [autoScroll, setAutoScroll] = useState(true);
-
   const bottomRef = useRef<HTMLDivElement>(null);
-
   const listRef = useRef<HTMLDivElement>(null);
-
   const fetchLogs = useCallback(async () => {
     try {
       const res = await fetch('/api/debug-logs');
-
       const data = (await res.json()) as DebugLogEntry[];
 
       setLogs(data);
@@ -508,18 +499,15 @@ export function DebugLogsViewer() {
 
     setAutoScroll(atBottom);
   }, []);
-
   const clearLogs = useCallback(async () => {
     await fetch('/api/debug-logs?action=clear', { method: 'POST' });
     setLogs([]);
   }, []);
-
   const updateFilters = useCallback((patch: Partial<Filters>) => {
     setFilters((f) => {
       return { ...f, ...patch };
     });
   }, []);
-
   // Apply filters
   const visible = logs.filter((e) => {
     if (filters.source !== 'all' && e.source !== filters.source) return false;

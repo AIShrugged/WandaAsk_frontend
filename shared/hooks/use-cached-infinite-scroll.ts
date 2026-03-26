@@ -44,15 +44,12 @@ export function useCachedInfiniteScroll<T>({
   const items = store((s) => {
     return s.items;
   });
-
   const isLoading = store((s) => {
     return s.isLoading;
   });
-
   const hasMore = store((s) => {
     return s.hasMore;
   });
-
   const sentinelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

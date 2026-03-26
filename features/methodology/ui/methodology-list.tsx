@@ -44,7 +44,6 @@ export default function MethodologyList({
     },
     [organizationId],
   );
-
   const { items, isLoading, hasMore, sentinelRef } =
     useCachedInfiniteScroll<MethodologyProps>({
       store: useMethodologyStore,

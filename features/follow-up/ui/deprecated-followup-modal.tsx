@@ -37,11 +37,8 @@ export default function DeprecatedFollowUpModal({
   title = 'Follow-up uses an outdated methodology',
 }: DeprecatedFollowUpModalProps) {
   const router = useRouter();
-
   const [state, setState] = useState<State>(isOpen ? 'idle' : 'dismissed');
-
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
   const clearTimer = useCallback(() => {
     if (timerRef.current) {
       clearTimeout(timerRef.current);
@@ -57,7 +54,6 @@ export default function DeprecatedFollowUpModal({
     clearTimer();
     setState('dismissed');
   }, [clearTimer]);
-
   const startPolling = useCallback(
     (newId: number) => {
       /**
@@ -95,7 +91,6 @@ export default function DeprecatedFollowUpModal({
     },
     [clearTimer, close, router],
   );
-
   const handleRegenerate = useCallback(async () => {
     setState('regenerating');
 
@@ -123,7 +118,6 @@ export default function DeprecatedFollowUpModal({
       setState('failed');
     }
   }, [clearTimer, close, followUpId, router, startPolling]);
-
   const handleRetry = useCallback(() => {
     void handleRegenerate();
   }, [handleRegenerate]);

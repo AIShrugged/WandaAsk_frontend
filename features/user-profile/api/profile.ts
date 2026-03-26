@@ -19,7 +19,6 @@ export async function updateProfile(data: {
   name: string;
 }): Promise<ActionResult> {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(`${API_URL}/users/me`, {
     method: 'PATCH',
     headers: { ...authHeaders, 'Content-Type': 'application/json' },
@@ -60,7 +59,6 @@ export async function changePassword(data: {
   password_confirmation: string;
 }): Promise<ActionResult> {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(`${API_URL}/users/me`, {
     method: 'PATCH',
     headers: { ...authHeaders, 'Content-Type': 'application/json' },

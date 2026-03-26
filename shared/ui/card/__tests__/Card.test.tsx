@@ -14,7 +14,6 @@ describe('Card', () => {
 
   it('applies base classes', () => {
     const { container } = render(<Card>Content</Card>);
-
     const div = container.firstChild as HTMLElement;
 
     expect(div).toHaveClass(

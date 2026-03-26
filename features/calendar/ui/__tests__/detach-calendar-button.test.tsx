@@ -17,7 +17,6 @@ import { detachCalendar } from '@/features/calendar/api/source';
 import DetachCalendarButton from '@/features/calendar/ui/detach-calendar-button';
 
 const mockDetachCalendar = detachCalendar as jest.Mock;
-
 const user = userEvent.setup({ delay: null });
 
 describe('DetachCalendarButton', () => {

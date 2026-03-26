@@ -242,7 +242,6 @@ describe('createTeam', () => {
       string,
       RequestInit,
     ];
-
     const body = JSON.parse(options.body as string) as Record<string, unknown>;
 
     expect(body.organization_id).toBe('7');
@@ -448,7 +447,6 @@ describe('sendInvite', () => {
       string,
       RequestInit,
     ];
-
     const body = JSON.parse(options.body as string) as Record<string, unknown>;
 
     expect(body.email).toBe('member@example.com');

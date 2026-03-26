@@ -12,7 +12,6 @@ describe('CosmicBackground', () => {
 
   it('is aria-hidden (decorative element)', () => {
     const { container } = render(<CosmicBackground />);
-
     const root = container.firstChild as HTMLElement;
 
     expect(root).toHaveAttribute('aria-hidden', 'true');
@@ -20,7 +19,6 @@ describe('CosmicBackground', () => {
 
   it('renders star particle divs', () => {
     const { container } = render(<CosmicBackground />);
-
     // There are 20 stars + 4 orb divs + 1 root = multiple child divs
     const divs = container.querySelectorAll('div > div');
 

@@ -59,20 +59,16 @@ export function ThinkingIndicator() {
   // phrasesRef is initialised with a shuffled deck via useRef(shuffle(...)).
   // This does NOT read a ref during render — it only passes the initial value.
   const phrasesRef = useRef<Phrase[]>(shuffle(PHRASES));
-
   // Start at -1 so the first step('show') advances to index 0.
   const indexRef = useRef(-1);
-
   // The displayed phrase; starts with the hardcoded first phrase ('Thinking').
   // No ref access here — avoids the react-hooks/refs violation.
   const [phrase, setPhrase] = useState<Phrase>(PHRASES[0]);
-
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
     let pending: ReturnType<typeof setTimeout>;
-
     /**
      * step.
      * @param phase - phase.

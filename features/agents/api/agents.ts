@@ -32,7 +32,6 @@ async function requestAgentApi<T>(
   fallbackMessage: string,
 ): Promise<{ response: Response; json: ApiResponse<T> }> {
   const authHeaders = await getAuthHeaders();
-
   const response = await fetch(`${API_URL}${path}`, {
     ...init,
     headers: {
@@ -86,7 +85,6 @@ async function actionAgentApi<T>(
   fallbackMessage: string,
 ): Promise<T | AgentActionError> {
   const authHeaders = await getAuthHeaders();
-
   const response = await fetch(`${API_URL}${path}`, {
     ...init,
     headers: {
@@ -101,7 +99,6 @@ async function actionAgentApi<T>(
     if (response.status === 401) redirect('/api/auth/clear-session');
 
     const text = await response.text();
-
     const parsed = parseApiError(text, fallbackMessage);
 
     logApiError({
@@ -210,7 +207,6 @@ export async function updateAgentProfile(
  */
 export async function deleteAgentProfile(id: number) {
   const authHeaders = await getAuthHeaders();
-
   const response = await fetch(`${API_URL}/agent-profiles/${id}`, {
     method: 'DELETE',
     headers: {
@@ -221,7 +217,6 @@ export async function deleteAgentProfile(id: number) {
 
   if (!response.ok) {
     const text = await response.text();
-
     const parsed = parseApiError(text, 'Failed to delete agent profile');
 
     return {
@@ -262,15 +257,12 @@ export async function getAgentTasks(offset = 0, limit = 20) {
     offset: String(offset),
     limit: String(limit),
   });
-
   const { response, json } = await requestAgentApi<AgentTask[]>(
     `/agent-tasks?${params}`,
     { method: 'GET' },
     'Failed to load agent tasks',
   );
-
   const data = json.data ?? [];
-
   const totalCount = Number(response.headers.get('Items-Count') ?? '0');
 
   return {
@@ -334,7 +326,6 @@ export async function updateAgentTask(
  */
 export async function deleteAgentTask(id: number) {
   const authHeaders = await getAuthHeaders();
-
   const response = await fetch(`${API_URL}/agent-tasks/${id}`, {
     method: 'DELETE',
     headers: {
@@ -345,7 +336,6 @@ export async function deleteAgentTask(id: number) {
 
   if (!response.ok) {
     const text = await response.text();
-
     const parsed = parseApiError(text, 'Failed to delete agent task');
 
     return {

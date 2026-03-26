@@ -55,7 +55,6 @@ describe('useTeamsStore', () => {
     const first = [
       { id: 1, name: 'A', slug: 'a', employee_count: 1, members: [] },
     ];
-
     const second = [
       { id: 2, name: 'B', slug: 'b', employee_count: 2, members: [] },
     ];

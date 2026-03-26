@@ -31,9 +31,7 @@ function getStatusVariant(status: string) {
  */
 export function AgentTaskRunDetail({ run }: { run: AgentTaskRun }) {
   const toolCalls = getToolCalls(run);
-
   const sandboxResult = getSandboxResult(run);
-
   const { plan, handoff, lineage } = getPlanOrHandoff(run);
 
   return (

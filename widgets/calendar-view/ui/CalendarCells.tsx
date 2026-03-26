@@ -23,7 +23,6 @@ export default function CalendarCells({
   events: EventProps[];
 }) {
   const { open, close } = useModal();
-
   /**
    * handleShowAll.
    * @param dayEvents - events for the day.

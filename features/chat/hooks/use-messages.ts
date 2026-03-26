@@ -28,19 +28,13 @@ export function useMessages(
   // Messages stored in chronological order (oldest first, newest last).
   // API returns oldest-first, so no reversal needed.
   const [messages, setMessages] = useState<Message[]>(initialMessages);
-
   // Tracks the beginning offset of what we've loaded so far.
   const [loadedStartOffset, setLoadedStartOffset] = useState(startOffset);
-
   const [isLoading, setIsLoading] = useState(false);
-
   const sentinelRef = useRef<HTMLDivElement>(null);
-
   const containerRef = useRef<HTMLDivElement>(null);
-
   // There are older messages if we haven't loaded from offset 0 yet.
   const hasMore = loadedStartOffset > 0;
-
   /**
    * loadOlder.
    * @returns Promise.
@@ -49,15 +43,12 @@ export function useMessages(
     if (isLoading || !hasMore) return;
 
     const container = containerRef.current;
-
     const prevScrollHeight = container?.scrollHeight ?? 0;
 
     setIsLoading(true);
     try {
       const fetchOffset = Math.max(0, loadedStartOffset - PAGE_SIZE);
-
       const fetchCount = loadedStartOffset - fetchOffset;
-
       const { messages: older } = await getMessages(
         chatId,
         fetchOffset,
@@ -124,7 +115,6 @@ export function useMessages(
       return [...prev, message];
     });
   }, []);
-
   /**
    * addMessages.
    * @param incoming - Messages to append and scroll to.
@@ -136,7 +126,6 @@ export function useMessages(
       return [...prev, ...incoming];
     });
   }, []);
-
   /**
    * updateMessage — patches a message in-place by id.
    * @param id - ID of the message to update.
@@ -150,7 +139,6 @@ export function useMessages(
       });
     });
   }, []);
-
   /**
    * removeMessage.
    * @param id - message id.

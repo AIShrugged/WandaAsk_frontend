@@ -97,12 +97,10 @@ function TaskPreviewPanel({
     medium: { label: 'Medium', color: 'text-yellow-400' },
     low: { label: 'Low', color: 'text-muted-foreground' },
   };
-
   const typeColors: Record<string, string> = {
     task: 'bg-blue-500/20 text-blue-300',
     bug: 'bg-red-500/20 text-red-300',
   };
-
   const colConfig = card
     ? (KANBAN_COLUMNS.find((col) => {
         return col.id === card.status;
@@ -275,15 +273,12 @@ function KanbanCardItem({
   onCardClick: (card: KanbanCard) => void;
 }) {
   const [dragOver] = useState(false);
-
   const typeColors: Record<string, string> = {
     task: 'bg-blue-500/20 text-blue-300',
     bug: 'bg-red-500/20 text-red-300',
   };
-
   const typeClass =
     typeColors[card.type] ?? 'bg-secondary text-secondary-foreground';
-
   const otherColumns = columns.filter((col) => {
     return col.id !== card.status;
   });
@@ -443,7 +438,6 @@ function KanbanColumnComponent({
         event.preventDefault();
         setIsDragOver(false);
         const cardId = Number(event.dataTransfer.getData('cardId'));
-
         const sourceStatus = event.dataTransfer.getData(
           'sourceStatus',
         ) as IssueStatus;
@@ -517,12 +511,9 @@ export function KanbanBoard({
   initialFilters,
 }: KanbanBoardProps) {
   const router = useRouter();
-
   const searchParams = useSearchParams();
-
   const [columns, setColumns] =
     useState<Record<IssueStatus, KanbanCard[]>>(initialColumns);
-
   // Sync columns when server re-fetches data with new filters.
   // initialColumns is a new object reference on every server render,
   // so we use a serialized key from the URL search params as a stable dependency.
@@ -533,25 +524,18 @@ export function KanbanBoard({
   }, [searchParamsString]);
 
   const [movingCardId, setMovingCardId] = useState<number | null>(null);
-
   const [hoveredCard, setHoveredCard] = useState<KanbanCard | null>(null);
-
   const [, startTransition] = useTransition();
-
   const [search, setSearch] = useState(initialFilters.search ?? '');
-
   const [orgId, setOrgId] = useState(
     initialFilters.organization_id
       ? String(initialFilters.organization_id)
       : '',
   );
-
   const [teamId, setTeamId] = useState(
     initialFilters.team_id ? String(initialFilters.team_id) : '',
   );
-
   const [teams, setTeams] = useState<TeamProps[]>([]);
-
   const [isTeamsLoading, setIsTeamsLoading] = useState(false);
 
   useEffect(() => {
@@ -577,15 +561,12 @@ export function KanbanBoard({
   }, [orgId]);
 
   const [type, setType] = useState(initialFilters.type ?? '');
-
   const [assigneeId, setAssigneeId] = useState(
     initialFilters.assignee_id ? String(initialFilters.assignee_id) : '',
   );
-
   const [priority, setPriority] = useState<KanbanPriority | ''>(
     (initialFilters.priority as KanbanPriority | '') ?? '',
   );
-
   const updateUrl = useCallback(
     (patch: Record<string, string>) => {
       const params = new URLSearchParams(searchParams.toString());
@@ -604,7 +585,6 @@ export function KanbanBoard({
     },
     [router, searchParams],
   );
-
   /**
    *
    * @param prev
@@ -632,7 +612,6 @@ export function KanbanBoard({
 
     return next;
   };
-
   /**
    *
    * @param prev
@@ -657,7 +636,6 @@ export function KanbanBoard({
 
     return next;
   };
-
   /**
    *
    * @param cardId
@@ -670,7 +648,6 @@ export function KanbanBoard({
     targetStatus: IssueStatus,
   ) => {
     const sourceCards = columns[sourceStatus];
-
     const card = sourceCards.find((c) => {
       return c.id === cardId;
     });
@@ -715,7 +692,6 @@ export function KanbanBoard({
       }
     });
   };
-
   /**
    *
    * @param card
@@ -726,7 +702,6 @@ export function KanbanBoard({
 
     handleDrop(card.id, card.status, status);
   };
-
   // Client-side search filter
   const filteredColumns: Record<IssueStatus, KanbanCard[]> = {
     open: [],
@@ -734,7 +709,6 @@ export function KanbanBoard({
     paused: [],
     done: [],
   };
-
   const lowerSearch = search.toLowerCase();
 
   for (const col of KANBAN_COLUMNS) {
@@ -754,20 +728,17 @@ export function KanbanBoard({
       return { value: String(org.id), label: org.name };
     }),
   ];
-
   const teamOptions = [
     { value: '', label: isTeamsLoading ? 'Loading...' : 'All teams' },
     ...teams.map((team) => {
       return { value: String(team.id), label: team.name };
     }),
   ];
-
   const typeOptions = [
     { value: '', label: 'All' },
     { value: 'task', label: 'Task' },
     { value: 'bug', label: 'Bug' },
   ];
-
   const assigneeOptions = [
     { value: '', label: 'All' },
     ...persons.map((person) => {
@@ -777,7 +748,6 @@ export function KanbanBoard({
       };
     }),
   ];
-
   const priorityOptions = [
     { value: '', label: 'All' },
     ...Object.entries(KANBAN_PRIORITY_LABELS).map(([value, label]) => {

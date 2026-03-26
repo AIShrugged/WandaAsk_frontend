@@ -18,9 +18,7 @@ interface MeetingRowProps {
  */
 function MeetingRow({ event }: MeetingRowProps) {
   const start = parseISO(event.starts_at);
-
   const end = parseISO(event.ends_at);
-
   const timeLabel = `${format(start, 'HH:mm')} — ${format(end, 'HH:mm')}`;
 
   return (

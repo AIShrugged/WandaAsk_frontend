@@ -20,19 +20,13 @@ interface PopupPosition {
  */
 export function PopupProvider({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
-
   const [config, setConfig] = useState<PopupConfig | null>(null);
-
   const [position, setPosition] = useState<PopupPosition>({ top: 0, left: 0 });
-
   const calculatePosition = useCallback(
     (anchor: HTMLElement, cfg: PopupConfig): PopupPosition => {
       const rect = anchor.getBoundingClientRect();
-
       const offset = cfg.offset ?? 8;
-
       const width = cfg.width ?? 200;
-
       let top = 0;
       let left = 0;
 
@@ -64,7 +58,6 @@ export function PopupProvider({ children }: { children: React.ReactNode }) {
       }
 
       const viewportWidth = window.innerWidth;
-
       const viewportHeight = window.innerHeight;
 
       if (left + width > viewportWidth) {
@@ -88,7 +81,6 @@ export function PopupProvider({ children }: { children: React.ReactNode }) {
     },
     [],
   );
-
   const open = useCallback(
     (anchor: HTMLElement, cfg: PopupConfig) => {
       const pos = calculatePosition(anchor, cfg);
@@ -99,7 +91,6 @@ export function PopupProvider({ children }: { children: React.ReactNode }) {
     },
     [calculatePosition],
   );
-
   const close = useCallback(() => {
     setIsOpen(false);
     setConfig(null);

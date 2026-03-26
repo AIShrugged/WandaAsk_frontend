@@ -49,26 +49,19 @@ test.describe('Follow-ups list — authenticated', () => {
         'a[href*="/dashboard/follow-ups/"]:not([href="/dashboard/follow-ups"])',
       )
       .first();
-
     // Multiple empty state variants used across different scenarios
     const emptyText1 = page.getByText(/no team in this organization/i);
-
     const emptyText2 = page.getByText(/no teams yet/i);
-
     const emptyText3 = page.getByText(/create a team to get started/i);
-
     const hasTeams = await teamLink.isVisible({ timeout: 5000 }).catch(() => {
       return false;
     });
-
     const isEmpty1 = await emptyText1.isVisible({ timeout: 2000 }).catch(() => {
       return false;
     });
-
     const isEmpty2 = await emptyText2.isVisible({ timeout: 2000 }).catch(() => {
       return false;
     });
-
     const isEmpty3 = await emptyText3.isVisible({ timeout: 2000 }).catch(() => {
       return false;
     });
@@ -90,7 +83,6 @@ test.describe('Follow-ups detail — authenticated', () => {
       storageState: 'e2e/.auth/user.json',
       baseURL: 'http://localhost:8080',
     });
-
     const page = await context.newPage();
 
     try {
@@ -102,7 +94,6 @@ test.describe('Follow-ups detail — authenticated', () => {
           'a[href*="/dashboard/follow-ups/"]:not([href="/dashboard/follow-ups"])',
         )
         .first();
-
       const href = await teamLink
         .getAttribute('href', { timeout: 5000 })
         .catch(() => {
@@ -144,15 +135,12 @@ test.describe('Follow-ups detail — authenticated', () => {
     const followUpItem = page
       .locator('a[href*="/dashboard/follow-ups/analysis/"]')
       .first();
-
     const emptyHeading = page.getByText(/no follow-ups yet/i);
-
     const hasItems = await followUpItem
       .isVisible({ timeout: 5000 })
       .catch(() => {
         return false;
       });
-
     const isEmpty = await emptyHeading
       .isVisible({ timeout: 3000 })
       .catch(() => {
@@ -190,7 +178,6 @@ test.describe('Follow-ups analysis — authenticated', () => {
       storageState: 'e2e/.auth/user.json',
       baseURL: 'http://localhost:8080',
     });
-
     const page = await context.newPage();
 
     try {
@@ -204,7 +191,6 @@ test.describe('Follow-ups analysis — authenticated', () => {
           'a[href*="/dashboard/follow-ups/"]:not([href="/dashboard/follow-ups"])',
         )
         .first();
-
       const teamHref = await teamLink
         .getAttribute('href', { timeout: 5000 })
         .catch(() => {
@@ -220,7 +206,6 @@ test.describe('Follow-ups analysis — authenticated', () => {
       const analysisLink = page
         .locator('a[href*="/dashboard/follow-ups/analysis/"]')
         .first();
-
       // Use short timeout — if no analysis links exist, fail fast
       const analysisHref = await analysisLink
         .getAttribute('href', { timeout: 3000 })

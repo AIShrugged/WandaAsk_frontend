@@ -48,14 +48,12 @@ const SOURCE_LABEL: Record<ErrorSource, string> = {
   network: 'Network Error',
   unknown: 'Error',
 };
-
 const SOURCE_BADGE: Record<ErrorSource, string> = {
   server: 'bg-red-50 text-red-700 border border-red-200',
   frontend: 'bg-orange-50 text-orange-700 border border-orange-200',
   network: 'bg-yellow-50 text-yellow-700 border border-yellow-200',
   unknown: 'bg-muted text-muted-foreground border',
 };
-
 const SOURCE_ACCENT: Record<ErrorSource, string> = {
   server: 'border-l-red-500',
   frontend: 'border-l-orange-500',
@@ -89,7 +87,6 @@ function SourceIcon({ source }: { source: ErrorSource }) {
  */
 function buildDebugText(error: RichError): string {
   const source = error.source ?? 'unknown';
-
   const lines: string[] = [
     `[${SOURCE_LABEL[source]}] ${error.name ?? 'Error'}: ${error.message}`,
   ];
@@ -152,15 +149,10 @@ function ProdErrorView({ reset }: { reset: () => void }) {
  */
 function DevErrorView({ error, reset }: ErrorDisplayProps) {
   const source = error.source ?? 'unknown';
-
   const label = SOURCE_LABEL[source];
-
   const badgeClass = SOURCE_BADGE[source];
-
   const accentClass = SOURCE_ACCENT[source];
-
   const [isStackOpen, setIsStackOpen] = useState(false);
-
   /**
    * handleCopy.
    */
@@ -281,7 +273,6 @@ function DevErrorView({ error, reset }: ErrorDisplayProps) {
  */
 export default function ErrorDisplay({ error, reset }: ErrorDisplayProps) {
   const source = error.source ?? 'unknown';
-
   const label = SOURCE_LABEL[source];
 
   useEffect(() => {

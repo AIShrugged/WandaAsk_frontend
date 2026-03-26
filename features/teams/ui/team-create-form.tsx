@@ -29,13 +29,9 @@ export default function TeamCreateForm({
   organization_id: string;
 }) {
   const FORM_ID = 'team-create-form';
-
   const isEdit = Boolean(values?.id);
-
   const router = useRouter();
-
   const [isPending, startTransition] = useTransition();
-
   const {
     control,
     handleSubmit,
@@ -45,7 +41,6 @@ export default function TeamCreateForm({
     mode: 'onBlur',
     reValidateMode: 'onChange',
   });
-
   /**
    * onSubmit.
    * @param data - data.
@@ -89,7 +84,6 @@ export default function TeamCreateForm({
             rules={field.rules}
             render={({ field: hookField, fieldState }) => {
               const variant: VariantType = field.variant;
-
               const Component = VARIANT_MAPPER[variant];
 
               return (

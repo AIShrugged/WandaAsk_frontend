@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { beforeAll } from '@jest/globals';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -34,7 +33,6 @@ const mockCreateChat = jest.fn(() => {
     updated_at: '',
   });
 });
-
 const mockGetChats = jest.fn(() => {
   return Promise.resolve({ chats: [], totalCount: 0 });
 });
@@ -90,7 +88,6 @@ jest.mock('@/features/chat/ui/chat-list-item', () => {
 });
 
 const CHAT_ITEM_1 = 'chat-item-1';
-
 const makeChat = (id: number, title: string | null = null): Chat => {
   return {
     id,

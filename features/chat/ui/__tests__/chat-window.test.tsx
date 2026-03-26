@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
@@ -25,11 +24,8 @@ jest.mock('@/shared/lib/config', () => {
 });
 
 const mockAddMessage = jest.fn();
-
 const mockAddMessages = jest.fn();
-
 const mockSendMessage = jest.fn();
-
 const mockToastError = jest.fn();
 
 jest.mock('@/features/chat/hooks/use-messages', () => {
@@ -193,7 +189,6 @@ describe('ChatWindow', () => {
 
   it('calls onCollapse when collapse button is clicked', async () => {
     const onCollapse = jest.fn();
-
     const user = userEvent.setup();
 
     render(

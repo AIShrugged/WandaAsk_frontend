@@ -54,7 +54,6 @@ describe('ChangePasswordForm', () => {
   it('shows required error for empty current password on submit', async () => {
     render(<ChangePasswordForm />);
     const currentInput = screen.getByLabelText(/current password/i);
-
     const newInput = screen.getByLabelText('New password');
 
     await userEvent.type(currentInput, 'old');

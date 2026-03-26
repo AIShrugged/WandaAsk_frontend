@@ -50,13 +50,10 @@ test.describe('Chat list — authenticated', () => {
     const chatLink = page
       .locator('a[href*="/dashboard/chat/"]:not([href="/dashboard/chat"])')
       .first();
-
     const emptyState = page.getByText(/no chats yet/i);
-
     const hasChats = await chatLink.isVisible({ timeout: 5000 }).catch(() => {
       return false;
     });
-
     const isEmpty = await emptyState.isVisible({ timeout: 3000 }).catch(() => {
       return false;
     });
@@ -83,7 +80,6 @@ test.describe('Chat list — authenticated', () => {
     const link = page
       .locator('a[href*="/dashboard/chat/"]:not([href="/dashboard/chat"])')
       .first();
-
     const isVisible = await link.isVisible({ timeout: 5000 }).catch(() => {
       return false;
     });

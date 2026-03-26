@@ -1,13 +1,10 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import DeprecatedFollowUpModal from '@/features/follow-up/ui/deprecated-followup-modal';
 
 const mockRefresh = jest.fn();
-
 const mockRegenerateFollowUp = jest.fn();
-
 const mockPollFollowUp = jest.fn();
 
 jest.mock('next/navigation', () => {

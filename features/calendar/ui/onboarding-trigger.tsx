@@ -12,9 +12,7 @@ import OnboardingImage from './onboarding-image';
  */
 export default function OnboardingTrigger() {
   const [isPending, setIsPending] = useState(false);
-
   const [error, setError] = useState<string | null>(null);
-
   /**
    * handleAttach.
    * @returns Promise.

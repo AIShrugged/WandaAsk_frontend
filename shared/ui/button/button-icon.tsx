@@ -34,7 +34,6 @@ export function ButtonIcon({
 }: IconActionProps) {
   const baseClasses =
     'cursor-pointer flex items-center justify-center transition-colors';
-
   const stateClasses = clsx(
     !disabled &&
       variant === 'primary' &&
@@ -45,7 +44,6 @@ export function ButtonIcon({
     disabled &&
       'text-muted-foreground/40 opacity-40 cursor-not-allowed pointer-events-none',
   );
-
   const content = (
     <span className={clsx(baseClasses, stateClasses, className)}>{icon}</span>
   );

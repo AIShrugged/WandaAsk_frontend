@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
@@ -218,7 +217,6 @@ describe('GlobalPopup', () => {
 
   it('removes event listeners on unmount', () => {
     const removeSpy = jest.spyOn(globalThis, 'removeEventListener');
-
     const { unmount } = render(<GlobalPopup />);
 
     unmount();

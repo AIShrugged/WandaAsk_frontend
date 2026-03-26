@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
@@ -16,7 +15,6 @@ const makeEvent = (id: number): EventProps => {
     color: '#ff0000',
   };
 };
-
 const user = userEvent.setup({ delay: null });
 
 describe('EventExtraButton', () => {
@@ -27,7 +25,6 @@ describe('EventExtraButton', () => {
 
   it('calls onShowAll with dayEvents when clicked', async () => {
     const events = [makeEvent(1), makeEvent(2)];
-
     const onShowAll = jest.fn();
 
     render(

@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { render, screen } from '@testing-library/react';
 
 import TranscriptHistory from '@/features/transcript/ui/transcript-history';
@@ -68,7 +67,6 @@ const makeTranscript = (id: number): TranscriptProps => {
     } as TranscriptProps['participant'],
   };
 };
-
 const makeTranscriptsData = (items: TranscriptProps[]): TranscriptsProps => {
   return {
     data: items,

@@ -73,7 +73,6 @@ interface KpiOverviewBlockProps {
  */
 export function KpiOverviewBlock({ summary }: KpiOverviewBlockProps) {
   const totalHours = Math.round(summary.meetings.total_duration_minutes / 60);
-
   const openTasks =
     summary.tasks.by_status.open + summary.tasks.by_status.in_progress;
 

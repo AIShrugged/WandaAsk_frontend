@@ -51,11 +51,8 @@ export function AgentProfileForm({
   toolOptions: AgentSelectOption[];
 }) {
   const router = useRouter();
-
   const [isPending, startTransition] = useTransition();
-
   const isEdit = Boolean(profile?.id);
-
   const defaultValues = useMemo<AgentProfileFormValues>(() => {
     return {
       name: profile?.name ?? '',
@@ -67,7 +64,6 @@ export function AgentProfileForm({
       validation_payload: '',
     };
   }, [profile]);
-
   const {
     register,
     watch,
@@ -81,7 +77,6 @@ export function AgentProfileForm({
     mode: 'onBlur',
     reValidateMode: 'onChange',
   });
-
   /**
    *
    * @param values
@@ -106,7 +101,6 @@ export function AgentProfileForm({
         ...(values.model.trim() ? { model: values.model.trim() } : {}),
         ...(config ? { config } : {}),
       };
-
       const result =
         isEdit && profile
           ? await updateAgentProfile(profile.id, payload)

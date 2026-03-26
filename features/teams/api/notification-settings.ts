@@ -22,7 +22,6 @@ export async function getTeamNotificationSettings(
   teamId: number | string,
 ): Promise<TeamNotificationSetting[]> {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(`${API_URL}/teams/${teamId}/notification-settings`, {
     headers: { ...authHeaders },
     cache: 'no-store',
@@ -59,7 +58,6 @@ export async function createTeamNotificationSetting(
   data: TeamNotificationSettingCreateDTO,
 ): Promise<{ error?: string; fieldErrors?: Record<string, string> }> {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(`${API_URL}/teams/${teamId}/notification-settings`, {
     method: 'POST',
     headers: { ...authHeaders, 'Content-Type': 'application/json' },
@@ -71,7 +69,6 @@ export async function createTeamNotificationSetting(
     if (res.status === 401) redirect('/api/auth/clear-session');
 
     const text = await res.text();
-
     const parsed = parseApiError(text, 'Failed to create notification setting');
 
     if (res.status === 422) {
@@ -98,7 +95,6 @@ export async function updateTeamNotificationSetting(
   enabled: boolean,
 ): Promise<{ error?: string }> {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(
     `${API_URL}/teams/${teamId}/notification-settings/${settingId}`,
     {
@@ -130,7 +126,6 @@ export async function deleteTeamNotificationSetting(
   settingId: number,
 ): Promise<{ error?: string }> {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(
     `${API_URL}/teams/${teamId}/notification-settings/${settingId}`,
     {

@@ -14,7 +14,6 @@ import type { ActionResult } from '@/shared/types/server-action';
  */
 export async function deleteDemo(): Promise<ActionResult> {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(`${API_URL}/demo`, {
     method: 'DELETE',
     headers: { ...authHeaders },

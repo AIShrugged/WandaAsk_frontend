@@ -21,9 +21,7 @@ type Props = {
  */
 export function TeamItem({ team, actions, href }: Props) {
   const route = `${href}/${team.id}`;
-
   const employeeSuffix = team.employee_count === 1 ? '' : 's';
-
   const employeeLabel =
     team.employee_count < 1
       ? `No employees in ${team.name}`

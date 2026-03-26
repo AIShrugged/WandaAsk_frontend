@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc, import/order */
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
@@ -81,11 +80,8 @@ import { sendInvite } from '@/features/teams/api/team';
 import TeamMemberAddForm from '@/features/teams/ui/team-member-add-form';
 
 const mockSendInvite = sendInvite as jest.Mock;
-
 const FIELD_EMAIL = 'field-email';
-
 const TEST_EMAIL = 'test@example.com';
-
 const user = userEvent.setup({ delay: null });
 
 describe('TeamMemberAddForm', () => {

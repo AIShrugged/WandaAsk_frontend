@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
@@ -21,11 +20,8 @@ jest.mock('sonner', () => {
 });
 
 const mockCreateTeam = jest.fn().mockResolvedValue({ data: { id: 1 } });
-
 const mockUpdateTeam = jest.fn().mockResolvedValue({ data: {} });
-
 const mockInvalidate = jest.fn();
-
 const mockPush = jest.fn();
 
 jest.mock('@/features/teams/api/team', () => {
@@ -56,7 +52,6 @@ const blankTeam = {
   employee_count: 0,
   members: [],
 } as TeamProps;
-
 const existingTeam: TeamProps = {
   id: 42,
   name: 'Engineering',
@@ -64,7 +59,6 @@ const existingTeam: TeamProps = {
   employee_count: 3,
   members: [],
 };
-
 const user = userEvent.setup({ delay: null });
 
 describe('TeamCreateForm', () => {

@@ -16,7 +16,6 @@ export async function getFirstId(
 ): Promise<string | null> {
   await page.goto(listUrl);
   const link = page.locator(`a[href*="${hrefPrefix}"]`).first();
-
   const href = await link.getAttribute('href').catch(() => {
     return null;
   });

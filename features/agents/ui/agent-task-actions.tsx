@@ -31,9 +31,7 @@ export function AgentProfileActions({
   backHref,
 }: BaseProps & { id: number }) {
   const router = useRouter();
-
   const [isPending, startTransition] = useTransition();
-
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
 
   return (
@@ -105,11 +103,8 @@ export function AgentTaskActions({
   enabled: boolean;
 }) {
   const router = useRouter();
-
   const [isPending, startTransition] = useTransition();
-
   const [isDeletePending, setIsDeletePending] = useState(false);
-
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
 
   return (

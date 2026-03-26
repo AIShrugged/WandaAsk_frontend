@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { render, screen } from '@testing-library/react';
 
 import ParticipantData from '@/features/participants/ui/participant-data';
@@ -34,7 +33,6 @@ const makeGuest = (id: number): GuestProps => {
     email: `guest${id}@test.com`,
   } as GuestProps;
 };
-
 const makeAttendee = (id: number): AttendeeProps => {
   return {
     id,

@@ -18,7 +18,6 @@ import type { ActionResult } from '@/shared/types/server-action';
  */
 export async function getSources(): Promise<Source[]> {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(`${API_URL}/sources`, {
     headers: { ...authHeaders },
     cache: 'no-store',
@@ -50,9 +49,7 @@ export async function getSources(): Promise<Source[]> {
  */
 export async function detachCalendar(sourceId: number): Promise<ActionResult> {
   const authHeaders = await getAuthHeaders();
-
   const url = `${API_URL}/sources/${sourceId}`;
-
   const res = await fetch(url, {
     method: 'DELETE',
     headers: { ...authHeaders },
@@ -91,9 +88,7 @@ export async function detachCalendarFromProfile(
   sourceId: number,
 ): Promise<ActionResult> {
   const authHeaders = await getAuthHeaders();
-
   const url = `${API_URL}/sources/${sourceId}`;
-
   const res = await fetch(url, {
     method: 'DELETE',
     headers: { ...authHeaders },

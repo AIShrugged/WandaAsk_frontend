@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { render, screen, fireEvent } from '@testing-library/react';
 
 import { UserMenuPopup } from '@/features/user/ui/user-menu-popup';

@@ -35,7 +35,6 @@ export default async function AgentProfileDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-
   const profileId = Number(id);
 
   if (!Number.isFinite(profileId) || profileId <= 0) notFound();

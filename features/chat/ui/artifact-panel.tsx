@@ -30,13 +30,9 @@ export function ArtifactPanel({
   const [artifacts, setArtifacts] = useState<ArtifactsResponse | null>(
     initialArtifacts,
   );
-
   const [isCollapsed, setIsCollapsed] = useState(false);
-
   const [isRefreshing, setIsRefreshing] = useState(false);
-
   const mountedRef = useRef(true);
-
   const pollingRef = useRef(false);
 
   useEffect(() => {
@@ -62,7 +58,6 @@ export function ArtifactPanel({
         setTimeout(poll, POLLING_INTERVAL_MS);
       }
     };
-
     const timerId = setTimeout(poll, POLLING_INTERVAL_MS);
 
     return () => {
@@ -88,7 +83,6 @@ export function ArtifactPanel({
       if (mountedRef.current) setIsRefreshing(false);
     }
   };
-
   const items = (artifacts?.layout?.items ?? [])
     .map((item) => {
       return artifacts!.artifacts[item.id];

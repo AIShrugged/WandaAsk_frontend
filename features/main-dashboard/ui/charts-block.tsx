@@ -27,14 +27,12 @@ import Card from '@/shared/ui/card/Card';
 import type { DashboardApiResponse } from '@/features/summary/types';
 
 const BAR_COLOR = 'hsl(142 47% 45%)';
-
 const TASK_COLORS: Record<string, string> = {
   Open: 'hsl(217 91% 60%)',
   'In Progress': 'hsl(45 93% 58%)',
   Done: 'hsl(142 47% 45%)',
   Cancelled: 'hsl(240 3.8% 65%)',
 };
-
 const FOLLOWUP_COLORS: Record<string, string> = {
   Done: 'hsl(142 47% 45%)',
   'In Progress': 'hsl(45 93% 58%)',
@@ -57,7 +55,6 @@ export function ChartsBlock({ summary }: ChartsBlockProps) {
       Meetings: item.count,
     };
   });
-
   const taskData = [
     { name: 'Open', value: summary.tasks.by_status.open },
     { name: 'In Progress', value: summary.tasks.by_status.in_progress },
@@ -66,7 +63,6 @@ export function ChartsBlock({ summary }: ChartsBlockProps) {
   ].filter((e) => {
     return e.value > 0;
   });
-
   const followupData = [
     { name: 'Done', value: summary.followups.by_status.done },
     { name: 'In Progress', value: summary.followups.by_status.in_progress },

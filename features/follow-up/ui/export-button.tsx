@@ -25,12 +25,10 @@ interface ExportButtonProps {
  */
 export function ExportButton({ followUpId }: ExportButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
-
   const [dropdownPos, setDropdownPos] = useState<{
     top: number;
     right: number;
   } | null>(null);
-
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {

@@ -35,7 +35,6 @@ describe('MeetingCard', () => {
     render(<MeetingCard data={baseData} />);
     // Users icon only appears with participants
     const { container } = render(<MeetingCard data={baseData} />);
-
     const userIcons = container.querySelectorAll('.lucide-users');
 
     expect(userIcons).toHaveLength(0);

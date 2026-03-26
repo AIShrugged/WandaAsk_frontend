@@ -30,7 +30,6 @@ import { redirect } from 'next/navigation';
 import { logApiError } from '@/shared/lib/logger';
 
 const mockRedirect = redirect as jest.Mock;
-
 const mockLogApiError = logApiError as jest.Mock;
 
 // ---------------------------------------------------------------------------
@@ -199,7 +198,6 @@ describe('seedDemo', () => {
       string,
       RequestInit,
     ];
-
     const body = JSON.parse(options.body as string) as Record<string, unknown>;
 
     expect(body.teams_count).toBe(3);

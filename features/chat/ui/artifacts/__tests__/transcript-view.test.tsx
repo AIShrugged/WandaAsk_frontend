@@ -6,7 +6,6 @@ const baseData = {
   meeting_title: 'Weekly Sync',
   entries: [],
 };
-
 /**
  *
  * @param overrides
@@ -107,11 +106,8 @@ describe('TranscriptView', () => {
         }}
       />,
     );
-
     const avatars = container.querySelectorAll('.rounded-full.flex-shrink-0');
-
     const classes0 = [...avatars[0].classList];
-
     const classes1 = [...avatars[1].classList];
 
     expect(classes0).toEqual(classes1);

@@ -9,7 +9,6 @@ import { ROUTES } from '@/shared/lib/routes';
  */
 export async function getOrganizationId(): Promise<string> {
   const cookieStore = await cookies();
-
   const organizationId = cookieStore.get('organization_id')?.value;
 
   if (!organizationId) {

@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
@@ -65,7 +64,6 @@ describe('Checkbox', () => {
     const { container } = render(
       <Checkbox onChange={jest.fn()} value='' error='Required' />,
     );
-
     const input = container.querySelector('input');
 
     expect(input?.className).toContain('border-destructive');
@@ -73,7 +71,6 @@ describe('Checkbox', () => {
 
   it('applies default border class when no error', () => {
     const { container } = render(<Checkbox onChange={jest.fn()} value='' />);
-
     const input = container.querySelector('input');
 
     expect(input?.className).toContain('border-border');

@@ -1,11 +1,9 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import MethodologyCreate from '@/features/methodology/ui/methodology-create';
 
 const mockPush = jest.fn();
-
 const mockCreateChat = jest.fn();
 
 jest.mock('next/navigation', () => {

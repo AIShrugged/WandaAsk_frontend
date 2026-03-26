@@ -166,13 +166,10 @@ function TelegramChatCard({
   const [organizationId, setOrganizationId] = useState(
     chat.organization_id ? String(chat.organization_id) : '',
   );
-
   const [teamId, setTeamId] = useState(
     chat.team_id ? String(chat.team_id) : '',
   );
-
   const [rootError, setRootError] = useState('');
-
   const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
@@ -183,33 +180,24 @@ function TelegramChatCard({
   }, [chat.organization_id, chat.team_id]);
 
   const status = getTelegramStatus(chat, now);
-
   const badge = statusBadgeProps(status);
-
   const isPrivate = isPrivateTelegramChat(chat);
-
   const isAttachableGroup = isGroupTelegramChat(chat);
-
   const hasAssignedScope =
     chat.organization_id !== null || chat.team_id !== null;
-
   const isExpired =
     chat.attach_code_expires_at !== null &&
     isPast(new Date(chat.attach_code_expires_at));
-
   const canGenerateCode =
     isAttachableGroup && status !== 'bound' && !hasAssignedScope;
-
   const expirationLabel =
     chat.attach_code_expires_at && !isExpired
       ? formatDistanceToNowStrict(new Date(chat.attach_code_expires_at), {
           addSuffix: true,
         })
       : null;
-
   const title =
     chat.chat_title?.trim() || `Telegram chat #${chat.telegram_chat_id}`;
-
   let scopeText = 'Scope: Not assigned';
   let ownerText = 'Owner: My private chat';
 
@@ -233,7 +221,6 @@ function TelegramChatCard({
       toast.success('Attach command copied');
     });
   };
-
   /**
    *
    */
@@ -454,13 +441,10 @@ export function TelegramChatsManagement({
   organizations,
 }: TelegramChatsManagementProps) {
   const [chats, setChats] = useState(initialChats);
-
   const [now, setNow] = useState(() => {
     return new Date();
   });
-
   const [isRefreshing, startRefreshTransition] = useTransition();
-
   const shouldAutoRefresh = useMemo(() => {
     return chats.some((chat) => {
       return (

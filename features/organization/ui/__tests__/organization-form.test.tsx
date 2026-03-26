@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
@@ -103,9 +102,7 @@ const existingOrg: OrganizationProps = {
   updated_at: '2024-01-01T00:00:00Z',
   pivot: { organization_id: 5, role: 'admin', user_id: 1 },
 };
-
 const FIELD_NAME = 'field-name';
-
 const user = userEvent.setup({ delay: null });
 
 describe('OrganizationForm', () => {

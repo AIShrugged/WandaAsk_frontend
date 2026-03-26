@@ -16,11 +16,8 @@ import PageHeader from '@/widgets/layout/ui/page-header';
  */
 export default async function ProfilePage() {
   const { data: user } = await getUser();
-
   const identities = await getIdentities();
-
   const sources = await getSources();
-
   const calendarSource = sources[0] ?? null;
 
   return (

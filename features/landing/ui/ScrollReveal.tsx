@@ -11,13 +11,11 @@ import { useEffect } from 'react';
 export function ScrollReveal() {
   useEffect(() => {
     const elements = document.querySelectorAll<HTMLElement>('[data-reveal]');
-
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           if (entry.isIntersecting) {
             const el = entry.target as HTMLElement;
-
             const delay = el.dataset.revealDelay ?? '0';
 
             el.style.transitionDelay = `${delay}ms`;

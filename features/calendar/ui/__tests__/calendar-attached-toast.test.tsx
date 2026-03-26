@@ -18,7 +18,6 @@ jest.mock('next/navigation', () => {
 });
 
 const mockToastSuccess = toast.success as jest.Mock;
-
 const mockUseRouter = useRouter as jest.Mock;
 
 describe('CalendarAttachedToast', () => {

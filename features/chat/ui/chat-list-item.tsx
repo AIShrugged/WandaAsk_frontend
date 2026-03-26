@@ -36,7 +36,6 @@ export function ChatListItem({
   onDelete,
 }: ChatListItemProps) {
   const [mode, setMode] = useState<'idle' | 'confirming-delete'>('idle');
-
   const [isPending, startTransition] = useTransition();
 
   // ── Delete handlers ────────────────────────────────────────────────────────
@@ -50,7 +49,6 @@ export function ChatListItem({
     e.preventDefault();
     setMode('confirming-delete');
   };
-
   /**
    * cancelDelete.
    * @returns Result.
@@ -58,7 +56,6 @@ export function ChatListItem({
   const cancelDelete = () => {
     return setMode('idle');
   };
-
   /**
    * confirmDelete.
    * @returns Result.
@@ -78,9 +75,7 @@ export function ChatListItem({
   // ── Render ─────────────────────────────────────────────────────────────────
 
   const href = `${ROUTES.DASHBOARD.CHAT}/${chat.id}`;
-
   const displayTitle = chat.title ?? 'Untitled chat';
-
   let scopeLabel = 'Personal chat';
 
   if ((chat.organization_id ?? null) !== null) {

@@ -23,9 +23,7 @@ export function ChatInput({
   placeholder = 'Message…',
 }: ChatInputProps) {
   const [value, setValue] = useState('');
-
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-
   /**
    * submit.
    * @returns Result.
@@ -38,7 +36,6 @@ export function ChatInput({
     onSend(trimmed);
     textareaRef.current?.focus();
   };
-
   /**
    * handleKeyDown.
    * @param e - e.

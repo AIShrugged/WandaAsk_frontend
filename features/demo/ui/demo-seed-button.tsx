@@ -15,7 +15,6 @@ import { DemoOverlay } from '@/features/demo/ui/demo-overlay';
 import { ROUTES } from '@/shared/lib/routes';
 
 const POLLING_INTERVAL_MS = 2000;
-
 const MAX_POLL_RETRIES = 150; // ~5 minutes at 2s interval
 
 /**
@@ -27,38 +26,23 @@ const MAX_POLL_RETRIES = 150; // ~5 minutes at 2s interval
 // eslint-disable-next-line max-statements, complexity
 export default function DemoSeedButton() {
   const [isOpen, setIsOpen] = useState(false);
-
   const [isPending, setIsPending] = useState(false);
-
   const [progressPercent, setProgressPercent] = useState<number | null>(null);
-
   const [stepLabel, setStepLabel] = useState<string | null>(null);
-
   const [teamsCount, setTeamsCount] = useState(1);
-
   const [employeesPerTeam, setEmployeesPerTeam] = useState(7);
-
   const [meetingsPerTeam, setMeetingsPerTeam] = useState(3);
-
   const [hasExistingDemo, setHasExistingDemo] = useState(false);
-
   const [isDeleting, setIsDeleting] = useState(false);
-
   const buttonRef = useRef<HTMLButtonElement>(null);
-
   const [dropdownPos, setDropdownPos] = useState<{
     top: number;
     right: number;
   } | null>(null);
-
   const pollingRef = useRef(false);
-
   const pollCountRef = useRef(0);
-
   const mountedRef = useRef(true);
-
   const router = useRouter();
-
   /**
    * stopPolling.
    */
@@ -71,7 +55,6 @@ export default function DemoSeedButton() {
       setStepLabel(null);
     }
   };
-
   /**
    * startPolling.
    */
@@ -234,7 +217,6 @@ export default function DemoSeedButton() {
       if (mountedRef.current) setIsDeleting(false);
     }
   };
-
   /**
    * handleGenerate.
    * @returns Promise.

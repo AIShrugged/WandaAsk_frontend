@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 
@@ -159,7 +158,6 @@ describe('MenuSidebar', () => {
 describe('getMenuItems', () => {
   it('includes Agent Activity for agent managers', () => {
     const items = getMenuItems({ canManageAgents: true });
-
     const labels = items.map((item) => {
       return item.label;
     });

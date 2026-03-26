@@ -9,7 +9,6 @@ export const isDev =
 
 // ── ANSI colour palette (Unicode escapes required by unicorn/no-hex-escape) ─
 const ESC = '\u001B[';
-
 const C = {
   reset: `${ESC}0m`,
   bold: `${ESC}1m`,
@@ -23,7 +22,6 @@ const C = {
   gray: `${ESC}90m`,
   orange: `${ESC}38;5;208m`,
 } as const;
-
 const DIVIDER = C.dim + '─'.repeat(72) + C.reset;
 
 // ── Slow request threshold ─────────────────────────────────────────────────
@@ -48,17 +46,11 @@ export function createRequestId(): string {
  */
 export function formatTimestamp(): string {
   const d = new Date();
-
   const day = String(d.getDate()).padStart(2, '0');
-
   const month = String(d.getMonth() + 1).padStart(2, '0');
-
   const hh = String(d.getHours()).padStart(2, '0');
-
   const mm = String(d.getMinutes()).padStart(2, '0');
-
   const ss = String(d.getSeconds()).padStart(2, '0');
-
   const ms = String(d.getMilliseconds()).padStart(3, '0');
 
   return day + '/' + month + ' ' + hh + ':' + mm + ':' + ss + '.' + ms;
@@ -102,7 +94,6 @@ export function captureCallerStack(skipFile: string): string | undefined {
   if (!stack) return undefined;
 
   const noise = [...STACK_NOISE, skipFile];
-
   const frames = stack
     .split('\n')
     .slice(1) // skip the "Error" header line
@@ -314,9 +305,7 @@ export function logRequest(ctx: RequestLogContext): void {
     userAgent,
     referer,
   } = ctx;
-
   const sanitized = sanitizeHeaders(headers);
-
   const hdrsStr =
     Object.entries(sanitized).length > 0
       ? Object.entries(sanitized)
@@ -325,9 +314,7 @@ export function logRequest(ctx: RequestLogContext): void {
           })
           .join('\n')
       : '    ' + C.gray + '(none)' + C.reset;
-
   const tsStr = timestamp ? '  ' + C.gray + timestamp + C.reset : '';
-
   // When a tag is present, show "[TAG] path" in the header and full URL as a detail.
   const urlDisplay = tag
     ? tagColour(tag) +
@@ -339,7 +326,6 @@ export function logRequest(ctx: RequestLogContext): void {
       '  ' +
       new URL(url).pathname
     : url;
-
   let out =
     '\n' +
     DIVIDER +
@@ -410,11 +396,8 @@ export function logResponse(ctx: ResponseLogContext): void {
 
   const { id, method, url, status, durationMs, body, slow, size, cacheStatus } =
     ctx;
-
   const sc = statusColour(status);
-
   const headerColour = slow ? C.orange : sc;
-
   const timeStr = slow
     ? C.orange +
       C.bold +
@@ -425,7 +408,6 @@ export function logResponse(ctx: ResponseLogContext): void {
       'ms' +
       C.reset
     : String(durationMs) + 'ms';
-
   let out =
     headerColour +
     C.bold +
@@ -498,7 +480,6 @@ export function logApiError(context: ApiErrorContext): void {
   if (!isDev) return;
 
   const method = context.method ?? 'GET';
-
   const { url, status, statusText, body } = context;
 
   // eslint-disable-next-line no-console

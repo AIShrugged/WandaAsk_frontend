@@ -76,7 +76,6 @@ test.describe('Organization create — authenticated', () => {
 
   test('save button becomes enabled after filling name', async ({ page }) => {
     const nameField = page.getByLabel(/name/i).first();
-
     const saveBtn = page.getByRole('button', { name: /save/i }).first();
 
     await nameField.fill('Test Organization Name');
@@ -97,7 +96,6 @@ test.describe('Organization edit — authenticated', () => {
       storageState: 'e2e/.auth/user.json',
       baseURL: 'http://localhost:8080',
     });
-
     const page = await context.newPage();
 
     try {
@@ -109,7 +107,6 @@ test.describe('Organization edit — authenticated', () => {
       const orgLink = page
         .locator('a[href*="/dashboard/organization/"]:not([href*="/create"])')
         .first();
-
       const href = await orgLink
         .getAttribute('href', { timeout: 5000 })
         .catch(() => {

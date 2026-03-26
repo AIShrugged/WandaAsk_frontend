@@ -54,13 +54,11 @@ export default async function AgentTaskDetailPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { id } = await params;
-
   const profileId = Number(id);
 
   if (!Number.isFinite(profileId) || profileId <= 0) notFound();
 
   const query = await searchParams;
-
   const currentTab =
     typeof query.tab === 'string' &&
     tabs.some((tab) => {
@@ -68,10 +66,8 @@ export default async function AgentTaskDetailPage({
     })
       ? query.tab
       : 'overview';
-
   const selectedRunId =
     typeof query.runId === 'string' ? Number(query.runId) : undefined;
-
   const { canManageAgents, managerOrganizations } =
     await getAgentAccessContext();
 

@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
@@ -100,7 +99,6 @@ describe('ModalRoot', () => {
 
   it('removes keydown listener on unmount', () => {
     const removeSpy = jest.spyOn(document, 'removeEventListener');
-
     const { unmount } = render(
       <ModalRoot open onClose={onClose}>
         <p>Content</p>

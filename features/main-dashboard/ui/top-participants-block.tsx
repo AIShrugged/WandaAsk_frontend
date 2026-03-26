@@ -17,7 +17,6 @@ export function TopParticipantsBlock({
   participants,
 }: TopParticipantsBlockProps) {
   const top = participants.slice(0, 8);
-
   const maxCount = top[0]?.meetings_count ?? 1;
 
   return (

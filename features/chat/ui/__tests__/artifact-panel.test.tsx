@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
@@ -106,9 +105,7 @@ import { ArtifactPanel } from '@/features/chat/ui/artifact-panel';
 import type { ArtifactsResponse } from '@/features/chat/types';
 
 const ARTIFACT_ID = 'a1';
-
 const ARTIFACT_TITLE = 'My Artifact';
-
 const makeArtifacts = (type = 'task_table'): ArtifactsResponse => {
   return {
     layout: { items: [{ id: ARTIFACT_ID }] },
@@ -123,7 +120,6 @@ const makeArtifacts = (type = 'task_table'): ArtifactsResponse => {
     },
   };
 };
-
 const user = userEvent.setup({ delay: null });
 
 describe('ArtifactPanel', () => {

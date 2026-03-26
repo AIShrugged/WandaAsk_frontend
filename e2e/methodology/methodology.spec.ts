@@ -6,7 +6,6 @@ import { expect, test } from '@playwright/test';
  */
 
 const METHODOLOGY_URL = '/dashboard/methodology';
-
 const METHODOLOGY_CREATE_URL = '/dashboard/methodology/create';
 
 // ---------------------------------------------------------------------------
@@ -59,15 +58,12 @@ test.describe('Methodology list — authenticated', () => {
     const methodologyLink = page
       .locator('a[href*="/dashboard/methodology/"]')
       .first();
-
     const emptyText = page.getByText(/no methodologies in this organization/i);
-
     const hasItems = await methodologyLink
       .isVisible({ timeout: 5000 })
       .catch(() => {
         return false;
       });
-
     const isEmpty = await emptyText.isVisible({ timeout: 3000 }).catch(() => {
       return false;
     });
@@ -81,7 +77,6 @@ test.describe('Methodology list — authenticated', () => {
     const firstLink = page
       .locator('a[href*="/dashboard/methodology/"]')
       .first();
-
     const isVisible = await firstLink.isVisible({ timeout: 5000 }).catch(() => {
       return false;
     });

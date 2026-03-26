@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 
@@ -34,7 +33,6 @@ const makeEvent = (id: number, startsAt: string): EventProps => {
     color: '#ff0000',
   };
 };
-
 const renderEvent = (event: EventProps) => {
   return (
     <div key={event.id} data-testid={`event-${event.id}`}>

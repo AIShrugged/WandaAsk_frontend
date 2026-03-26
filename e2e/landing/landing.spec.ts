@@ -24,15 +24,12 @@ test.describe('Landing page', () => {
     // LandingHero renders an HeroTyping headline and subtitle text
     // Look for any heading in the page
     const heading = page.getByRole('heading').first();
-
     const heroText = page.getByText(/tribes|meeting|ai|intelligence/i).first();
-
     const hasHeading = await heading
       .isVisible({ timeout: 10_000 })
       .catch(() => {
         return false;
       });
-
     const hasHeroText = await heroText
       .isVisible({ timeout: 5000 })
       .catch(() => {

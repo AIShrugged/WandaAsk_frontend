@@ -26,11 +26,8 @@ const FORM_ID = 'team-member-add-form';
  */
 export default function TeamMemberAddForm({ close }: ModalContextValue) {
   const searchParams = useSearchParams();
-
   const currentTeamId = searchParams.get('team_id');
-
   const [isPending, startTransition] = useTransition();
-
   const {
     control,
     handleSubmit,
@@ -41,7 +38,6 @@ export default function TeamMemberAddForm({ close }: ModalContextValue) {
     mode: 'onBlur',
     reValidateMode: 'onChange',
   });
-
   /**
    * onSubmit.
    * @param data - data.
@@ -77,7 +73,6 @@ export default function TeamMemberAddForm({ close }: ModalContextValue) {
             rules={field.rules}
             render={({ field: hookField, fieldState }) => {
               const variant: VariantType = field.variant;
-
               const Component = VARIANT_MAPPER[variant];
 
               return (

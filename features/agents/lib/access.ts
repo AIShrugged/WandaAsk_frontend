@@ -26,16 +26,12 @@ export async function getAgentAccessContext(): Promise<{
     getOrganizations(),
     cookies(),
   ]);
-
   const organizations = organizationsResponse.data ?? [];
-
   const activeOrganizationId = cookieStore.get('organization_id')?.value ?? '';
-
   const activeOrganization =
     organizations.find((organization) => {
       return String(organization.id) === activeOrganizationId;
     }) ?? null;
-
   const managerOrganizations = organizations.filter((organization) => {
     return isOrganizationManager(organization.pivot.role);
   });

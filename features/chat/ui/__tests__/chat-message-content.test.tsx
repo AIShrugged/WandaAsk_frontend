@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { render, screen } from '@testing-library/react';
 
 import { ChatMessageContent } from '@/features/chat/ui/chat-message-content';
@@ -56,10 +55,8 @@ describe('ChatMessageContent', () => {
 
   it('re-executes script tags inside HTML content', () => {
     const executed: string[] = [];
-
     // Capture document.createElement calls to detect script creation
     const originalCreate = document.createElement.bind(document);
-
     const createSpy = jest
       .spyOn(document, 'createElement')
       .mockImplementation((tag: string) => {

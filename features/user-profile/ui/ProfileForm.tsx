@@ -20,7 +20,6 @@ interface ProfileFormData {
  */
 export function ProfileForm({ user }: { user: UserProps }) {
   const [isPending, startTransition] = useTransition();
-
   const {
     register,
     handleSubmit,
@@ -28,7 +27,6 @@ export function ProfileForm({ user }: { user: UserProps }) {
   } = useForm<ProfileFormData>({
     defaultValues: { name: user.name },
   });
-
   /**
    * onSubmit.
    * @param data - Form data.

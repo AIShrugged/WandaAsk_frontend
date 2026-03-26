@@ -20,7 +20,6 @@ describe('Textarea', () => {
   it('label is associated with the textarea via htmlFor', () => {
     render(<Textarea label='Notes' />);
     const label = screen.getByText('Notes');
-
     const textarea = screen.getByRole('textbox');
 
     expect(label).toHaveAttribute('for', textarea.id);

@@ -87,7 +87,6 @@ const mockMessage = {
   content: 'Hello',
   created_at: '2024-01-01T00:00:00Z',
 };
-
 const mockAgentRun = {
   uuid: 'run-uuid-123',
   status: 'completed',
@@ -253,7 +252,6 @@ describe('sendMessage', () => {
       string,
       RequestInit,
     ];
-
     const body = JSON.parse(options.body as string) as Record<string, unknown>;
 
     expect(body.content).toBe('My message text');

@@ -1,4 +1,4 @@
-/* eslint-disable jsdoc/require-jsdoc, max-statements */
+/* eslint-disable max-statements */
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
@@ -23,7 +23,6 @@ const options: DropdownOption[] = [
   { value: 'b', label: 'Beta' },
   { value: 'c', label: 'Gamma' },
 ];
-
 const user = userEvent.setup({ delay: null });
 
 describe('InputDropdown', () => {
@@ -185,7 +184,6 @@ describe('InputDropdown', () => {
 
   it('does not call onChange for disabled option', async () => {
     const onChange = jest.fn();
-
     const opts: DropdownOption[] = [
       { value: 'x', label: 'Disabled opt', disabled: true },
     ];

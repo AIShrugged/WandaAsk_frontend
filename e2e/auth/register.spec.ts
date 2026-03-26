@@ -76,7 +76,6 @@ test.describe('Register page', () => {
 
   test('shows error when email format is invalid', async ({ page }) => {
     const nameField = page.getByLabel(/name/i).first();
-
     const emailField = page.getByLabel(/email/i);
 
     await nameField.fill('Test User');
@@ -87,7 +86,6 @@ test.describe('Register page', () => {
     const errorMsg = page
       .getByText(/invalid|valid email|email.*invalid/i)
       .first();
-
     const isVisible = await errorMsg.isVisible({ timeout: 5000 }).catch(() => {
       return false;
     });
@@ -103,9 +101,7 @@ test.describe('Register page', () => {
 
   test('shows error when email is already registered', async ({ page }) => {
     const nameField = page.getByLabel(/name/i).first();
-
     const emailField = page.getByLabel(/email/i);
-
     const passwordInputs = page.locator('input[type="password"]');
 
     // Fill with existing test user credentials to trigger "already registered" error
@@ -114,7 +110,6 @@ test.describe('Register page', () => {
     await passwordInputs.first().fill('testpassword123');
     // Fill second password field if present
     const secondPassword = passwordInputs.nth(1);
-
     const hasSecondPwd = await secondPassword
       .isVisible({ timeout: 1000 })
       .catch(() => {
@@ -141,7 +136,6 @@ test.describe('Register page', () => {
     const loginLink = page
       .getByRole('link', { name: /login|sign in|log in/i })
       .first();
-
     const isVisible = await loginLink.isVisible({ timeout: 5000 }).catch(() => {
       return false;
     });

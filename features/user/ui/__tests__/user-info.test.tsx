@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
@@ -41,7 +40,6 @@ const makeUser = (overrides: Partial<UserProps> = {}): UserProps => {
     ...overrides,
   };
 };
-
 const user = userEvent.setup({ delay: null });
 
 describe('UserInfo', () => {

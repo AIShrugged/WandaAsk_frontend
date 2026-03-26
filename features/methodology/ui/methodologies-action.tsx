@@ -22,13 +22,10 @@ export function MethodologiesAction({
   methodology: MethodologyProps;
 }) {
   const [isPending, startTransition] = useTransition();
-
   const removeItem = useMethodologyStore((state) => {
     return state.removeItem;
   });
-
   const isDefault = methodology.id === 1;
-
   /**
    * handleDelete.
    */

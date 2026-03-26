@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { render, screen, fireEvent } from '@testing-library/react';
 
 import { NestedMenuItem } from '@/features/menu/ui/menu-nested-item';
@@ -107,7 +106,6 @@ describe('NestedMenuItem', () => {
     const { container } = render(
       <NestedMenuItem item={makeItem()} level={2} />,
     );
-
     const clickable = container.querySelector(
       '[style*="padding-left"]',
     ) as HTMLElement;

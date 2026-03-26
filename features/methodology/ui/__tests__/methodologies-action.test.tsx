@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
@@ -7,15 +6,10 @@ import { MethodologiesAction } from '@/features/methodology/ui/methodologies-act
 import type { MethodologyProps } from '@/features/methodology/model/types';
 
 const DELETE_BTN = 'delete-btn';
-
 const EDIT_BTN = 'edit-btn';
-
 const mockDeleteMethodology = jest.fn();
-
 const mockRemoveItem = jest.fn();
-
 const mockToastSuccess = jest.fn();
-
 const mockToastError = jest.fn();
 
 jest.mock('@/features/methodology/api/methodology', () => {

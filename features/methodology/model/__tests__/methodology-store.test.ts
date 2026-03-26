@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { useMethodologyStore } from '@/features/methodology/model/methodology-store';
 
 import type { MethodologyProps } from '@/features/methodology/model/types';

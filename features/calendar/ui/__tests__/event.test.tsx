@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
@@ -65,7 +64,6 @@ import { isEventPast } from '@/shared/lib/isEventPast';
 import type { EventProps } from '@/entities/event';
 
 const EVENT_TITLE = 'Team Meeting';
-
 const makeEvent = (id: number = 1): EventProps => {
   return {
     id,
@@ -81,7 +79,6 @@ const makeEvent = (id: number = 1): EventProps => {
     assignee_id: null,
   };
 };
-
 const user = userEvent.setup({ delay: null });
 
 describe('Event', () => {

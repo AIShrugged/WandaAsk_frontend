@@ -50,9 +50,7 @@ export async function getKanbanIssues(
   filters: KanbanFilters = {},
 ): Promise<Record<IssueStatus, KanbanCard[]>> {
   const authHeaders = await getAuthHeaders();
-
   const query = buildKanbanQuery(filters);
-
   const res = await fetch(`${API_URL}/issues?${query}`, {
     headers: { ...authHeaders },
     cache: 'no-store',
@@ -110,7 +108,6 @@ export async function moveKanbanCard(
   card: KanbanCard,
 ): Promise<KanbanCard> {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(`${API_URL}/issues/${cardId}`, {
     method: 'PATCH',
     headers: { ...authHeaders, 'Content-Type': 'application/json' },

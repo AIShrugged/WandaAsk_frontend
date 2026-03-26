@@ -14,7 +14,6 @@ const ChartsBlock = dynamic(
   },
   {
     ssr: false,
-    // eslint-disable-next-line jsdoc/require-jsdoc
     loading: () => {
       return <Skeleton className='h-64 rounded-[var(--radius-card)]' />;
     },

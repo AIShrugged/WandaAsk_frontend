@@ -48,17 +48,11 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     ref,
   ) => {
     const autoId = useId();
-
     const textareaId = id ?? `textarea-${autoId}`;
-
     const [isFocused, setIsFocused] = useState(false);
-
     const currentValue = propValue ?? '';
-
     const hasValue = currentValue.length > 0 || !!placeholder;
-
     const floatingActive = floating && (isFocused || hasValue);
-
     /**
      * handleFocus.
      * @param e - e.
@@ -68,7 +62,6 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       setIsFocused(true);
       onFocus?.(e);
     };
-
     /**
      * handleBlur.
      * @param e - e.
@@ -78,7 +71,6 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       setIsFocused(false);
       onBlur?.(e);
     };
-
     /**
      * handleChange.
      * @param e - e.

@@ -78,16 +78,12 @@ function BubbleContent({
 // eslint-disable-next-line complexity
 export function ChatMessage({ message }: ChatMessageProps) {
   const isUser = message.role === 'user';
-
   const isPending =
     message.status === 'queued' ||
     message.status === 'processing' ||
     message.status === 'retrying';
-
   const isFailed = message.status === 'failed';
-
   const [copied, setCopied] = useState(false);
-
   /**
    * copyToClipboard.
    * @returns Promise.

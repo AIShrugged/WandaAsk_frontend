@@ -78,7 +78,6 @@ export function getMenuItems({
       href: ROUTES.DASHBOARD.KANBAN,
     },
   ];
-
   const isDev =
     process.env.NODE_ENV === 'development' ||
     process.env.NEXT_PUBLIC_APP_ENV === 'development';

@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { render, screen } from '@testing-library/react';
 
 import { ParticipantList } from '@/features/participants/ui/participant-list';
@@ -26,7 +25,6 @@ const makeAttendee = (
     ...overrides,
   };
 };
-
 const makeGuest = (overrides: Partial<GuestProps> = {}): GuestProps => {
   return {
     variant: 'guest',

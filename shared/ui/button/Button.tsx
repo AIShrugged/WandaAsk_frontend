@@ -48,10 +48,8 @@ export function Button({
   ...rest
 }: Props) {
   const isDisabled = disabled || loading;
-
   const base =
     'relative h-10 w-full px-6 py-2 rounded-[var(--radius-button)] font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2';
-
   const variants = {
     [BUTTON_VARIANT.primary]: clsx(
       'bg-gradient-to-b from-violet-500 to-violet-700 text-primary-foreground cursor-pointer',

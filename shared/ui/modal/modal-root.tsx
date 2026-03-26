@@ -11,7 +11,6 @@ interface ModalRootProps extends PropsWithChildren {
 
 /** Noop unsubscribe for useSyncExternalStore. */
 const noopUnsubscribe = () => {};
-
 /**
  * Stable subscribe for useSyncExternalStore — no external store to listen to.
  * @returns Unsubscribe noop.

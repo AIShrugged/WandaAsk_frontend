@@ -71,7 +71,6 @@ async function parseJsonResponse(
  */
 export async function login(data: LoginInput): Promise<void> {
   const validated = LoginSchema.parse(data);
-
   let res: Response;
 
   try {
@@ -96,7 +95,6 @@ export async function login(data: LoginInput): Promise<void> {
   }
 
   const payload = json.data as Record<string, unknown> | null;
-
   const token = payload?.token;
 
   if (typeof token !== 'string') {
@@ -120,7 +118,6 @@ export async function login(data: LoginInput): Promise<void> {
 // eslint-disable-next-line max-statements
 export async function register(data: RegisterInput): Promise<void> {
   const validated = RegisterSchema.parse(data);
-
   let res: Response;
 
   try {
@@ -146,7 +143,6 @@ export async function register(data: RegisterInput): Promise<void> {
   }
 
   const payload = json.data as Record<string, unknown> | null;
-
   const token = payload?.token;
 
   if (typeof token !== 'string') {

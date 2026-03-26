@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 
@@ -62,7 +61,6 @@ const makeGuest = (id: number): GuestProps => {
     user_id: 0,
   };
 };
-
 const makeAttendee = (id: number): AttendeeProps => {
   return {
     variant: 'attendee',
@@ -105,7 +103,6 @@ describe('ParticipantMatcher', () => {
 
   it('passes eventId, guests and attendees to ParticipantMatching', () => {
     const guests = [makeGuest(1), makeGuest(2)];
-
     const attendees = [makeAttendee(10)];
 
     render(

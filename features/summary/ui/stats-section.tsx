@@ -16,13 +16,11 @@ const MeetingStats = dynamic(
   },
   {
     ssr: false,
-    // eslint-disable-next-line jsdoc/require-jsdoc
     loading: () => {
       return <Skeleton className='h-48 rounded-[var(--radius-card)]' />;
     },
   },
 );
-
 const TaskStats = dynamic(
   () => {
     return import('@/features/summary/ui/TaskStats').then((m) => {
@@ -31,13 +29,11 @@ const TaskStats = dynamic(
   },
   {
     ssr: false,
-    // eslint-disable-next-line jsdoc/require-jsdoc
     loading: () => {
       return <Skeleton className='h-48 rounded-[var(--radius-card)]' />;
     },
   },
 );
-
 const FollowupStats = dynamic(
   () => {
     return import('@/features/summary/ui/FollowupStats').then((m) => {
@@ -46,13 +42,11 @@ const FollowupStats = dynamic(
   },
   {
     ssr: false,
-    // eslint-disable-next-line jsdoc/require-jsdoc
     loading: () => {
       return <Skeleton className='h-48 rounded-[var(--radius-card)]' />;
     },
   },
 );
-
 const ParticipantStats = dynamic(
   () => {
     return import('@/features/summary/ui/ParticipantStats').then((m) => {
@@ -61,13 +55,11 @@ const ParticipantStats = dynamic(
   },
   {
     ssr: false,
-    // eslint-disable-next-line jsdoc/require-jsdoc
     loading: () => {
       return <Skeleton className='h-48 rounded-[var(--radius-card)]' />;
     },
   },
 );
-
 const TeamStats = dynamic(
   () => {
     return import('@/features/summary/ui/TeamStats').then((m) => {
@@ -76,7 +68,6 @@ const TeamStats = dynamic(
   },
   {
     ssr: false,
-    // eslint-disable-next-line jsdoc/require-jsdoc
     loading: () => {
       return <Skeleton className='h-48 rounded-[var(--radius-card)]' />;
     },

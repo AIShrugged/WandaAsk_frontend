@@ -36,9 +36,7 @@ describe('ExportButton', () => {
     fireEvent.click(screen.getByRole('button', { name: /export follow-up/i }));
 
     const pdfLink = screen.getByText('PDF').closest('a');
-
     const excelLink = screen.getByText('Excel').closest('a');
-
     const htmlLink = screen.getByText('HTML').closest('a');
 
     expect(pdfLink).toHaveAttribute(

@@ -1,12 +1,9 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 
 const mockCreateMethodology = jest.fn().mockResolvedValue({});
-
 const mockUpdateMethodology = jest.fn().mockResolvedValue({});
-
 const mockPush = jest.fn();
 
 jest.mock('next/navigation', () => {
@@ -134,16 +131,12 @@ import type { TeamProps } from '@/entities/team';
 import type { MethodologyProps } from '@/features/methodology/model/types';
 
 const ORG_ID = 'org-1';
-
 const FIELD_NAME = 'field-name';
-
 const FIELD_TEXT = 'field-text';
-
 const teams: TeamProps[] = [
   { id: 1, name: 'Team A', slug: 'team-a', employee_count: 3, members: [] },
   { id: 2, name: 'Team B', slug: 'team-b', employee_count: 2, members: [] },
 ];
-
 const existingMethodology: MethodologyProps = {
   id: 10,
   name: 'Agile',
@@ -153,7 +146,6 @@ const existingMethodology: MethodologyProps = {
   is_default: false,
   teams: [{ id: 1, name: 'Team A', slug: 'team-a', employee_count: 3 }],
 };
-
 const user = userEvent.setup({ delay: null });
 
 describe('MethodologyForm', () => {

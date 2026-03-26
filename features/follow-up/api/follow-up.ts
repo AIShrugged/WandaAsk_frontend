@@ -15,7 +15,6 @@ import type { FollowUpDetailProps } from '../model/types';
  */
 export async function getFollowUp(id: number) {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(`${API_URL}/followups/${id}`, {
     headers: {
       ...authHeaders,
@@ -59,7 +58,6 @@ export async function regenerateFollowUp(
   followUpId: number,
 ): Promise<{ data: FollowUpDetailProps }> {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(`${API_URL}/followups/${followUpId}/regenerate`, {
     method: 'POST',
     headers: {
@@ -104,7 +102,6 @@ export async function pollFollowUp(
   id: number,
 ): Promise<{ data: FollowUpDetailProps }> {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(`${API_URL}/followups/${id}`, {
     headers: {
       ...authHeaders,

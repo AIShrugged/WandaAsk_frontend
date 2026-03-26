@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { ServerError } from '@/shared/lib/errors';
 import { httpClient, httpClientList } from '@/shared/lib/httpClient';
 
@@ -45,11 +44,8 @@ const makeResponse = (
     json: jest.fn().mockResolvedValue(body),
   } as unknown as Response;
 };
-
 const API_RESOURCE_URL = 'https://api/resource';
-
 const API_LIST_URL = 'https://api/list';
-
 // Assign a stable jest.fn() to globalThis.fetch before all tests.
 const mockFetch = jest.fn();
 

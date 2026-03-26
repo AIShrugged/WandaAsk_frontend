@@ -19,13 +19,10 @@ export default async function KanbanPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const params = await searchParams;
-
   const cookieOrgId = await getOrganizationId();
-
   const orgId = params.organization_id
     ? Number(params.organization_id)
     : Number(cookieOrgId);
-
   const filters: KanbanFilters = {
     organization_id: orgId,
     team_id: params.team_id ? Number(params.team_id) : null,
@@ -36,13 +33,11 @@ export default async function KanbanPage({
         ? (params.priority as KanbanFilters['priority'])
         : undefined,
   };
-
   const [groupedCards, organizationsResponse, persons] = await Promise.all([
     getKanbanIssues(filters),
     getOrganizations(),
     getPersons(),
   ]);
-
   const initialFilters = {
     ...filters,
     search: typeof params.search === 'string' ? params.search : '',

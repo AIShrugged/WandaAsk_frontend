@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
@@ -47,11 +46,8 @@ jest.mock('@/shared/ui/button/Button', () => {
 });
 
 const mockLinkIdentity = linkIdentity as jest.Mock;
-
 const mockUnlinkIdentity = unlinkIdentity as jest.Mock;
-
 const mockToastError = toast.error as jest.Mock;
-
 const mockToastSuccess = toast.success as jest.Mock;
 
 function makeIdentity(overrides: Partial<Identity> = {}): Identity {

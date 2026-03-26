@@ -6,13 +6,9 @@ import { Minus, Plus, Sparkles, Trash2 } from 'lucide-react';
 import { Button } from '@/shared/ui/button/Button';
 
 const TEAMS_COUNT_OPTIONS = [1, 2, 3] as const;
-
 const MEETINGS_OPTIONS = [1, 2, 3, 4, 5, 6] as const;
-
 const EMPLOYEES_MIN = 3;
-
 const EMPLOYEES_MAX = 10;
-
 const LABEL_CLASS = 'text-xs font-medium text-muted-foreground';
 
 interface DemoDropdownProps {

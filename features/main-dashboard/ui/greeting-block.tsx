@@ -11,9 +11,7 @@ interface GreetingBlockProps {
  */
 export function GreetingBlock({ name }: GreetingBlockProps) {
   const now = new Date();
-
   const hour = now.getHours();
-
   let greeting = 'Good evening';
 
   if (hour < 12) greeting = 'Good morning';

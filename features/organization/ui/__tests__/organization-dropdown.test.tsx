@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
@@ -146,7 +145,6 @@ describe('OrganizationDropdown', () => {
     const { toast } = jest.requireMock('sonner') as {
       toast: { success: jest.Mock };
     };
-
     const user = userEvent.setup({ delay: null });
 
     render(

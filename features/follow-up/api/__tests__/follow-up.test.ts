@@ -31,7 +31,6 @@ import {
 import { logApiError } from '@/shared/lib/logger';
 
 const mockRedirect = redirect as jest.Mock;
-
 const mockLogApiError = logApiError as jest.Mock;
 
 // ---------------------------------------------------------------------------

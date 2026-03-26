@@ -44,7 +44,6 @@ export default function TranscriptHistory({
     },
     [eventId],
   );
-
   const { items, isLoading, hasMore, sentinelRef } =
     useInfiniteScroll<TranscriptProps>({
       fetchMore,

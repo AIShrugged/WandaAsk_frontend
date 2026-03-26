@@ -13,7 +13,6 @@ const AUTH_FILE = 'e2e/.auth/user.json';
  */
 setup('authenticate', async ({ page }) => {
   const email = process.env.E2E_EMAIL;
-
   const password = process.env.E2E_PASSWORD;
 
   if (!email || !password) {

@@ -42,12 +42,10 @@ export function ChartArtifactView({ data }: { data: ChartArtifact['data'] }) {
 
     return point;
   });
-
   const sharedProps = {
     data: chartData,
     margin: { top: 4, right: 4, left: -16, bottom: 0 },
   };
-
   const axes = (
     <>
       <CartesianGrid strokeDasharray='3 3' stroke='hsl(240 5.9% 90%)' />

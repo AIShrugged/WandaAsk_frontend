@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
@@ -31,7 +30,6 @@ import { attachCalendar } from '@/features/calendar/api/calendar';
 import OnboardingTrigger from '@/features/calendar/ui/onboarding-trigger';
 
 const mockAttachCalendar = attachCalendar as jest.Mock;
-
 const user = userEvent.setup({ delay: null });
 
 describe('OnboardingTrigger', () => {

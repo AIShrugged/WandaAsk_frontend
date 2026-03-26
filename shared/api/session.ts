@@ -26,9 +26,7 @@ export async function clearSession(): Promise<void> {
  */
 export async function logout(): Promise<void> {
   const authHeaders = await getAuthHeaders();
-
   const cookieStore = await cookies();
-
   const res = await fetch(`${API_URL}/auth/logout`, {
     method: 'POST',
     headers: {

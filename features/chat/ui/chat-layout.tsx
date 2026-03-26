@@ -54,23 +54,14 @@ export function ChatLayout({
   organizations = [],
 }: ChatLayoutProps) {
   const [isChatCollapsed, setIsChatCollapsed] = useState(false);
-
   const [mobileTab, setMobileTab] = useState<MobileTab>('chat');
-
   const ARTIFACTS_MIN_WIDTH = 240;
-
   const ARTIFACTS_MAX_WIDTH = 960;
-
   const ARTIFACTS_DEFAULT_WIDTH = 360;
-
   const [artifactsWidth, setArtifactsWidth] = useState(ARTIFACTS_DEFAULT_WIDTH);
-
   const isDraggingRef = useRef(false);
-
   const dragStartXRef = useRef(0);
-
   const dragStartWidthRef = useRef(0);
-
   const handleDividerMouseDown = useCallback(
     (e: React.MouseEvent) => {
       e.preventDefault();
@@ -85,7 +76,6 @@ export function ChatLayout({
       const onMouseMove = (ev: MouseEvent) => {
         if (!isDraggingRef.current) return;
         const delta = ev.clientX - dragStartXRef.current;
-
         const next = Math.min(
           ARTIFACTS_MAX_WIDTH,
           Math.max(ARTIFACTS_MIN_WIDTH, dragStartWidthRef.current + delta),
@@ -93,7 +83,6 @@ export function ChatLayout({
 
         setArtifactsWidth(next);
       };
-
       /**
        *
        */
@@ -112,7 +101,6 @@ export function ChatLayout({
     },
     [artifactsWidth],
   );
-
   const [chat, setChat] = useState<Chat>(
     currentChat ?? {
       id: chatId,

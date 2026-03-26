@@ -107,7 +107,6 @@ describe('updateProfile', () => {
       string,
       RequestInit,
     ];
-
     const body = JSON.parse(options.body as string) as Record<string, unknown>;
 
     expect(body.name).toBe('Charlie');
@@ -184,7 +183,6 @@ describe('changePassword', () => {
       string,
       RequestInit,
     ];
-
     const body = JSON.parse(options.body as string) as Record<string, unknown>;
 
     expect(body.current_password).toBe('oldpass123');

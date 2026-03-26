@@ -22,19 +22,15 @@ export default async function IssuesListPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const params = await searchParams;
-
   const cookieOrgId = await getOrganizationId();
-
   const orgId =
     typeof params.organization_id === 'string'
       ? params.organization_id
       : cookieOrgId;
-
   const statusParam =
     typeof params.status === 'string' && isIssueStatus(params.status)
       ? params.status
       : '';
-
   const [issues, organizationsResponse, persons] = await Promise.all([
     getIssues({
       organization_id: orgId ? Number(orgId) : null,

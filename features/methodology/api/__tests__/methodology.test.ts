@@ -77,7 +77,6 @@ const mockMethodology = {
   organization_id: 10,
   team_ids: [1, 2],
 };
-
 const mockDTO = {
   name: 'Agile',
   text: 'Agile methodology',
@@ -209,7 +208,6 @@ describe('createMethodology', () => {
       string,
       RequestInit,
     ];
-
     const body = JSON.parse(options.body as string) as Record<string, unknown>;
 
     expect(body.organization_id).toBe(10);
@@ -225,7 +223,6 @@ describe('createMethodology', () => {
       string,
       RequestInit,
     ];
-
     const body = JSON.parse(options.body as string) as Record<string, unknown>;
 
     expect(body.teams_ids).toEqual([1, 2]);

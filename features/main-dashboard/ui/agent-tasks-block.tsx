@@ -51,7 +51,6 @@ export function AgentTasksBlock({ tasks }: { tasks: AgentTask[] }) {
         ) : (
           displayed.map((task) => {
             const runStatus = task.latest_run_status ?? null;
-
             const statusVariant =
               (runStatus && RUN_STATUS_VARIANT[runStatus.toLowerCase()]) ||
               'default';

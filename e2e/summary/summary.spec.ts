@@ -6,7 +6,6 @@ import { expect, test } from '@playwright/test';
  */
 
 const SUMMARY_URL = '/dashboard/summary';
-
 const STATISTICS_URL = '/dashboard/statistics';
 
 // ---------------------------------------------------------------------------
@@ -63,15 +62,12 @@ test.describe('Summary — authenticated', () => {
       timeout: 10_000,
     });
     const participants = page.getByText(/unique participants/i).first();
-
     const tasks = page.getByText('Tasks').first();
-
     const hasParticipants = await participants
       .isVisible({ timeout: 3000 })
       .catch(() => {
         return false;
       });
-
     const hasTasks = await tasks.isVisible({ timeout: 3000 }).catch(() => {
       return false;
     });

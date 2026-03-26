@@ -21,7 +21,6 @@ const Wrapper = ({ children }: PropsWithChildren) => {
     <Card className='h-full flex flex-col overflow-hidden'>{children}</Card>
   );
 };
-
 /**
  * UnattachedView component.
  */
@@ -32,7 +31,6 @@ const UnattachedView = () => {
     </Wrapper>
   );
 };
-
 /**
  * AttachedView component.
  * @param root0
@@ -76,16 +74,12 @@ export default async function Page({
   searchParams: Promise<{ attached?: string; month?: string }>;
 }) {
   const params = await searchParams;
-
   const justAttached = params?.attached === '1';
-
   const sources = await getSources();
-
   const isCalendarAttached = sources.length > 0;
 
   if (isCalendarAttached && !params.month) {
     const currentMonth = new Date().toISOString().slice(0, 7) + '-01';
-
     const suffix = justAttached ? '&attached=1' : '';
 
     redirect(`/dashboard/calendar?month=${currentMonth}${suffix}`);
@@ -96,7 +90,6 @@ export default async function Page({
   }
 
   const month = params.month ?? new Date().toISOString().slice(0, 7) + '-01';
-
   const { data: events } = await getEvents();
 
   return (

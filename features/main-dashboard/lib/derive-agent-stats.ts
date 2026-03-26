@@ -16,13 +16,10 @@ export interface AgentStats {
  */
 export function deriveAgentStats(tasks: AgentTask[]): AgentStats {
   const totalTasks = tasks.length;
-
   const enabledTasks = tasks.filter((t) => {
     return t.enabled;
   }).length;
-
   let completedRuns = 0;
-
   let failedRuns = 0;
 
   for (const task of tasks) {
@@ -36,7 +33,6 @@ export function deriveAgentStats(tasks: AgentTask[]): AgentStats {
   }
 
   const total = completedRuns + failedRuns;
-
   const successRate =
     total > 0 ? Math.round((completedRuns / total) * 100) : null;
 

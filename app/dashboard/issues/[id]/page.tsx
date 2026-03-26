@@ -21,7 +21,6 @@ export default async function IssueDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-
   const issueId = Number(id);
 
   if (!Number.isFinite(issueId) || issueId <= 0) notFound();

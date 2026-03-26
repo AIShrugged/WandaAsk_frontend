@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { getOrganizationId } from '@/shared/lib/getOrganizationId';
 
 const mockRedirect = jest.fn((path: string) => {

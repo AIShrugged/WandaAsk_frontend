@@ -50,7 +50,6 @@ export function TeamList({
     },
     [organizationId],
   );
-
   const { items, isLoading, hasMore, sentinelRef } =
     useCachedInfiniteScroll<TeamProps>({
       store: useTeamsStore,

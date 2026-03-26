@@ -29,7 +29,6 @@ export default function CalendarAgenda({
 }) {
   // Fix: currentMonth is already a full date string ("2026-03-01"), no need to append "-01"
   const monthStart = parseISO(currentMonth);
-
   const monthEvents = events
     .filter((ev) => {
       return isSameMonth(parseISO(eventDateKey(ev)), monthStart);
@@ -50,7 +49,6 @@ export default function CalendarAgenda({
 
   for (const ev of monthEvents) {
     const key = eventDateKey(ev);
-
     const existing = grouped.get(key);
 
     if (existing) {

@@ -17,7 +17,6 @@ import type { ApiResponse } from '@/shared/types/common';
  */
 export async function getEvent(id: string) {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(`${API_URL}/calendar-events/${id}`, {
     method: 'GET',
     headers: {
@@ -48,7 +47,6 @@ export async function getEvent(id: string) {
  */
 export async function getEvents() {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(`${API_URL}/calendar-events?limit=50`, {
     method: 'GET',
     headers: {
@@ -81,12 +79,10 @@ export async function getEvents() {
  */
 export async function switchBot(eventId: number, botRequired: boolean) {
   const authHeaders = await getAuthHeaders();
-
   const payload = {
     calendar_event_id: eventId,
     required_bot: botRequired,
   };
-
   const res = await fetch(`${API_URL}/calendar-events/${eventId}/bot/require`, {
     method: 'POST',
     cache: 'no-store',
@@ -112,7 +108,6 @@ export async function switchBot(eventId: number, botRequired: boolean) {
  */
 export async function getFollowUps(id: number) {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(
     `${API_URL}/calendar-events/${id}/followups?limit=50`,
     {
@@ -138,7 +133,6 @@ export async function getFollowUps(id: number) {
  */
 export const getEventFollowUp = async (calendarEventId: number | string) => {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(
     `${API_URL}/calendar-events/${calendarEventId}/followup`,
     {
@@ -177,7 +171,6 @@ export async function getMeetingTasks(
   calendarEventId: string,
 ): Promise<MeetingTask[]> {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(
     `${API_URL}/calendar-events/${calendarEventId}/tasks`,
     {

@@ -18,14 +18,12 @@ interface MobileSidebarProps {
 const subscribeToMount = () => {
   return noop;
 };
-
 /**
  *
  */
 const getMountedSnapshot = () => {
   return true;
 };
-
 /**
  *
  */
@@ -49,7 +47,6 @@ function noop() {}
  */
 export default function MobileSidebar({ children }: MobileSidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
-
   const isMounted = useSyncExternalStore(
     subscribeToMount,
     getMountedSnapshot,

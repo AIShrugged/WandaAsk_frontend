@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { render, screen } from '@testing-library/react';
 
 import OrganizationCreateLink from '@/features/organization/ui/organization-create-link';

@@ -213,7 +213,6 @@ describe('createChat', () => {
       string,
       RequestInit,
     ];
-
     const body = JSON.parse(options.body as string) as Record<string, unknown>;
 
     expect(body.title).toBe('Hello Chat');
@@ -230,7 +229,6 @@ describe('createChat', () => {
       string,
       RequestInit,
     ];
-
     const body = JSON.parse(options.body as string) as Record<string, unknown>;
 
     expect(body).not.toHaveProperty('title');
@@ -298,7 +296,6 @@ describe('updateChatTitle', () => {
       string,
       RequestInit,
     ];
-
     const body = JSON.parse(options.body as string) as Record<string, unknown>;
 
     expect(body.title).toBe('My New Title');

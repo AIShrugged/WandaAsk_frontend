@@ -15,7 +15,6 @@ import type { PageProps } from '@/shared/types/common';
  */
 export default async function Page({ params }: PageProps) {
   const { id } = await params;
-
   const { data: organization } = await getOrganization(id);
 
   if (!organization) return null;

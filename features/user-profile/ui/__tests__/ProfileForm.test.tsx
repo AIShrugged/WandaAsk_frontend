@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
@@ -36,7 +35,6 @@ const makeUser = (overrides?: Partial<UserProps>): UserProps => {
     ...overrides,
   };
 };
-
 const user = userEvent.setup({ delay: null });
 
 describe('ProfileForm', () => {

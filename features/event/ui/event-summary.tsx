@@ -12,7 +12,6 @@ import type { EventProps } from '@/entities/event';
  */
 export default function EventSummary({ event }: { event: EventProps }) {
   const iconClass = 'w-6 h-6 shrink-0';
-
   const textClass = 'font-normal text-base md:text-[20px] min-w-0 truncate';
 
   return (

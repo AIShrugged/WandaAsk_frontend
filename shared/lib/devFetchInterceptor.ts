@@ -54,7 +54,6 @@ function resolveClientTag(url: string): ClientTag | undefined {
 
 // Flag to prevent double-patching on React StrictMode double-invoke / HMR.
 const PATCHED_KEY = '__tribes_fetch_debug_patched';
-
 const SKIP_PATTERNS = [
   '/_next/',
   '/favicon',
@@ -116,11 +115,8 @@ function statusStyle(status: number): string {
 }
 
 const LABEL = 'color:#94a3b8;font-weight:bold';
-
 const MUTED = 'color:#6b7280;font-size:0.8em';
-
 const MONO = 'font-family:monospace';
-
 let _counter = 0;
 
 /**
@@ -180,7 +176,6 @@ function buildTimeLabel(slow: boolean, durationMs: number): string {
  */
 function computeResponseSize(res: Response, body: unknown): string | undefined {
   const contentLength = res.headers.get('content-length');
-
   let byteCount = 0;
 
   if (contentLength) {
@@ -241,7 +236,6 @@ function logReqGroup(
   }
 
   const tagLabel = tag ? `%c[${tag}]%c ` : '%c%c';
-
   const tagSt = tag ? tagStyle(tag) : '';
 
   // eslint-disable-next-line no-console
@@ -310,12 +304,9 @@ async function logResGroup(
   durationMs: number,
 ): Promise<void> {
   const ct = res.headers.get('content-type') ?? '';
-
   const isStream =
     ct.includes('text/event-stream') || ct.includes('octet-stream');
-
   const slow = durationMs > SLOW_THRESHOLD_MS;
-
   // Collect response headers for display.
   const resHeaders: Record<string, string> = {};
 
@@ -337,15 +328,10 @@ async function logResGroup(
   }
 
   const size = computeResponseSize(res, responseBody);
-
   const cacheStatus = res.headers.get('x-nextjs-cache');
-
   const reqColor = resolveReqColor(slow, res.ok);
-
   const timeLabel = buildTimeLabel(slow, durationMs);
-
   const slowStyle = slow ? 'color:#f97316;font-weight:bold' : '';
-
   const metaParts: string[] = [];
 
   if (size) metaParts.push(size);
@@ -404,7 +390,6 @@ function sendToBuffer(entry: DebugLogEntry): void {
   const nativeFetch = (
     globalThis as typeof globalThis & { __tribes_original_fetch?: typeof fetch }
   ).__tribes_original_fetch;
-
   const sender = nativeFetch ?? globalThis.fetch;
 
   sender('/api/debug-logs', {
@@ -449,17 +434,11 @@ export function installClientFetchDebugger(): () => void {
     // Capture caller stack and timestamp BEFORE the async boundary
     // so the stack reflects the actual call site.
     const caller = captureCallerStack('devFetchInterceptor');
-
     const timestamp = formatTimestamp();
-
     const id = nextId();
-
     const method = ((init.method ?? 'GET') as string).toUpperCase();
-
     const tag = resolveClientTag(url);
-
     const userAgent = globalThis.navigator?.userAgent;
-
     const referer = globalThis.document?.referrer || undefined;
 
     logReqGroup(
@@ -497,24 +476,19 @@ export function installClientFetchDebugger(): () => void {
 
     // Inject X-Debug-Request-ID so the backend can correlate logs.
     const patchedInit = withDebugHeader(init, id);
-
     const start = performance.now();
 
     try {
       const res = await original(input, patchedInit);
-
       const durationMs = Math.round(performance.now() - start);
 
       await logResGroup(id, method, url, res, durationMs);
 
       const slow = durationMs > SLOW_THRESHOLD_MS;
-
       const cacheStatus = res.headers.get('x-nextjs-cache') ?? undefined;
-
       // Clone body for buffer (best-effort).
       let resBodyText: string | undefined;
       const ct = res.headers.get('content-type') ?? '';
-
       const isStream =
         ct.includes('text/event-stream') || ct.includes('octet-stream');
 

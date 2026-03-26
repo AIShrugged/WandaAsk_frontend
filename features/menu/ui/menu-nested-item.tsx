@@ -24,17 +24,12 @@ export function NestedMenuItem({
   level: number;
 }) {
   const [isOpen, setIsOpen] = useState(false);
-
   const hasChildren = item.children && item.children.length > 0;
-
   const pathname = usePathname();
-
   const activeHref = item.activeHref ?? item.href;
-
   const isActive = activeHref
     ? pathname === activeHref || pathname.startsWith(`${activeHref}/`)
     : false;
-
   /**
    * handleToggle.
    */
@@ -43,9 +38,7 @@ export function NestedMenuItem({
       setIsOpen(!isOpen);
     }
   };
-
   const Icon = item.icon ? ICONS_MAP[item.icon] : null;
-
   const Content = (
     <div
       className={`

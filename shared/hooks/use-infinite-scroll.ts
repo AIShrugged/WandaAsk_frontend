@@ -24,9 +24,7 @@ export function useInfiniteScroll<T>({
   maxItems,
 }: UseInfiniteScrollOptions<T>) {
   const [items, setItems] = useState<T[]>(initialItems);
-
   const [offset, setOffset] = useState(initialItems.length);
-
   const [hasMore, setHasMore] = useState(initialHasMore);
 
   useEffect(() => {
@@ -36,9 +34,7 @@ export function useInfiniteScroll<T>({
   }, [initialItems]);
 
   const [isLoading, setIsLoading] = useState(false);
-
   const sentinelRef = useRef<HTMLDivElement>(null);
-
   const loadMore = useCallback(async () => {
     if (isLoading || !hasMore) return;
     setIsLoading(true);

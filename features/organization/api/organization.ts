@@ -18,7 +18,6 @@ import type { ApiResponse } from '@/shared/types/common';
 export const getOrganizations = cache(
   async (): Promise<ApiResponse<OrganizationProps[]>> => {
     const authHeaders = await getAuthHeaders();
-
     const res = await fetch(`${API_URL}/organizations?limit=50&offset=0`, {
       method: 'GET',
       headers: {
@@ -54,7 +53,6 @@ export const getOrganizations = cache(
 export const getOrganization = cache(
   async (organization_id: string): Promise<ApiResponse<OrganizationProps>> => {
     const authHeaders = await getAuthHeaders();
-
     const res = await fetch(`${API_URL}/organizations/${organization_id}`, {
       method: 'GET',
       headers: {
@@ -91,7 +89,6 @@ export const getOrganization = cache(
  */
 export async function createOrganization(data: OrganizationDTO) {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(`${API_URL}/organizations`, {
     method: 'POST',
     headers: {
@@ -138,7 +135,6 @@ export async function setActiveOrganization(
   formData: FormData,
 ) {
   const id = formData.get('organization_id') as string;
-
   const store = await cookies();
 
   store.set({
@@ -163,7 +159,6 @@ export async function setActiveOrganization(
  */
 export async function selectOrganizationAction(formData: FormData) {
   const id = formData.get('organization_id') as string;
-
   const store = await cookies();
 
   store.set({

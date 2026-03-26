@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
@@ -81,7 +80,6 @@ const makeChat = (id: number): Chat => {
     updated_at: '2024-01-01T00:00:00Z',
   };
 };
-
 const makeMessage = (id: number): Message => {
   return {
     id,
@@ -100,15 +98,10 @@ const makeMessage = (id: number): Message => {
     created_at: '2024-01-01T00:00:00Z',
   };
 };
-
 const CHAT_LIST_TESTID = 'chat-list';
-
 const ARTIFACT_PANEL_TESTID = 'artifact-panel';
-
 const CHAT_WINDOW_TESTID = 'chat-window';
-
 const COLLAPSED_PANEL_TESTID = 'collapsed-panel';
-
 const defaultProps = {
   initialChats: [makeChat(1), makeChat(2)],
   totalCount: 2,

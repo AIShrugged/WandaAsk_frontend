@@ -14,7 +14,6 @@ interface PopupState {
  */
 export default function GlobalPopup() {
   const [state, setState] = useState<PopupState | null>(null);
-
   const popupRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -26,7 +25,6 @@ export default function GlobalPopup() {
     const handler = (e: Event) => {
       setState((e as CustomEvent<PopupState>).detail);
     };
-
     /**
      * closeHandler.
      */
@@ -71,7 +69,6 @@ export default function GlobalPopup() {
   if (!state) return null;
 
   const rect = state.anchorEl.getBoundingClientRect();
-
   const style: React.CSSProperties = {
     position: 'fixed',
     top: rect.bottom + 8,

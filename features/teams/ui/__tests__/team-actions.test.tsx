@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc, import/order */
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
@@ -98,9 +97,7 @@ import { TeamActions } from '@/features/teams/ui/team-actions';
 import type { TeamActionType } from '@/entities/team';
 
 const mockDeleteTeam = deleteTeam as jest.Mock;
-
 const TRASH_ICON = 'trash-icon';
-
 const user = userEvent.setup({ delay: null });
 
 describe('TeamActions', () => {
@@ -164,7 +161,6 @@ describe('TeamActions', () => {
 
   it('renders nothing when actions is empty', () => {
     const { container } = render(<TeamActions id={1} actions={[]} />);
-
     const wrapper = container.firstChild as HTMLElement;
 
     expect(wrapper.children).toHaveLength(0);

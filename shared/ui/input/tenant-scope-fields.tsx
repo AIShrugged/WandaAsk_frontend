@@ -47,7 +47,6 @@ export function TenantScopeFields({
   disabled,
 }: TenantScopeFieldsProps) {
   const [teams, setTeams] = useState<TeamProps[]>([]);
-
   const [isTeamsLoading, setIsTeamsLoading] = useState(false);
 
   useEffect(() => {
@@ -93,7 +92,6 @@ export function TenantScopeFields({
       };
     }),
   ];
-
   const teamOptions = [
     { value: '', label: 'No team' },
     ...teams.map((team) => {
@@ -103,7 +101,6 @@ export function TenantScopeFields({
       };
     }),
   ];
-
   let teamPlaceholder = 'Select organization first';
 
   if (organizationId) {

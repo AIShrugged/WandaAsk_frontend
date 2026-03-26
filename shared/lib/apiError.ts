@@ -24,7 +24,6 @@ export function parseApiError(
       error?: string;
       errors?: Record<string, string[] | string>;
     };
-
     const fieldErrors = Object.fromEntries(
       Object.entries(json.errors ?? {}).map(([field, value]) => {
         return [field, Array.isArray(value) ? (value[0] ?? '') : value];

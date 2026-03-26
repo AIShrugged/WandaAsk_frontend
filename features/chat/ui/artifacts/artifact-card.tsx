@@ -42,13 +42,11 @@ const ChartArtifactView = dynamic(
   },
   {
     ssr: false,
-    // eslint-disable-next-line jsdoc/require-jsdoc
     loading: () => {
       return <Skeleton className='h-40 rounded-md' />;
     },
   },
 );
-
 const TYPE_META: Record<
   ArtifactType,
   { label: string; icon: React.ReactNode }
@@ -124,11 +122,8 @@ function ArtifactContent({ artifact }: { artifact: Artifact }) {
 // eslint-disable-next-line max-statements
 export function ArtifactCard({ artifact }: { artifact: Artifact }) {
   const meta = TYPE_META[artifact.type] ?? { label: artifact.type, icon: null };
-
   const isGenerating = artifact.status === 'generating';
-
   const isFailed = artifact.status === 'failed';
-
   let statusClassName: string;
 
   if (isGenerating) {
@@ -140,9 +135,7 @@ export function ArtifactCard({ artifact }: { artifact: Artifact }) {
   }
 
   const nonGeneratingLabel = isFailed ? 'Failed' : meta.label;
-
   const statusLabel = isGenerating ? 'Generating\u2026' : nonGeneratingLabel;
-
   let cardBody: React.ReactNode;
 
   if (isGenerating) {

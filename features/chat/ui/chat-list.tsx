@@ -43,21 +43,13 @@ export function ChatList({
   onActiveChatUpdate,
 }: ChatListProps) {
   const router = useRouter();
-
   const [chats, setChats] = useState<Chat[]>(initialChats);
-
   const [offset, setOffset] = useState(initialChats.length);
-
   const [hasMore, setHasMore] = useState(initialChats.length < totalCount);
-
   const [isLoading, setIsLoading] = useState(false);
-
   const [isCollapsed, setIsCollapsed] = useState(false);
-
   const [editingChat, setEditingChat] = useState<Chat | null>(null);
-
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-
   const sentinelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -124,7 +116,6 @@ export function ChatList({
       onActiveChatUpdate?.(updated);
     }
   };
-
   /**
    * handleDelete.
    * @param id - id.
@@ -141,7 +132,6 @@ export function ChatList({
       router.push(ROUTES.DASHBOARD.CHAT);
     }
   };
-
   /**
    * handleSavedChat.
    * @param chat - saved chat.

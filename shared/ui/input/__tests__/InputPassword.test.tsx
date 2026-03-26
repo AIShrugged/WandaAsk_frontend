@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
@@ -62,7 +61,6 @@ describe('InputPassword', () => {
     const { container } = render(
       <InputPassword value='mysecret' onChange={jest.fn()} />,
     );
-
     const input = container.querySelector('input');
 
     expect(input).toHaveValue('mysecret');

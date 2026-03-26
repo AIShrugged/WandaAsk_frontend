@@ -10,7 +10,6 @@ const PUBLIC_ROUTES = ['/auth/login', '/auth/register'];
  */
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-
   const token = request.cookies.get('token')?.value;
 
   // Allow public routes

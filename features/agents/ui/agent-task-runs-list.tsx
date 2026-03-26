@@ -41,7 +41,6 @@ export function AgentTaskRunsList({
       <div className='flex flex-col gap-3 md:hidden'>
         {runs.map((run) => {
           const href = `/dashboard/agents/tasks/${taskId}?tab=runs&runId=${run.id}`;
-
           const isSelected = selectedRunId === run.id;
 
           return (

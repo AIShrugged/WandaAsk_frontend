@@ -40,7 +40,6 @@ export default async function MainDashboardPage() {
     },
     summaryData,
   ] = await Promise.all([getMainDashboardData(), getSummaryData()]);
-
   const mainContent = (
     <div className='flex flex-col gap-5 p-2'>
       {/* Greeting + date */}
@@ -81,7 +80,6 @@ export default async function MainDashboardPage() {
       />
     </div>
   );
-
   const statisticsContent = summaryData ? (
     <div className='flex flex-col gap-6 p-2'>
       {/* Header */}

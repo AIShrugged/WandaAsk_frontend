@@ -19,9 +19,7 @@ import type { EventProps } from '@/entities/event';
  */
 export function CalendarEvent({ event }: { event: EventProps }) {
   const { open, close } = useModal();
-
   const [, startTransition] = useTransition();
-
   /**
    * handleFutureEventClick.
    * @param e - event.

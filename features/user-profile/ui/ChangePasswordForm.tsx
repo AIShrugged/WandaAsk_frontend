@@ -18,7 +18,6 @@ interface ChangePasswordFormData {
  */
 export function ChangePasswordForm() {
   const [isPending, startTransition] = useTransition();
-
   const {
     register,
     handleSubmit,
@@ -33,7 +32,6 @@ export function ChangePasswordForm() {
       password_confirmation: '',
     },
   });
-
   /**
    * onSubmit.
    * @param data - Form data.

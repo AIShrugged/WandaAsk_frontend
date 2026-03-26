@@ -238,7 +238,6 @@ describe('createOrganization', () => {
       string,
       RequestInit,
     ];
-
     const body = JSON.parse(options.body as string) as Record<string, unknown>;
 
     expect(body.name).toBe('Test Org');

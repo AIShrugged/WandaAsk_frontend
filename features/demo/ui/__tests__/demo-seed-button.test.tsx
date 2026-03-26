@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc, jsdoc/require-returns, import/order */
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
@@ -100,9 +99,7 @@ import { seedDemo } from '@/features/demo/api/seed-demo';
 import DemoSeedButton from '@/features/demo/ui/demo-seed-button';
 
 const mockGetDemoStatus = getDemoStatus as jest.Mock;
-
 const mockSeedDemo = seedDemo as jest.Mock;
-
 // userEvent instance without delays so it works regardless of timer mocking
 const user = userEvent.setup({ delay: null });
 
@@ -264,7 +261,6 @@ describe('SegmentedControl (via DemoSeedButton)', () => {
     // Teams segmented control contains buttons 1, 2, 3 (there are multiple "2"s).
     // The teams control is the first segmented control — its buttons come first in the DOM.
     const allButtons = screen.getAllByRole('button');
-
     // button[0]=trigger, then teams: 1,2,3; employees stepper: -,+; meetings: 1,2,3,4,5,6; Generate
     const teamsTwo = allButtons[2]; // 0=trigger, 1=team-1, 2=team-2
 
@@ -287,7 +283,6 @@ describe('SegmentedControl (via DemoSeedButton)', () => {
     );
     // Meetings segmented control options: 1,2,3,4,5,6 — pick "6" (unique text)
     const buttons = screen.getAllByRole('button');
-
     const seg6 = buttons.find((b) => {
       return b.textContent === '6';
     });

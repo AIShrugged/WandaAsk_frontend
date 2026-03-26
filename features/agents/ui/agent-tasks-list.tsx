@@ -46,7 +46,6 @@ export function AgentTasksList({ initialTasks, totalCount }: Props) {
 
     return { items: result.data, hasMore: result.hasMore };
   }, []);
-
   const {
     items: tasks,
     isLoading,

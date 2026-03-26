@@ -47,9 +47,7 @@ function AddNotificationModal({
   const [selectedChatId, setSelectedChatId] = useState<string>(
     availableChats[0] ? String(availableChats[0].id) : '',
   );
-
   const [isPending, startTransition] = useTransition();
-
   /**
    *
    */
@@ -165,13 +163,10 @@ interface SettingRowProps {
  */
 function SettingRow({ setting, teamId }: SettingRowProps) {
   const [isPending, startTransition] = useTransition();
-
   const chatTitle =
     setting.notifiable?.data?.chat_title ?? `Chat #${setting.notifiable?.id}`;
-
   const eventLabel =
     EVENT_TYPE_LABELS[setting.event_type] ?? setting.event_type;
-
   /**
    *
    */
@@ -186,7 +181,6 @@ function SettingRow({ setting, teamId }: SettingRowProps) {
       if (result.error) toast.error(result.error);
     });
   };
-
   /**
    *
    */
@@ -267,7 +261,6 @@ export default function TeamNotificationSettings({
   availableChats,
 }: Props) {
   const { open, close } = useModal();
-
   /**
    *
    */

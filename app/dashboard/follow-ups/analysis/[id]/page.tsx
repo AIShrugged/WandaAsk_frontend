@@ -33,13 +33,9 @@ import type { PageProps } from '@/shared/types/common';
  */
 export default async function Page({ params, searchParams }: PageProps) {
   const { id } = await params;
-
   const { tab = available_tabs.summary } = await searchParams;
-
   const { data: followUp } = await getTeamFollowUp(id);
-
   const currentTab = validTabs.includes(tab as Tab) ? (tab as Tab) : 'summary';
-
   // Resolve the methodology chat once at page level so FollowUpAnalysis
   // receives a plain chatId — keeping FSD boundaries clean.
   const methodologyChat =

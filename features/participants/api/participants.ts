@@ -13,7 +13,6 @@ import type { ApiResponse } from '@/shared/types/common';
 export const getAttendees = cache(
   async (id: string): Promise<ApiResponse<AttendeeProps[]>> => {
     const authHeaders = await getAuthHeaders();
-
     const res = await fetch(`${API_URL}/calendar-events/${id}/participants`, {
       method: 'GET',
       headers: {
@@ -44,7 +43,6 @@ export const getAttendees = cache(
 export const getGuests = cache(
   async (id: string): Promise<ApiResponse<GuestProps[]>> => {
     const authHeaders = await getAuthHeaders();
-
     const res = await fetch(`${API_URL}/calendar-events/${id}/profiles`, {
       method: 'GET',
       headers: {
@@ -85,13 +83,11 @@ export async function setProfile(
   guestId: string | null,
 ) {
   const authHeaders = await getAuthHeaders();
-
   const payload = {
     calendar_event_id: eventId,
     participant_id: participantId,
     profile_id: guestId,
   };
-
   const res = await fetch(
     `${API_URL}/calendar-events/${eventId}/participants/${participantId}/set-profile`,
     {

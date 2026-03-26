@@ -22,7 +22,6 @@ type DemoStatusApiResponse = {
  */
 export async function getDemoStatus(): Promise<DemoStatusResult | null> {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(`${API_URL}/demo/status`, {
     method: 'GET',
     headers: {

@@ -63,11 +63,8 @@ export function IssueForm({
   hideStatusField = false,
 }: IssueFormProps) {
   const router = useRouter();
-
   const [isPending, startTransition] = useTransition();
-
   const [rootError, setRootError] = useState('');
-
   const defaultValues = useMemo<IssueFormValues>(() => {
     return {
       name: issue?.name ?? '',
@@ -81,7 +78,6 @@ export function IssueForm({
       assignee_id: issue?.assignee_id ? String(issue.assignee_id) : '',
     };
   }, [defaultOrganizationId, issue]);
-
   const {
     register,
     watch,
@@ -95,7 +91,6 @@ export function IssueForm({
     mode: 'onBlur',
     reValidateMode: 'onChange',
   });
-
   const assigneeOptions = [
     { value: '', label: 'Unassigned' },
     ...persons.map((person) => {
@@ -105,9 +100,7 @@ export function IssueForm({
       };
     }),
   ];
-
   const statusOptions = ISSUE_STATUS_OPTIONS;
-
   /**
    *
    * @param values
@@ -139,7 +132,6 @@ export function IssueForm({
         team_id: values.team_id ? Number(values.team_id) : null,
         assignee_id: values.assignee_id ? Number(values.assignee_id) : null,
       };
-
       const result = issue
         ? await updateIssue(issue.id, payload)
         : await createIssue(payload);

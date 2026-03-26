@@ -45,24 +45,18 @@ export default function MethodologyForm({
   values?: MethodologyProps;
 }) {
   const isEdit = Boolean(values?.id);
-
   const disabled = values?.id === 1;
-
   const [isPending, startTransition] = useTransition();
-
   const { push } = useRouter();
-
   const formFields = getFormFields(
     teams.map((team) => {
       return { value: String(team.id), label: team.name };
     }),
   );
-
   const initialTeamIds =
     values?.teams?.map((team) => {
       return String(team.id);
     }) ?? [];
-
   const {
     control,
     handleSubmit,
@@ -75,7 +69,6 @@ export default function MethodologyForm({
     mode: 'onBlur',
     reValidateMode: 'onChange',
   });
-
   /**
    * onSubmit.
    * @param data - data.
@@ -89,7 +82,6 @@ export default function MethodologyForm({
             values.teams?.map((team) => {
               return String(team.id);
             }) ?? [];
-
           const mergedTeamIds = [
             ...new Set([...existingTeamIds, ...data.team_ids]),
           ];
@@ -128,7 +120,6 @@ export default function MethodologyForm({
             rules={field.rules}
             render={({ field: hookField, fieldState }) => {
               const variant: VariantType = field.variant;
-
               const Component = VARIANT_MAPPER[variant];
 
               return (

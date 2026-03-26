@@ -15,9 +15,7 @@ import { ROUTES } from '@/shared/lib/routes';
 import type { Chat, Message, MessageStatus } from '@/features/chat/types';
 
 const POLL_INTERVAL_MS = 1500;
-
 const POLL_MAX_ATTEMPTS = 60; // 90 s timeout
-
 const TERMINAL: ReadonlySet<MessageStatus> = new Set(['completed', 'failed']);
 
 interface ChatWindowProps {
@@ -49,7 +47,6 @@ export function ChatWindow({
   onCollapse,
 }: ChatWindowProps) {
   const router = useRouter();
-
   const chat: Chat = providedChat ?? {
     id: chatId,
     title: null,
@@ -58,7 +55,6 @@ export function ChatWindow({
     created_at: '',
     updated_at: '',
   };
-
   const {
     messages,
     isLoading,
@@ -69,11 +65,8 @@ export function ChatWindow({
     updateMessage = () => {},
     removeMessage = () => {},
   } = useMessages(chatId, initialMessages, totalCount, startOffset);
-
   const searchParams = useSearchParams();
-
   const [composerError, setComposerError] = useState('');
-
   // True if there's an in-flight run on initial load (e.g. page refresh mid-generation)
   const [isSending, setIsSending] = useState(() => {
     return initialMessages.some((m) => {
@@ -84,14 +77,11 @@ export function ChatWindow({
       );
     });
   });
-
   // Active run being polled — { messageId, runUuid }
   const activeRunRef = useRef<{ messageId: number; runUuid: string } | null>(
     null,
   );
-
   const pollAttemptsRef = useRef(0);
-
   const pollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Scroll to bottom on mount
@@ -113,7 +103,6 @@ export function ChatWindow({
     setIsSending(true);
     schedulePoll();
   };
-
   /**
    * schedulePoll — schedules the next poll tick.
    * @returns Result.
@@ -123,7 +112,6 @@ export function ChatWindow({
       void doPoll();
     }, POLL_INTERVAL_MS);
   };
-
   /**
    * doPoll — performs a single poll request.
    * @returns Promise.
@@ -216,7 +204,6 @@ export function ChatWindow({
     }
 
     const optimisticId = Date.now();
-
     const optimistic: Message = {
       id: optimisticId,
       chat_id: chatId,
@@ -288,7 +275,6 @@ export function ChatWindow({
         setIsSending(false);
       });
   };
-
   // Auto-send prompt from query param (e.g. ?prompt=...) on empty chat
   const autoPromptFired = useRef(false);
 

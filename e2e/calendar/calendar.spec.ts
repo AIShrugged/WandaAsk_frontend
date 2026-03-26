@@ -53,19 +53,16 @@ test.describe('Calendar — authenticated', () => {
         ),
       )
       .first();
-
     // Onboarding: shows connect calendar CTA
     const onboarding = page
       .getByText(/connect/i)
       .or(page.getByText(/calendar/i))
       .first();
-
     const hasCalendar = await calendarWidget
       .isVisible({ timeout: 5000 })
       .catch(() => {
         return false;
       });
-
     const hasOnboarding = await onboarding
       .isVisible({ timeout: 3000 })
       .catch(() => {

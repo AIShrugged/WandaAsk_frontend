@@ -51,7 +51,6 @@ function attachmentUrl(attachment: IssueAttachment) {
  */
 function attachmentExtension(attachment: IssueAttachment) {
   const label = attachmentLabel(attachment).toLowerCase();
-
   const dotIndex = label.lastIndexOf('.');
 
   if (dotIndex === -1) return '';
@@ -143,23 +142,17 @@ export function IssueAttachments({
   initialAttachments,
 }: IssueAttachmentsProps) {
   const [attachments, setAttachments] = useState(initialAttachments);
-
   const [previewAttachmentId, setPreviewAttachmentId] = useState<number | null>(
     null,
   );
-
   const [textPreviewCache, setTextPreviewCache] = useState<
     Record<number, string>
   >({});
-
   const [textPreviewErrors, setTextPreviewErrors] = useState<
     Record<number, string>
   >({});
-
   const [loadingPreviewId, setLoadingPreviewId] = useState<number | null>(null);
-
   const [isPending, startTransition] = useTransition();
-
   const previewAttachment = useMemo(() => {
     return attachments.find((attachment) => {
       return attachment.id === previewAttachmentId;
@@ -170,7 +163,6 @@ export function IssueAttachments({
     if (!previewAttachment) return;
 
     const url = attachmentUrl(previewAttachment);
-
     const kind = getAttachmentPreviewKind(previewAttachment);
 
     if (!url || (kind !== 'markdown' && kind !== 'text')) return;
@@ -229,20 +221,15 @@ export function IssueAttachments({
 
     setAttachments(next);
   };
-
   /**
    *
    * @param attachment
    */
   const renderPreview = (attachment: IssueAttachment) => {
     const url = attachmentUrl(attachment);
-
     const previewKind = getAttachmentPreviewKind(attachment);
-
     const textPreview = textPreviewCache[attachment.id];
-
     const textPreviewError = textPreviewErrors[attachment.id];
-
     const isLoadingPreview = loadingPreviewId === attachment.id;
 
     if (!url || previewAttachmentId !== attachment.id) {
@@ -396,19 +383,14 @@ export function IssueAttachments({
       ) : (
         attachments.map((attachment) => {
           const url = attachmentUrl(attachment);
-
           const isPreviewOpen = previewAttachmentId === attachment.id;
-
           const previewKind = getAttachmentPreviewKind(attachment);
-
           const canPreview = Boolean(url) && previewKind !== 'none';
-
           const urlBadge = url ? (
             <Badge variant='primary'>Viewable</Badge>
           ) : (
             <Badge variant='warning'>No file URL</Badge>
           );
-
           const previewButton =
             url && canPreview ? (
               <Button
@@ -425,7 +407,6 @@ export function IssueAttachments({
                 {isPreviewOpen ? 'Hide preview' : 'Preview'}
               </Button>
             ) : null;
-
           const openButton = url ? (
             <a
               href={url}

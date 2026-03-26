@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
@@ -50,7 +49,6 @@ const makeEvent = (id: number): EventProps => {
     url: `https://example.com/event/${id}`,
   };
 };
-
 const user = userEvent.setup({ delay: null });
 
 describe('EventPopupAll', () => {
@@ -84,7 +82,6 @@ describe('EventPopupAll', () => {
         close={jest.fn()}
       />,
     );
-
     // EventPopupAll renders a <div key={event.id} /> per event
     const eventRows = container.querySelectorAll('.p-4 > div');
 

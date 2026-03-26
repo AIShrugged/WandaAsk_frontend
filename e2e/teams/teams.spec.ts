@@ -6,7 +6,6 @@ import { expect, test } from '@playwright/test';
  */
 
 const TEAMS_URL = '/dashboard/teams';
-
 const TEAMS_CREATE_URL = '/dashboard/teams/create';
 
 // ---------------------------------------------------------------------------
@@ -53,13 +52,10 @@ test.describe('Teams list — authenticated', () => {
 
   test('renders team list OR empty state', async ({ page }) => {
     const teamLink = page.locator('a[href*="/dashboard/teams/"]').first();
-
     const emptyText = page.getByText(/no team in this organization/i);
-
     const hasTeams = await teamLink.isVisible({ timeout: 5000 }).catch(() => {
       return false;
     });
-
     const isEmpty = await emptyText.isVisible({ timeout: 3000 }).catch(() => {
       return false;
     });
@@ -71,7 +67,6 @@ test.describe('Teams list — authenticated', () => {
     page,
   }) => {
     const firstTeamLink = page.locator('a[href*="/dashboard/teams/"]').first();
-
     const isVisible = await firstTeamLink
       .isVisible({ timeout: 5000 })
       .catch(() => {

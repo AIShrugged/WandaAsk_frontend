@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
 import { render, screen, fireEvent } from '@testing-library/react';
 
 import { MonthSwitcher } from '@/features/calendar/ui/month-switcher';

@@ -1,9 +1,7 @@
-/* eslint-disable jsdoc/require-jsdoc, jsdoc/require-returns, max-statements */
+/* eslint-disable max-statements */
 
 const mockLogRequest = jest.fn();
-
 const mockLogResponse = jest.fn();
-
 const mockLogApiError = jest.fn();
 
 jest.mock('@/shared/lib/logger', () => {
@@ -34,7 +32,6 @@ jest.mock('@/shared/lib/logger', () => {
 import { patchServerFetch } from '@/shared/lib/fetchDebugger';
 
 const PATCHED_SYM = Symbol.for('__tribes_fetch_debug_patched');
-
 const API_URL = 'http://example.com/api';
 
 /**
@@ -185,7 +182,6 @@ describe('patchServerFetch', () => {
 
   it('does not read body for streaming responses', async () => {
     const cloneSpy = jest.fn();
-
     const streamRes = makeRes('data: chunk\n\n', 200, {
       'content-type': 'text/event-stream',
     });

@@ -1,4 +1,4 @@
-/* eslint-disable jsdoc/require-jsdoc, max-statements */
+/* eslint-disable max-statements */
 import { act, renderHook } from '@testing-library/react';
 
 import { useMessages } from '@/features/chat/hooks/use-messages';
@@ -58,7 +58,6 @@ const makeMessage = (id: number, overrides: Partial<Message> = {}): Message => {
     ...overrides,
   };
 };
-
 const INITIAL_MESSAGES: Message[] = [
   makeMessage(1),
   makeMessage(2),
@@ -108,7 +107,6 @@ describe('useMessages', () => {
     const { result } = renderHook(() => {
       return useMessages(1, INITIAL_MESSAGES, 3, 0);
     });
-
     const newMessage = makeMessage(4);
 
     act(() => {
@@ -197,7 +195,6 @@ describe('useMessages', () => {
 
   it('assistant role messages are stored correctly', () => {
     const assistantMsg = makeMessage(10, { role: 'assistant' });
-
     const { result } = renderHook(() => {
       return useMessages(1, [assistantMsg], 1, 0);
     });
@@ -225,7 +222,6 @@ describe('useMessages', () => {
     const { result, rerender } = renderHook(() => {
       return useMessages(1, INITIAL_MESSAGES, 5, 3);
     });
-
     // The hook won't observe until sentinelRef.current is set.
     // We simulate by attaching a real element to the ref manually.
     const sentinel = document.createElement('div');
@@ -250,7 +246,6 @@ describe('useMessages', () => {
     const { result, rerender } = renderHook(() => {
       return useMessages(1, INITIAL_MESSAGES, 5, 3);
     });
-
     const sentinel = document.createElement('div');
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

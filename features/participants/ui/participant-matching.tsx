@@ -44,16 +44,13 @@ export default function ParticipantMatching({
       };
     },
   );
-
   const [isPending, startTransition] = useTransition();
-
   const guestOptions = guests.map((guest) => {
     return {
       label: guest.channel_identifier,
       value: String(guest.id),
     };
   });
-
   /**
    * handleSelect.
    * @param attendeeId - attendeeId.

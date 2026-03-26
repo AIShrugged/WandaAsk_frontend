@@ -8,7 +8,6 @@ const STATUS_STYLES: Record<string, string> = {
   done: 'bg-green-100 text-green-700',
   closed: 'bg-muted text-muted-foreground',
 };
-
 const STATUS_LABELS: Record<string, string> = {
   open: 'Open',
   in_progress: 'In progress',

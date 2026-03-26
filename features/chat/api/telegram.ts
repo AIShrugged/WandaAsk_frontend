@@ -22,7 +22,6 @@ type TelegramAttachActionError = {
  */
 export async function getTelegramChats(): Promise<TelegramChatRegistration[]> {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(`${API_URL}/telegram/chats`, {
     headers: { ...authHeaders },
     cache: 'no-store',
@@ -63,7 +62,6 @@ export async function issueTelegramAttachCode(
   payload: { organization_id: number; team_id?: number | null },
 ): Promise<TelegramChatRegistration | TelegramAttachActionError> {
   const authHeaders = await getAuthHeaders();
-
   const res = await fetch(`${API_URL}/telegram/chats/${id}/attach-code`, {
     method: 'POST',
     headers: { ...authHeaders, 'Content-Type': 'application/json' },

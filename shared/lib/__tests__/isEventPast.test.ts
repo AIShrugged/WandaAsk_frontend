@@ -19,7 +19,6 @@ describe('isEventPast', () => {
 
   it('returns true for yesterday', () => {
     const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
-
     const formatted = `${yesterday.getFullYear()}-${pad(yesterday.getMonth() + 1)}-${pad(yesterday.getDate())} 00:00:00`;
 
     expect(isEventPast(formatted)).toBe(true);
@@ -27,7 +26,6 @@ describe('isEventPast', () => {
 
   it('returns false for tomorrow', () => {
     const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000);
-
     const formatted = `${tomorrow.getFullYear()}-${pad(tomorrow.getMonth() + 1)}-${pad(tomorrow.getDate())} 23:59:59`;
 
     expect(isEventPast(formatted)).toBe(false);

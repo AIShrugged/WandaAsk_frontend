@@ -11,7 +11,6 @@ describe('ORGANIZATION_VALUES', () => {
 
 describe('ORGANIZATION_FIELDS name validation', () => {
   const nameField = ORGANIZATION_FIELDS[0];
-
   const rules = nameField.rules;
 
   it('name field is required', () => {
