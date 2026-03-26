@@ -385,6 +385,60 @@ Do not write local helper functions that replicate what `httpClient`,
 `parseApiError`, `logApiError`, or `ServerError` already do. If a new pattern
 appears in multiple api/ files, add it to `shared/lib/httpClient.ts` instead.
 
+## Agent Workflow — When to Use Specialized Agents
+
+Use these agents at the right stages. They are available via the `Agent` tool.
+
+### Starting a new feature
+
+1. **`wanda-backend-navigator`** — before writing any code, read the backend
+   contracts (routes, controllers, Resources/DTOs, FormRequests, Enums). Never
+   guess field names.
+2. **`backend-contract-validator`** — after writing TypeScript types, verify
+   they exactly match the backend Resource/DTO.
+3. **`frontend-architect`** — for features involving multiple FSD slices,
+   complex state, or API integration. Designs the full implementation plan and
+   delegates subtasks.
+
+### Writing code
+
+4. **`fsd-boundary-guard`** — after adding or refactoring features, verify FSD
+   import boundaries (cross-feature imports, missing index.ts, layer
+   violations).
+5. **`compound-engineering:workflow:lint`** — before committing, run lint and
+   format checks on all changed Ruby/TS/ERB files.
+
+### After implementing
+
+6. **`unit-test-booster`** — after implementing a new component or feature,
+   generate Jest + RTL tests.
+7. **`e2e-coverage-agent`** — after adding a new route or user flow, generate
+   Playwright E2E tests.
+8. **`mr-reviewer`** — before committing or pushing, runs a full review: FSD
+   boundaries, TypeScript correctness, ESLint, Next.js patterns, test coverage.
+
+### Design & UI
+
+9. **`design-guardian`** — after writing or modifying UI components, audit
+   against the design system (cosmic dark theme, violet primary, terminal green
+   accent). Check spacing, states, colors.
+10. **`artifact-sync`** — when backend adds/changes an artifact type in
+    `CreateArtifactTool`, sync frontend renderers.
+
+### Quick reference table
+
+| Stage                         | Agent                        |
+| ----------------------------- | ---------------------------- |
+| Before touching any API       | `wanda-backend-navigator`    |
+| After writing TS types        | `backend-contract-validator` |
+| Complex multi-slice feature   | `frontend-architect`         |
+| After adding/moving features  | `fsd-boundary-guard`         |
+| After writing UI components   | `unit-test-booster`          |
+| After adding routes/flows     | `e2e-coverage-agent`         |
+| Before commit / push          | `mr-reviewer`                |
+| After modifying UI            | `design-guardian`            |
+| Backend artifact type changed | `artifact-sync`              |
+
 ## FSD Layer Rules
 
 ### Import direction (strict)

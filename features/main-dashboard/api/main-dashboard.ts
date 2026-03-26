@@ -1,24 +1,37 @@
 'use server';
 
+import { getAgentActivity } from '@/features/agents/api/activity';
 import { getAgentTasks } from '@/features/agents/api/agents';
+import { getAgentAccessContext } from '@/features/agents/lib/access';
 import { getEvents } from '@/features/event/api/calendar-events';
+import { deriveAgentStats } from '@/features/main-dashboard/lib/derive-agent-stats';
 import { getSummaryData } from '@/features/summary/api/summary';
 import { getUser } from '@/features/user';
 
 import type { MainDashboardData } from '@/features/main-dashboard/model/types';
+
+const RECENT_ACTIVITY_LIMIT = 5;
 
 /**
  * getMainDashboardData.
  * @returns Promise with all data needed for the main dashboard page.
  */
 export async function getMainDashboardData(): Promise<MainDashboardData> {
-  const [userResult, eventsResult, agentTasksResult, summaryResult] =
-    await Promise.allSettled([
-      getUser(),
-      getEvents(),
-      getAgentTasks(),
-      getSummaryData(),
-    ]);
+  const [
+    userResult,
+    eventsResult,
+    agentTasksResult,
+    summaryResult,
+    activityResult,
+    accessResult,
+  ] = await Promise.allSettled([
+    getUser(),
+    getEvents(),
+    getAgentTasks(),
+    getSummaryData(),
+    getAgentActivity(0, RECENT_ACTIVITY_LIMIT),
+    getAgentAccessContext(),
+  ]);
 
   const user = userResult.status === 'fulfilled' ? userResult.value.data : null;
 
@@ -30,6 +43,17 @@ export async function getMainDashboardData(): Promise<MainDashboardData> {
 
   const summary =
     summaryResult.status === 'fulfilled' ? summaryResult.value : null;
+
+  const recentAgentActivity =
+    activityResult.status === 'fulfilled' ? activityResult.value.items : [];
+
+  const agentActivityTotal =
+    activityResult.status === 'fulfilled' ? activityResult.value.totalCount : 0;
+
+  const canManageAgents =
+    accessResult.status === 'fulfilled'
+      ? accessResult.value.canManageAgents
+      : false;
 
   const now = new Date();
 
@@ -59,6 +83,8 @@ export async function getMainDashboardData(): Promise<MainDashboardData> {
 
   const lastMeeting = pastEvents[0] ?? null;
 
+  const agentStats = deriveAgentStats(agentTasks);
+
   return {
     user,
     todayEvents,
@@ -66,5 +92,9 @@ export async function getMainDashboardData(): Promise<MainDashboardData> {
     lastMeeting,
     agentTasks,
     summary,
+    agentStats,
+    recentAgentActivity,
+    agentActivityTotal,
+    canManageAgents,
   };
 }

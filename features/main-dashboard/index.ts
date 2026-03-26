@@ -8,3 +8,4 @@ export { ChartsBlockLoader } from './ui/charts-block-loader';
 export { AgentRecommendationsBlock } from './ui/agent-recommendations-block';
 export { TopParticipantsBlock } from './ui/top-participants-block';
 export { DashboardTabs } from './ui/dashboard-tabs';
+export { AgentActivityStatsBlock } from './ui/agent-activity-stats-block';

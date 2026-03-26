@@ -11,6 +11,7 @@ import {
   AgentRecommendationsBlock,
   TopParticipantsBlock,
   DashboardTabs,
+  AgentActivityStatsBlock,
 } from '@/features/main-dashboard';
 import { KpiCard, SummaryHeader } from '@/features/summary';
 import { getSummaryData } from '@/features/summary/api/summary';
@@ -25,7 +26,18 @@ import { StatsSection } from '@/features/summary/ui/stats-section';
  */
 export default async function MainDashboardPage() {
   const [
-    { user, todayEvents, tomorrowEvents, lastMeeting, agentTasks, summary },
+    {
+      user,
+      todayEvents,
+      tomorrowEvents,
+      lastMeeting,
+      agentTasks,
+      summary,
+      agentStats,
+      recentAgentActivity,
+      agentActivityTotal,
+      canManageAgents,
+    },
     summaryData,
   ] = await Promise.all([getMainDashboardData(), getSummaryData()]);
 
@@ -59,6 +71,14 @@ export default async function MainDashboardPage() {
           <TopParticipantsBlock participants={summary.participants.top} />
         )}
       </div>
+
+      {/* Agent activity stats */}
+      <AgentActivityStatsBlock
+        stats={agentStats}
+        recentActivity={recentAgentActivity}
+        activityTotal={agentActivityTotal}
+        canManageAgents={canManageAgents}
+      />
     </div>
   );
 

@@ -1,8 +1,12 @@
 import type { EventProps } from '@/entities/event';
 // eslint-disable-next-line boundaries/element-types
-import type { AgentTask } from '@/features/agents/model/types';
+import type {
+  AgentActivityItem,
+  AgentTask,
+} from '@/features/agents/model/types';
 // eslint-disable-next-line boundaries/element-types
 import type { DashboardApiResponse } from '@/features/summary/types';
+export type { AgentStats } from '@/features/main-dashboard/lib/derive-agent-stats';
 
 export interface MainDashboardData {
   user: { id: number; name: string; email: string } | null;
@@ -11,4 +15,8 @@ export interface MainDashboardData {
   lastMeeting: EventProps | null;
   agentTasks: AgentTask[];
   summary: DashboardApiResponse | null;
+  agentStats: AgentStats;
+  recentAgentActivity: AgentActivityItem[];
+  agentActivityTotal: number;
+  canManageAgents: boolean;
 }
