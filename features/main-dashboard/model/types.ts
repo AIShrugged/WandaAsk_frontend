@@ -1,5 +1,4 @@
 import type { EventProps } from '@/entities/event';
-// eslint-disable-next-line boundaries/element-types
 import type {
   AgentActivityItem,
   AgentTask,
