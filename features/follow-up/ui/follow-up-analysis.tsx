@@ -1,7 +1,8 @@
 import { LayoutDashboard } from 'lucide-react';
 
-import { ArtifactCard } from '@/entities/artifact';
 import { getArtifacts } from '@/entities/artifact/api/artifacts';
+
+import { FollowUpAnalysisPolling } from './follow-up-analysis-polling';
 
 interface Props {
   /** ID of the chat whose artifacts should be rendered. Null when no chat is linked. */
@@ -25,26 +26,13 @@ export default async function FollowUpAnalysis({ chatId }: Props) {
     );
   }
 
-  const artifactsResponse = await getArtifacts(chatId);
-
-  if (!artifactsResponse || artifactsResponse.layout.items.length === 0) {
-    return (
-      <AnalysisEmptyState message='No visual artifacts found for this methodology. Ask the AI to create evaluation charts or criteria cards in the methodology chat.' />
-    );
-  }
-
-  const { artifacts, layout } = artifactsResponse;
+  const initialArtifacts = await getArtifacts(chatId);
 
   return (
-    <div className='flex flex-col gap-6'>
-      {layout.items.map(({ id }) => {
-        const artifact = artifacts[id];
-
-        if (!artifact) return null;
-
-        return <ArtifactCard key={id} artifact={artifact} />;
-      })}
-    </div>
+    <FollowUpAnalysisPolling
+      chatId={chatId}
+      initialArtifacts={initialArtifacts}
+    />
   );
 }
 
