@@ -1,4 +1,4 @@
-import { getArtifacts } from '@/features/chat/api/artifacts';
+import { getArtifacts } from '@/entities/artifact/api/artifacts';
 
 // ---------------------------------------------------------------------------
 // Mocks

@@ -11,7 +11,7 @@ export {
   deleteChat,
 } from '@/features/chat/api/chats';
 export { getMessages } from '@/features/chat/api/messages';
-export { getArtifacts } from '@/features/chat/api/artifacts';
+export { getArtifacts } from '@/entities/artifact/api/artifacts';
 export {
   getTelegramChats,
   issueTelegramAttachCode,
