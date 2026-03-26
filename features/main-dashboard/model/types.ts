@@ -3,7 +3,7 @@ import type {
   AgentActivityItem,
   AgentTask,
 } from '@/features/agents/model/types';
-// eslint-disable-next-line boundaries/element-types
+import type { AgentStats } from '@/features/main-dashboard/lib/derive-agent-stats';
 import type { DashboardApiResponse } from '@/features/summary/types';
 export type { AgentStats } from '@/features/main-dashboard/lib/derive-agent-stats';
 
