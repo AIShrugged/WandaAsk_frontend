@@ -81,15 +81,8 @@ describe('FollowUpItem', () => {
     );
   });
 
-  it('shows deprecated badge when is_deprecated is true', () => {
+  it('does not show deprecated badge', () => {
     render(<FollowUpItem followUp={makeFollowUp({ is_deprecated: true })} />);
-    expect(
-      screen.getByText('Created with outdated methodology'),
-    ).toBeInTheDocument();
-  });
-
-  it('does not show deprecated badge when is_deprecated is false', () => {
-    render(<FollowUpItem followUp={makeFollowUp({ is_deprecated: false })} />);
     expect(
       screen.queryByText('Created with outdated methodology'),
     ).not.toBeInTheDocument();
