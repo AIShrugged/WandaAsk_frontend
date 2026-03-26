@@ -5,7 +5,7 @@ import React from 'react';
 
 const mockGetArtifacts = jest.fn();
 
-jest.mock('@/features/chat/api/artifacts', () => {
+jest.mock('@/entities/artifact/api/artifacts', () => {
   return {
     getArtifacts: (...args: unknown[]) => {
       return mockGetArtifacts(...args);
