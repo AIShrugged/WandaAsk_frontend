@@ -1,12 +1,14 @@
 import { redirect } from 'next/navigation';
 import React, { Suspense } from 'react';
 
-import Analysis from '@/features/analysis/ui/analysis';
 import {
   getEventFollowUp,
   getMeetingTasks,
 } from '@/features/event/api/calendar-events';
-import { DeprecatedFollowUpModal } from '@/features/follow-up';
+import {
+  DeprecatedFollowUpModal,
+  FollowUpAnalysis,
+} from '@/features/follow-up';
 import {
   available_tabs,
   type Tab,
@@ -14,6 +16,7 @@ import {
 } from '@/features/meeting/lib/options';
 import ButtonsRow from '@/features/meeting/ui/buttons-row';
 import MeetingTasks from '@/features/meeting/ui/meeting-tasks';
+import { getMethodologyChat } from '@/features/methodology/api/methodology-chat';
 import Transcript from '@/features/transcript/ui/transcript';
 import { ROUTES } from '@/shared/lib/routes';
 import Card from '@/shared/ui/card/Card';
@@ -68,6 +71,11 @@ export default async function Page({ params, searchParams }: PageProps) {
   if (tab !== currentTab)
     redirect(`${ROUTES.DASHBOARD.MEETING}/${id}?tab=${currentTab}`);
 
+  const methodologyChat =
+    currentTab === available_tabs.analysis && followUp.methodology_id
+      ? await getMethodologyChat(followUp.methodology_id)
+      : null;
+
   return (
     <Card className='h-full flex flex-col overflow-y-scroll'>
       <PageHeader hasButtonBack title={followUp.calendar_event.title} />
@@ -88,7 +96,7 @@ export default async function Page({ params, searchParams }: PageProps) {
             )}
             {currentTab === available_tabs.transcript && <Transcript id={id} />}
             {currentTab === available_tabs.analysis && (
-              <Analysis data={followUp?.text} />
+              <FollowUpAnalysis chatId={methodologyChat?.id ?? null} />
             )}
             {currentTab === available_tabs.tasks && <TasksTab id={id} />}
           </Suspense>

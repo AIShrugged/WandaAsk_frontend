@@ -3,8 +3,8 @@
 import { ChevronLeft, RefreshCw, Sparkles } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 
+import { ArtifactCard } from '@/entities/artifact';
 import { getArtifacts } from '@/features/chat/api/artifacts';
-import { ArtifactCard } from '@/features/chat/ui/artifacts/artifact-card';
 import { CollapsedSidePanel } from '@/shared/ui/layout/collapsed-side-panel';
 
 import type { Artifact, ArtifactsResponse } from '@/features/chat/types';

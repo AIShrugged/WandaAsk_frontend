@@ -31,7 +31,7 @@ import type {
   PeopleListArtifact,
   TaskTableArtifact,
   TranscriptArtifact,
-} from '@/features/chat/types';
+} from '@/entities/artifact/model/types';
 
 // Recharts uses browser APIs (ResizeObserver) — defer to client
 const ChartArtifactView = dynamic(

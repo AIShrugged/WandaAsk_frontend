@@ -1,13 +1,18 @@
 import { redirect } from 'next/navigation';
 import React, { Suspense } from 'react';
 
-import { DeprecatedFollowUpModal, ExportButton } from '@/features/follow-up';
+import {
+  DeprecatedFollowUpModal,
+  ExportButton,
+  FollowUpAnalysis,
+} from '@/features/follow-up';
 import {
   available_tabs,
   type Tab,
   validTabs,
 } from '@/features/meeting/lib/options';
 import ButtonsRow from '@/features/meeting/ui/buttons-row';
+import { getMethodologyChat } from '@/features/methodology/api/methodology-chat';
 import { getTeamFollowUp } from '@/features/teams/api/team';
 import Transcript from '@/features/transcript/ui/transcript';
 import { ROUTES } from '@/shared/lib/routes';
@@ -16,8 +21,6 @@ import CardBody from '@/shared/ui/card/CardBody';
 import SpinLoader from '@/shared/ui/layout/spin-loader';
 import PageHeader from '@/widgets/layout/ui/page-header';
 import EventOverview from '@/widgets/meeting/ui/event-overview';
-
-import Analysis from '../../../../../features/analysis/ui/analysis';
 
 import type { PageProps } from '@/shared/types/common';
 
@@ -36,6 +39,13 @@ export default async function Page({ params, searchParams }: PageProps) {
   const { data: followUp } = await getTeamFollowUp(id);
 
   const currentTab = validTabs.includes(tab as Tab) ? (tab as Tab) : 'summary';
+
+  // Resolve the methodology chat once at page level so FollowUpAnalysis
+  // receives a plain chatId — keeping FSD boundaries clean.
+  const methodologyChat =
+    currentTab === available_tabs.analysis && followUp.methodology_id
+      ? await getMethodologyChat(followUp.methodology_id)
+      : null;
 
   if (tab !== currentTab)
     redirect(`${ROUTES.DASHBOARD.FOLLOWUPS}/analysis/${id}?tab=${currentTab}`);
@@ -67,7 +77,7 @@ export default async function Page({ params, searchParams }: PageProps) {
             )}
             {currentTab === available_tabs.transcript && <Transcript id={id} />}
             {currentTab === available_tabs.analysis && (
-              <Analysis data={followUp?.text} />
+              <FollowUpAnalysis chatId={methodologyChat?.id ?? null} />
             )}
           </Suspense>
         </div>
