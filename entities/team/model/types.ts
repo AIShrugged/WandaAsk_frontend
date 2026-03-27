@@ -1,5 +1,5 @@
 import type { EventProps } from '@/entities/event';
-import type { UserProps } from '@/entities/user';
+import type { UserBasicProps } from '@/entities/user';
 
 export interface TeamProps extends TeamCreateDTO {
   id: number;
@@ -30,9 +30,9 @@ export interface TeamFollowUpDTO {
   methodology_id: number | null;
   is_deprecated: boolean;
   text: string;
-  status: string;
+  status: 'in_progress' | 'done' | 'failed';
   created_at: string;
   updated_at: string;
-  user: UserProps;
+  user: UserBasicProps;
   calendar_event: EventProps;
 }

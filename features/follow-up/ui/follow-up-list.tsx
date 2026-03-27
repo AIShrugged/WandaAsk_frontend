@@ -1,7 +1,8 @@
 import { ListChecks } from 'lucide-react';
 
-import { FollowUpItem } from '@/features/follow-up/ui/follow-up-item';
 import { GenericList } from '@/shared/ui/layout/generic-list';
+
+import { FollowUpItem } from './follow-up-item';
 
 import type { TeamFollowUpDTO } from '@/entities/team';
 

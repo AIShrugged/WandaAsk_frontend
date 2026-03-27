@@ -7,3 +7,10 @@ export interface UserProps {
   readonly updated_at: string;
   readonly is_demo: boolean;
 }
+
+/** Minimal user shape returned by UserResource (id/name/email only) */
+export interface UserBasicProps {
+  id: number;
+  name: string;
+  email: string;
+}

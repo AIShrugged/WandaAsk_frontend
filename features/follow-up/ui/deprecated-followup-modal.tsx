@@ -97,27 +97,12 @@ export default function DeprecatedFollowUpModal({
     try {
       const { data } = await regenerateFollowUp(followUpId);
 
-      if (data.status === 'done') {
-        clearTimer();
-        router.refresh();
-        close();
-
-        return;
-      }
-
-      if (data.status === 'failed') {
-        clearTimer();
-        setState('failed');
-
-        return;
-      }
-
-      startPolling(data.id);
+      startPolling(data.followup_id);
     } catch {
       clearTimer();
       setState('failed');
     }
-  }, [clearTimer, close, followUpId, router, startPolling]);
+  }, [clearTimer, followUpId, startPolling]);
   const handleRetry = useCallback(() => {
     void handleRegenerate();
   }, [handleRegenerate]);
@@ -192,7 +177,7 @@ export default function DeprecatedFollowUpModal({
             <>
               <Button
                 type='button'
-                onClick={handleRegenerate}
+                onClick={handleRetry}
                 className='w-auto'
                 loading={state === 'regenerating' || state === 'polling'}
                 loadingText='Generating...'

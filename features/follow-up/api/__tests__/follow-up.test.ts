@@ -67,13 +67,26 @@ function makeResponse(status: number, body: unknown): Response {
 
 const mockFollowUp = {
   id: 7,
-  event_id: 3,
+  calendar_event: {
+    id: 3,
+    platform: 'google_meet',
+    url: 'https://meet.google.com/abc',
+    title: 'Test Meeting',
+    description: '',
+    starts_at: '2026-03-01T09:00:00Z',
+    ends_at: '2026-03-01T10:00:00Z',
+    creator_user_id: 1,
+    required_bot: false,
+    has_summary: true,
+  },
   team_id: 1,
+  user: { id: 1, name: 'Test User', email: 'test@test.com' },
   methodology_id: 2,
   is_deprecated: false,
-  status: 'done',
+  status: 'done' as const,
   text: 'Follow-up text',
   created_at: '2026-03-01T10:00:00Z',
+  updated_at: '2026-03-01T10:00:00Z',
 };
 
 // ---------------------------------------------------------------------------
@@ -199,16 +212,22 @@ describe('regenerateFollowUp', () => {
     jest.clearAllMocks();
   });
 
-  it('posts to the regenerate endpoint and returns the follow-up', async () => {
+  it('posts to the regenerate endpoint and returns the queued response', async () => {
+    const mockRegenerateResponse = {
+      calendar_event_id: 5,
+      followup_id: 7,
+      status: 'in_progress',
+    };
+
     globalThis.fetch = jest
       .fn()
       .mockResolvedValue(
-        makeResponse(200, { success: true, data: mockFollowUp }),
+        makeResponse(202, { success: true, data: mockRegenerateResponse }),
       );
 
     const result = await regenerateFollowUp(7);
 
-    expect(result.data).toEqual(mockFollowUp);
+    expect(result.data).toEqual(mockRegenerateResponse);
     expect(globalThis.fetch).toHaveBeenCalledWith(
       'https://api.test/followups/7/regenerate',
       expect.objectContaining({ method: 'POST' }),

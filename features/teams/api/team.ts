@@ -12,6 +12,7 @@ import type {
   TeamFollowUpDTO,
   TeamProps,
 } from '@/entities/team';
+import type { FollowUpDetailProps } from '@/features/follow-up/model/types';
 import type { ApiResponse } from '@/shared/types/common';
 
 // ------------------------------
@@ -183,7 +184,9 @@ export const getTeamFollowUps = async (
  * @param calendarEventId - calendarEventId.
  * @returns Promise.
  */
-export const getTeamFollowUp = async (calendarEventId: number | string) => {
+export const getTeamFollowUp = async (
+  calendarEventId: number | string,
+): Promise<{ data: FollowUpDetailProps }> => {
   const authHeaders = await getAuthHeaders();
   const res = await fetch(
     `${API_URL}/calendar-events/${calendarEventId}/followup`,

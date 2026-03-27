@@ -1,1 +1,1 @@
-export type { UserProps } from './model/types';
+export type { UserBasicProps, UserProps } from './model/types';

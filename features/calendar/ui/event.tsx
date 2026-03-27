@@ -1,7 +1,7 @@
 'use client';
 
 import clsx from 'clsx';
-import { parse, format } from 'date-fns';
+import { format } from 'date-fns';
 import {
   Bot,
   Circle,
@@ -12,21 +12,18 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-import { formatDate } from '@/shared/lib/dateFormatter';
+import { formatDate, parseEventDate } from '@/shared/lib/dateFormatter';
 import { isEventPast } from '@/shared/lib/isEventPast';
 import { ROUTES } from '@/shared/lib/routes';
 
 import type { EventProps } from '@/entities/event';
 
 /**
- * formatTime formats a "yyyy-MM-dd HH:mm:ss" string to "h:mm a".
- * @param dateString - date string.
- * @returns formatted time.
+ * formatTime formats a date string to "h:mm a".
+ * Accepts "yyyy-MM-dd HH:mm:ss" or ISO 8601 strings.
  */
 function formatTime(dateString: string): string {
-  const date = parse(dateString, 'yyyy-MM-dd HH:mm:ss', new Date());
-
-  return format(date, 'h:mm a');
+  return format(parseEventDate(dateString), 'h:mm a');
 }
 
 /**

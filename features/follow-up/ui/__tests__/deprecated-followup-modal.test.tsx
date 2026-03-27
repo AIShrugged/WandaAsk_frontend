@@ -78,13 +78,7 @@ describe('DeprecatedFollowUpModal', () => {
     });
 
     mockRegenerateFollowUp.mockResolvedValueOnce({
-      data: {
-        id: 42,
-        methodology_id: 8,
-        is_deprecated: false,
-        status: 'in_progress',
-        text: '',
-      },
+      data: { calendar_event_id: 5, followup_id: 42, status: 'in_progress' },
     });
     mockPollFollowUp.mockResolvedValueOnce({
       data: {
@@ -119,13 +113,16 @@ describe('DeprecatedFollowUpModal', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('shows an error state and retries regeneration', async () => {
+  it('shows an error state when polling returns failed and retries regeneration', async () => {
     const user = userEvent.setup({
       delay: null,
       advanceTimers: jest.advanceTimersByTime,
     });
 
     mockRegenerateFollowUp.mockResolvedValueOnce({
+      data: { calendar_event_id: 5, followup_id: 42, status: 'in_progress' },
+    });
+    mockPollFollowUp.mockResolvedValueOnce({
       data: {
         id: 42,
         methodology_id: 8,
@@ -135,13 +132,7 @@ describe('DeprecatedFollowUpModal', () => {
       },
     });
     mockRegenerateFollowUp.mockResolvedValueOnce({
-      data: {
-        id: 43,
-        methodology_id: 8,
-        is_deprecated: false,
-        status: 'in_progress',
-        text: '',
-      },
+      data: { calendar_event_id: 5, followup_id: 43, status: 'in_progress' },
     });
     mockPollFollowUp.mockResolvedValueOnce({
       data: {
@@ -162,6 +153,10 @@ describe('DeprecatedFollowUpModal', () => {
         }),
       );
       await Promise.resolve();
+    });
+
+    await act(async () => {
+      jest.advanceTimersByTime(4000);
     });
 
     expect(screen.getByText('Unable to update the report')).toBeInTheDocument();

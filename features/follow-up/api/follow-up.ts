@@ -6,7 +6,10 @@ import { API_URL } from '@/shared/lib/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 import { logApiError } from '@/shared/lib/logger';
 
-import type { FollowUpDetailProps } from '../model/types';
+import type {
+  FollowUpDetailProps,
+  RegenerateFollowUpResponse,
+} from '../model/types';
 
 /**
  * getFollowUp.
@@ -56,7 +59,7 @@ export async function getFollowUp(id: number) {
  */
 export async function regenerateFollowUp(
   followUpId: number,
-): Promise<{ data: FollowUpDetailProps }> {
+): Promise<{ data: RegenerateFollowUpResponse }> {
   const authHeaders = await getAuthHeaders();
   const res = await fetch(`${API_URL}/followups/${followUpId}/regenerate`, {
     method: 'POST',

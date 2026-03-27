@@ -353,13 +353,6 @@ export function IssuesPage({
   return (
     <div className='flex flex-col gap-6'>
       <div className='flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between'>
-        <div>
-          <h2 className='text-2xl font-semibold text-foreground'>Issues</h2>
-          <p className='mt-1 text-sm text-muted-foreground'>
-            Tenant-aware tasks with filters and attachments.
-          </p>
-        </div>
-
         <Link
           href={`${ROUTES.DASHBOARD.ISSUES}/create`}
           className='inline-flex h-10 w-auto items-center justify-center gap-2 rounded-[var(--radius-button)] bg-gradient-to-b from-violet-500 to-violet-700 px-4 text-sm font-medium text-primary-foreground shadow-[0_2px_12px_rgba(124,58,237,0.25)] transition-all hover:from-violet-400 hover:to-violet-600'

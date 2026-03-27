@@ -6,7 +6,11 @@ import { SkeletonList } from '@/shared/ui/layout/skeleton';
  */
 export default function Loading() {
   return (
-    <Card className='h-full flex flex-col'>
+    <Card
+      className='h-full flex flex-col'
+      aria-busy='true'
+      aria-label='Loading content'
+    >
       <SkeletonList rows={6} />
     </Card>
   );
