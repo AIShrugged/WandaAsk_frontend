@@ -78,30 +78,30 @@ function MethodologyBlock({ block }: { block: MethodologyCriteriaBlock }) {
     }
 
     case 'scoring_table': {
-      const scoreColIndex = block.columns.findIndex(
-        (c) =>
-          {return typeof c === 'string' && c.toLowerCase().includes('факт')},
-      );
-      const maxColIndex = block.columns.findIndex(
-        (c) =>
-          {return typeof c === 'string' && c.toLowerCase().includes('макс')},
-      );
+      const scoreColIndex = block.columns.findIndex((c) => {
+        return typeof c === 'string' && c.toLowerCase().includes('факт');
+      });
+      const maxColIndex = block.columns.findIndex((c) => {
+        return typeof c === 'string' && c.toLowerCase().includes('макс');
+      });
 
       return (
         <div className='overflow-x-auto rounded-lg border border-border/50'>
           <table className='w-full text-xs'>
             <thead>
               <tr className='border-b border-border bg-accent/20'>
-                {block.columns.map((col, i) => {return (
-                  <th
-                    key={i}
-                    className={`px-3 py-2.5 font-semibold text-muted-foreground ${
-                      i === 0 ? 'text-left' : 'text-center'
-                    }`}
-                  >
-                    {col}
-                  </th>
-                )})}
+                {block.columns.map((col, i) => {
+                  return (
+                    <th
+                      key={i}
+                      className={`px-3 py-2.5 font-semibold text-muted-foreground ${
+                        i === 0 ? 'text-left' : 'text-center'
+                      }`}
+                    >
+                      {col}
+                    </th>
+                  );
+                })}
               </tr>
             </thead>
             <tbody>
@@ -174,9 +174,7 @@ function MethodologyBlock({ block }: { block: MethodologyCriteriaBlock }) {
                   </span>
                   <div className='flex items-center gap-2'>
                     {pct != null && (
-                      <span
-                        className={`text-xs font-medium ${status.color}`}
-                      >
+                      <span className={`text-xs font-medium ${status.color}`}>
                         {status.label}
                       </span>
                     )}
@@ -220,7 +218,9 @@ function MethodologyBlock({ block }: { block: MethodologyCriteriaBlock }) {
     }
 
     case 'scale': {
-      const thresholds = block.items.toSorted((a, b) => {return b.score - a.score});
+      const thresholds = block.items.toSorted((a, b) => {
+        return b.score - a.score;
+      });
 
       return (
         <div className='rounded-xl border border-border/50 bg-accent/10 p-4 flex flex-col gap-3'>
@@ -263,15 +263,17 @@ function MethodologyBlock({ block }: { block: MethodologyCriteriaBlock }) {
             {block.title}
           </p>
           <ul className='flex flex-col gap-2'>
-            {block.items.map((item, i) => {return (
-              <li
-                key={i}
-                className='flex items-start gap-2 text-sm text-foreground/90'
-              >
-                <span className='mt-1.5 w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0' />
-                <span className='leading-relaxed'>{item}</span>
-              </li>
-            )})}
+            {block.items.map((item, i) => {
+              return (
+                <li
+                  key={i}
+                  className='flex items-start gap-2 text-sm text-foreground/90'
+                >
+                  <span className='mt-1.5 w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0' />
+                  <span className='leading-relaxed'>{item}</span>
+                </li>
+              );
+            })}
           </ul>
         </div>
       );
@@ -302,9 +304,9 @@ export function MethodologyCriteria({
 
   return (
     <div className='flex flex-col gap-5'>
-      {blocks.map((block, i) => {return (
-        <MethodologyBlock key={i} block={block} />
-      )})}
+      {blocks.map((block, i) => {
+        return <MethodologyBlock key={i} block={block} />;
+      })}
     </div>
   );
 }
