@@ -27,6 +27,7 @@ import type {
 interface AgentProfileFormValues {
   name: string;
   description: string;
+  system_prompt: string;
   sandbox_profile: string;
   allowed_tools: string[];
   model: string;
@@ -57,6 +58,7 @@ export function AgentProfileForm({
     return {
       name: profile?.name ?? '',
       description: profile?.description ?? '',
+      system_prompt: profile?.system_prompt ?? '',
       sandbox_profile: profile?.sandbox_profile ?? '',
       allowed_tools: profile?.allowed_tools ?? [],
       model: profile?.model ?? '',
@@ -96,6 +98,7 @@ export function AgentProfileForm({
       const payload = {
         name: values.name.trim(),
         description: values.description.trim() || null,
+        system_prompt: values.system_prompt.trim() || null,
         sandbox_profile: values.sandbox_profile || null,
         allowed_tools: values.allowed_tools,
         ...(values.model.trim() ? { model: values.model.trim() } : {}),
@@ -147,6 +150,13 @@ export function AgentProfileForm({
         label='Description'
         value={watch('description')}
         error={errors.description?.message}
+      />
+
+      <InputTextarea
+        {...register('system_prompt')}
+        label='System Prompt'
+        value={watch('system_prompt')}
+        error={errors.system_prompt?.message}
       />
 
       <div className='grid gap-4 md:grid-cols-2'>

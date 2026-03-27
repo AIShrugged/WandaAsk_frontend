@@ -131,6 +131,12 @@ export default async function AgentProfileDetailPage({
                   <p>Description: {profile.description || '—'}</p>
                   <p>Sandbox: {profile.sandbox_profile || '—'}</p>
                   <p>Model: {profile.model ?? '—'}</p>
+                  <div>
+                    <p className='text-muted-foreground'>System Prompt:</p>
+                    <p className='mt-1 whitespace-pre-wrap break-words'>
+                      {profile.system_prompt || '—'}
+                    </p>
+                  </div>
                 </div>
               </div>
               <AgentJsonPreview

@@ -1,9 +1,7 @@
-import { format, parseISO } from 'date-fns';
-import { CalendarClock, ClipboardList } from 'lucide-react';
+import { ClipboardList } from 'lucide-react';
 
 import { AgendaDonutLoader } from '@/features/main-dashboard/ui/agenda-donut-loader';
-import { AgendaStatusBadge } from '@/features/main-dashboard/ui/agenda-status-badge';
-import { Badge } from '@/shared/ui/badge';
+import { AgendaItem } from '@/features/main-dashboard/ui/agenda-item';
 import Card from '@/shared/ui/card/Card';
 
 import type { MeetingAgenda } from '@/features/main-dashboard/model/agenda-types';
@@ -104,38 +102,7 @@ export function UpcomingAgendasBlock({ agendas }: UpcomingAgendasBlockProps) {
               Next meetings
             </p>
             {visibleAgendas.map((agenda) => {
-              return (
-                <div
-                  key={agenda.id}
-                  className='flex items-center gap-3 py-3 border-b border-border/50 last:border-0'
-                >
-                  <div className='flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary'>
-                    <CalendarClock className='h-4 w-4' />
-                  </div>
-                  <div className='min-w-0 flex-1'>
-                    <p className='text-sm font-medium text-foreground truncate'>
-                      {agenda.calendar_event.title}
-                    </p>
-                    <div className='flex items-center gap-1.5 mt-0.5 flex-wrap'>
-                      <Badge
-                        variant={
-                          agenda.type === 'personal' ? 'primary' : 'default'
-                        }
-                        className='text-xs'
-                      >
-                        {agenda.type === 'personal' ? 'Personal' : 'General'}
-                      </Badge>
-                      <span className='text-xs text-muted-foreground'>
-                        {format(
-                          parseISO(agenda.calendar_event.starts_at),
-                          'MMM d, HH:mm',
-                        )}
-                      </span>
-                    </div>
-                  </div>
-                  <AgendaStatusBadge status={agenda.status} />
-                </div>
-              );
+              return <AgendaItem key={agenda.id} agenda={agenda} />;
             })}
           </div>
         </>

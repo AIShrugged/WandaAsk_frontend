@@ -9,6 +9,7 @@ export interface AgentProfile {
   id: number;
   name: string;
   description: string | null;
+  system_prompt: string | null;
   allowed_tools: string[] | null;
   sandbox_profile: string | null;
   model?: string | null;
@@ -22,6 +23,7 @@ export interface AgentProfile {
 export interface AgentProfilePayload {
   name: string;
   description: string | null;
+  system_prompt: string | null;
   allowed_tools: string[];
   sandbox_profile: string | null;
   model?: string | null;

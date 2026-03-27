@@ -29,6 +29,11 @@ export function AgentProfilesList({ profiles }: { profiles: AgentProfile[] }) {
                   {profile.description}
                 </p>
               )}
+              {profile.system_prompt && (
+                <p className='mt-1 text-sm text-muted-foreground line-clamp-2'>
+                  {profile.system_prompt}
+                </p>
+              )}
               <div className='mt-2 flex flex-wrap gap-1.5'>
                 {(profile.allowed_tools ?? []).map((tool) => {
                   return <Badge key={tool}>{tool}</Badge>;
@@ -53,6 +58,7 @@ export function AgentProfilesList({ profiles }: { profiles: AgentProfile[] }) {
             <tr>
               <th className='px-4 py-3 font-medium'>Name</th>
               <th className='px-4 py-3 font-medium'>Description</th>
+              <th className='px-4 py-3 font-medium'>System Prompt</th>
               <th className='px-4 py-3 font-medium'>Allowed tools</th>
               <th className='px-4 py-3 font-medium'>Sandbox</th>
               <th className='px-4 py-3 font-medium'>Model</th>
@@ -77,6 +83,11 @@ export function AgentProfilesList({ profiles }: { profiles: AgentProfile[] }) {
                   </td>
                   <td className='px-4 py-3 text-muted-foreground'>
                     {profile.description || '—'}
+                  </td>
+                  <td className='px-4 py-3 text-muted-foreground max-w-[200px]'>
+                    <p className='line-clamp-2'>
+                      {profile.system_prompt || '—'}
+                    </p>
                   </td>
                   <td className='px-4 py-3'>
                     <div className='flex flex-wrap gap-2'>
