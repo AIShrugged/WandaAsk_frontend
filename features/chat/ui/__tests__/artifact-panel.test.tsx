@@ -36,50 +36,6 @@ jest.mock('@/shared/ui/layout/collapsed-side-panel', () => {
   };
 });
 
-// Stub artifact sub-components
-jest.mock('@/features/chat/ui/artifacts/chart-artifact', () => {
-  return {
-    ChartArtifactView: () => {
-      return <div data-testid='chart-artifact' />;
-    },
-  };
-});
-jest.mock('@/features/chat/ui/artifacts/insight-card', () => {
-  return {
-    InsightCard: () => {
-      return <div data-testid='insight-card' />;
-    },
-  };
-});
-jest.mock('@/features/chat/ui/artifacts/meeting-card', () => {
-  return {
-    MeetingCard: () => {
-      return <div data-testid='meeting-card' />;
-    },
-  };
-});
-jest.mock('@/features/chat/ui/artifacts/people-list', () => {
-  return {
-    PeopleList: () => {
-      return <div data-testid='people-list' />;
-    },
-  };
-});
-jest.mock('@/features/chat/ui/artifacts/task-table', () => {
-  return {
-    TaskTable: () => {
-      return <div data-testid='task-table' />;
-    },
-  };
-});
-jest.mock('@/features/chat/ui/artifacts/transcript-view', () => {
-  return {
-    TranscriptView: () => {
-      return <div data-testid='transcript-view' />;
-    },
-  };
-});
-
 // Stub Lucide icons
 jest.mock('lucide-react', () => {
   const Icon = ({ className }: { className?: string }) => {
