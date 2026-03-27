@@ -1,3 +1,4 @@
+import type { ArtifactsResponse } from '@/entities/artifact';
 import type { EventProps } from '@/entities/event';
 import type { UserBasicProps } from '@/entities/user';
 
@@ -9,7 +10,7 @@ export interface FollowUpDetailProps {
   user: UserBasicProps;
   methodology_id: number | null;
   is_deprecated: boolean;
-  text: string;
+  text: ArtifactsResponse | null;
   status: 'in_progress' | 'done' | 'failed';
   created_at: string;
   updated_at: string;

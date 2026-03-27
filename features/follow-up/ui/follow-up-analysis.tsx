@@ -1,25 +1,56 @@
 import { LayoutDashboard } from 'lucide-react';
 
+import { ArtifactCard } from '@/entities/artifact';
 import { getArtifacts } from '@/entities/artifact/api/artifacts';
 
 import { FollowUpAnalysisPolling } from './follow-up-analysis-polling';
 
+import type { Artifact, ArtifactsResponse } from '@/entities/artifact';
+
 interface Props {
-  /** ID of the chat whose artifacts should be rendered. Null when no chat is linked. */
-  chatId: number | null;
+  /** Pre-built artifacts from the follow-up `text` field (new backend format). */
+  staticArtifacts?: ArtifactsResponse | null;
+  /** ID of the chat whose artifacts should be rendered (methodology chat). */
+  chatId?: number | null;
 }
 
 /**
- * Renders follow-up analysis using the artifacts configured in the methodology chat.
+ * Renders follow-up analysis.
  *
- * The parent page is responsible for resolving the methodology's chat ID
- * (via getMethodologyChat) and passing it here as a prop.
- * This keeps FSD boundaries clean: features/follow-up only imports from entities/.
+ * Two modes:
+ * 1. staticArtifacts — renders the artifacts baked into the followup `text` field directly (no polling).
+ * 2. chatId — fetches artifacts from methodology chat with live polling.
  * @param props - Component props.
+ * @param props.staticArtifacts - Pre-built artifacts from follow-up text field.
  * @param props.chatId - ID of the methodology configuration chat.
  * @returns JSX element.
  */
-export default async function FollowUpAnalysis({ chatId }: Props) {
+export default async function FollowUpAnalysis({
+  staticArtifacts,
+  chatId,
+}: Props) {
+  if (staticArtifacts) {
+    const items = (staticArtifacts.layout?.items ?? [])
+      .map((item) => {
+        return staticArtifacts.artifacts[item.id];
+      })
+      .filter(Boolean) as Artifact[];
+
+    if (items.length === 0) {
+      return (
+        <AnalysisEmptyState message='No analysis data found in this follow-up.' />
+      );
+    }
+
+    return (
+      <div className='flex flex-col gap-6'>
+        {items.map((artifact) => {
+          return <ArtifactCard key={artifact.id} artifact={artifact} />;
+        })}
+      </div>
+    );
+  }
+
   if (!chatId) {
     return (
       <AnalysisEmptyState message='This methodology has not been configured via chat yet. Open the AI chat and describe your evaluation criteria to get started.' />

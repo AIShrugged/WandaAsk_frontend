@@ -61,8 +61,14 @@ export default async function Page({ params, searchParams }: PageProps) {
   if (tab !== currentTab)
     redirect(`${ROUTES.DASHBOARD.MEETING}/${id}?tab=${currentTab}`);
 
+  const hasStaticArtifacts =
+    followUp?.text != null &&
+    Object.keys(followUp.text.artifacts ?? {}).length > 0;
+
   const methodologyChat =
-    currentTab === available_tabs.analysis && followUp?.methodology_id
+    currentTab === available_tabs.analysis &&
+    !hasStaticArtifacts &&
+    followUp?.methodology_id
       ? await getMethodologyChat(followUp.methodology_id)
       : null;
 
@@ -86,7 +92,10 @@ export default async function Page({ params, searchParams }: PageProps) {
             )}
             {currentTab === available_tabs.transcript && <Transcript id={id} />}
             {currentTab === available_tabs.analysis && (
-              <FollowUpAnalysis chatId={methodologyChat?.id ?? null} />
+              <FollowUpAnalysis
+                staticArtifacts={followUp?.text ?? null}
+                chatId={methodologyChat?.id ?? null}
+              />
             )}
             {currentTab === available_tabs.tasks && <TasksTab id={id} />}
           </Suspense>

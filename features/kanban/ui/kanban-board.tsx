@@ -29,6 +29,7 @@ import { getTeams } from '@/features/teams/api/team';
 import { ROUTES } from '@/shared/lib/routes';
 import Avatar from '@/shared/ui/common/avatar';
 import InputDropdown from '@/shared/ui/input/InputDropdown';
+import { TenantScopeFields } from '@/shared/ui/input/tenant-scope-fields';
 
 import type { OrganizationProps } from '@/entities/organization';
 import type { TeamProps } from '@/entities/team';
@@ -525,7 +526,7 @@ export function KanbanBoard({
 
   const [movingCardId, setMovingCardId] = useState<number | null>(null);
   const [hoveredCard, setHoveredCard] = useState<KanbanCard | null>(null);
-  const [, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
   const [search, setSearch] = useState(initialFilters.search ?? '');
   const [orgId, setOrgId] = useState(
     initialFilters.organization_id
@@ -758,77 +759,63 @@ export function KanbanBoard({
   return (
     <div className='flex flex-col h-full gap-3'>
       {/* Filters bar */}
-      <div className='flex flex-wrap items-center gap-2 px-1'>
-        <div className='flex items-center gap-1.5 text-xs text-muted-foreground'>
-          <span>Org:</span>
-          <InputDropdown
-            options={orgOptions}
-            value={orgId}
-            onChange={(value) => {
-              setOrgId(value as string);
-              setTeamId('');
-              updateUrl({ organization_id: value as string, team_id: '' });
-            }}
-            className='w-[140px]'
-            searchable
-          />
-        </div>
+      <div className='flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between'>
+        <Link
+          href={`${ROUTES.DASHBOARD.ISSUES}/create`}
+          className='inline-flex h-10 w-auto items-center justify-center gap-2 rounded-[var(--radius-button)] bg-gradient-to-b from-violet-500 to-violet-700 px-4 text-sm font-medium text-primary-foreground shadow-[0_2px_12px_rgba(124,58,237,0.25)] transition-all hover:from-violet-400 hover:to-violet-600'
+        >
+          <Plus className='h-4 w-4' />
+          New issue
+        </Link>
+      </div>
 
-        <div className='flex items-center gap-1.5 text-xs text-muted-foreground'>
-          <span>Team:</span>
-          <InputDropdown
-            options={teamOptions}
-            value={teamId}
-            onChange={(value) => {
-              setTeamId(value as string);
-              updateUrl({ team_id: value as string });
-            }}
-            className='w-[130px]'
-            disabled={!orgId || isTeamsLoading}
-          />
-        </div>
+      <div className='grid gap-4 rounded-[var(--radius-card)] border border-border bg-card p-4'>
+        <TenantScopeFields
+          organizations={organizations}
+          organizationId={orgId}
+          teamId={teamId}
+          fetchTeams={getTeams}
+          onOrganizationChange={(value) => {
+            setOrgId(value as string);
+            setTeamId('');
+            updateUrl({ organization_id: value as string, team_id: '' });
+          }}
+          onTeamChange={(value) => {
+            setTeamId(value as string);
+            updateUrl({ team_id: value as string });
+          }}
+          disabled={isPending}
+        />
 
-        <div className='flex items-center gap-1.5 text-xs text-muted-foreground'>
-          <span>Type:</span>
+        <div className='grid gap-4 sm:grid-cols-2 xl:grid-cols-4'>
           <InputDropdown
+            label='Type'
             options={typeOptions}
             value={type}
             onChange={(value) => {
               setType(value as string);
               updateUrl({ type: value as string });
             }}
-            className='w-[120px]'
           />
-        </div>
-
-        <div className='flex items-center gap-1.5 text-xs text-muted-foreground'>
-          <span>Assignee:</span>
           <InputDropdown
+            label='Assignee'
             options={assigneeOptions}
             value={assigneeId}
             onChange={(value) => {
               setAssigneeId(value as string);
               updateUrl({ assignee_id: value as string });
             }}
-            className='w-[130px]'
             searchable
           />
-        </div>
-
-        <div className='flex items-center gap-1.5 text-xs text-muted-foreground'>
-          <span>Priority:</span>
           <InputDropdown
+            label='Priority'
             options={priorityOptions}
             value={priority}
             onChange={(value) => {
               setPriority(value as KanbanPriority | '');
               updateUrl({ priority: value as string });
             }}
-            className='w-[110px]'
           />
-        </div>
-
-        <div className='ml-auto flex-1 min-w-0 max-w-xs'>
           <div className='relative'>
             <Search className='absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none' />
             <input
@@ -838,18 +825,10 @@ export function KanbanBoard({
               onChange={(event) => {
                 setSearch(event.target.value);
               }}
-              className='w-full h-8 pl-8 pr-3 text-sm bg-card border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20'
+              className='w-full h-10 pl-8 pr-3 text-sm bg-background border border-input rounded-[var(--radius-button)] text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20'
             />
           </div>
         </div>
-
-        <Link
-          href={`${ROUTES.DASHBOARD.ISSUES}/create`}
-          className='flex items-center gap-1.5 h-8 px-3 text-xs font-medium rounded-lg bg-gradient-to-b from-violet-500 to-violet-700 text-primary-foreground shadow-[0_2px_12px_rgba(124,58,237,0.25)] transition-all hover:from-violet-400 hover:to-violet-600 flex-shrink-0'
-        >
-          <Plus className='h-3.5 w-3.5' />
-          Create
-        </Link>
       </div>
 
       {/* Board: columns + preview panel */}
