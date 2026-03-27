@@ -9,6 +9,7 @@ export const ROUTES = {
     CALENDAR: '/dashboard/calendar',
     CHAT: '/dashboard/chat',
     ISSUES: '/dashboard/issues',
+    AGENTS: '/dashboard/agents',
     AGENT_PROFILES: '/dashboard/agents/profiles',
     AGENT_PROFILES_NEW: '/dashboard/agents/profiles/new',
     AGENT_TASKS: '/dashboard/agents/tasks',

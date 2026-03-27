@@ -4,6 +4,7 @@ export {
   createIssue,
   updateIssue,
   deleteIssue,
+  dispatchIssue,
   getPersons,
   getIssueAttachments,
   uploadIssueAttachment,

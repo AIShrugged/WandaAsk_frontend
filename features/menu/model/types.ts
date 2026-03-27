@@ -7,4 +7,5 @@ export interface MenuProps {
   href?: string;
   activeHref?: string;
   children?: MenuProps[];
+  position: number;
 }

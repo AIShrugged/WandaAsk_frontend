@@ -7,6 +7,7 @@ import { API_URL, FILES_URL } from '@/shared/lib/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 import { logApiError } from '@/shared/lib/logger';
 
+import type { AgentTaskRun } from '@/features/agents/model/types';
 import type {
   Issue,
   IssueAttachment,
@@ -334,6 +335,44 @@ export async function deleteIssue(id: number): Promise<void> {
     });
     throw new Error(parseApiError(text, 'Failed to delete issue').message);
   }
+}
+
+/**
+ * dispatchIssue.
+ * @param id - issue id.
+ * @returns AgentTaskRun on success or error message.
+ */
+export async function dispatchIssue(
+  id: number,
+): Promise<{ data: AgentTaskRun | null; error: string | null }> {
+  const authHeaders = await getAuthHeaders();
+  const res = await fetch(`${API_URL}/issues/${id}/dispatch`, {
+    method: 'POST',
+    headers: { ...authHeaders },
+    cache: 'no-store',
+  });
+
+  if (!res.ok) {
+    if (res.status === 401) redirect('/api/auth/clear-session');
+    const text = await res.text();
+
+    logApiError({
+      method: 'POST',
+      url: res.url,
+      status: res.status,
+      statusText: res.statusText,
+      body: text,
+    });
+
+    return {
+      data: null,
+      error: parseApiError(text, 'Failed to dispatch agent for issue').message,
+    };
+  }
+
+  const json: ApiResponse<AgentTaskRun> = await res.json();
+
+  return { data: json.data ?? null, error: null };
 }
 
 /**

@@ -35,6 +35,7 @@ export interface Issue {
   priority?: IssuePriority | null;
   organization_id: number | null;
   team_id: number | null;
+  agent_task_id?: number | null;
   assignee_id: number | null;
   assignee?: PersonOption | null;
   created_at: string;

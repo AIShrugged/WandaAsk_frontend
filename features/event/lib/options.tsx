@@ -1,4 +1,4 @@
-import { parse as dateParse, format } from 'date-fns';
+import { format } from 'date-fns';
 import parse from 'html-react-parser';
 import { Clock4, Dot, TextAlignJustify, Video } from 'lucide-react';
 
@@ -12,7 +12,7 @@ import type { EventProps } from '@/entities/event';
  * @returns Result.
  */
 function formatDate(dateString: string) {
-  const date = new Date(dateString.replace(' ', 'T'));
+  const date = new Date(dateString);
 
   return new Intl.DateTimeFormat('en-US', {
     weekday: 'long',
@@ -28,7 +28,7 @@ function formatDate(dateString: string) {
  * @returns Result.
  */
 function formatTime(dateString: string, withMeridiem: boolean): string {
-  const date = dateParse(dateString, 'yyyy-MM-dd HH:mm:ss', new Date());
+  const date = new Date(dateString);
 
   return format(date, withMeridiem ? 'h:mmb' : 'h:mm');
 }

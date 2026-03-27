@@ -53,7 +53,7 @@ export async function httpClient<T>(
 
   const json: ApiResponse<T> = await res.json();
 
-  if (!json.success || !json.data) {
+  if (!json.success) {
     throw new ServerError(json.error ?? 'Invalid API response', { url });
   }
 
@@ -106,15 +106,17 @@ export async function httpClientList<T>(
 
   const json: ApiResponse<T[]> = await res.json();
 
-  if (!json.success || !json.data) {
+  if (!json.success) {
     throw new ServerError(json.error ?? 'Invalid API response', { url });
   }
 
   const totalCount = Number(res.headers.get('Items-Count') ?? '0');
 
+  const data = json.data ?? [];
+
   return {
-    data: json.data,
+    data,
     totalCount,
-    hasMore: json.data.length < totalCount,
+    hasMore: data.length < totalCount,
   };
 }

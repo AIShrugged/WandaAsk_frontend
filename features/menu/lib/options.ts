@@ -1,6 +1,5 @@
 import {
   BarChart2,
-  Activity,
   Bot,
   Bug,
   Calendar,
@@ -34,48 +33,56 @@ export function getMenuItems({
       label: 'Dashboard',
       icon: 'layoutDashboard',
       href: ROUTES.DASHBOARD.MAIN,
+      position: 10,
     },
     {
       id: 'chat',
       label: 'AI Chat',
       icon: 'messageSquare',
       href: ROUTES.DASHBOARD.CHAT,
+      position: 50,
     },
     {
       id: 'issues',
-      label: 'Issues',
+      label: 'Tasktracker',
       icon: 'bug',
       href: ROUTES.DASHBOARD.ISSUES,
+      position: 30,
     },
     {
       id: 'teams',
       label: 'Teams',
       icon: 'teams',
       href: ROUTES.DASHBOARD.TEAMS,
+      position: 80,
     },
     {
       id: 'methodology',
       label: 'Methodologies',
       icon: 'bookOpen',
       href: ROUTES.DASHBOARD.METHODOLOGY,
+      position: 70,
     },
     {
       id: 'calendar',
       label: 'Calendar',
       icon: 'calendar',
       href: ROUTES.DASHBOARD.CALENDAR,
+      position: 20,
     },
     {
       id: 'follow-ups',
       label: 'Follow ups (meetings)',
       icon: 'file',
       href: ROUTES.DASHBOARD.FOLLOWUPS,
+      position: 60,
     },
     {
       id: 'kanban',
       label: 'Kanban',
       icon: 'kanban',
       href: ROUTES.DASHBOARD.KANBAN,
+      position: 40,
     },
   ];
   const isDev =
@@ -88,34 +95,24 @@ export function getMenuItems({
       label: 'Debug Logs',
       icon: 'terminal',
       href: ROUTES.DASHBOARD.DEBUG_LOGS,
+      position: 10_000,
     });
   }
 
   if (canManageAgents) {
-    items.splice(3, 0, {
-      id: 'agent-tasks',
-      label: 'Agent Tasks',
+    items.push({
+      id: 'agents',
+      label: 'Agents',
       icon: 'bot',
-      href: ROUTES.DASHBOARD.AGENT_TASKS,
-      activeHref: ROUTES.DASHBOARD.AGENT_TASKS,
-    });
-    items.splice(4, 0, {
-      id: 'agent-profiles',
-      label: 'Agent Profiles',
-      icon: 'bot',
-      href: ROUTES.DASHBOARD.AGENT_PROFILES,
-      activeHref: ROUTES.DASHBOARD.AGENT_PROFILES,
-    });
-    items.splice(5, 0, {
-      id: 'agent-activity',
-      label: 'Agent Activity',
-      icon: 'activity',
-      href: ROUTES.DASHBOARD.AGENT_ACTIVITY,
-      activeHref: ROUTES.DASHBOARD.AGENT_ACTIVITY,
+      href: ROUTES.DASHBOARD.AGENTS,
+      activeHref: ROUTES.DASHBOARD.AGENTS,
+      position: 90,
     });
   }
 
-  return items;
+  return items.toSorted((a, b) => {
+    return a.position - b.position;
+  });
 }
 
 export const ICONS_MAP = {
@@ -127,7 +124,6 @@ export const ICONS_MAP = {
   file: File,
   kanban: SquareKanban,
   barChart: BarChart2,
-  activity: Activity,
   messageSquare: MessageSquare,
   bug: Bug,
   terminal: Terminal,
