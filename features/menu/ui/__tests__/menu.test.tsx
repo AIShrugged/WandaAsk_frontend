@@ -70,9 +70,6 @@ jest.mock('lucide-react', () => {
     SquareKanban: () => {
       return <span />;
     },
-    Activity: () => {
-      return <span />;
-    },
     File: () => {
       return <span />;
     },
@@ -156,12 +153,12 @@ describe('MenuSidebar', () => {
 });
 
 describe('getMenuItems', () => {
-  it('includes Agent Activity for agent managers', () => {
+  it('includes Agents item for agent managers', () => {
     const items = getMenuItems({ canManageAgents: true });
     const labels = items.map((item) => {
       return item.label;
     });
 
-    expect(labels).toContain('Agent Activity');
+    expect(labels).toContain('Agents');
   });
 });

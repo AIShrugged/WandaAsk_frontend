@@ -54,34 +54,37 @@ describe('getMenuItems', () => {
     expect(item?.label).toBe('Methodologies');
   });
 
-  it('adds agent items when agent management is enabled', () => {
+  it('adds agents item when agent management is enabled', () => {
     const items = getMenuItems({ canManageAgents: true });
 
     expect(
       items.find((item) => {
-        return item.id === 'agent-tasks';
-      }),
-    ).toBeDefined();
-    expect(
-      items.find((item) => {
-        return item.id === 'agent-profiles';
+        return item.id === 'agents';
       }),
     ).toBeDefined();
   });
 
-  it('omits agent items when agent management is disabled', () => {
+  it('omits agents item when agent management is disabled', () => {
     const items = getMenuItems({ canManageAgents: false });
 
     expect(
       items.find((item) => {
-        return item.id === 'agent-tasks';
+        return item.id === 'agents';
       }),
     ).toBeUndefined();
-    expect(
-      items.find((item) => {
-        return item.id === 'agent-profiles';
+  });
+
+  it('items are sorted by position ascending', () => {
+    const items = getMenuItems({ canManageAgents: true });
+    const positions = items.map((item) => {
+      return item.position;
+    });
+
+    expect(positions).toEqual(
+      [...positions].toSorted((a, b) => {
+        return a - b;
       }),
-    ).toBeUndefined();
+    );
   });
 
   it('all hrefs are non-empty strings', () => {
