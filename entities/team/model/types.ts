@@ -31,8 +31,8 @@ export interface TeamFollowUpDTO {
   is_deprecated: boolean;
   text: string;
   status: 'in_progress' | 'done' | 'failed';
-  created_at: string;
+  created_at: string | null;
   updated_at: string;
-  user: UserBasicProps;
-  calendar_event: EventProps;
+  user: UserBasicProps | null;
+  calendar_event: EventProps | null;
 }

@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import React, { Suspense } from 'react';
 
 import {
+  getEvent,
   getEventFollowUp,
   getMeetingTasks,
 } from '@/features/event/api/calendar-events';
@@ -49,20 +50,11 @@ async function TasksTab({ id }: { id: string }) {
 export default async function Page({ params, searchParams }: PageProps) {
   const { id } = await params;
   const { tab = available_tabs.summary } = await searchParams;
-  const { data: followUp } = await getEventFollowUp(id);
 
-  if (!followUp) {
-    return (
-      <Card className='h-full flex flex-col overflow-y-scroll'>
-        <PageHeader hasButtonBack title='Meeting' />
-        <CardBody>
-          <p className='text-sm text-muted-foreground'>
-            No summary available for this meeting yet.
-          </p>
-        </CardBody>
-      </Card>
-    );
-  }
+  const [{ data: event }, { data: followUp }] = await Promise.all([
+    getEvent(id),
+    getEventFollowUp(id),
+  ]);
 
   const currentTab = validTabs.includes(tab as Tab) ? (tab as Tab) : 'summary';
 
@@ -70,16 +62,16 @@ export default async function Page({ params, searchParams }: PageProps) {
     redirect(`${ROUTES.DASHBOARD.MEETING}/${id}?tab=${currentTab}`);
 
   const methodologyChat =
-    currentTab === available_tabs.analysis && followUp.methodology_id
+    currentTab === available_tabs.analysis && followUp?.methodology_id
       ? await getMethodologyChat(followUp.methodology_id)
       : null;
 
   return (
     <Card className='h-full flex flex-col overflow-y-scroll'>
-      <PageHeader hasButtonBack title={followUp.calendar_event.title} />
+      <PageHeader hasButtonBack title={event.title} />
 
       <CardBody>
-        {followUp.is_deprecated && (
+        {followUp?.is_deprecated && (
           <DeprecatedFollowUpModal followUpId={followUp.id} />
         )}
 
@@ -90,7 +82,7 @@ export default async function Page({ params, searchParams }: PageProps) {
         <div className='mt-8'>
           <Suspense fallback={<SpinLoader />} key={currentTab}>
             {currentTab === available_tabs.summary && (
-              <EventOverview id={id} event={followUp.calendar_event} />
+              <EventOverview id={id} event={event} />
             )}
             {currentTab === available_tabs.transcript && <Transcript id={id} />}
             {currentTab === available_tabs.analysis && (

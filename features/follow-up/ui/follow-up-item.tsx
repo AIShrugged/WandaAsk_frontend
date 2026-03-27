@@ -14,7 +14,9 @@ import type { TeamFollowUpDTO } from '@/entities/team';
  * @returns JSX element.
  */
 export function FollowUpItem({ followUp }: { followUp: TeamFollowUpDTO }) {
-  const route = `${ROUTES.DASHBOARD.FOLLOWUPS}/analysis/${followUp.calendar_event.id}`;
+  const route = followUp.calendar_event
+    ? `${ROUTES.DASHBOARD.FOLLOWUPS}/analysis/${followUp.calendar_event.id}`
+    : ROUTES.DASHBOARD.FOLLOWUPS;
 
   return (
     <div className='border-b border-border'>
@@ -24,14 +26,16 @@ export function FollowUpItem({ followUp }: { followUp: TeamFollowUpDTO }) {
       >
         <div className='flex-1'>
           <div className='flex items-center gap-2'>
-            <H3>{followUp?.calendar_event.title}</H3>
+            <H3>{followUp.calendar_event?.title ?? 'Untitled'}</H3>
           </div>
           <p className='text-sm text-muted-foreground'>
-            Organizer: {followUp?.user.name}
+            Organizer: {followUp.user?.name ?? 'Unknown'}
           </p>
-          <p className='text-sm text-muted-foreground'>
-            {format(new Date(followUp.created_at), 'dd.MM.yyyy')}
-          </p>
+          {followUp.created_at && (
+            <p className='text-sm text-muted-foreground'>
+              {format(new Date(followUp.created_at), 'dd.MM.yyyy')}
+            </p>
+          )}
         </div>
 
         <ChevronRight className='text-primary size-5' />
