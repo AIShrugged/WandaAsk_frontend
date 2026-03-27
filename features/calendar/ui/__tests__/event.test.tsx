@@ -23,6 +23,9 @@ jest.mock('@/shared/lib/dateFormatter', () => {
     formatDate: (d: string) => {
       return d;
     },
+    parseEventDate: (d: string) => {
+      return new Date(d);
+    },
   };
 });
 
@@ -70,13 +73,12 @@ const makeEvent = (id: number = 1): EventProps => {
     title: EVENT_TITLE,
     starts_at: '2024-03-15 10:00:00',
     ends_at: '2024-03-15 11:00:00',
-    color: '#ff0000',
+    url: '',
     has_summary: true,
     description: '',
-    external_id: '',
     platform: 'google',
     required_bot: false,
-    assignee_id: null,
+    creator_user_id: 1,
   };
 };
 const user = userEvent.setup({ delay: null });
