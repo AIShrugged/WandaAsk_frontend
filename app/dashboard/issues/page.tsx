@@ -132,7 +132,6 @@ export default async function IssuesListPage({
             initialTotalCount={issues.totalCount}
             organizations={organizationsResponse.data ?? []}
             persons={persons}
-            currentUserId={currentUserId}
             initialFilters={{
               organization_id: orgId,
               team_id: typeof params.team_id === 'string' ? params.team_id : '',

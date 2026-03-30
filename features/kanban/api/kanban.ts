@@ -36,6 +36,8 @@ function buildKanbanQuery(filters: KanbanFilters = {}): string {
   }
 
   params.set('limit', '100');
+  params.set('sort', 'updated_at');
+  params.set('order', 'desc');
 
   return params.toString();
 }

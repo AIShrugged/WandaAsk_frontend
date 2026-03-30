@@ -50,7 +50,6 @@ interface IssuesPageProps {
   initialTotalCount: number;
   organizations: OrganizationProps[];
   persons: PersonOption[];
-  currentUserId?: number | null;
   initialFilters: {
     organization_id: string;
     team_id: string;
@@ -151,7 +150,6 @@ export function IssuesPage({
   initialTotalCount,
   organizations,
   persons,
-  currentUserId,
   initialFilters,
 }: IssuesPageProps) {
   const router = useRouter();
@@ -343,7 +341,6 @@ export function IssuesPage({
   }, [searchValue]);
   const personOptions = [
     { value: '', label: 'Any assignee' },
-    ...(currentUserId ? [{ value: String(currentUserId), label: 'Me' }] : []),
     ...persons.map((person) => {
       return {
         value: String(person.id),
