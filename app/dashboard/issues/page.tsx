@@ -71,27 +71,56 @@ export default async function IssuesListPage({
     typeof params.type === 'string' && isIssueType(params.type)
       ? params.type
       : '';
-  const [issues, organizationsResponse, persons, currentUserId] =
-    await Promise.all([
-      getIssues({
-        organization_id: orgId ? Number(orgId) : null,
-        team_id: params.team_id ? Number(params.team_id) : null,
-        status: statusParam,
-        type: typeParam,
-        assignee: params.assignee ? Number(params.assignee) : null,
-        offset: 0,
-        limit: 20,
-        sort: sortParam,
-        order: orderParam,
-        search:
-          typeof params.search === 'string' && params.search.length > 0
-            ? params.search
-            : undefined,
-      }),
-      getOrganizations(),
-      getPersons(),
-      getCurrentUserId(),
-    ]);
+  // null means the param is absent from the URL (use current user as default)
+  // '' means it was explicitly cleared by the user (show all)
+  let assigneeParam: string | null;
+  if (!('assignee' in params)) {
+    assigneeParam = null;
+  } else if (typeof params.assignee === 'string') {
+    assigneeParam = params.assignee;
+  } else {
+    assigneeParam = '';
+  }
+
+  const [organizationsResponse, persons, currentUserId] = await Promise.all([
+    getOrganizations(),
+    getPersons(),
+    getCurrentUserId(),
+  ]);
+
+  let resolvedAssignee: number | null;
+  if (assigneeParam === null) {
+    resolvedAssignee = currentUserId ?? null;
+  } else if (assigneeParam.length > 0) {
+    resolvedAssignee = Number(assigneeParam);
+  } else {
+    resolvedAssignee = null;
+  }
+
+  const issues = await getIssues({
+    organization_id: orgId ? Number(orgId) : null,
+    team_id: params.team_id ? Number(params.team_id) : null,
+    status: statusParam,
+    type: typeParam,
+    assignee: resolvedAssignee,
+    offset: 0,
+    limit: 20,
+    sort: sortParam,
+    order: orderParam,
+    search:
+      typeof params.search === 'string' && params.search.length > 0
+        ? params.search
+        : undefined,
+  });
+
+  let initialAssignee: string;
+  if (assigneeParam !== null) {
+    initialAssignee = assigneeParam;
+  } else if (currentUserId) {
+    initialAssignee = String(currentUserId);
+  } else {
+    initialAssignee = '';
+  }
 
   return (
     <Card className='h-full flex flex-col'>
@@ -109,8 +138,7 @@ export default async function IssuesListPage({
               team_id: typeof params.team_id === 'string' ? params.team_id : '',
               status: statusParam,
               type: typeParam,
-              assignee:
-                typeof params.assignee === 'string' ? params.assignee : '',
+              assignee: initialAssignee,
               priority:
                 typeof params.priority === 'string'
                   ? (params.priority as IssuePriority)
