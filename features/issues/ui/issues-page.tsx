@@ -466,7 +466,7 @@ export function IssuesPage({
             options={typeOptions}
             value={type}
             onChange={(value) => {
-              applyFilter({ type: value as string });
+              applyFilter({ type: value as IssueType | '' });
             }}
           />
           <InputDropdown
