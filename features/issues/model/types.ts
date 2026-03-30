@@ -65,6 +65,15 @@ export const ISSUE_PRIORITY_LABELS: Record<IssuePriority, string> = {
   critical: 'Critical',
 };
 
+export type IssueSortField =
+  | 'id'
+  | 'name'
+  | 'type'
+  | 'status'
+  | 'updated_at'
+  | 'created_at';
+export type SortOrder = 'asc' | 'desc';
+
 export interface IssueFilters {
   organization_id?: number | null;
   team_id?: number | null;
@@ -73,6 +82,8 @@ export interface IssueFilters {
   assignee?: number | null;
   offset?: number;
   limit?: number;
+  sort?: IssueSortField;
+  order?: SortOrder;
 }
 
 export interface IssueUpsertDTO {

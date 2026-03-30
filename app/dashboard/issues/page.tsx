@@ -2,13 +2,33 @@ import { getPersons, getIssues } from '@/features/issues';
 import {
   isIssueStatus,
   type IssuePriority,
+  type IssueSortField,
+  type SortOrder,
 } from '@/features/issues/model/types';
 import { IssuesPage } from '@/features/issues/ui/issues-page';
 import { getOrganizations } from '@/features/organization/api/organization';
+import { getCurrentUserId } from '@/shared/lib/getCurrentUserId';
 import { getOrganizationId } from '@/shared/lib/getOrganizationId';
 import Card from '@/shared/ui/card/Card';
 import CardBody from '@/shared/ui/card/CardBody';
 import PageHeader from '@/widgets/layout/ui/page-header';
+
+const VALID_SORT_FIELDS = new Set<IssueSortField>([
+  'id',
+  'name',
+  'type',
+  'status',
+  'updated_at',
+  'created_at',
+]);
+
+function isIssueSortField(value: string): value is IssueSortField {
+  return VALID_SORT_FIELDS.has(value as IssueSortField);
+}
+
+function isSortOrder(value: string): value is SortOrder {
+  return value === 'asc' || value === 'desc';
+}
 
 /**
  * IssuesListPage component.
@@ -31,19 +51,31 @@ export default async function IssuesListPage({
     typeof params.status === 'string' && isIssueStatus(params.status)
       ? params.status
       : '';
-  const [issues, organizationsResponse, persons] = await Promise.all([
-    getIssues({
-      organization_id: orgId ? Number(orgId) : null,
-      team_id: params.team_id ? Number(params.team_id) : null,
-      status: statusParam,
-      type: typeof params.type === 'string' ? params.type : '',
-      assignee: params.assignee ? Number(params.assignee) : null,
-      offset: 0,
-      limit: 20,
-    }),
-    getOrganizations(),
-    getPersons(),
-  ]);
+  const sortParam =
+    typeof params.sort === 'string' && isIssueSortField(params.sort)
+      ? params.sort
+      : 'updated_at';
+  const orderParam =
+    typeof params.order === 'string' && isSortOrder(params.order)
+      ? params.order
+      : 'desc';
+  const [issues, organizationsResponse, persons, currentUserId] =
+    await Promise.all([
+      getIssues({
+        organization_id: orgId ? Number(orgId) : null,
+        team_id: params.team_id ? Number(params.team_id) : null,
+        status: statusParam,
+        type: typeof params.type === 'string' ? params.type : '',
+        assignee: params.assignee ? Number(params.assignee) : null,
+        offset: 0,
+        limit: 20,
+        sort: sortParam,
+        order: orderParam,
+      }),
+      getOrganizations(),
+      getPersons(),
+      getCurrentUserId(),
+    ]);
 
   return (
     <Card className='h-full flex flex-col'>
@@ -55,6 +87,7 @@ export default async function IssuesListPage({
             initialTotalCount={issues.totalCount}
             organizations={organizationsResponse.data ?? []}
             persons={persons}
+            currentUserId={currentUserId}
             initialFilters={{
               organization_id: orgId,
               team_id: typeof params.team_id === 'string' ? params.team_id : '',
@@ -66,6 +99,8 @@ export default async function IssuesListPage({
                 typeof params.priority === 'string'
                   ? (params.priority as IssuePriority)
                   : '',
+              sort: sortParam,
+              order: orderParam,
             }}
           />
         </CardBody>
