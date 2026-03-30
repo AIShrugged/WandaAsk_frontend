@@ -84,6 +84,7 @@ export interface IssueFilters {
   limit?: number;
   sort?: IssueSortField;
   order?: SortOrder;
+  search?: string;
 }
 
 export interface IssueUpsertDTO {

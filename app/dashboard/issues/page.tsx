@@ -71,6 +71,10 @@ export default async function IssuesListPage({
         limit: 20,
         sort: sortParam,
         order: orderParam,
+        search:
+          typeof params.search === 'string' && params.search.length > 0
+            ? params.search
+            : undefined,
       }),
       getOrganizations(),
       getPersons(),
@@ -101,6 +105,7 @@ export default async function IssuesListPage({
                   : '',
               sort: sortParam,
               order: orderParam,
+              search: typeof params.search === 'string' ? params.search : '',
             }}
           />
         </CardBody>

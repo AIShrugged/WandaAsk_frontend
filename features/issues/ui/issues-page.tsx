@@ -1,10 +1,17 @@
 'use client';
 
 import { format } from 'date-fns';
-import { Bug, Plus } from 'lucide-react';
+import { Bug, Plus, Search } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useMemo, useRef, useState, useTransition } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+} from 'react';
 import { toast } from 'sonner';
 
 import { loadIssuesChunk, updateIssue } from '@/features/issues/api/issues';
@@ -52,6 +59,7 @@ interface IssuesPageProps {
     priority: IssuePriority | '';
     sort: IssueSortField;
     order: SortOrder;
+    search: string;
   };
 }
 
@@ -170,6 +178,7 @@ export function IssuesPage({
     initialFilters.sort,
   );
   const [sortOrder, setSortOrder] = useState<SortOrder>(initialFilters.order);
+  const [searchValue, setSearchValue] = useState(initialFilters.search);
   // Filters ref — used inside fetchMore without triggering re-renders
   const filtersRef = useRef({
     organization_id: organizationId,
@@ -179,6 +188,7 @@ export function IssuesPage({
     assignee,
     sort: initialFilters.sort,
     order: initialFilters.order,
+    search: initialFilters.search,
   });
   // resetKey increments on filter change to reset the infinite scroll list
   const [resetKey, setResetKey] = useState(0);
@@ -202,6 +212,7 @@ export function IssuesPage({
         limit: PAGE_SIZE,
         sort: f.sort,
         order: f.order,
+        search: f.search || undefined,
       });
     },
     // resetKey forces useInfiniteScroll to re-instantiate with fresh initialItems
@@ -249,6 +260,7 @@ export function IssuesPage({
       assignee?: string;
       sort?: IssueSortField;
       order?: SortOrder;
+      search?: string;
     }) => {
       const next = {
         organization_id:
@@ -261,6 +273,7 @@ export function IssuesPage({
         assignee: patch.assignee === undefined ? assignee : patch.assignee,
         sort: patch.sort === undefined ? sortField : patch.sort,
         order: patch.order === undefined ? sortOrder : patch.order,
+        search: patch.search === undefined ? searchValue : patch.search,
       };
 
       filtersRef.current = next;
@@ -288,6 +301,7 @@ export function IssuesPage({
         assignee: next.assignee,
         sort: next.sort,
         order: next.order,
+        search: next.search,
       });
 
       setResetKey((k) => {
@@ -302,6 +316,7 @@ export function IssuesPage({
       assignee,
       sortField,
       sortOrder,
+      searchValue,
       updateUrl,
     ],
   );
@@ -315,6 +330,16 @@ export function IssuesPage({
     },
     [sortField, sortOrder, applyFilter],
   );
+  // Debounce search: apply filter 300ms after the user stops typing
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      applyFilter({ search: searchValue });
+    }, 300);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [searchValue]);
   const personOptions = [
     { value: '', label: 'Any assignee' },
     ...(currentUserId ? [{ value: String(currentUserId), label: 'Me' }] : []),
@@ -408,6 +433,18 @@ export function IssuesPage({
       </div>
 
       <div className='grid gap-4 rounded-[var(--radius-card)] border border-border bg-card p-4'>
+        <div className='relative'>
+          <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
+          <input
+            type='text'
+            placeholder='Search by name...'
+            value={searchValue}
+            onChange={(e) => {
+              setSearchValue(e.target.value);
+            }}
+            className='h-10 w-full rounded-[var(--radius-button)] border border-border bg-background pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary'
+          />
+        </div>
         <TenantScopeFields
           organizations={organizations}
           organizationId={organizationId}

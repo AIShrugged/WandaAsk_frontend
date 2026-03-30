@@ -99,6 +99,7 @@ function buildIssuesQuery(filters: IssueFilters = {}) {
   params.set('limit', String(filters.limit ?? 10));
   if (filters.sort) params.set('sort', filters.sort);
   if (filters.order) params.set('order', filters.order);
+  if (filters.search) params.set('search', filters.search);
 
   return params.toString();
 }
