@@ -1,10 +1,17 @@
 'use client';
 
 import { format } from 'date-fns';
-import { Bug, Plus } from 'lucide-react';
+import { Bug, Plus, Search } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useMemo, useRef, useState, useTransition } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+} from 'react';
 import { toast } from 'sonner';
 
 import { loadIssuesChunk, updateIssue } from '@/features/issues/api/issues';
@@ -23,13 +30,16 @@ import InputDropdown from '@/shared/ui/input/InputDropdown';
 import { TenantScopeFields } from '@/shared/ui/input/tenant-scope-fields';
 import { InfiniteScrollStatus } from '@/shared/ui/layout/infinite-scroll-status';
 import SpinLoader from '@/shared/ui/layout/spin-loader';
+import { SortableHeader } from '@/shared/ui/table/SortableHeader';
 
 import type { OrganizationProps } from '@/entities/organization';
 import type {
   Issue,
   IssuePriority,
+  IssueSortField,
   IssueStatus,
   PersonOption,
+  SortOrder,
 } from '@/features/issues/model/types';
 
 const PAGE_SIZE = 20;
@@ -39,6 +49,7 @@ interface IssuesPageProps {
   initialTotalCount: number;
   organizations: OrganizationProps[];
   persons: PersonOption[];
+  currentUserId?: number | null;
   initialFilters: {
     organization_id: string;
     team_id: string;
@@ -46,6 +57,9 @@ interface IssuesPageProps {
     type: string;
     assignee: string;
     priority: IssuePriority | '';
+    sort: IssueSortField;
+    order: SortOrder;
+    search: string;
   };
 }
 
@@ -136,6 +150,7 @@ export function IssuesPage({
   initialTotalCount,
   organizations,
   persons,
+  currentUserId,
   initialFilters,
 }: IssuesPageProps) {
   const router = useRouter();
@@ -159,6 +174,11 @@ export function IssuesPage({
   const [editingAssigneeIssueId, setEditingAssigneeIssueId] = useState<
     number | null
   >(null);
+  const [sortField, setSortField] = useState<IssueSortField>(
+    initialFilters.sort,
+  );
+  const [sortOrder, setSortOrder] = useState<SortOrder>(initialFilters.order);
+  const [searchValue, setSearchValue] = useState(initialFilters.search);
   // Filters ref — used inside fetchMore without triggering re-renders
   const filtersRef = useRef({
     organization_id: organizationId,
@@ -166,6 +186,9 @@ export function IssuesPage({
     status,
     type,
     assignee,
+    sort: initialFilters.sort,
+    order: initialFilters.order,
+    search: initialFilters.search,
   });
   // resetKey increments on filter change to reset the infinite scroll list
   const [resetKey, setResetKey] = useState(0);
@@ -187,6 +210,9 @@ export function IssuesPage({
         assignee: f.assignee ? Number(f.assignee) : null,
         offset,
         limit: PAGE_SIZE,
+        sort: f.sort,
+        order: f.order,
+        search: f.search || undefined,
       });
     },
     // resetKey forces useInfiniteScroll to re-instantiate with fresh initialItems
@@ -232,6 +258,9 @@ export function IssuesPage({
       status?: IssueStatus | '';
       type?: string;
       assignee?: string;
+      sort?: IssueSortField;
+      order?: SortOrder;
+      search?: string;
     }) => {
       const next = {
         organization_id:
@@ -242,6 +271,9 @@ export function IssuesPage({
         status: patch.status === undefined ? status : patch.status,
         type: patch.type === undefined ? type : patch.type,
         assignee: patch.assignee === undefined ? assignee : patch.assignee,
+        sort: patch.sort === undefined ? sortField : patch.sort,
+        order: patch.order === undefined ? sortOrder : patch.order,
+        search: patch.search === undefined ? searchValue : patch.search,
       };
 
       filtersRef.current = next;
@@ -257,22 +289,60 @@ export function IssuesPage({
 
       if (patch.assignee !== undefined) setAssignee(next.assignee);
 
+      if (patch.sort !== undefined) setSortField(next.sort);
+
+      if (patch.order !== undefined) setSortOrder(next.order);
+
       updateUrl({
         organization_id: next.organization_id,
         team_id: next.team_id,
         status: next.status,
         type: next.type,
         assignee: next.assignee,
+        sort: next.sort,
+        order: next.order,
+        search: next.search,
       });
 
       setResetKey((k) => {
         return k + 1;
       });
     },
-    [organizationId, teamId, status, type, assignee, updateUrl],
+    [
+      organizationId,
+      teamId,
+      status,
+      type,
+      assignee,
+      sortField,
+      sortOrder,
+      searchValue,
+      updateUrl,
+    ],
   );
+  const handleSort = useCallback(
+    (field: string) => {
+      const sortableField = field as IssueSortField;
+      const newOrder =
+        sortField === sortableField && sortOrder === 'desc' ? 'asc' : 'desc';
+
+      applyFilter({ sort: sortableField, order: newOrder });
+    },
+    [sortField, sortOrder, applyFilter],
+  );
+  // Debounce search: apply filter 300ms after the user stops typing
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      applyFilter({ search: searchValue });
+    }, 300);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [searchValue]);
   const personOptions = [
     { value: '', label: 'Any assignee' },
+    ...(currentUserId ? [{ value: String(currentUserId), label: 'Me' }] : []),
     ...persons.map((person) => {
       return {
         value: String(person.id),
@@ -363,6 +433,18 @@ export function IssuesPage({
       </div>
 
       <div className='grid gap-4 rounded-[var(--radius-card)] border border-border bg-card p-4'>
+        <div className='relative'>
+          <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
+          <input
+            type='text'
+            placeholder='Search by name...'
+            value={searchValue}
+            onChange={(e) => {
+              setSearchValue(e.target.value);
+            }}
+            className='h-10 w-full rounded-[var(--radius-button)] border border-border bg-background pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary'
+          />
+        </div>
         <TenantScopeFields
           organizations={organizations}
           organizationId={organizationId}
@@ -429,12 +511,44 @@ export function IssuesPage({
             <table className='w-full min-w-[920px] text-sm'>
               <thead className='bg-accent/30 text-left text-muted-foreground'>
                 <tr>
-                  <th className='px-4 py-3'>Issue</th>
-                  <th className='px-4 py-3'>Type</th>
-                  <th className='px-4 py-3'>Status</th>
+                  <th className='px-4 py-3'>
+                    <SortableHeader
+                      field='name'
+                      label='Issue'
+                      currentSort={sortField}
+                      currentOrder={sortOrder}
+                      onSort={handleSort}
+                    />
+                  </th>
+                  <th className='px-4 py-3'>
+                    <SortableHeader
+                      field='type'
+                      label='Type'
+                      currentSort={sortField}
+                      currentOrder={sortOrder}
+                      onSort={handleSort}
+                    />
+                  </th>
+                  <th className='px-4 py-3'>
+                    <SortableHeader
+                      field='status'
+                      label='Status'
+                      currentSort={sortField}
+                      currentOrder={sortOrder}
+                      onSort={handleSort}
+                    />
+                  </th>
                   <th className='px-4 py-3'>Scope</th>
                   <th className='px-4 py-3'>Assignee</th>
-                  <th className='px-4 py-3'>Updated</th>
+                  <th className='px-4 py-3'>
+                    <SortableHeader
+                      field='updated_at'
+                      label='Updated'
+                      currentSort={sortField}
+                      currentOrder={sortOrder}
+                      onSort={handleSort}
+                    />
+                  </th>
                 </tr>
               </thead>
               <tbody>

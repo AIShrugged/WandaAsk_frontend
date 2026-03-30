@@ -32,7 +32,6 @@ import InputDropdown from '@/shared/ui/input/InputDropdown';
 import { TenantScopeFields } from '@/shared/ui/input/tenant-scope-fields';
 
 import type { OrganizationProps } from '@/entities/organization';
-import type { TeamProps } from '@/entities/team';
 import type { PersonOption } from '@/features/issues/model/types';
 
 interface KanbanBoardProps {
@@ -536,31 +535,6 @@ export function KanbanBoard({
   const [teamId, setTeamId] = useState(
     initialFilters.team_id ? String(initialFilters.team_id) : '',
   );
-  const [teams, setTeams] = useState<TeamProps[]>([]);
-  const [isTeamsLoading, setIsTeamsLoading] = useState(false);
-
-  useEffect(() => {
-    if (!orgId) {
-      setTeams([]);
-      setTeamId('');
-
-      return;
-    }
-
-    setIsTeamsLoading(true);
-
-    getTeams(orgId)
-      .then(({ data }) => {
-        setTeams(data ?? []);
-      })
-      .catch(() => {
-        setTeams([]);
-      })
-      .finally(() => {
-        setIsTeamsLoading(false);
-      });
-  }, [orgId]);
-
   const [type, setType] = useState(initialFilters.type ?? '');
   const [assigneeId, setAssigneeId] = useState(
     initialFilters.assignee_id ? String(initialFilters.assignee_id) : '',
@@ -723,18 +697,6 @@ export function KanbanBoard({
     });
   }
 
-  const orgOptions = [
-    { value: '', label: 'All orgs' },
-    ...organizations.map((org) => {
-      return { value: String(org.id), label: org.name };
-    }),
-  ];
-  const teamOptions = [
-    { value: '', label: isTeamsLoading ? 'Loading...' : 'All teams' },
-    ...teams.map((team) => {
-      return { value: String(team.id), label: team.name };
-    }),
-  ];
   const typeOptions = [
     { value: '', label: 'All' },
     { value: 'task', label: 'Task' },
