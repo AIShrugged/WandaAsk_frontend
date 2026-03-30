@@ -38,6 +38,7 @@ import type {
   IssuePriority,
   IssueSortField,
   IssueStatus,
+  IssueType,
   PersonOption,
   SortOrder,
 } from '@/features/issues/model/types';
@@ -54,7 +55,7 @@ interface IssuesPageProps {
     organization_id: string;
     team_id: string;
     status: IssueStatus | '';
-    type: string;
+    type: IssueType | '';
     assignee: string;
     priority: IssuePriority | '';
     sort: IssueSortField;
@@ -256,7 +257,7 @@ export function IssuesPage({
       organization_id?: string;
       team_id?: string;
       status?: IssueStatus | '';
-      type?: string;
+      type?: IssueType | '';
       assignee?: string;
       sort?: IssueSortField;
       order?: SortOrder;
@@ -356,8 +357,8 @@ export function IssuesPage({
   ];
   const typeOptions = [
     { value: '', label: 'Any type' },
-    { value: 'task', label: 'Task' },
-    { value: 'bug', label: 'Bug' },
+    { value: 'development', label: 'Development' },
+    { value: 'organization', label: 'Organization' },
   ];
   const priorityOptions = [
     { value: '', label: 'Any priority' },

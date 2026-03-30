@@ -1,7 +1,9 @@
 import { getPersons, getIssues } from '@/features/issues';
 import {
   isIssueStatus,
+  ISSUE_TYPE_OPTIONS,
   type IssuePriority,
+  type IssueType,
   type IssueSortField,
   type SortOrder,
 } from '@/features/issues/model/types';
@@ -28,6 +30,12 @@ function isIssueSortField(value: string): value is IssueSortField {
 
 function isSortOrder(value: string): value is SortOrder {
   return value === 'asc' || value === 'desc';
+}
+
+function isIssueType(value: string): value is IssueType {
+  return ISSUE_TYPE_OPTIONS.some((option) => {
+    return option.value === value;
+  });
 }
 
 /**
@@ -59,13 +67,17 @@ export default async function IssuesListPage({
     typeof params.order === 'string' && isSortOrder(params.order)
       ? params.order
       : 'desc';
+  const typeParam =
+    typeof params.type === 'string' && isIssueType(params.type)
+      ? params.type
+      : '';
   const [issues, organizationsResponse, persons, currentUserId] =
     await Promise.all([
       getIssues({
         organization_id: orgId ? Number(orgId) : null,
         team_id: params.team_id ? Number(params.team_id) : null,
         status: statusParam,
-        type: typeof params.type === 'string' ? params.type : '',
+        type: typeParam,
         assignee: params.assignee ? Number(params.assignee) : null,
         offset: 0,
         limit: 20,
@@ -96,7 +108,7 @@ export default async function IssuesListPage({
               organization_id: orgId,
               team_id: typeof params.team_id === 'string' ? params.team_id : '',
               status: statusParam,
-              type: typeof params.type === 'string' ? params.type : '',
+              type: typeParam,
               assignee:
                 typeof params.assignee === 'string' ? params.assignee : '',
               priority:

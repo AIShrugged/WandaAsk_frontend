@@ -10,7 +10,10 @@ import {
   deleteIssue,
   updateIssue,
 } from '@/features/issues/api/issues';
-import { ISSUE_STATUS_OPTIONS } from '@/features/issues/model/types';
+import {
+  ISSUE_STATUS_OPTIONS,
+  ISSUE_TYPE_OPTIONS,
+} from '@/features/issues/model/types';
 import { getTeams } from '@/features/teams/api/team';
 import { ROUTES } from '@/shared/lib/routes';
 import { BUTTON_VARIANT } from '@/shared/types/button';
@@ -24,6 +27,7 @@ import type { OrganizationProps } from '@/entities/organization';
 import type {
   Issue,
   IssueStatus,
+  IssueType,
   PersonOption,
 } from '@/features/issues/model/types';
 
@@ -38,7 +42,7 @@ interface IssueFormProps {
 interface IssueFormValues {
   name: string;
   description: string;
-  type: string;
+  type: IssueType | '';
   status: IssueStatus | '';
   organization_id: string;
   team_id: string;
@@ -126,7 +130,7 @@ export function IssueForm({
       const payload = {
         name: values.name.trim(),
         description: values.description.trim() || null,
-        type: values.type.trim(),
+        type: values.type as IssueType,
         status,
         organization_id: Number(values.organization_id),
         team_id: values.team_id ? Number(values.team_id) : null,
@@ -190,18 +194,15 @@ export function IssueForm({
         error={errors.description?.message}
       />
       <div className='grid gap-4 md:grid-cols-2'>
-        <Input
-          {...register('type', {
-            /**
-             *
-             */
-            onChange: () => {
-              clearErrors('type');
-              setRootError('');
-            },
-          })}
+        <InputDropdown
           label='Type'
+          options={[{ value: '', label: 'Select type' }, ...ISSUE_TYPE_OPTIONS]}
           value={watch('type')}
+          onChange={(value) => {
+            setValue('type', value as IssueType | '', { shouldDirty: true });
+            clearErrors('type');
+            setRootError('');
+          }}
           error={errors.type?.message}
         />
         {hideStatusField ? null : (

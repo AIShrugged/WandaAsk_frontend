@@ -98,8 +98,8 @@ function TaskPreviewPanel({
     low: { label: 'Low', color: 'text-muted-foreground' },
   };
   const typeColors: Record<string, string> = {
-    task: 'bg-blue-500/20 text-blue-300',
-    bug: 'bg-red-500/20 text-red-300',
+    development: 'bg-blue-500/20 text-blue-300',
+    organization: 'bg-purple-500/20 text-purple-300',
   };
   const colConfig = card
     ? (KANBAN_COLUMNS.find((col) => {
@@ -274,8 +274,8 @@ function KanbanCardItem({
 }) {
   const [dragOver] = useState(false);
   const typeColors: Record<string, string> = {
-    task: 'bg-blue-500/20 text-blue-300',
-    bug: 'bg-red-500/20 text-red-300',
+    development: 'bg-blue-500/20 text-blue-300',
+    organization: 'bg-purple-500/20 text-purple-300',
   };
   const typeClass =
     typeColors[card.type] ?? 'bg-secondary text-secondary-foreground';
@@ -699,8 +699,8 @@ export function KanbanBoard({
 
   const typeOptions = [
     { value: '', label: 'All' },
-    { value: 'task', label: 'Task' },
-    { value: 'bug', label: 'Bug' },
+    { value: 'development', label: 'Development' },
+    { value: 'organization', label: 'Organization' },
   ];
   const assigneeOptions = [
     { value: '', label: 'All' },

@@ -1,5 +1,12 @@
 export type IssueStatus = 'open' | 'in_progress' | 'paused' | 'done';
 
+export type IssueType = 'development' | 'organization';
+
+export const ISSUE_TYPE_OPTIONS: { value: IssueType; label: string }[] = [
+  { value: 'development', label: 'Development' },
+  { value: 'organization', label: 'Organization' },
+];
+
 export const ISSUE_STATUS_OPTIONS: { value: IssueStatus; label: string }[] = [
   { value: 'open', label: 'Open' },
   { value: 'in_progress', label: 'In progress' },
@@ -30,7 +37,7 @@ export interface Issue {
   id: number;
   name: string;
   description: string | null;
-  type: string;
+  type: IssueType;
   status: IssueStatus;
   priority?: IssuePriority | null;
   organization_id: number | null;
@@ -78,7 +85,7 @@ export interface IssueFilters {
   organization_id?: number | null;
   team_id?: number | null;
   status?: IssueStatus | '';
-  type?: string;
+  type?: IssueType | '';
   assignee?: number | null;
   offset?: number;
   limit?: number;
@@ -90,7 +97,7 @@ export interface IssueFilters {
 export interface IssueUpsertDTO {
   name: string;
   description: string | null;
-  type: string;
+  type: IssueType;
   status: IssueStatus;
   organization_id: number | null;
   team_id: number | null;
