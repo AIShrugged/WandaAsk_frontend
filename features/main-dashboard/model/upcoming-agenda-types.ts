@@ -1,4 +1,8 @@
-export type UpcomingAgendaStatus = 'pending' | 'in_progress' | 'done' | 'failed';
+export type UpcomingAgendaStatus =
+  | 'pending'
+  | 'in_progress'
+  | 'done'
+  | 'failed';
 
 export interface UpcomingAgendaRaw {
   next_meeting_context: string | null;

@@ -62,7 +62,13 @@ export async function getMainDashboardData(): Promise<MainDashboardData> {
   const latestMeetingTasks =
     latestTasksResult.status === 'fulfilled'
       ? latestTasksResult.value
-      : { meeting_title: null, meeting_date: null, meeting_id: null, tasks: [], other_tasks: [] };
+      : {
+          meeting_title: null,
+          meeting_date: null,
+          meeting_id: null,
+          tasks: [],
+          other_tasks: [],
+        };
   const now = new Date();
   const todayStr = now.toISOString().slice(0, 10);
   const tomorrow = new Date(now);
