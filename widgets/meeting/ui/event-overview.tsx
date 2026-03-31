@@ -23,10 +23,16 @@ export default async function EventOverview({
   event: EventProps;
   withoutMatcher?: boolean;
 }) {
-  const [{ data: attendees = [] }, { data: guests = [] }] = await Promise.all([
+  const [attendeesResult, guestsResult] = await Promise.allSettled([
     getAttendees(id),
     getGuests(id),
   ]);
+  const attendees =
+    attendeesResult.status === 'fulfilled'
+      ? (attendeesResult.value.data ?? [])
+      : [];
+  const guests =
+    guestsResult.status === 'fulfilled' ? (guestsResult.value.data ?? []) : [];
 
   if (!event) return;
 

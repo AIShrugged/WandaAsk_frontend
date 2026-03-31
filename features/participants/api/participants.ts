@@ -26,7 +26,7 @@ export const getAttendees = cache(
       const text = await res.text();
 
       throw new Error(
-        `getMethodologies failed: ${res.status} ${res.statusText} — ${text}`,
+        `getAttendees failed: ${res.status} ${res.statusText} — ${text}`,
       );
     }
 
@@ -56,7 +56,7 @@ export const getGuests = cache(
       const text = await res.text();
 
       throw new Error(
-        `getMethodologies failed: ${res.status} ${res.statusText} — ${text}`,
+        `getGuests failed: ${res.status} ${res.statusText} — ${text}`,
       );
     }
 
