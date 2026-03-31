@@ -4,7 +4,10 @@ import { getAgentActivity } from '@/features/agents/api/activity';
 import { getAgentTasks } from '@/features/agents/api/agents';
 import { getAgentAccessContext } from '@/features/agents/lib/access';
 import { getEvents } from '@/features/event/api/calendar-events';
-import { getMyAgendas } from '@/features/main-dashboard/api/agendas';
+import {
+  getLatestMeetingTasks,
+  getUpcomingAgenda,
+} from '@/features/main-dashboard/api/upcoming-agenda';
 import { deriveAgentStats } from '@/features/main-dashboard/lib/derive-agent-stats';
 import { getSummaryData } from '@/features/summary/api/summary';
 import { getUser } from '@/features/user';
@@ -25,7 +28,8 @@ export async function getMainDashboardData(): Promise<MainDashboardData> {
     summaryResult,
     activityResult,
     accessResult,
-    agendasResult,
+    upcomingAgendaResult,
+    latestTasksResult,
   ] = await Promise.allSettled([
     getUser(),
     getEvents(),
@@ -33,7 +37,8 @@ export async function getMainDashboardData(): Promise<MainDashboardData> {
     getSummaryData(),
     getAgentActivity(0, RECENT_ACTIVITY_LIMIT),
     getAgentAccessContext(),
-    getMyAgendas(),
+    getUpcomingAgenda(),
+    getLatestMeetingTasks(),
   ]);
   const user = userResult.status === 'fulfilled' ? userResult.value.data : null;
   const allEvents =
@@ -50,8 +55,14 @@ export async function getMainDashboardData(): Promise<MainDashboardData> {
     accessResult.status === 'fulfilled'
       ? accessResult.value.canManageAgents
       : false;
-  const upcomingAgendas =
-    agendasResult.status === 'fulfilled' ? agendasResult.value : [];
+  const upcomingAgenda =
+    upcomingAgendaResult.status === 'fulfilled'
+      ? upcomingAgendaResult.value
+      : null;
+  const latestMeetingTasks =
+    latestTasksResult.status === 'fulfilled'
+      ? latestTasksResult.value
+      : { meeting_title: null, meeting_date: null, meeting_id: null, tasks: [], other_tasks: [] };
   const now = new Date();
   const todayStr = now.toISOString().slice(0, 10);
   const tomorrow = new Date(now);
@@ -86,6 +97,7 @@ export async function getMainDashboardData(): Promise<MainDashboardData> {
     recentAgentActivity,
     agentActivityTotal,
     canManageAgents,
-    upcomingAgendas,
+    upcomingAgenda,
+    latestMeetingTasks,
   };
 }

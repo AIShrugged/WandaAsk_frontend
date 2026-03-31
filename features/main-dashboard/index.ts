@@ -9,4 +9,4 @@ export { AgentRecommendationsBlock } from './ui/agent-recommendations-block';
 export { TopParticipantsBlock } from './ui/top-participants-block';
 export { DashboardTabs } from './ui/dashboard-tabs';
 export { AgentActivityStatsBlock } from './ui/agent-activity-stats-block';
-export { UpcomingAgendasBlock } from './ui/upcoming-agendas-block';
+export { NextMeetingPrepBlock } from './ui/next-meeting-prep-block';
