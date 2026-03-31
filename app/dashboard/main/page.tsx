@@ -12,7 +12,7 @@ import {
   TopParticipantsBlock,
   DashboardTabs,
   AgentActivityStatsBlock,
-  UpcomingAgendasBlock,
+  NextMeetingPrepBlock,
 } from '@/features/main-dashboard';
 import { KpiCard, SummaryHeader } from '@/features/summary';
 import { getSummaryData } from '@/features/summary/api/summary';
@@ -38,7 +38,8 @@ export default async function MainDashboardPage() {
       recentAgentActivity,
       agentActivityTotal,
       canManageAgents,
-      upcomingAgendas,
+      upcomingAgenda,
+      latestMeetingTasks,
     },
     summaryData,
   ] = await Promise.all([getMainDashboardData(), getSummaryData()]);
@@ -65,8 +66,11 @@ export default async function MainDashboardPage() {
       {/* Charts: meeting trend + task/followup donuts */}
       {summary && <ChartsBlockLoader summary={summary} />}
 
-      {/* Upcoming meeting agendas */}
-      <UpcomingAgendasBlock agendas={upcomingAgendas} />
+      {/* Next meeting prep: post-meeting agenda + tasks from last meeting */}
+      <NextMeetingPrepBlock
+        agenda={upcomingAgenda}
+        latestTasks={latestMeetingTasks}
+      />
 
       {/* Agent tasks + top participants */}
       <div className='grid grid-cols-1 gap-4 lg:grid-cols-2'>
