@@ -52,6 +52,7 @@ export default async function KanbanPage({
     priority: (typeof params.priority === 'string'
       ? params.priority
       : '') as SharedFilters['priority'],
+    status: '',
   };
 
   return (

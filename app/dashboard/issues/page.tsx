@@ -158,10 +158,10 @@ export default async function IssuesListPage({
             type: typeParam,
             assignee_id: initialAssigneeId,
             priority: priorityParam,
+            status: statusParam,
           }}
           initialSort={sortParam}
           initialOrder={orderParam}
-          initialStatus={statusParam}
         />
       </div>
     </Card>

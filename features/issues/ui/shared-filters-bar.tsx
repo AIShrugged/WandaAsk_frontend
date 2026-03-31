@@ -4,7 +4,10 @@ import { Plus, Search } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
-import { ISSUE_PRIORITY_LABELS } from '@/features/issues/model/types';
+import {
+  ISSUE_PRIORITY_LABELS,
+  ISSUE_STATUS_OPTIONS,
+} from '@/features/issues/model/types';
 import { getTeams } from '@/features/teams/api/team';
 import { ROUTES } from '@/shared/lib/routes';
 import InputDropdown from '@/shared/ui/input/InputDropdown';
@@ -13,6 +16,7 @@ import { TenantScopeFields } from '@/shared/ui/input/tenant-scope-fields';
 import type { OrganizationProps } from '@/entities/organization';
 import type {
   IssuePriority,
+  IssueStatus,
   IssueType,
   PersonOption,
   SharedFilters,
@@ -37,6 +41,11 @@ const PRIORITY_OPTIONS = [
   ...Object.entries(ISSUE_PRIORITY_LABELS).map(([value, label]) => {
     return { value, label };
   }),
+];
+
+const STATUS_OPTIONS = [
+  { value: '', label: 'Any status' },
+  ...ISSUE_STATUS_OPTIONS,
 ];
 
 /**
@@ -120,7 +129,16 @@ export function SharedFiltersBar({
           disabled={disabled}
         />
 
-        <div className='grid gap-4 sm:grid-cols-3'>
+        <div className='grid gap-4 sm:grid-cols-2 xl:grid-cols-4'>
+          <InputDropdown
+            label='Status'
+            options={STATUS_OPTIONS}
+            value={filters.status}
+            onChange={(value) => {
+              onChange({ status: value as IssueStatus | '' });
+            }}
+            disabled={disabled}
+          />
           <InputDropdown
             label='Type'
             options={TYPE_OPTIONS}

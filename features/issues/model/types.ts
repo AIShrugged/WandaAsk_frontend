@@ -88,6 +88,7 @@ export interface SharedFilters {
   type: IssueType | '';
   assignee_id: string;
   priority: IssuePriority | '';
+  status: IssueStatus | '';
 }
 
 export interface IssueFilters {

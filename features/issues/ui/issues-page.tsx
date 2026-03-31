@@ -46,7 +46,6 @@ interface IssuesPageProps {
   filtersVersion: number;
   initialSort: IssueSortField;
   initialOrder: SortOrder;
-  initialStatus: IssueStatus | '';
 }
 
 /**
@@ -110,25 +109,18 @@ function formatIssueScope(issue: Issue) {
     : `Org #${issue.organization_id}`;
 }
 
-const STATUS_OPTIONS = [
-  { value: '', label: 'Any status' },
-  ...ISSUE_STATUS_OPTIONS,
-];
-
 /**
  * IssuesPage renders the issues list with infinite scroll.
- * Shared filters (org, team, search, type, assignee, priority) are controlled by parent.
- * Tab-local filters: status, sort.
+ * All filters (org, team, search, type, assignee, priority, status) are controlled by parent.
+ * Tab-local filters: sort.
  * @param props - component props.
  * @param props.initialIssues
  * @param props.initialTotalCount
  * @param props.persons
- * @param props.organizations
  * @param props.filters
  * @param props.filtersVersion
  * @param props.initialSort
  * @param props.initialOrder
- * @param props.initialStatus
  * @returns JSX element.
  */
 export function IssuesPage({
@@ -139,13 +131,19 @@ export function IssuesPage({
   filtersVersion,
   initialSort,
   initialOrder,
-  initialStatus,
 }: IssuesPageProps) {
   const [isPending, startTransition] = useTransition();
-  const [status, setStatus] = useState<IssueStatus | ''>(initialStatus);
   const [sortField, setSortField] = useState<IssueSortField>(initialSort);
   const [sortOrder, setSortOrder] = useState<SortOrder>(initialOrder);
   const [updatingIssueId, setUpdatingIssueId] = useState<number | null>(null);
+  const [firstPage, setFirstPage] = useState<{
+    items: Issue[];
+    hasMore: boolean;
+  }>({
+    items: initialIssues,
+    hasMore: initialTotalCount > initialIssues.length,
+  });
+  const isFirstRender = useRef(true);
   const [editingStatusIssueId, setEditingStatusIssueId] = useState<
     number | null
   >(null);
@@ -156,24 +154,52 @@ export function IssuesPage({
   // filtersRef used inside fetchMore without triggering re-renders
   const filtersRef = useRef({
     ...filters,
-    status,
     sort: sortField,
     order: sortOrder,
   });
 
-  // Keep filtersRef in sync with latest props/state
+  // Keep filtersRef in sync with latest props/state (useEffect avoids updating during render)
   useEffect(() => {
     filtersRef.current = {
       ...filters,
-      status,
       sort: sortField,
       order: sortOrder,
     };
-  }, [filters, status, sortField, sortOrder]);
+  });
+
+  // Reload first page whenever filters or sort change (skip initial render — SSR data is already correct)
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+
+      return;
+    }
+
+    const f = filtersRef.current;
+
+    loadIssuesChunk({
+      organization_id: f.organization_id ? Number(f.organization_id) : null,
+      team_id: f.team_id ? Number(f.team_id) : null,
+      status: f.status || undefined,
+      type: f.type || undefined,
+      assignee: f.assignee_id ? Number(f.assignee_id) : null,
+      offset: 0,
+      limit: PAGE_SIZE,
+      sort: f.sort,
+      order: f.order,
+      search: f.search || undefined,
+    })
+      .then(({ items, hasMore: more }) => {
+        setFirstPage({ items, hasMore: more });
+      })
+      .catch(() => {
+        // silently fail — existing items remain visible
+      });
+  }, [filtersVersion, sortField, sortOrder]);
 
   const scrollInitialItems = useMemo(() => {
-    return initialIssues;
-  }, [filtersVersion, status, sortField, sortOrder]);
+    return firstPage.items;
+  }, [firstPage]);
 
   const fetchMore = useCallback(
     async (offset: number) => {
@@ -192,7 +218,7 @@ export function IssuesPage({
         search: f.search || undefined,
       });
     },
-    [filtersVersion, status, sortField, sortOrder],
+    [filtersVersion, sortField, sortOrder],
   );
 
   const {
@@ -203,7 +229,7 @@ export function IssuesPage({
   } = useInfiniteScroll<Issue>({
     fetchMore,
     initialItems: scrollInitialItems,
-    initialHasMore: initialTotalCount > initialIssues.length,
+    initialHasMore: firstPage.hasMore,
   });
 
   // Client-side priority filter (backend doesn't support priority filtering)
@@ -283,20 +309,6 @@ export function IssuesPage({
 
   return (
     <div className='flex flex-col gap-6'>
-      {/* Tab-local filter: status */}
-      <div className='grid gap-4 rounded-[var(--radius-card)] border border-border bg-card p-4'>
-        <div className='grid gap-4 sm:grid-cols-2 xl:grid-cols-4'>
-          <InputDropdown
-            label='Status'
-            options={STATUS_OPTIONS}
-            value={status}
-            onChange={(value) => {
-              setStatus(value as IssueStatus | '');
-            }}
-          />
-        </div>
-      </div>
-
       {items.length === 0 && !isLoading ? (
         <div className='rounded-[var(--radius-card)] border border-border bg-card p-6'>
           <EmptyState

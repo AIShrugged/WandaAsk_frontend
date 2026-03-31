@@ -11,7 +11,6 @@ import type { OrganizationProps } from '@/entities/organization';
 import type {
   Issue,
   IssueSortField,
-  IssueStatus,
   PersonOption,
   SharedFilters,
   SortOrder,
@@ -42,7 +41,6 @@ interface TasktrackerTabsProps {
   initialFilters: SharedFilters;
   initialSort: IssueSortField;
   initialOrder: SortOrder;
-  initialStatus: IssueStatus | '';
 }
 
 /**
@@ -61,7 +59,6 @@ export function TasktrackerTabs({
   initialFilters,
   initialSort,
   initialOrder,
-  initialStatus,
 }: TasktrackerTabsProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -75,6 +72,7 @@ export function TasktrackerTabs({
   // We increment it whenever URL changes (which triggers SSR re-fetch → new initialColumns)
   const columnsVersionRef = useRef(0);
   const [columnsVersion, setColumnsVersion] = useState(0);
+  const isFirstFiltersRender = useRef(true);
 
   // On mount: remove any stale legacy params left over from old URLs
   useEffect(() => {
@@ -115,32 +113,37 @@ export function TasktrackerTabs({
     [router, pathname, searchParams],
   );
 
-  const handleFiltersChange = useCallback(
-    (patch: Partial<SharedFilters>) => {
-      setFilters((prev) => {
-        const next = { ...prev, ...patch };
+  const handleFiltersChange = useCallback((patch: Partial<SharedFilters>) => {
+    setFilters((prev) => {
+      return { ...prev, ...patch };
+    });
 
-        updateUrl({
-          organization_id: next.organization_id,
-          team_id: next.team_id,
-          search: next.search,
-          type: next.type,
-          assignee_id: next.assignee_id,
-          priority: next.priority,
-        });
+    setFiltersVersion((v) => {
+      return v + 1;
+    });
 
-        return next;
-      });
+    columnsVersionRef.current += 1;
+    setColumnsVersion(columnsVersionRef.current);
+  }, []);
 
-      setFiltersVersion((v) => {
-        return v + 1;
-      });
+  // Sync URL after filters state updates — outside of setState callback
+  useEffect(() => {
+    if (isFirstFiltersRender.current) {
+      isFirstFiltersRender.current = false;
 
-      columnsVersionRef.current += 1;
-      setColumnsVersion(columnsVersionRef.current);
-    },
-    [updateUrl],
-  );
+      return;
+    }
+
+    updateUrl({
+      organization_id: filters.organization_id,
+      team_id: filters.team_id,
+      search: filters.search,
+      type: filters.type,
+      assignee_id: filters.assignee_id,
+      priority: filters.priority,
+      status: filters.status,
+    });
+  }, [filters]);
 
   return (
     <div className='flex flex-col h-full overflow-hidden'>
@@ -189,7 +192,6 @@ export function TasktrackerTabs({
               filtersVersion={filtersVersion}
               initialSort={initialSort}
               initialOrder={initialOrder}
-              initialStatus={initialStatus}
             />
           </div>
         )}
