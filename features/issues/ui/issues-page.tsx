@@ -44,6 +44,7 @@ import type {
 } from '@/features/issues/model/types';
 
 const PAGE_SIZE = 20;
+const KEEP_WHEN_EMPTY = new Set(['assignee']);
 
 interface IssuesPageProps {
   initialIssues: Issue[];
@@ -239,7 +240,7 @@ export function IssuesPage({
       const params = new URLSearchParams(searchParams.toString());
 
       for (const [key, value] of Object.entries(patch)) {
-        if (value) {
+        if (value || KEEP_WHEN_EMPTY.has(key)) {
           params.set(key, value);
         } else {
           params.delete(key);
