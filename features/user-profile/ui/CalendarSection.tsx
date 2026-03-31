@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -19,6 +20,7 @@ interface CalendarSectionProps {
  * @returns JSX element.
  */
 export function CalendarSection({ source }: CalendarSectionProps) {
+  const router = useRouter();
   const [confirming, setConfirming] = useState(false);
   const [isPending, setIsPending] = useState(false);
   /**
@@ -38,6 +40,7 @@ export function CalendarSection({ source }: CalendarSectionProps) {
       toast.error(result.error);
     } else {
       toast.success('Google Calendar disconnected.');
+      router.refresh();
     }
   };
 
