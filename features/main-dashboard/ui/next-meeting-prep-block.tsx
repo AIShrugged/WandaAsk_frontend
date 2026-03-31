@@ -3,7 +3,6 @@ import {
   AlertCircle,
   CheckCircle2,
   Circle,
-  ClipboardList,
   Clock,
   HelpCircle,
   Lightbulb,
@@ -22,6 +21,7 @@ import type {
   LatestMeetingTasksData,
   UpcomingAgenda,
   UpcomingAgendaRaw,
+  UpcomingAgendaStatus,
 } from '@/features/main-dashboard/model/upcoming-agenda-types';
 
 interface TaskStatusIconProps {
@@ -172,6 +172,63 @@ function AgendaSection({
   );
 }
 
+function AgendaContent({
+  status,
+  raw,
+}: {
+  status: UpcomingAgendaStatus;
+  raw: UpcomingAgendaRaw | null;
+}) {
+  if (status === 'pending' || status === 'in_progress') {
+    return (
+      <div className='flex items-center gap-2 text-xs text-muted-foreground'>
+        <Loader2 className='h-3.5 w-3.5 animate-spin' />
+        Generating…
+      </div>
+    );
+  }
+
+  if (status === 'failed') {
+    return (
+      <div className='flex items-center gap-2 text-xs text-destructive'>
+        <AlertCircle className='h-3.5 w-3.5' />
+        Generation failed
+      </div>
+    );
+  }
+
+  if (raw) {
+    return (
+      <div className='flex flex-col gap-3'>
+        {raw.next_meeting_context && (
+          <p className='text-xs text-foreground/80 leading-relaxed'>
+            {raw.next_meeting_context}
+          </p>
+        )}
+        <AgendaSection
+          icon={<CheckCircle2 className='h-3 w-3 text-green-500' />}
+          label='Follow-up'
+          items={raw.follow_up_items ?? []}
+        />
+        <AgendaSection
+          icon={<HelpCircle className='h-3 w-3 text-amber-500' />}
+          label='Open questions'
+          items={raw.open_questions ?? []}
+        />
+        <AgendaSection
+          icon={<Target className='h-3 w-3 text-primary' />}
+          label='Focus areas'
+          items={raw.focus_areas ?? []}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <p className='text-xs text-muted-foreground/70 italic'>No content yet</p>
+  );
+}
+
 function AgendaColumn({ agenda }: AgendaColumnProps) {
   const formattedDate = format(
     new Date(agenda.source_meeting_date),
@@ -199,44 +256,7 @@ function AgendaColumn({ agenda }: AgendaColumnProps) {
         )}
       </div>
 
-      {agenda.status === 'pending' || agenda.status === 'in_progress' ? (
-        <div className='flex items-center gap-2 text-xs text-muted-foreground'>
-          <Loader2 className='h-3.5 w-3.5 animate-spin' />
-          Generating…
-        </div>
-      ) : agenda.status === 'failed' ? (
-        <div className='flex items-center gap-2 text-xs text-destructive'>
-          <AlertCircle className='h-3.5 w-3.5' />
-          Generation failed
-        </div>
-      ) : raw ? (
-        <div className='flex flex-col gap-3'>
-          {raw.next_meeting_context && (
-            <p className='text-xs text-foreground/80 leading-relaxed'>
-              {raw.next_meeting_context}
-            </p>
-          )}
-          <AgendaSection
-            icon={<CheckCircle2 className='h-3 w-3 text-green-500' />}
-            label='Follow-up'
-            items={raw.follow_up_items ?? []}
-          />
-          <AgendaSection
-            icon={<HelpCircle className='h-3 w-3 text-amber-500' />}
-            label='Open questions'
-            items={raw.open_questions ?? []}
-          />
-          <AgendaSection
-            icon={<Target className='h-3 w-3 text-primary' />}
-            label='Focus areas'
-            items={raw.focus_areas ?? []}
-          />
-        </div>
-      ) : (
-        <p className='text-xs text-muted-foreground/70 italic'>
-          No content yet
-        </p>
-      )}
+      <AgendaContent status={agenda.status} raw={raw} />
     </div>
   );
 }
