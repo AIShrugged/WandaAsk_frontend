@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { IssuesPage } from '@/features/issues/ui/issues-page';
 import { SharedFiltersBar } from '@/features/issues/ui/shared-filters-bar';
@@ -29,6 +29,9 @@ const TABS = [
 type TabId = (typeof TABS)[number]['id'];
 
 const KEEP_WHEN_EMPTY = new Set(['assignee_id']);
+
+// Legacy param aliases that must be removed whenever this page writes to the URL
+const STALE_PARAMS = ['assignee'] as const;
 
 interface TasktrackerTabsProps {
   organizations: OrganizationProps[];
@@ -73,9 +76,31 @@ export function TasktrackerTabs({
   const columnsVersionRef = useRef(0);
   const [columnsVersion, setColumnsVersion] = useState(0);
 
+  // On mount: remove any stale legacy params left over from old URLs
+  useEffect(() => {
+    const current = new URLSearchParams(searchParams.toString());
+    let dirty = false;
+
+    for (const stale of STALE_PARAMS) {
+      if (current.has(stale)) {
+        current.delete(stale);
+        dirty = true;
+      }
+    }
+
+    if (dirty) {
+      router.replace(`${pathname}?${current.toString()}`, { scroll: false });
+    }
+  }, []);
+
   const updateUrl = useCallback(
     (patch: Record<string, string>) => {
       const params = new URLSearchParams(searchParams.toString());
+
+      // Always remove legacy aliases before writing canonical params
+      for (const stale of STALE_PARAMS) {
+        params.delete(stale);
+      }
 
       for (const [key, value] of Object.entries(patch)) {
         if (value || KEEP_WHEN_EMPTY.has(key)) {
