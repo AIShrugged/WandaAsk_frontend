@@ -27,6 +27,7 @@ export async function getLatestMeetingTasks(): Promise<LatestMeetingTasksData> {
       meeting_date: null,
       meeting_id: null,
       tasks: [],
+      other_tasks: [],
     }
   );
 }
