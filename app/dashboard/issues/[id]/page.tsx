@@ -29,7 +29,16 @@ export default async function IssueDetailPage({
 
   const [issue, attachments, organizationsResponse, persons] =
     await Promise.all([
-      getIssue(issueId),
+      getIssue(issueId).catch((error: Error) => {
+        if (
+          error.message.includes('404') ||
+          error.message.toLowerCase().includes('not found') ||
+          error.message.toLowerCase().includes('no query results')
+        ) {
+          notFound();
+        }
+        throw error;
+      }),
       getIssueAttachments(issueId).catch(() => {
         return [];
       }),

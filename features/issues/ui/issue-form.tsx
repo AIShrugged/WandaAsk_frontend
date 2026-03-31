@@ -159,7 +159,11 @@ export function IssueForm({
       }
 
       toast.success(issue ? 'Issue updated' : 'Issue created');
-      router.push(`${ROUTES.DASHBOARD.ISSUES}/${result.id}`);
+      if (issue) {
+        router.refresh();
+      } else {
+        router.push(`${ROUTES.DASHBOARD.ISSUES}/${result.id}`);
+      }
     });
   };
 
