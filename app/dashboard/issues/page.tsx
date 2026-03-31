@@ -7,13 +7,15 @@ import {
   type IssueSortField,
   type SortOrder,
 } from '@/features/issues/model/types';
-import { IssuesPage } from '@/features/issues/ui/issues-page';
+import { TasktrackerTabs } from '@/features/issues/ui/tasktracker-tabs';
+import { getKanbanIssues } from '@/features/kanban';
 import { getOrganizations } from '@/features/organization/api/organization';
 import { getCurrentUserId } from '@/shared/lib/getCurrentUserId';
 import { getOrganizationId } from '@/shared/lib/getOrganizationId';
 import Card from '@/shared/ui/card/Card';
-import CardBody from '@/shared/ui/card/CardBody';
 import PageHeader from '@/widgets/layout/ui/page-header';
+
+import type { KanbanFilters } from '@/features/kanban/model/types';
 
 const VALID_SORT_FIELDS = new Set<IssueSortField>([
   'id',
@@ -40,6 +42,7 @@ function isIssueType(value: string): value is IssueType {
 
 /**
  * IssuesListPage component.
+ * Combines Tasktracker (issues list) and Kanban board in two tabs with shared filters.
  * @param props - page props.
  * @param props.searchParams - search params.
  * @returns JSX element.
@@ -71,28 +74,44 @@ export default async function IssuesListPage({
     typeof params.type === 'string' && isIssueType(params.type)
       ? params.type
       : '';
-  // null means the param is absent from the URL (use current user as default)
-  // '' means it was explicitly cleared by the user (show all)
-  let assigneeParam: string | null;
-  if (!('assignee' in params)) {
-    assigneeParam = null;
-  } else if (typeof params.assignee === 'string') {
-    assigneeParam = params.assignee;
+  const priorityParam =
+    typeof params.priority === 'string'
+      ? (params.priority as IssuePriority)
+      : '';
+
+  // Unified assignee_id param (replaces old split 'assignee' / 'assignee_id')
+  // null → absent from URL → default to current user
+  // ''   → explicitly cleared → show all
+  let assigneeIdParam: string | null;
+  if (!('assignee_id' in params)) {
+    assigneeIdParam = null;
+  } else if (typeof params.assignee_id === 'string') {
+    assigneeIdParam = params.assignee_id;
   } else {
-    assigneeParam = '';
+    assigneeIdParam = '';
   }
 
-  const [organizationsResponse, persons, currentUserId] = await Promise.all([
-    getOrganizations(),
-    getPersons(),
-    getCurrentUserId(),
-  ]);
+  const kanbanFilters: KanbanFilters = {
+    organization_id: orgId ? Number(orgId) : null,
+    team_id: params.team_id ? Number(params.team_id) : null,
+    type: typeParam || undefined,
+    assignee_id: assigneeIdParam ? Number(assigneeIdParam) : null,
+    priority: priorityParam || undefined,
+  };
+
+  const [organizationsResponse, persons, currentUserId, groupedCards] =
+    await Promise.all([
+      getOrganizations(),
+      getPersons(),
+      getCurrentUserId(),
+      getKanbanIssues(kanbanFilters),
+    ]);
 
   let resolvedAssignee: number | null;
-  if (assigneeParam === null) {
+  if (assigneeIdParam === null) {
     resolvedAssignee = currentUserId ?? null;
-  } else if (assigneeParam.length > 0) {
-    resolvedAssignee = Number(assigneeParam);
+  } else if (assigneeIdParam.length > 0) {
+    resolvedAssignee = Number(assigneeIdParam);
   } else {
     resolvedAssignee = null;
   }
@@ -113,41 +132,37 @@ export default async function IssuesListPage({
         : undefined,
   });
 
-  let initialAssignee: string;
-  if (assigneeParam !== null) {
-    initialAssignee = assigneeParam;
+  let initialAssigneeId: string;
+  if (assigneeIdParam !== null) {
+    initialAssigneeId = assigneeIdParam;
   } else if (currentUserId) {
-    initialAssignee = String(currentUserId);
+    initialAssigneeId = String(currentUserId);
   } else {
-    initialAssignee = '';
+    initialAssigneeId = '';
   }
 
   return (
     <Card className='h-full flex flex-col'>
-      <PageHeader title='Issues' />
-      <div className='h-full overflow-y-auto'>
-        <CardBody>
-          <IssuesPage
-            initialIssues={issues.data}
-            initialTotalCount={issues.totalCount}
-            organizations={organizationsResponse.data ?? []}
-            persons={persons}
-            initialFilters={{
-              organization_id: orgId,
-              team_id: typeof params.team_id === 'string' ? params.team_id : '',
-              status: statusParam,
-              type: typeParam,
-              assignee: initialAssignee,
-              priority:
-                typeof params.priority === 'string'
-                  ? (params.priority as IssuePriority)
-                  : '',
-              sort: sortParam,
-              order: orderParam,
-              search: typeof params.search === 'string' ? params.search : '',
-            }}
-          />
-        </CardBody>
+      <PageHeader title='Tasktracker' />
+      <div className='flex-1 overflow-hidden'>
+        <TasktrackerTabs
+          organizations={organizationsResponse.data ?? []}
+          persons={persons}
+          initialIssues={issues.data}
+          initialTotalCount={issues.totalCount}
+          initialColumns={groupedCards}
+          initialFilters={{
+            organization_id: orgId ?? '',
+            team_id: typeof params.team_id === 'string' ? params.team_id : '',
+            search: typeof params.search === 'string' ? params.search : '',
+            type: typeParam,
+            assignee_id: initialAssigneeId,
+            priority: priorityParam,
+          }}
+          initialSort={sortParam}
+          initialOrder={orderParam}
+          initialStatus={statusParam}
+        />
       </div>
     </Card>
   );

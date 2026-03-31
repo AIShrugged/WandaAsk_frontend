@@ -81,6 +81,15 @@ export type IssueSortField =
   | 'created_at';
 export type SortOrder = 'asc' | 'desc';
 
+export interface SharedFilters {
+  organization_id: string;
+  team_id: string;
+  search: string;
+  type: IssueType | '';
+  assignee_id: string;
+  priority: IssuePriority | '';
+}
+
 export interface IssueFilters {
   organization_id?: number | null;
   team_id?: number | null;

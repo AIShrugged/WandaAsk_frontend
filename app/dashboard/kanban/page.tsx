@@ -5,6 +5,7 @@ import { getOrganizationId } from '@/shared/lib/getOrganizationId';
 import Card from '@/shared/ui/card/Card';
 import PageHeader from '@/widgets/layout/ui/page-header';
 
+import type { SharedFilters } from '@/features/issues/model/types';
 import type { KanbanFilters } from '@/features/kanban/model/types';
 
 /**
@@ -23,7 +24,7 @@ export default async function KanbanPage({
   const orgId = params.organization_id
     ? Number(params.organization_id)
     : Number(cookieOrgId);
-  const filters: KanbanFilters = {
+  const kanbanFilters: KanbanFilters = {
     organization_id: orgId,
     team_id: params.team_id ? Number(params.team_id) : null,
     type: typeof params.type === 'string' ? params.type : undefined,
@@ -34,13 +35,23 @@ export default async function KanbanPage({
         : undefined,
   };
   const [groupedCards, organizationsResponse, persons] = await Promise.all([
-    getKanbanIssues(filters),
+    getKanbanIssues(kanbanFilters),
     getOrganizations(),
     getPersons(),
   ]);
-  const initialFilters = {
-    ...filters,
+
+  const filters: SharedFilters = {
+    organization_id: String(orgId || ''),
+    team_id: typeof params.team_id === 'string' ? params.team_id : '',
     search: typeof params.search === 'string' ? params.search : '',
+    type: (typeof params.type === 'string'
+      ? params.type
+      : '') as SharedFilters['type'],
+    assignee_id:
+      typeof params.assignee_id === 'string' ? params.assignee_id : '',
+    priority: (typeof params.priority === 'string'
+      ? params.priority
+      : '') as SharedFilters['priority'],
   };
 
   return (
@@ -51,7 +62,8 @@ export default async function KanbanPage({
           initialColumns={groupedCards}
           organizations={organizationsResponse.data ?? []}
           persons={persons}
-          initialFilters={initialFilters}
+          filters={filters}
+          columnsVersion={0}
         />
       </div>
     </Card>
