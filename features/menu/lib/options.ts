@@ -77,13 +77,6 @@ export function getMenuItems({
       href: ROUTES.DASHBOARD.FOLLOWUPS,
       position: 60,
     },
-    {
-      id: 'kanban',
-      label: 'Kanban',
-      icon: 'kanban',
-      href: ROUTES.DASHBOARD.KANBAN,
-      position: 40,
-    },
   ];
   const isDev =
     process.env.NODE_ENV === 'development' ||

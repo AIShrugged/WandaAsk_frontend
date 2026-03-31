@@ -6,6 +6,7 @@ export interface MenuProps {
   icon?: keyof typeof ICONS_MAP;
   href?: string;
   activeHref?: string;
+  activeHrefs?: string[];
   children?: MenuProps[];
   position: number;
 }

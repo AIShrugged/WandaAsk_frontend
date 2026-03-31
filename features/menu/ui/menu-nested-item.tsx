@@ -23,13 +23,14 @@ export function NestedMenuItem({
   item: MenuProps;
   level: number;
 }) {
-  const [isOpen, setIsOpen] = useState(false);
   const hasChildren = item.children && item.children.length > 0;
   const pathname = usePathname();
-  const activeHref = item.activeHref ?? item.href;
-  const isActive = activeHref
-    ? pathname === activeHref || pathname.startsWith(`${activeHref}/`)
-    : false;
+  const fallbackHref = item.activeHref ?? item.href;
+  const activeHrefs = item.activeHrefs ?? (fallbackHref ? [fallbackHref] : []);
+  const isActive = activeHrefs.some((href) => {
+    return pathname === href || pathname.startsWith(`${href}/`);
+  });
+  const [isOpen, setIsOpen] = useState(isActive);
   /**
    * handleToggle.
    */
