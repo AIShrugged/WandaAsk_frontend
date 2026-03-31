@@ -15,7 +15,10 @@ import PageHeader from '@/widgets/layout/ui/page-header';
 export default async function ProfilePage() {
   const { data: user } = await getUser();
   const sources = await getSources();
-  const calendarSource = sources[0] ?? null;
+  const calendarSource =
+    sources.find((s) => {
+      return s.is_connected === '1' || s.is_connected === true;
+    }) ?? null;
 
   return (
     <Card className='h-full flex flex-col overflow-y-auto'>

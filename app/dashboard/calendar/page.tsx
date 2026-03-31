@@ -76,7 +76,9 @@ export default async function Page({
   const params = await searchParams;
   const justAttached = params?.attached === '1';
   const sources = await getSources();
-  const isCalendarAttached = sources.length > 0;
+  const isCalendarAttached = sources.some((s) => {
+    return s.is_connected === '1' || s.is_connected === true;
+  });
 
   if (isCalendarAttached && !params.month) {
     const currentMonth = new Date().toISOString().slice(0, 7) + '-01';

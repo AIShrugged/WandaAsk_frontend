@@ -6,5 +6,7 @@ export interface Source {
   readonly identity: string;
   readonly type: string;
   readonly auth_type: string;
-  readonly is_connected: boolean;
+  /** Backend returns "0" or "1" as a string. Use isSourceConnected() to check. */
+  readonly is_connected: '0' | '1' | boolean;
+  readonly detached_at: string | null;
 }
