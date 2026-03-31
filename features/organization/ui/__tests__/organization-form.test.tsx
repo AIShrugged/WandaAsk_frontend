@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import React from 'react';
 
 const mockCreateOrganization = jest.fn().mockResolvedValue({});
+const mockRefresh = jest.fn();
 
 jest.mock('next/link', () => {
   return {
@@ -19,11 +20,20 @@ jest.mock('next/link', () => {
   };
 });
 
+jest.mock('next/navigation', () => {
+  return {
+    useRouter: () => {
+      return { refresh: mockRefresh };
+    },
+  };
+});
+
 jest.mock('@/features/organization/api/organization', () => {
   return {
     createOrganization: (...args: unknown[]) => {
       return mockCreateOrganization(...args);
     },
+    updateOrganization: jest.fn().mockResolvedValue({}),
     setActiveOrganization: jest.fn().mockResolvedValue({ ok: true }),
   };
 });

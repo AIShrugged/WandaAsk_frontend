@@ -12,6 +12,7 @@ import { ROUTES } from '@/shared/lib/routes';
 import type {
   OrganizationDTO,
   OrganizationProps,
+  OrganizationUpdateDTO,
 } from '@/entities/organization';
 import type { ApiResponse } from '@/shared/types/common';
 
@@ -121,6 +122,46 @@ export async function createOrganization(data: OrganizationDTO) {
 
   await selectOrganizationAction(formData);
   revalidatePath('/organizations');
+}
+
+/**
+ * updateOrganization.
+ * @param organizationId - organization id.
+ * @param data - data.
+ * @returns Promise.
+ */
+export async function updateOrganization(
+  organizationId: number,
+  data: OrganizationUpdateDTO,
+) {
+  const authHeaders = await getAuthHeaders();
+  const res = await fetch(`${API_URL}/organizations/${organizationId}`, {
+    method: 'PUT',
+    headers: {
+      ...authHeaders,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+    cache: 'no-store',
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+
+    // eslint-disable-next-line no-console
+    console.error(
+      `[org] updateOrganization → ${res.status} ${res.statusText}: ${text}`,
+    );
+    throw new Error('Failed to update organization. Please try again.');
+  }
+
+  const json: ApiResponse<OrganizationProps> = await res.json();
+
+  if (!json.success || !json.data) {
+    throw new Error(json.error ?? 'Invalid API response');
+  }
+
+  return { data: json.data };
 }
 
 /**

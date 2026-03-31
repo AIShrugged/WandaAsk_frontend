@@ -1,10 +1,15 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import React, { useTransition } from 'react';
 import { useForm, Controller } from 'react-hook-form';
+import { toast } from 'sonner';
 
-import { createOrganization } from '@/features/organization/api/organization';
+import {
+  createOrganization,
+  updateOrganization,
+} from '@/features/organization/api/organization';
 import {
   ORGANIZATION_FIELDS,
   ORGANIZATION_VALUES,
@@ -31,6 +36,7 @@ export default function OrganizationForm({
 }) {
   const FORM_ID = 'organization-form';
   const isEdit = Boolean(values?.id);
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const {
     control,
@@ -50,6 +56,17 @@ export default function OrganizationForm({
   const onSubmit = (data: OrganizationDTO) => {
     startTransition(async () => {
       try {
+        if (isEdit && values?.id) {
+          await updateOrganization(values.id, {
+            name: data.name,
+          });
+
+          toast.success('Organization updated');
+          router.refresh();
+
+          return;
+        }
+
         await createOrganization(data);
       } catch (error) {
         setError('name', {

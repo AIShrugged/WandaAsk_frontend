@@ -1,1 +1,7 @@
-export type { OrganizationProps, OrganizationDTO } from './model/types';
+export type {
+  OrganizationIssueType,
+  OrganizationIssueTypePayload,
+  OrganizationProps,
+  OrganizationDTO,
+  OrganizationUpdateDTO,
+} from './model/types';
