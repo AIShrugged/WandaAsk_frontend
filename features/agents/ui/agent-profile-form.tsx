@@ -28,6 +28,7 @@ interface AgentProfileFormValues {
   name: string;
   description: string;
   system_prompt: string;
+  metadata: string;
   sandbox_profile: string;
   allowed_tools: string[];
   model: string;
@@ -59,6 +60,7 @@ export function AgentProfileForm({
       name: profile?.name ?? '',
       description: profile?.description ?? '',
       system_prompt: profile?.system_prompt ?? '',
+      metadata: stringifyJson(profile?.metadata),
       sandbox_profile: profile?.sandbox_profile ?? '',
       allowed_tools: profile?.allowed_tools ?? [],
       model: profile?.model ?? '',
@@ -86,6 +88,7 @@ export function AgentProfileForm({
   const onSubmit = (values: AgentProfileFormValues) => {
     startTransition(async () => {
       let config: Record<string, unknown> | null = null;
+      let metadata: Record<string, unknown> | null = null;
 
       try {
         config = parseJsonInput(values.config);
@@ -95,10 +98,19 @@ export function AgentProfileForm({
         return;
       }
 
+      try {
+        metadata = parseJsonInput(values.metadata);
+      } catch (error) {
+        setError('metadata', { message: (error as Error).message });
+
+        return;
+      }
+
       const payload = {
         name: values.name.trim(),
         description: values.description.trim() || null,
         system_prompt: values.system_prompt.trim() || null,
+        metadata,
         sandbox_profile: values.sandbox_profile || null,
         allowed_tools: values.allowed_tools,
         ...(values.model.trim() ? { model: values.model.trim() } : {}),
@@ -157,6 +169,13 @@ export function AgentProfileForm({
         label='System Prompt'
         value={watch('system_prompt')}
         error={errors.system_prompt?.message}
+      />
+
+      <InputTextarea
+        {...register('metadata')}
+        label='Metadata JSON'
+        value={watch('metadata')}
+        error={errors.metadata?.message}
       />
 
       <div className='grid gap-4 md:grid-cols-2'>
