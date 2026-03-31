@@ -129,6 +129,12 @@ export default async function AgentProfileDetailPage({
                 <div className='mt-3 space-y-2 text-sm text-foreground'>
                   <p>Name: {profile.name}</p>
                   <p>Description: {profile.description || '—'}</p>
+                  <p>
+                    Metadata:{' '}
+                    {profile.metadata
+                      ? JSON.stringify(profile.metadata, null, 2)
+                      : '—'}
+                  </p>
                   <p>Sandbox: {profile.sandbox_profile || '—'}</p>
                   <p>Model: {profile.model ?? '—'}</p>
                   <div>

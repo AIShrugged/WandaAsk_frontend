@@ -10,6 +10,7 @@ export interface AgentProfile {
   name: string;
   description: string | null;
   system_prompt: string | null;
+  metadata?: Record<string, unknown> | null;
   allowed_tools: string[] | null;
   sandbox_profile: string | null;
   model?: string | null;
@@ -24,6 +25,7 @@ export interface AgentProfilePayload {
   name: string;
   description: string | null;
   system_prompt: string | null;
+  metadata?: Record<string, unknown> | null;
   allowed_tools: string[];
   sandbox_profile: string | null;
   model?: string | null;
