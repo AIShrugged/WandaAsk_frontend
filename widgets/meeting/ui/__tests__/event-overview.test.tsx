@@ -4,6 +4,9 @@ import EventOverview from '@/widgets/meeting/ui/event-overview';
 
 import type { EventProps } from '@/entities/event';
 
+const PARTICIPANTS_MODULE = '@/features/participants/api/participants';
+const PARTICIPANT_DATA_TESTID = 'participant-data';
+
 jest.mock('@/features/participants/api/participants', () => {
   return {
     getAttendees: jest.fn().mockResolvedValue({ data: [] }),
@@ -31,7 +34,7 @@ jest.mock('@/features/participants/ui/participant-data', () => {
       attendees: unknown[];
     }) => {
       return (
-        <div data-testid='participant-data'>
+        <div data-testid={PARTICIPANT_DATA_TESTID}>
           guests:{guests.length} attendees:{attendees.length}
         </div>
       );
@@ -67,13 +70,11 @@ describe('EventOverview', () => {
   it('renders ParticipantData', async () => {
     render(await EventOverview({ id: '1', event: makeEvent() }));
 
-    expect(screen.getByTestId('participant-data')).toBeInTheDocument();
+    expect(screen.getByTestId(PARTICIPANT_DATA_TESTID)).toBeInTheDocument();
   });
 
   it('passes fetched attendees and guests to ParticipantData', async () => {
-    const { getAttendees, getGuests } = jest.requireMock(
-      '@/features/participants/api/participants',
-    );
+    const { getAttendees, getGuests } = jest.requireMock(PARTICIPANTS_MODULE);
 
     getAttendees.mockResolvedValueOnce({
       data: [{ id: 1 }, { id: 2 }],
@@ -84,15 +85,13 @@ describe('EventOverview', () => {
 
     render(await EventOverview({ id: '5', event: makeEvent() }));
 
-    expect(screen.getByTestId('participant-data')).toHaveTextContent(
+    expect(screen.getByTestId(PARTICIPANT_DATA_TESTID)).toHaveTextContent(
       'guests:1 attendees:2',
     );
   });
 
   it('calls getAttendees and getGuests with the event id', async () => {
-    const { getAttendees, getGuests } = jest.requireMock(
-      '@/features/participants/api/participants',
-    );
+    const { getAttendees, getGuests } = jest.requireMock(PARTICIPANTS_MODULE);
 
     await EventOverview({ id: '42', event: makeEvent() });
 
@@ -110,8 +109,36 @@ describe('EventOverview', () => {
   it('handles empty attendees and guests gracefully', async () => {
     render(await EventOverview({ id: '1', event: makeEvent() }));
 
-    expect(screen.getByTestId('participant-data')).toHaveTextContent(
+    expect(screen.getByTestId(PARTICIPANT_DATA_TESTID)).toHaveTextContent(
       'guests:0 attendees:0',
+    );
+  });
+
+  it('renders with empty lists when getAttendees rejects (e.g. 404)', async () => {
+    const { getAttendees } = jest.requireMock(PARTICIPANTS_MODULE);
+
+    getAttendees.mockRejectedValueOnce(
+      new Error('getAttendees failed: 404 Not Found'),
+    );
+
+    render(await EventOverview({ id: '11', event: makeEvent() }));
+
+    expect(screen.getByTestId(PARTICIPANT_DATA_TESTID)).toHaveTextContent(
+      'guests:0 attendees:0',
+    );
+  });
+
+  it('renders with empty lists when getGuests rejects (e.g. 404)', async () => {
+    const { getGuests } = jest.requireMock(PARTICIPANTS_MODULE);
+
+    getGuests.mockRejectedValueOnce(
+      new Error('getGuests failed: 404 Not Found'),
+    );
+
+    render(await EventOverview({ id: '11', event: makeEvent() }));
+
+    expect(screen.getByTestId(PARTICIPANT_DATA_TESTID)).toHaveTextContent(
+      'attendees:0',
     );
   });
 });

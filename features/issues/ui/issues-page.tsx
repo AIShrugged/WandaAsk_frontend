@@ -1,9 +1,8 @@
 'use client';
 
 import { format } from 'date-fns';
-import { Bug, Plus, Search } from 'lucide-react';
+import { Bug } from 'lucide-react';
 import Link from 'next/link';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
   useCallback,
   useEffect,
@@ -15,11 +14,7 @@ import {
 import { toast } from 'sonner';
 
 import { loadIssuesChunk, updateIssue } from '@/features/issues/api/issues';
-import {
-  ISSUE_PRIORITY_LABELS,
-  ISSUE_STATUS_OPTIONS,
-} from '@/features/issues/model/types';
-import { getTeams } from '@/features/teams/api/team';
+import { ISSUE_STATUS_OPTIONS } from '@/features/issues/model/types';
 import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
 import { ROUTES } from '@/shared/lib/routes';
 import { BUTTON_VARIANT } from '@/shared/types/button';
@@ -27,41 +22,31 @@ import { Badge } from '@/shared/ui/badge';
 import { Button } from '@/shared/ui/button/Button';
 import { EmptyState } from '@/shared/ui/feedback/empty-state';
 import InputDropdown from '@/shared/ui/input/InputDropdown';
-import { TenantScopeFields } from '@/shared/ui/input/tenant-scope-fields';
 import { InfiniteScrollStatus } from '@/shared/ui/layout/infinite-scroll-status';
 import SpinLoader from '@/shared/ui/layout/spin-loader';
 import { SortableHeader } from '@/shared/ui/table/SortableHeader';
 
-import type { OrganizationProps } from '@/entities/organization';
 import type {
   Issue,
   IssuePriority,
   IssueSortField,
   IssueStatus,
-  IssueType,
   PersonOption,
+  SharedFilters,
   SortOrder,
 } from '@/features/issues/model/types';
 
 const PAGE_SIZE = 20;
-const KEEP_WHEN_EMPTY = new Set(['assignee']);
 
 interface IssuesPageProps {
   initialIssues: Issue[];
   initialTotalCount: number;
-  organizations: OrganizationProps[];
   persons: PersonOption[];
-  initialFilters: {
-    organization_id: string;
-    team_id: string;
-    status: IssueStatus | '';
-    type: IssueType | '';
-    assignee: string;
-    priority: IssuePriority | '';
-    sort: IssueSortField;
-    order: SortOrder;
-    search: string;
-  };
+  filters: SharedFilters;
+  filtersVersion: number;
+  initialSort: IssueSortField;
+  initialOrder: SortOrder;
+  initialStatus: IssueStatus | '';
 }
 
 /**
@@ -125,48 +110,41 @@ function formatIssueScope(issue: Issue) {
     : `Org #${issue.organization_id}`;
 }
 
-/**
- *
- * @param issues
- * @param updatedIssue
- */
-function replaceIssueInList(issues: Issue[], updatedIssue: Issue) {
-  return issues.map((item) => {
-    return item.id === updatedIssue.id ? updatedIssue : item;
-  });
-}
+const STATUS_OPTIONS = [
+  { value: '', label: 'Any status' },
+  ...ISSUE_STATUS_OPTIONS,
+];
 
 /**
- * IssuesPage renders list with filters and infinite scroll.
+ * IssuesPage renders the issues list with infinite scroll.
+ * Shared filters (org, team, search, type, assignee, priority) are controlled by parent.
+ * Tab-local filters: status, sort.
  * @param props - component props.
  * @param props.initialIssues
  * @param props.initialTotalCount
- * @param props.organizations
  * @param props.persons
- * @param props.initialFilters
+ * @param props.organizations
+ * @param props.filters
+ * @param props.filtersVersion
+ * @param props.initialSort
+ * @param props.initialOrder
+ * @param props.initialStatus
  * @returns JSX element.
  */
 export function IssuesPage({
   initialIssues,
   initialTotalCount,
-  organizations,
   persons,
-  initialFilters,
+  filters,
+  filtersVersion,
+  initialSort,
+  initialOrder,
+  initialStatus,
 }: IssuesPageProps) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
-  const [organizationId, setOrganizationId] = useState(
-    initialFilters.organization_id,
-  );
-  const [teamId, setTeamId] = useState(initialFilters.team_id);
-  const [status, setStatus] = useState(initialFilters.status);
-  const [type, setType] = useState(initialFilters.type);
-  const [assignee, setAssignee] = useState(initialFilters.assignee);
-  const [priority, setPriority] = useState<IssuePriority | ''>(
-    initialFilters.priority,
-  );
+  const [status, setStatus] = useState<IssueStatus | ''>(initialStatus);
+  const [sortField, setSortField] = useState<IssueSortField>(initialSort);
+  const [sortOrder, setSortOrder] = useState<SortOrder>(initialOrder);
   const [updatingIssueId, setUpdatingIssueId] = useState<number | null>(null);
   const [editingStatusIssueId, setEditingStatusIssueId] = useState<
     number | null
@@ -174,30 +152,29 @@ export function IssuesPage({
   const [editingAssigneeIssueId, setEditingAssigneeIssueId] = useState<
     number | null
   >(null);
-  const [sortField, setSortField] = useState<IssueSortField>(
-    initialFilters.sort,
-  );
-  const [sortOrder, setSortOrder] = useState<SortOrder>(initialFilters.order);
-  const [searchValue, setSearchValue] = useState(initialFilters.search);
-  // Filters ref — used inside fetchMore without triggering re-renders
-  const filtersRef = useRef({
-    organization_id: organizationId,
-    team_id: teamId,
-    status,
-    type,
-    assignee,
-    sort: initialFilters.sort,
-    order: initialFilters.order,
-    search: initialFilters.search,
-  });
-  // resetKey increments on filter change to reset the infinite scroll list
-  const [resetKey, setResetKey] = useState(0);
 
-  // resetKey changes force useInfiniteScroll to start fresh with new initialItems
+  // filtersRef used inside fetchMore without triggering re-renders
+  const filtersRef = useRef({
+    ...filters,
+    status,
+    sort: sortField,
+    order: sortOrder,
+  });
+
+  // Keep filtersRef in sync with latest props/state
+  useEffect(() => {
+    filtersRef.current = {
+      ...filters,
+      status,
+      sort: sortField,
+      order: sortOrder,
+    };
+  }, [filters, status, sortField, sortOrder]);
 
   const scrollInitialItems = useMemo(() => {
     return initialIssues;
-  }, [resetKey]);
+  }, [filtersVersion, status, sortField, sortOrder]);
+
   const fetchMore = useCallback(
     async (offset: number) => {
       const f = filtersRef.current;
@@ -207,7 +184,7 @@ export function IssuesPage({
         team_id: f.team_id ? Number(f.team_id) : null,
         status: f.status || undefined,
         type: f.type || undefined,
-        assignee: f.assignee ? Number(f.assignee) : null,
+        assignee: f.assignee_id ? Number(f.assignee_id) : null,
         offset,
         limit: PAGE_SIZE,
         sort: f.sort,
@@ -215,10 +192,9 @@ export function IssuesPage({
         search: f.search || undefined,
       });
     },
-    // resetKey forces useInfiniteScroll to re-instantiate with fresh initialItems
-
-    [resetKey],
+    [filtersVersion, status, sortField, sortOrder],
   );
+
   const {
     items: rawItems,
     isLoading,
@@ -229,141 +205,26 @@ export function IssuesPage({
     initialItems: scrollInitialItems,
     initialHasMore: initialTotalCount > initialIssues.length,
   });
+
   // Client-side priority filter (backend doesn't support priority filtering)
-  const items = priority
+  const items = filters.priority
     ? rawItems.filter((issue) => {
-        return issue.priority === priority;
+        return issue.priority === (filters.priority as IssuePriority);
       })
     : rawItems;
-  const updateUrl = useCallback(
-    (patch: Record<string, string>) => {
-      const params = new URLSearchParams(searchParams.toString());
 
-      for (const [key, value] of Object.entries(patch)) {
-        if (value || KEEP_WHEN_EMPTY.has(key)) {
-          params.set(key, value);
-        } else {
-          params.delete(key);
-        }
-      }
-
-      router.replace(`${pathname}?${params.toString()}`, { scroll: false });
-    },
-    [router, pathname, searchParams],
-  );
-  const applyFilter = useCallback(
-    (patch: {
-      organization_id?: string;
-      team_id?: string;
-      status?: IssueStatus | '';
-      type?: IssueType | '';
-      assignee?: string;
-      sort?: IssueSortField;
-      order?: SortOrder;
-      search?: string;
-    }) => {
-      const next = {
-        organization_id:
-          patch.organization_id === undefined
-            ? organizationId
-            : patch.organization_id,
-        team_id: patch.team_id === undefined ? teamId : patch.team_id,
-        status: patch.status === undefined ? status : patch.status,
-        type: patch.type === undefined ? type : patch.type,
-        assignee: patch.assignee === undefined ? assignee : patch.assignee,
-        sort: patch.sort === undefined ? sortField : patch.sort,
-        order: patch.order === undefined ? sortOrder : patch.order,
-        search: patch.search === undefined ? searchValue : patch.search,
-      };
-
-      filtersRef.current = next;
-
-      if (patch.organization_id !== undefined)
-        setOrganizationId(next.organization_id);
-
-      if (patch.team_id !== undefined) setTeamId(next.team_id);
-
-      if (patch.status !== undefined) setStatus(next.status);
-
-      if (patch.type !== undefined) setType(next.type);
-
-      if (patch.assignee !== undefined) setAssignee(next.assignee);
-
-      if (patch.sort !== undefined) setSortField(next.sort);
-
-      if (patch.order !== undefined) setSortOrder(next.order);
-
-      updateUrl({
-        organization_id: next.organization_id,
-        team_id: next.team_id,
-        status: next.status,
-        type: next.type,
-        assignee: next.assignee,
-        sort: next.sort,
-        order: next.order,
-        search: next.search,
-      });
-
-      setResetKey((k) => {
-        return k + 1;
-      });
-    },
-    [
-      organizationId,
-      teamId,
-      status,
-      type,
-      assignee,
-      sortField,
-      sortOrder,
-      searchValue,
-      updateUrl,
-    ],
-  );
   const handleSort = useCallback(
     (field: string) => {
       const sortableField = field as IssueSortField;
       const newOrder =
         sortField === sortableField && sortOrder === 'desc' ? 'asc' : 'desc';
 
-      applyFilter({ sort: sortableField, order: newOrder });
+      setSortField(sortableField);
+      setSortOrder(newOrder);
     },
-    [sortField, sortOrder, applyFilter],
+    [sortField, sortOrder],
   );
-  // Debounce search: apply filter 300ms after the user stops typing
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      applyFilter({ search: searchValue });
-    }, 300);
 
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [searchValue]);
-  const personOptions = [
-    { value: '', label: 'Any assignee' },
-    ...persons.map((person) => {
-      return {
-        value: String(person.id),
-        label: person.email ? `${person.name} (${person.email})` : person.name,
-      };
-    }),
-  ];
-  const statusOptions = [
-    { value: '', label: 'Any status' },
-    ...ISSUE_STATUS_OPTIONS,
-  ];
-  const typeOptions = [
-    { value: '', label: 'Any type' },
-    { value: 'development', label: 'Development' },
-    { value: 'organization', label: 'Organization' },
-  ];
-  const priorityOptions = [
-    { value: '', label: 'Any priority' },
-    ...Object.entries(ISSUE_PRIORITY_LABELS).map(([value, label]) => {
-      return { value, label };
-    }),
-  ];
   const rowStatusOptions = ISSUE_STATUS_OPTIONS;
   const rowAssigneeOptions = [
     { value: '', label: 'Unassigned' },
@@ -374,6 +235,7 @@ export function IssuesPage({
       };
     }),
   ];
+
   /**
    *
    * @param issue
@@ -421,76 +283,15 @@ export function IssuesPage({
 
   return (
     <div className='flex flex-col gap-6'>
-      <div className='flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between'>
-        <Link
-          href={`${ROUTES.DASHBOARD.ISSUES}/create`}
-          className='inline-flex h-10 w-auto items-center justify-center gap-2 rounded-[var(--radius-button)] bg-gradient-to-b from-violet-500 to-violet-700 px-4 text-sm font-medium text-primary-foreground shadow-[0_2px_12px_rgba(124,58,237,0.25)] transition-all hover:from-violet-400 hover:to-violet-600'
-        >
-          <Plus className='h-4 w-4' />
-          New issue
-        </Link>
-      </div>
-
+      {/* Tab-local filter: status */}
       <div className='grid gap-4 rounded-[var(--radius-card)] border border-border bg-card p-4'>
-        <div className='relative'>
-          <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
-          <input
-            type='text'
-            placeholder='Search by name...'
-            value={searchValue}
-            onChange={(e) => {
-              setSearchValue(e.target.value);
-            }}
-            className='h-10 w-full rounded-[var(--radius-button)] border border-border bg-background pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary'
-          />
-        </div>
-        <TenantScopeFields
-          organizations={organizations}
-          organizationId={organizationId}
-          teamId={teamId}
-          fetchTeams={getTeams}
-          onOrganizationChange={(value) => {
-            applyFilter({ organization_id: value, team_id: '' });
-          }}
-          onTeamChange={(value) => {
-            applyFilter({ team_id: value });
-          }}
-          disabled={isPending}
-        />
-
         <div className='grid gap-4 sm:grid-cols-2 xl:grid-cols-4'>
           <InputDropdown
-            label='Type'
-            options={typeOptions}
-            value={type}
-            onChange={(value) => {
-              applyFilter({ type: value as IssueType | '' });
-            }}
-          />
-          <InputDropdown
             label='Status'
-            options={statusOptions}
+            options={STATUS_OPTIONS}
             value={status}
             onChange={(value) => {
-              applyFilter({ status: value as IssueStatus | '' });
-            }}
-          />
-          <InputDropdown
-            label='Assignee'
-            options={personOptions}
-            value={assignee}
-            onChange={(value) => {
-              applyFilter({ assignee: value as string });
-            }}
-            searchable
-          />
-          <InputDropdown
-            label='Priority'
-            options={priorityOptions}
-            value={priority}
-            onChange={(value) => {
-              setPriority(value as IssuePriority | '');
-              updateUrl({ priority: value as string });
+              setStatus(value as IssueStatus | '');
             }}
           />
         </div>

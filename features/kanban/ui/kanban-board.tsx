@@ -5,40 +5,37 @@ import {
   ArrowUp,
   Calendar,
   ExternalLink,
-  Minus,
   MessageSquare,
+  Minus,
   Paperclip,
   Plus,
-  Search,
 } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useState, useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
 import { moveKanbanCard } from '@/features/kanban/api/kanban';
 import {
   KANBAN_COLUMNS,
-  KANBAN_PRIORITY_LABELS,
   type IssueStatus,
   type KanbanCard,
-  type KanbanFilters,
   type KanbanPriority,
 } from '@/features/kanban/model/types';
-import { getTeams } from '@/features/teams/api/team';
 import { ROUTES } from '@/shared/lib/routes';
 import Avatar from '@/shared/ui/common/avatar';
-import InputDropdown from '@/shared/ui/input/InputDropdown';
-import { TenantScopeFields } from '@/shared/ui/input/tenant-scope-fields';
 
 import type { OrganizationProps } from '@/entities/organization';
-import type { PersonOption } from '@/features/issues/model/types';
+import type {
+  PersonOption,
+  SharedFilters,
+} from '@/features/issues/model/types';
 
 interface KanbanBoardProps {
   initialColumns: Record<IssueStatus, KanbanCard[]>;
   organizations: OrganizationProps[];
   persons: PersonOption[];
-  initialFilters: KanbanFilters & { search: string };
+  filters: SharedFilters;
+  columnsVersion: number;
 }
 
 /**
@@ -391,7 +388,6 @@ function KanbanCardItem({
  * @param props.onDrop - drop handler.
  * @param props.onMoveToColumn - move handler.
  * @param props.movingCardId - id of card being moved.
- * @param props.onCardHover
  * @param props.onCardClick
  */
 function KanbanColumnComponent({
@@ -497,69 +493,33 @@ function KanbanColumnComponent({
 
 /**
  * KanbanBoard is the main kanban board client component.
+ * Shared filters (org, team, search, type, assignee, priority) come from parent via props.
  * @param props - component props.
  * @param props.initialColumns - initial grouped cards by status.
- * @param props.organizations - organizations list for filter.
- * @param props.persons - persons list for assignee filter.
- * @param props.initialFilters - initial filter values.
+ * @param props.organizations - organizations list (unused here, kept for future use).
+ * @param props.persons - persons list (unused here, kept for future use).
+ * @param props.filters - shared filter values from parent.
+ * @param props.columnsVersion - increments when server re-fetches with new filters.
  * @returns JSX element.
  */
 export function KanbanBoard({
   initialColumns,
-  organizations,
-  persons,
-  initialFilters,
+  organizations: _organizations,
+  persons: _persons,
+  filters,
+  columnsVersion,
 }: KanbanBoardProps) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
   const [columns, setColumns] =
     useState<Record<IssueStatus, KanbanCard[]>>(initialColumns);
-  // Sync columns when server re-fetches data with new filters.
-  // initialColumns is a new object reference on every server render,
-  // so we use a serialized key from the URL search params as a stable dependency.
-  const searchParamsString = searchParams.toString();
-
-  useEffect(() => {
-    setColumns(initialColumns);
-  }, [searchParamsString]);
-
   const [movingCardId, setMovingCardId] = useState<number | null>(null);
   const [hoveredCard, setHoveredCard] = useState<KanbanCard | null>(null);
-  const [isPending, startTransition] = useTransition();
-  const [search, setSearch] = useState(initialFilters.search ?? '');
-  const [orgId, setOrgId] = useState(
-    initialFilters.organization_id
-      ? String(initialFilters.organization_id)
-      : '',
-  );
-  const [teamId, setTeamId] = useState(
-    initialFilters.team_id ? String(initialFilters.team_id) : '',
-  );
-  const [type, setType] = useState(initialFilters.type ?? '');
-  const [assigneeId, setAssigneeId] = useState(
-    initialFilters.assignee_id ? String(initialFilters.assignee_id) : '',
-  );
-  const [priority, setPriority] = useState<KanbanPriority | ''>(
-    (initialFilters.priority as KanbanPriority | '') ?? '',
-  );
-  const updateUrl = useCallback(
-    (patch: Record<string, string>) => {
-      const params = new URLSearchParams(searchParams.toString());
+  const [, startTransition] = useTransition();
 
-      for (const [key, value] of Object.entries(patch)) {
-        if (value) {
-          params.set(key, value);
-        } else {
-          params.delete(key);
-        }
-      }
+  // Sync columns when server re-fetches data with new filters
+  useEffect(() => {
+    setColumns(initialColumns);
+  }, [columnsVersion]);
 
-      router.replace(`/dashboard/kanban?${params.toString()}`, {
-        scroll: false,
-      });
-    },
-    [router, searchParams],
-  );
   /**
    *
    * @param prev
@@ -677,122 +637,36 @@ export function KanbanBoard({
 
     handleDrop(card.id, card.status, status);
   };
-  // Client-side search filter
+
+  // Client-side search + priority filter
+  const lowerSearch = filters.search.toLowerCase();
   const filteredColumns: Record<IssueStatus, KanbanCard[]> = {
     open: [],
     in_progress: [],
     paused: [],
     done: [],
   };
-  const lowerSearch = search.toLowerCase();
 
   for (const col of KANBAN_COLUMNS) {
     filteredColumns[col.id] = columns[col.id].filter((card) => {
-      if (!lowerSearch) return true;
+      if (
+        lowerSearch.length > 0 &&
+        !card.name.toLowerCase().includes(lowerSearch) &&
+        !(card.description?.toLowerCase().includes(lowerSearch) ?? false)
+      ) {
+        return false;
+      }
 
-      return (
-        card.name.toLowerCase().includes(lowerSearch) ||
-        (card.description?.toLowerCase().includes(lowerSearch) ?? false)
-      );
+      if (filters.priority && card.priority !== filters.priority) {
+        return false;
+      }
+
+      return true;
     });
   }
 
-  const typeOptions = [
-    { value: '', label: 'All' },
-    { value: 'development', label: 'Development' },
-    { value: 'organization', label: 'Organization' },
-  ];
-  const assigneeOptions = [
-    { value: '', label: 'All' },
-    ...persons.map((person) => {
-      return {
-        value: String(person.id),
-        label: person.name,
-      };
-    }),
-  ];
-  const priorityOptions = [
-    { value: '', label: 'All' },
-    ...Object.entries(KANBAN_PRIORITY_LABELS).map(([value, label]) => {
-      return { value, label };
-    }),
-  ];
-
   return (
     <div className='flex flex-col h-full gap-3'>
-      {/* Filters bar */}
-      <div className='flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between'>
-        <Link
-          href={`${ROUTES.DASHBOARD.ISSUES}/create`}
-          className='inline-flex h-10 w-auto items-center justify-center gap-2 rounded-[var(--radius-button)] bg-gradient-to-b from-violet-500 to-violet-700 px-4 text-sm font-medium text-primary-foreground shadow-[0_2px_12px_rgba(124,58,237,0.25)] transition-all hover:from-violet-400 hover:to-violet-600'
-        >
-          <Plus className='h-4 w-4' />
-          New issue
-        </Link>
-      </div>
-
-      <div className='grid gap-4 rounded-[var(--radius-card)] border border-border bg-card p-4'>
-        <TenantScopeFields
-          organizations={organizations}
-          organizationId={orgId}
-          teamId={teamId}
-          fetchTeams={getTeams}
-          onOrganizationChange={(value) => {
-            setOrgId(value as string);
-            setTeamId('');
-            updateUrl({ organization_id: value as string, team_id: '' });
-          }}
-          onTeamChange={(value) => {
-            setTeamId(value as string);
-            updateUrl({ team_id: value as string });
-          }}
-          disabled={isPending}
-        />
-
-        <div className='grid gap-4 sm:grid-cols-2 xl:grid-cols-4'>
-          <InputDropdown
-            label='Type'
-            options={typeOptions}
-            value={type}
-            onChange={(value) => {
-              setType(value as string);
-              updateUrl({ type: value as string });
-            }}
-          />
-          <InputDropdown
-            label='Assignee'
-            options={assigneeOptions}
-            value={assigneeId}
-            onChange={(value) => {
-              setAssigneeId(value as string);
-              updateUrl({ assignee_id: value as string });
-            }}
-            searchable
-          />
-          <InputDropdown
-            label='Priority'
-            options={priorityOptions}
-            value={priority}
-            onChange={(value) => {
-              setPriority(value as KanbanPriority | '');
-              updateUrl({ priority: value as string });
-            }}
-          />
-          <div className='relative'>
-            <Search className='absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none' />
-            <input
-              type='text'
-              placeholder='Search issues...'
-              value={search}
-              onChange={(event) => {
-                setSearch(event.target.value);
-              }}
-              className='w-full h-10 pl-8 pr-3 text-sm bg-background border border-input rounded-[var(--radius-button)] text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20'
-            />
-          </div>
-        </div>
-      </div>
-
       {/* Board: columns + preview panel */}
       <div className='flex gap-3 flex-1 min-h-0'>
         <div className='flex gap-3 overflow-x-auto pb-4 flex-1 min-h-0'>
