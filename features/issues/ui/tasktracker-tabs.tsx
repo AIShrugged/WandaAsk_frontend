@@ -142,8 +142,6 @@ export function TasktrackerTabs({
       assignee_id: filters.assignee_id,
       priority: filters.priority,
       status: filters.status,
-      id_from: filters.id_from,
-      id_to: filters.id_to,
     });
   }, [filters]);
 
@@ -156,7 +154,6 @@ export function TasktrackerTabs({
           organizations={organizations}
           persons={persons}
           onChange={handleFiltersChange}
-          showIdRange={activeTab === 'tasktracker'}
         />
       </div>
 

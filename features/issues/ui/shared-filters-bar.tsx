@@ -28,7 +28,6 @@ interface SharedFiltersBarProps {
   persons: PersonOption[];
   onChange: (patch: Partial<SharedFilters>) => void;
   disabled?: boolean;
-  showIdRange?: boolean;
 }
 
 const TYPE_OPTIONS = [
@@ -65,11 +64,8 @@ export function SharedFiltersBar({
   persons,
   onChange,
   disabled,
-  showIdRange = false,
 }: SharedFiltersBarProps) {
   const [searchValue, setSearchValue] = useState(filters.search);
-  const [idFromValue, setIdFromValue] = useState(filters.id_from);
-  const [idToValue, setIdToValue] = useState(filters.id_to);
 
   // Debounce search: propagate 300ms after user stops typing
   useEffect(() => {
@@ -81,28 +77,6 @@ export function SharedFiltersBar({
       clearTimeout(timer);
     };
   }, [searchValue]);
-
-  // Debounce id_from: propagate 300ms after user stops typing
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      onChange({ id_from: idFromValue });
-    }, 300);
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [idFromValue]);
-
-  // Debounce id_to: propagate 300ms after user stops typing
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      onChange({ id_to: idToValue });
-    }, 300);
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [idToValue]);
 
   const personOptions = [
     { value: '', label: 'Any assignee' },
@@ -131,9 +105,7 @@ export function SharedFiltersBar({
           <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
           <input
             type='text'
-            placeholder={
-              showIdRange ? 'Search by name or #ID...' : 'Search by name...'
-            }
+            placeholder='Search by name...'
             value={searchValue}
             onChange={(e) => {
               setSearchValue(e.target.value);
@@ -196,35 +168,6 @@ export function SharedFiltersBar({
             disabled={disabled}
           />
         </div>
-
-        {showIdRange ? (
-          <div className='flex items-center gap-2'>
-            <span className='text-sm text-muted-foreground'>ID</span>
-            <input
-              type='number'
-              min={1}
-              placeholder='from'
-              value={idFromValue}
-              onChange={(e) => {
-                setIdFromValue(e.target.value);
-              }}
-              disabled={disabled}
-              className='h-10 w-24 rounded-[var(--radius-button)] border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary'
-            />
-            <span className='text-muted-foreground'>—</span>
-            <input
-              type='number'
-              min={1}
-              placeholder='to'
-              value={idToValue}
-              onChange={(e) => {
-                setIdToValue(e.target.value);
-              }}
-              disabled={disabled}
-              className='h-10 w-24 rounded-[var(--radius-button)] border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary'
-            />
-          </div>
-        ) : null}
       </div>
     </div>
   );
