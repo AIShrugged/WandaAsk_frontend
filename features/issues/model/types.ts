@@ -33,6 +33,27 @@ export interface PersonOption {
   team_id?: number | null;
 }
 
+export interface IssueAgentFlowStep {
+  id: number;
+  position: number;
+  kind: string | null;
+  status: string | null;
+  title: string | null;
+  agent_task_id: number | null;
+  task: {
+    id: number;
+    status: string | null;
+    latest_run_id: number | null;
+  } | null;
+}
+
+export interface IssueAgentFlow {
+  id: number;
+  status: string | null;
+  current_step_position: number | null;
+  steps: IssueAgentFlowStep[];
+}
+
 export interface Issue {
   id: number;
   name: string;
@@ -43,6 +64,8 @@ export interface Issue {
   organization_id: number | null;
   team_id: number | null;
   agent_task_id?: number | null;
+  agent_flow_id?: number | null;
+  agent_flow?: IssueAgentFlow | null;
   assignee_id: number | null;
   assignee?: PersonOption | null;
   created_at: string;
