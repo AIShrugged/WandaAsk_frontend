@@ -11,18 +11,10 @@ import { Button } from '@/shared/ui/button/Button';
 import Card from '@/shared/ui/card/Card';
 import CardBody from '@/shared/ui/card/CardBody';
 
-import type { Issue } from '@/features/issues/model/types';
-
-interface LinkedAgentTask {
-  id: number;
-  name: string;
-  latest_run_status?: string | null;
-  latest_run?: unknown;
-}
+import type { Issue, IssueAgentFlowStep } from '@/features/issues/model/types';
 
 interface IssueLinkedTaskProps {
   issue: Issue;
-  agentTask: LinkedAgentTask | null;
 }
 
 /**
@@ -54,17 +46,54 @@ function runStatusVariant(
 /**
  *
  * @param root0
- * @param root0.issue
- * @param root0.agentTask
+ * @param root0.step
  */
-export function IssueLinkedTask({ issue, agentTask }: IssueLinkedTaskProps) {
+function FlowStepRow({ step }: { step: IssueAgentFlowStep }) {
+  const label = step.title ?? `Step ${step.position.toString()}`;
+  const taskId = step.task?.id;
+  const status = step.task?.status ?? step.status;
+
+  return (
+    <div className='flex items-center justify-between gap-3 rounded-[var(--radius-card)] border border-border bg-background/30 px-4 py-3'>
+      <div className='flex min-w-0 flex-col gap-0.5'>
+        <span className='truncate text-sm font-medium text-foreground'>
+          {label}
+        </span>
+        {step.kind ? (
+          <span className='text-xs text-muted-foreground'>{step.kind}</span>
+        ) : null}
+      </div>
+      <div className='flex shrink-0 items-center gap-2'>
+        {status ? (
+          <Badge variant={runStatusVariant(status)}>{status}</Badge>
+        ) : null}
+        {taskId ? (
+          <Link
+            href={`/dashboard/agents/tasks/${taskId.toString()}`}
+            className='text-xs text-muted-foreground transition-colors hover:text-primary'
+          >
+            →
+          </Link>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
+/**
+ *
+ * @param root0
+ * @param root0.issue
+ */
+export function IssueLinkedTask({ issue }: IssueLinkedTaskProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
-  const latestStatus =
-    (agentTask?.latest_run as { status?: string } | null)?.status ??
-    agentTask?.latest_run_status ??
-    null;
+  const flow = issue.agent_flow;
+  const hasFlowSteps =
+    flow && Array.isArray(flow.steps) && flow.steps.length > 0;
+
+  const hasAnyTask = hasFlowSteps || Boolean(issue.agent_task_id);
 
   const handleDispatch = () => {
     startTransition(async () => {
@@ -81,56 +110,50 @@ export function IssueLinkedTask({ issue, agentTask }: IssueLinkedTaskProps) {
     });
   };
 
+  const dispatchLabel = isPending ? 'Dispatching…' : 'Dispatch Agent';
+  const buttonLabel = hasAnyTask ? 'Re-dispatch' : dispatchLabel;
+
   return (
     <Card>
       <CardBody>
         <div className='flex flex-col gap-4'>
           <p className='text-xs uppercase tracking-[0.2em] text-muted-foreground'>
-            Agent Task
+            Agent Tasks
           </p>
 
-          {agentTask ? (
-            <div className='flex flex-col gap-3'>
-              <div className='rounded-[var(--radius-card)] border border-border bg-background/30 p-4'>
-                <Link
-                  href={`/dashboard/agents/tasks/${agentTask.id}`}
-                  className='text-sm font-medium text-foreground hover:text-primary transition-colors'
-                >
-                  {agentTask.name}
-                </Link>
-                {latestStatus ? (
-                  <div className='mt-2'>
-                    <Badge variant={runStatusVariant(latestStatus)}>
-                      {latestStatus}
-                    </Badge>
-                  </div>
-                ) : null}
-              </div>
-
-              <Button
-                type='button'
-                className='w-full'
-                onClick={handleDispatch}
-                disabled={isPending}
-              >
-                {isPending ? 'Dispatching…' : 'Re-dispatch'}
-              </Button>
-            </div>
-          ) : (
-            <div className='flex flex-col gap-3'>
-              <p className='text-sm text-muted-foreground'>
-                No agent task linked to this issue.
-              </p>
-              <Button
-                type='button'
-                className='w-full'
-                onClick={handleDispatch}
-                disabled={isPending}
-              >
-                {isPending ? 'Dispatching…' : 'Dispatch Agent'}
-              </Button>
+          {hasFlowSteps && (
+            <div className='flex flex-col gap-2'>
+              {flow.steps.map((step) => {
+                return <FlowStepRow key={step.id} step={step} />;
+              })}
             </div>
           )}
+
+          {!hasFlowSteps && issue.agent_task_id ? (
+            <div className='rounded-[var(--radius-card)] border border-border bg-background/30 p-4'>
+              <Link
+                href={`/dashboard/agents/tasks/${issue.agent_task_id.toString()}`}
+                className='text-sm font-medium text-foreground transition-colors hover:text-primary'
+              >
+                Task #{issue.agent_task_id.toString()}
+              </Link>
+            </div>
+          ) : null}
+
+          {!hasFlowSteps && !issue.agent_task_id && (
+            <p className='text-sm text-muted-foreground'>
+              No agent task linked to this issue.
+            </p>
+          )}
+
+          <Button
+            type='button'
+            className='w-full'
+            onClick={handleDispatch}
+            disabled={isPending}
+          >
+            {isPending ? 'Dispatching…' : buttonLabel}
+          </Button>
         </div>
       </CardBody>
     </Card>

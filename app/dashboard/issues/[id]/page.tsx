@@ -1,6 +1,5 @@
 import { notFound } from 'next/navigation';
 
-import { getAgentTask } from '@/features/agents/api/agents';
 import { getIssue, getIssueAttachments, getPersons } from '@/features/issues';
 import { IssueAttachments } from '@/features/issues/ui/issue-attachments';
 import { IssueForm } from '@/features/issues/ui/issue-form';
@@ -46,31 +45,27 @@ export default async function IssueDetailPage({
       getPersons(),
     ]);
 
-  const agentTask = issue.agent_task_id
-    ? await getAgentTask(issue.agent_task_id).catch(() => {
-        return null;
-      })
-    : null;
-
   return (
     <div className='grid h-full gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]'>
-      <Card className='h-full flex flex-col'>
-        <PageHeader hasButtonBack title='Issue' />
-        <div className='h-full overflow-y-auto'>
-          <CardBody>
-            <IssueForm
-              issue={issue}
-              organizations={organizationsResponse.data ?? []}
-              persons={persons}
-              hideStatusField
-            />
-          </CardBody>
-        </div>
-      </Card>
+      <div className='flex flex-col gap-6'>
+        <Card className='flex flex-col'>
+          <PageHeader hasButtonBack title='Issue' />
+          <div className='overflow-y-auto'>
+            <CardBody>
+              <IssueForm
+                issue={issue}
+                organizations={organizationsResponse.data ?? []}
+                persons={persons}
+                hideStatusField
+              />
+            </CardBody>
+          </div>
+        </Card>
+        <IssueLinkedTask issue={issue} />
+      </div>
 
       <div className='flex h-full flex-col gap-6'>
         <IssueOverviewPanel issue={issue} />
-        <IssueLinkedTask issue={issue} agentTask={agentTask} />
 
         <Card className='h-full flex flex-col'>
           <PageHeader title='Attachments' />
