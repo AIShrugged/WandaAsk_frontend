@@ -5,8 +5,11 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { cache } from 'react';
 
+import { parseApiError } from '@/shared/lib/apiError';
 import { API_URL } from '@/shared/lib/config';
+import { ServerError } from '@/shared/lib/errors';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
+import { httpClient } from '@/shared/lib/httpClient';
 import { ROUTES } from '@/shared/lib/routes';
 
 import type {
@@ -15,6 +18,7 @@ import type {
   OrganizationUpdateDTO,
 } from '@/entities/organization';
 import type { ApiResponse } from '@/shared/types/common';
+import type { ActionResult } from '@/shared/types/server-action';
 
 export const getOrganizations = cache(
   async (): Promise<ApiResponse<OrganizationProps[]>> => {
@@ -213,4 +217,37 @@ export async function selectOrganizationAction(formData: FormData) {
   });
 
   redirect(ROUTES.DASHBOARD.MAIN);
+}
+
+/**
+ * deleteOrganization.
+ * @param organizationId - organization id.
+ * @returns ActionResult.
+ */
+export async function deleteOrganization(
+  organizationId: number,
+): Promise<ActionResult<void>> {
+  try {
+    await httpClient<void>(`${API_URL}/organizations/${organizationId}`, {
+      method: 'DELETE',
+    });
+
+    const store = await cookies();
+
+    store.delete('organization_id');
+    revalidatePath(ROUTES.DASHBOARD.ORGANIZATION);
+
+    return { data: undefined, error: null };
+  } catch (error) {
+    if (error instanceof ServerError) {
+      const parsed = parseApiError(
+        error.responseBody ?? '',
+        'Failed to delete organization. Please try again.',
+      );
+
+      return { data: null, error: parsed.message };
+    }
+
+    throw error;
+  }
 }

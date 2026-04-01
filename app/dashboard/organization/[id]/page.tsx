@@ -2,6 +2,7 @@ import React from 'react';
 
 import { getAgentProfiles } from '@/features/agents/api/agents';
 import { getOrganization } from '@/features/organization/api/organization';
+import { OrganizationDangerZone } from '@/features/organization/ui/organization-danger-zone';
 import OrganizationForm from '@/features/organization/ui/organization-form';
 import { OrganizationIssueTypesSettings } from '@/features/organization/ui/organization-issue-types-settings';
 import { OrganizationSettingsTabs } from '@/features/organization/ui/organization-settings-tabs';
@@ -41,7 +42,12 @@ export default async function Page({ params }: PageProps) {
       <PageHeader hasButtonBack title={'Organization settings'} />
       <CardBody>
         <OrganizationSettingsTabs
-          generalContent={<OrganizationForm values={organization} />}
+          generalContent={
+            <div className='flex flex-col gap-8'>
+              <OrganizationForm values={organization} />
+              <OrganizationDangerZone org={organization} />
+            </div>
+          }
           taskTypesContent={
             <OrganizationIssueTypesSettings
               organizationId={organization.id}
