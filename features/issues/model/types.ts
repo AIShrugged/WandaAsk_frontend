@@ -89,8 +89,6 @@ export interface SharedFilters {
   assignee_id: string;
   priority: IssuePriority | '';
   status: IssueStatus | '';
-  id_from: string;
-  id_to: string;
 }
 
 export interface IssueFilters {
@@ -104,8 +102,6 @@ export interface IssueFilters {
   sort?: IssueSortField;
   order?: SortOrder;
   search?: string;
-  id_from?: number | null;
-  id_to?: number | null;
 }
 
 export interface IssueUpsertDTO {

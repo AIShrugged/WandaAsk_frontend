@@ -188,8 +188,6 @@ export function IssuesPage({
       sort: f.sort,
       order: f.order,
       search: f.search || undefined,
-      id_from: f.id_from ? Number(f.id_from) : null,
-      id_to: f.id_to ? Number(f.id_to) : null,
     })
       .then(({ items, hasMore: more }) => {
         setFirstPage({ items, hasMore: more });
@@ -218,8 +216,6 @@ export function IssuesPage({
         sort: f.sort,
         order: f.order,
         search: f.search || undefined,
-        id_from: f.id_from ? Number(f.id_from) : null,
-        id_to: f.id_to ? Number(f.id_to) : null,
       });
     },
     [filtersVersion, sortField, sortOrder],

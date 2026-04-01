@@ -16,4 +16,6 @@ export interface MethodologyProps extends MethodologyDTO {
   id: number;
   is_default: boolean;
   teams: MethodologyTeam[];
+  scheme?: unknown | null;
+  scheme_version?: string | null;
 }
