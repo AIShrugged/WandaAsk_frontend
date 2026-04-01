@@ -53,7 +53,7 @@ export function DeleteOrganizationModal({
 
       toast.success(`"${org.name}" has been deleted`);
       onClose();
-      router.push(ROUTES.DASHBOARD.ORGANIZATION);
+      router.push(ROUTES.AUTH.ORGANIZATION);
     });
   };
 

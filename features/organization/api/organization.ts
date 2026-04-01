@@ -235,7 +235,7 @@ export async function deleteOrganization(
     const store = await cookies();
 
     store.delete('organization_id');
-    revalidatePath(ROUTES.DASHBOARD.ORGANIZATION);
+    revalidatePath(ROUTES.AUTH.ORGANIZATION);
 
     return { data: undefined, error: null };
   } catch (error) {
