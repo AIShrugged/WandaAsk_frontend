@@ -216,7 +216,7 @@ export async function selectOrganizationAction(formData: FormData) {
     maxAge: 60 * 60 * 24 * 7,
   });
 
-  redirect(ROUTES.DASHBOARD.MAIN);
+  redirect(ROUTES.DASHBOARD.MAIN_OVERVIEW);
 }
 
 /**

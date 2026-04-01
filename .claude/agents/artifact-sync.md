@@ -13,7 +13,7 @@ description:
   type.\"\n</example>\n\n<example>\nContext: User wants to verify frontend
   artifacts match backend schemas.\nuser: \"Check if our artifact types are
   still in sync with the backend\"\nassistant: \"I'll launch the artifact-sync
-  agent to audit all 6 artifact types.\"\n</example>"
+  agent to audit all 7 artifact types.\"\n</example>"
 model: sonnet
 color: orange
 ---
@@ -34,24 +34,25 @@ The frontend renders them.
 **Frontend renderers:**
 
 ```
-features/chat/ui/artifacts/
+entities/artifact/ui/
   task-table.tsx
   meeting-card.tsx
   people-list.tsx
   insight-card.tsx
   chart-artifact.tsx
   transcript-view.tsx
+  methodology-criteria.tsx
 
-features/chat/ui/artifact-panel.tsx   ← type dispatch / routing
-features/chat/types.ts                ← TypeScript interfaces
+features/chat/ui/artifact-panel.tsx   ← type dispatch / routing (imports from entities/artifact)
+entities/artifact/model/types.ts      ← TypeScript interfaces
 ```
 
 ## Your Workflow
 
 1. **Read the backend** — `CreateArtifactTool.php` to get all artifact types and
    their JSON schemas
-2. **Read the frontend** — `features/chat/types.ts` and each renderer in
-   `features/chat/ui/artifacts/`
+2. **Read the frontend** — `entities/artifact/model/types.ts` and each renderer
+   in `entities/artifact/ui/`
 3. **Read `artifact-panel.tsx`** — see which types are dispatched to which
    renderer
 4. **Identify gaps:**
@@ -64,14 +65,15 @@ features/chat/types.ts                ← TypeScript interfaces
 
 ## Artifact Type → Frontend Mapping
 
-| Backend `type`    | Frontend renderer     | TypeScript interface  |
-| ----------------- | --------------------- | --------------------- |
-| `task_table`      | `task-table.tsx`      | `TaskTableArtifact`   |
-| `meeting_card`    | `meeting-card.tsx`    | `MeetingCardArtifact` |
-| `people_list`     | `people-list.tsx`     | `PeopleListArtifact`  |
-| `insight_card`    | `insight-card.tsx`    | `InsightCardArtifact` |
-| `chart`           | `chart-artifact.tsx`  | `ChartArtifact`       |
-| `transcript_view` | `transcript-view.tsx` | `TranscriptArtifact`  |
+| Backend `type`         | Frontend renderer          | TypeScript interface          |
+| ---------------------- | -------------------------- | ----------------------------- |
+| `task_table`           | `task-table.tsx`           | `TaskTableArtifact`           |
+| `meeting_card`         | `meeting-card.tsx`         | `MeetingCardArtifact`         |
+| `people_list`          | `people-list.tsx`          | `PeopleListArtifact`          |
+| `insight_card`         | `insight-card.tsx`         | `InsightCardArtifact`         |
+| `chart`                | `chart-artifact.tsx`       | `ChartArtifact`               |
+| `transcript_view`      | `transcript-view.tsx`      | `TranscriptArtifact`          |
+| `methodology_criteria` | `methodology-criteria.tsx` | `MethodologyCriteriaArtifact` |
 
 ## Code Quality Rules
 
@@ -79,8 +81,8 @@ features/chat/types.ts                ← TypeScript interfaces
   schema
 - New renderers are `'use client'` (they render dynamic data)
 - Follow existing renderer patterns (props: `{ data: XxxData }`)
-- TypeScript union type `Artifact` in `features/chat/types.ts` must include all
-  types
+- TypeScript union type `Artifact` in `entities/artifact/model/types.ts` must
+  include all types
 - `artifact-panel.tsx` `switch` must handle all types with a default fallback
   for unknown types
 
@@ -93,7 +95,7 @@ After implementing any changes, run these checks in order:
 npx tsc --noEmit --incremental false 2>&1 | head -60
 
 # 2. ESLint — confirm new renderer files pass lint
-npx eslint features/chat/ui/artifacts/ features/chat/types.ts features/chat/ui/artifact-panel.tsx 2>&1 | head -60
+npx eslint entities/artifact/ui/ entities/artifact/model/types.ts features/chat/ui/artifact-panel.tsx 2>&1 | head -60
 ```
 
 If either check fails:

@@ -39,7 +39,10 @@ Server Actions.
 - **Coverage command:** `npm test -- --coverage --ci`
 - **Coverage thresholds:** branches: 20%, functions: 24%, lines: 23%,
   statements: 22%
-- **Current coverage:** ~39% statements / ~40% lines (as of March 2026)
+- **Current coverage:** ~40%+ statements (as of April 2026; ~158 suites / ~1107
+  tests). 1 SIGSEGV crash in
+  `features/calendar/ui/__tests__/detach-calendar-button.test.tsx` —
+  pre-existing, do not touch.
 
 ## Modes
 
