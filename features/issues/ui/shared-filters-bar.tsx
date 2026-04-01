@@ -68,6 +68,8 @@ export function SharedFiltersBar({
   showIdRange = false,
 }: SharedFiltersBarProps) {
   const [searchValue, setSearchValue] = useState(filters.search);
+  const [idFromValue, setIdFromValue] = useState(filters.id_from);
+  const [idToValue, setIdToValue] = useState(filters.id_to);
 
   // Debounce search: propagate 300ms after user stops typing
   useEffect(() => {
@@ -79,6 +81,28 @@ export function SharedFiltersBar({
       clearTimeout(timer);
     };
   }, [searchValue]);
+
+  // Debounce id_from: propagate 300ms after user stops typing
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      onChange({ id_from: idFromValue });
+    }, 300);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [idFromValue]);
+
+  // Debounce id_to: propagate 300ms after user stops typing
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      onChange({ id_to: idToValue });
+    }, 300);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [idToValue]);
 
   const personOptions = [
     { value: '', label: 'Any assignee' },
@@ -180,9 +204,9 @@ export function SharedFiltersBar({
               type='number'
               min={1}
               placeholder='from'
-              value={filters.id_from}
+              value={idFromValue}
               onChange={(e) => {
-                onChange({ id_from: e.target.value });
+                setIdFromValue(e.target.value);
               }}
               disabled={disabled}
               className='h-10 w-24 rounded-[var(--radius-button)] border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary'
@@ -192,9 +216,9 @@ export function SharedFiltersBar({
               type='number'
               min={1}
               placeholder='to'
-              value={filters.id_to}
+              value={idToValue}
               onChange={(e) => {
-                onChange({ id_to: e.target.value });
+                setIdToValue(e.target.value);
               }}
               disabled={disabled}
               className='h-10 w-24 rounded-[var(--radius-button)] border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary'
