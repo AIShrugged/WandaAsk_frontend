@@ -65,7 +65,7 @@ export default async function IssuesListPage({
   const sortParam =
     typeof params.sort === 'string' && isIssueSortField(params.sort)
       ? params.sort
-      : 'updated_at';
+      : 'created_at';
   const orderParam =
     typeof params.order === 'string' && isSortOrder(params.order)
       ? params.order

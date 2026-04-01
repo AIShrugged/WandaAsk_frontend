@@ -367,8 +367,8 @@ export function IssuesPage({
                   <th className='px-4 py-3'>Assignee</th>
                   <th className='px-4 py-3'>
                     <SortableHeader
-                      field='updated_at'
-                      label='Updated'
+                      field='created_at'
+                      label='Created'
                       currentSort={sortField}
                       currentOrder={sortOrder}
                       onSort={handleSort}
@@ -513,7 +513,7 @@ export function IssuesPage({
                         </div>
                       </td>
                       <td className='px-4 py-3 align-top text-muted-foreground'>
-                        {formatIssueDate(issue.updated_at)}
+                        {formatIssueDate(issue.created_at)}
                       </td>
                     </tr>
                   );
