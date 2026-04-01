@@ -24,6 +24,8 @@
 - `shared/ui/layout/skeleton.tsx` — `Skeleton`, `SkeletonList` components
 - `shared/ui/error/ErrorDisplay.tsx` — env-aware error display (dev: details,
   prod: generic)
+- `shared/lib/chart-theme.ts` — `CHART_TOOLTIP_STYLE`, `CHART_TICK_STYLE`,
+  `CHART_GRID_COLOR`, `CHART_CURSOR_BAR`, `CHART_CURSOR_LINE`
 
 ## API Call Pattern (Server Action)
 
@@ -50,10 +52,15 @@ export async function getSomeData() {
 - Use named chart color constants: primary green `hsl(142 47% 45%)`, blue
   `hsl(217 91% 60%)`, amber `hsl(45 93% 58%)`, red `hsl(0 84% 60%)`, violet
   `hsl(280 68% 60%)`
-- Standard tooltip style:
-  `{ background: 'hsl(0 0% 100%)', border: '1px solid hsl(240 5.9% 90%)', borderRadius: '6px', fontSize: 12 }`
-- Standard tick style: `{ fontSize: 11, fill: 'hsl(240 3.8% 46.1%)' }`
-- Grid color: `hsl(240 5.9% 90%)`
+- **Always import chart style constants from `shared/lib/chart-theme.ts`** —
+  never write inline style objects (causes `sonarjs/no-duplicate-string` lint
+  errors):
+  - `CHART_TOOLTIP_STYLE` — dark background `hsl(240 30% 7%)`, matches cosmic
+    dark theme
+  - `CHART_TICK_STYLE` — tick label style
+  - `CHART_GRID_COLOR` — grid line color
+  - `CHART_CURSOR_BAR` — cursor style for bar charts
+  - `CHART_CURSOR_LINE` — cursor style for line charts
 
 ## ESLint Rules (strict — zero warnings allowed)
 
@@ -83,7 +90,8 @@ export async function getSomeData() {
   - `api/summary.ts` — `getSummaryData()` →
     `GET /api/v1/organizations/:orgId/dashboard`
   - `types.ts` — `DashboardApiResponse` and all nested types
-  - `ui/SummaryHeader.tsx` — server component, date via date-fns/ru locale
+  - `ui/SummaryHeader.tsx` — server component, date formatted as English
+    (`format(new Date(), 'MMMM d, yyyy')`, no locale param)
   - `ui/MeetingStats.tsx` — client, BarChart monthly + table of last 10 meetings
   - `ui/TaskStats.tsx` — client, donut PieChart by status + overdue badge
   - `ui/FollowupStats.tsx` — client, donut PieChart by status

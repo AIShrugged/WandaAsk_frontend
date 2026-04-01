@@ -11,7 +11,6 @@ import {
   AgentActivityStatsBlock,
   NextMeetingPrepBlock,
 } from '@/features/main-dashboard';
-import { getSummaryData } from '@/features/summary/api/summary';
 
 export const metadata = { title: 'Dashboard' };
 
@@ -19,22 +18,20 @@ export const metadata = { title: 'Dashboard' };
  * Main dashboard overview tab page.
  */
 export default async function MainOverviewPage() {
-  const [
-    {
-      user,
-      todayEvents,
-      tomorrowEvents,
-      lastMeeting,
-      agentTasks,
-      summary,
-      agentStats,
-      recentAgentActivity,
-      agentActivityTotal,
-      canManageAgents,
-      upcomingAgenda,
-      latestMeetingTasks,
-    },
-  ] = await Promise.all([getMainDashboardData(), getSummaryData()]);
+  const {
+    user,
+    todayEvents,
+    tomorrowEvents,
+    lastMeeting,
+    agentTasks,
+    summary,
+    agentStats,
+    recentAgentActivity,
+    agentActivityTotal,
+    canManageAgents,
+    upcomingAgenda,
+    latestMeetingTasks,
+  } = await getMainDashboardData();
 
   return (
     <div className='flex flex-col gap-5 p-2'>

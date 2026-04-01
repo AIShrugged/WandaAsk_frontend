@@ -26,4 +26,9 @@ export type {
 export {
   ISSUE_TYPE_OPTIONS,
   isIssueStatus,
+  isIssueType,
+  isIssueSortField,
+  isSortOrder,
+  isIssuePriority,
+  VALID_SORT_FIELDS,
 } from '@/features/issues/model/types';

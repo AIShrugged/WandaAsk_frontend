@@ -194,23 +194,25 @@ npm run format       # Prettier format
 ## Architecture: Feature Sliced Design (FSD)
 
 ```
-src/
-  app/                # Next.js App Router — routing only, no business logic
-  features/           # Feature-sliced folders (auth/, etc.)
-    <feature>/
-      ui/             # React components, export via index
-      model/          # Business logic, state, DTO transformations, Zod schemas
-      api/            # Server Actions and API calls
-      hooks/          # Feature-specific hooks
-      types.ts        # Feature-specific types
-      index.ts        # Public API of the feature
-  entities/           # Domain entities
-  shared/             # Shared across features
-    ui/               # UI kit components (Button, Input, Checkbox, Toast)
-    lib/              # Utilities, helpers
-    api/              # Centralized API client
-  widgets/            # Composite components combining multiple features
-  styles/             # Global styles
+app/                # Next.js App Router — routing only, no business logic
+features/           # Feature-sliced folders (auth/, etc.)
+  <feature>/
+    ui/             # React components, export via index
+    model/          # Business logic, state, DTO transformations, Zod schemas
+    api/            # Server Actions and API calls
+    hooks/          # Feature-specific hooks
+    types.ts        # Feature-specific types
+    index.ts        # Public API of the feature
+entities/           # Domain entities
+shared/             # Shared across features
+  ui/               # UI kit components (Button, Input, Checkbox, Toast)
+  lib/              # Utilities, helpers
+  api/              # Centralized API client
+  store/            # Zustand store factories
+  hooks/            # Reusable hooks (use-modal, use-popup, use-infinite-scroll)
+  types/            # Shared TypeScript types (ActionResult, PaginatedResult)
+widgets/            # Composite components combining multiple features
+styles/             # Global styles
 ```
 
 **Key FSD rules:**
@@ -244,7 +246,8 @@ src/
 - `next.config.ts` — Next.js configuration (React Compiler enabled)
 - `postcss.config.mjs` — PostCSS with `@tailwindcss/postcss`
 - `eslint.config.mjs` / `.prettierrc` — linting and formatting rules
-- `tsconfig.json` — TypeScript strict mode, `@/*` path alias to `./src/*`
+- `tsconfig.json` — TypeScript strict mode, `@/*` path alias to `./*` (project
+  root, no `src/`)
 
 ## Conventions
 
@@ -255,8 +258,8 @@ src/
 - Maximize SSR: use Server Components by default, `'use client'` only where
   interactivity is required
 - Server Actions for data mutations; keep API calls server-side
-- Toast notifications via `useToast()` from `@/shared/ui` for network/server
-  errors
+- Toast notifications via `import { toast } from 'sonner'` — use
+  `toast.error(message)` / `toast.success(message)` for network/server errors
 
 ## API Layer Conventions (features/\*/api/)
 
@@ -405,8 +408,8 @@ Use these agents at the right stages. They are available via the `Agent` tool.
 4. **`fsd-boundary-guard`** — after adding or refactoring features, verify FSD
    import boundaries (cross-feature imports, missing index.ts, layer
    violations).
-5. **`compound-engineering:workflow:lint`** — before committing, run lint and
-   format checks on all changed Ruby/TS/ERB files.
+5. **`npm run lint:fix && npm run format`** — before committing, run lint
+   autofix and Prettier on changed TS files.
 
 ### After implementing
 

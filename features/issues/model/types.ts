@@ -65,6 +65,22 @@ export interface IssueAttachment {
 
 export type IssuePriority = 'low' | 'medium' | 'high' | 'critical';
 
+export const ISSUE_PRIORITY_VALUES: IssuePriority[] = [
+  'low',
+  'medium',
+  'high',
+  'critical',
+];
+
+/**
+ * isIssuePriority — type guard for IssuePriority.
+ * @param value - raw string.
+ * @returns boolean.
+ */
+export function isIssuePriority(value: string): value is IssuePriority {
+  return (ISSUE_PRIORITY_VALUES as string[]).includes(value);
+}
+
 export const ISSUE_PRIORITY_LABELS: Record<IssuePriority, string> = {
   low: 'Low',
   medium: 'Medium',
@@ -80,6 +96,44 @@ export type IssueSortField =
   | 'updated_at'
   | 'created_at';
 export type SortOrder = 'asc' | 'desc';
+
+export const VALID_SORT_FIELDS = new Set<IssueSortField>([
+  'id',
+  'name',
+  'type',
+  'status',
+  'updated_at',
+  'created_at',
+]);
+
+/**
+ * isIssueSortField — type guard for IssueSortField.
+ * @param value - raw string.
+ * @returns boolean.
+ */
+export function isIssueSortField(value: string): value is IssueSortField {
+  return VALID_SORT_FIELDS.has(value as IssueSortField);
+}
+
+/**
+ * isSortOrder — type guard for SortOrder.
+ * @param value - raw string.
+ * @returns boolean.
+ */
+export function isSortOrder(value: string): value is SortOrder {
+  return value === 'asc' || value === 'desc';
+}
+
+/**
+ * isIssueType — type guard for IssueType.
+ * @param value - raw string.
+ * @returns boolean.
+ */
+export function isIssueType(value: string): value is IssueType {
+  return ISSUE_TYPE_OPTIONS.some((option) => {
+    return option.value === value;
+  });
+}
 
 export interface SharedFilters {
   organization_id: string;
