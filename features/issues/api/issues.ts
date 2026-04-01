@@ -100,6 +100,8 @@ function buildIssuesQuery(filters: IssueFilters = {}) {
   if (filters.sort) params.set('sort', filters.sort);
   if (filters.order) params.set('order', filters.order);
   if (filters.search) params.set('search', filters.search);
+  if (filters.id_from) params.set('id_from', String(filters.id_from));
+  if (filters.id_to) params.set('id_to', String(filters.id_to));
 
   return params.toString();
 }
