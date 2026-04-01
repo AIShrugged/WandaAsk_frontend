@@ -78,6 +78,14 @@ export default async function IssuesListPage({
     typeof params.priority === 'string'
       ? (params.priority as IssuePriority)
       : '';
+  const idFromParam =
+    typeof params.id_from === 'string' && params.id_from.length > 0
+      ? params.id_from
+      : '';
+  const idToParam =
+    typeof params.id_to === 'string' && params.id_to.length > 0
+      ? params.id_to
+      : '';
 
   // Unified assignee_id param (replaces old split 'assignee' / 'assignee_id')
   // null → absent from URL → default to current user
@@ -130,6 +138,8 @@ export default async function IssuesListPage({
       typeof params.search === 'string' && params.search.length > 0
         ? params.search
         : undefined,
+    id_from: idFromParam ? Number(idFromParam) : null,
+    id_to: idToParam ? Number(idToParam) : null,
   });
 
   let initialAssigneeId: string;
@@ -159,6 +169,8 @@ export default async function IssuesListPage({
             assignee_id: initialAssigneeId,
             priority: priorityParam,
             status: statusParam,
+            id_from: idFromParam,
+            id_to: idToParam,
           }}
           initialSort={sortParam}
           initialOrder={orderParam}

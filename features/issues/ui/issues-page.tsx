@@ -188,6 +188,8 @@ export function IssuesPage({
       sort: f.sort,
       order: f.order,
       search: f.search || undefined,
+      id_from: f.id_from ? Number(f.id_from) : null,
+      id_to: f.id_to ? Number(f.id_to) : null,
     })
       .then(({ items, hasMore: more }) => {
         setFirstPage({ items, hasMore: more });
@@ -216,6 +218,8 @@ export function IssuesPage({
         sort: f.sort,
         order: f.order,
         search: f.search || undefined,
+        id_from: f.id_from ? Number(f.id_from) : null,
+        id_to: f.id_to ? Number(f.id_to) : null,
       });
     },
     [filtersVersion, sortField, sortOrder],
@@ -320,9 +324,18 @@ export function IssuesPage({
       ) : (
         <div className='overflow-hidden rounded-[var(--radius-card)] border border-border bg-card'>
           <div className='overflow-x-auto'>
-            <table className='w-full min-w-[920px] text-sm'>
+            <table className='w-full min-w-[980px] text-sm'>
               <thead className='bg-accent/30 text-left text-muted-foreground'>
                 <tr>
+                  <th className='px-4 py-3'>
+                    <SortableHeader
+                      field='id'
+                      label='ID'
+                      currentSort={sortField}
+                      currentOrder={sortOrder}
+                      onSort={handleSort}
+                    />
+                  </th>
                   <th className='px-4 py-3'>
                     <SortableHeader
                       field='name'
@@ -370,6 +383,9 @@ export function IssuesPage({
                       key={issue.id}
                       className='border-t border-border hover:bg-accent/20'
                     >
+                      <td className='px-4 py-3 align-top font-mono text-muted-foreground whitespace-nowrap'>
+                        #{issue.id}
+                      </td>
                       <td className='px-4 py-3 align-top'>
                         <Link
                           href={`${ROUTES.DASHBOARD.ISSUES}/${issue.id}`}
