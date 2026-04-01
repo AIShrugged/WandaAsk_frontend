@@ -27,5 +27,9 @@ export const ROUTES = {
     KANBAN: '/dashboard/kanban',
     DEBUG_LOGS: '/dashboard/debug-logs',
     MAIN: '/dashboard/main',
+    MAIN_OVERVIEW: '/dashboard/main/overview',
+    MAIN_STATISTICS: '/dashboard/main/statistics',
+    ISSUES_LIST: '/dashboard/issues/list',
+    ISSUES_KANBAN: '/dashboard/issues/kanban',
   },
 } as const;

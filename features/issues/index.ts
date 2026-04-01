@@ -16,4 +16,14 @@ export type {
   IssueFilters,
   IssueUpsertDTO,
   PersonOption,
+  SharedFilters,
+  IssueSortField,
+  SortOrder,
+  IssuePriority,
+  IssueType,
+  IssueStatus,
+} from '@/features/issues/model/types';
+export {
+  ISSUE_TYPE_OPTIONS,
+  isIssueStatus,
 } from '@/features/issues/model/types';
