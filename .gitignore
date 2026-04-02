@@ -18,6 +18,9 @@
 /out/
 .idea
 
+# swc compiler cache (auto-generated)
+.swc/
+
 # production
 /build
 

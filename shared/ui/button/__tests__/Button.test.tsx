@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { BUTTON_VARIANT } from '@/shared/types/button';
+import { BUTTON_SIZE, BUTTON_VARIANT } from '@/shared/types/button';
 import { Button } from '@/shared/ui/button/Button';
 
 describe('Button', () => {
@@ -79,5 +79,29 @@ describe('Button', () => {
   it('sets aria-disabled when loading', () => {
     render(<Button loading>Submit</Button>);
     expect(screen.getByRole('button')).toHaveAttribute('aria-disabled', 'true');
+  });
+
+  it('applies ghost-danger variant classes', () => {
+    render(<Button variant={BUTTON_VARIANT.ghostDanger}>Delete Org</Button>);
+    const btn = screen.getByRole('button');
+
+    expect(btn.className).toContain('border-destructive');
+    expect(btn.className).toContain('text-destructive');
+  });
+
+  it('applies sm size classes', () => {
+    render(<Button size={BUTTON_SIZE.sm}>Small</Button>);
+    const btn = screen.getByRole('button');
+
+    expect(btn.className).toContain('h-9');
+    expect(btn.className).toContain('px-4');
+  });
+
+  it('applies md size classes by default', () => {
+    render(<Button>Default</Button>);
+    const btn = screen.getByRole('button');
+
+    expect(btn.className).toContain('h-10');
+    expect(btn.className).toContain('px-6');
   });
 });
