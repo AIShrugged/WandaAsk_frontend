@@ -1,8 +1,7 @@
-import Link from 'next/link';
-
 import { HeroChatPreview } from '@/features/landing/ui/hero-chat-preview';
 import { HeroMascot } from '@/features/landing/ui/hero-mascot';
 import { HeroTyping } from '@/features/landing/ui/HeroTyping';
+import { ButtonLink } from '@/shared/ui/button/button-link';
 
 /**
  * Hero section with robot mascot, headline, CTA buttons, and mock chat card.
@@ -85,38 +84,20 @@ export function LandingHero() {
           flexWrap: 'wrap',
         }}
       >
-        <Link
+        <ButtonLink
           href='/auth/register'
-          className='tribes-glow-btn'
-          style={{
-            padding: '15px 36px',
-            borderRadius: '10px',
-            background: 'linear-gradient(135deg, #7c3aed, #8b5cf6)',
-            color: 'white',
-            fontSize: '16px',
-            fontWeight: 700,
-            textDecoration: 'none',
-            display: 'inline-block',
-          }}
+          variant='primary'
+          className='tribes-glow-btn text-base font-bold px-9 py-4 h-auto rounded-[10px]'
         >
           Start for Free →
-        </Link>
-        <Link
+        </ButtonLink>
+        <ButtonLink
           href='/auth/login'
-          style={{
-            padding: '15px 36px',
-            borderRadius: '10px',
-            border: '1px solid rgba(255,255,255,0.14)',
-            color: 'rgba(255,255,255,0.8)',
-            fontSize: '16px',
-            textDecoration: 'none',
-            display: 'inline-block',
-            backdropFilter: 'blur(8px)',
-            background: 'rgba(255,255,255,0.04)',
-          }}
+          variant='secondary'
+          className='text-base px-9 py-4 h-auto rounded-[10px] backdrop-blur-sm'
         >
           Sign In
-        </Link>
+        </ButtonLink>
       </div>
 
       <HeroChatPreview />

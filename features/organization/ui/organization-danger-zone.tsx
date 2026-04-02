@@ -4,6 +4,7 @@ import { Trash } from 'lucide-react';
 import { useState } from 'react';
 
 import { DeleteOrganizationModal } from '@/features/organization/ui/delete-organization-modal';
+import { Button } from '@/shared/ui/button/Button';
 
 import type { OrganizationProps } from '@/entities/organization';
 
@@ -31,16 +32,18 @@ export function OrganizationDangerZone({ org }: OrganizationDangerZoneProps) {
           </p>
         </div>
 
-        <button
+        <Button
           type='button'
+          variant='ghost-danger'
+          size='sm'
+          className='w-fit'
           onClick={() => {
             setIsModalOpen(true);
           }}
-          className='flex w-fit items-center gap-2 rounded-[var(--radius-button)] border border-destructive/50 bg-background px-3 py-1.5 text-sm font-medium text-destructive transition-colors hover:bg-destructive hover:text-destructive-foreground'
         >
           <Trash className='size-4' />
           Delete Organization
-        </button>
+        </Button>
       </div>
 
       <DeleteOrganizationModal

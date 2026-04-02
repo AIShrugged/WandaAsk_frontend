@@ -114,6 +114,71 @@ memory: project
 - `cosmic-float` — плавание элементов
 - `cosmic-glow-pulse` — пульсация свечения
 
+## Система кнопок (Button System)
+
+### Правило #1 — Никаких inline кнопок
+
+**Никогда** не создавай `<button>` или `<Link>` с inline стилями или custom
+классами вместо кнопки. Всегда используй компонент из `shared/ui/button/`.
+
+```ts
+// ❌ Запрещено
+<button className='rounded-md bg-destructive text-white px-3 py-1.5'>Delete</button>
+<Link href='/' style={{ background: '#7c3aed', padding: '15px 36px' }}>Start</Link>
+
+// ✅ Правильно
+<Button variant='danger'>Delete</Button>
+<ButtonLink href='/' variant='primary'>Start</ButtonLink>
+```
+
+### Компоненты кнопок
+
+| Компонент     | Файл                                | Когда использовать                                                        |
+| ------------- | ----------------------------------- | ------------------------------------------------------------------------- |
+| `Button`      | `shared/ui/button/Button.tsx`       | Любая кнопка с текстом/иконкой — форма, модальное окно, основные действия |
+| `ButtonLink`  | `shared/ui/button/button-link.tsx`  | Ссылка, стилизованная как кнопка — CTA, навигация, auth                   |
+| `ButtonIcon`  | `shared/ui/button/button-icon.tsx`  | Иконка без текста — редактировать, удалить, открыть                       |
+| `ButtonClose` | `shared/ui/button/button-close.tsx` | Закрытие модального окна/панели                                           |
+| `ButtonBack`  | `shared/ui/button/button-back.tsx`  | Кнопка назад (router.back())                                              |
+| `ButtonCopy`  | `shared/ui/button/button-copy.tsx`  | Копировать в буфер обмена                                                 |
+
+Импортируй из `@/shared/ui/button/<ComponentName>` или из `@/shared/ui/button`
+(index.ts).
+
+### Варианты (ButtonVariant)
+
+| Вариант             | Когда использовать                            | Визуал                                             |
+| ------------------- | --------------------------------------------- | -------------------------------------------------- |
+| `primary` (default) | Главное действие, submit форм                 | Фиолетовый градиент, тень-glow                     |
+| `secondary`         | Отмена, второстепенные действия               | Прозрачный с border                                |
+| `danger`            | Удаление с заполненным фоном                  | Красный фон                                        |
+| `ghost-danger`      | Danger zone, деструктивное действие с outline | Прозрачный с красным border, заполняется при hover |
+
+### Размеры (ButtonSize)
+
+| Размер         | Высота | Padding       | Когда                                       |
+| -------------- | ------ | ------------- | ------------------------------------------- |
+| `md` (default) | `h-10` | `px-6 py-2`   | Основные кнопки в формах, модальных окнах   |
+| `sm`           | `h-9`  | `px-4 py-1.5` | Компактные контексты — danger zone, toolbar |
+
+### Известные исключения (документированные)
+
+Следующие паттерны **намеренно** не используют Button компоненты:
+
+1. **Hamburger button** (`widgets/layout/ui/mobile-sidebar.tsx`) — требует
+   `aria-controls`, `aria-expanded`, специфические breakpoint-классы `lg:hidden`
+2. **Chat send button** (`features/chat/ui/chat-input.tsx`) — квадратная
+   `w-8 h-8` иконка с `bg-primary` заливкой, не совпадает ни с одним вариантом
+3. **Chat "New" / "Telegram" mini-links** (`features/chat/ui/chat-list.tsx`) —
+   текст+иконка в сайдбаре, намеренно маленькие (`text-xs`), без фона
+4. **Calendar detach confirmation**
+   (`features/calendar/ui/detach-calendar-button.tsx`) — inline текстовые кнопки
+   Yes/Cancel в подтверждении, hover-underline паттерн
+5. **Export button** (`features/follow-up/ui/export-button.tsx`) — требует `ref`
+   для DOM-позиционирования dropdown портала; Button не поддерживает forwardRef
+6. **Chat suggestion chips** (`features/chat/ui/chat-suggestions.tsx`) —
+   карточный стиль (не кнопочный), намеренно card-like
+
 ### Текущее состояние компонентов
 
 **Button (primary):**
@@ -123,6 +188,17 @@ memory: project
 - `shadow-[0_2px_12px_rgba(124,58,237,0.25)]`
 - Hover: светлее gradient + `shadow-[0_4px_20px_rgba(124,58,237,0.5)]`
 - Active: темнее + слабее shadow
+
+**Button (ghost-danger):**
+
+- `border border-destructive/50 bg-background text-destructive`
+- Hover: `bg-destructive text-destructive-foreground`
+- Active: `bg-destructive/90`
+
+**ButtonLink:**
+
+- Те же варианты что и Button, рендерит `<Link>` вместо `<button>`
+- Prop `external={true}` → `target="_blank" rel="noopener noreferrer"`
 
 **ButtonIcon (primary):**
 
