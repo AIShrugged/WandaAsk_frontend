@@ -3,8 +3,8 @@ import { redirect } from 'next/navigation';
 import { ROUTES } from '@/shared/lib/routes';
 
 /**
- * Legacy route — redirect to the new Debug → Logs tab.
+ * /dashboard/debug → redirect to the Logs tab.
  */
-export default function DebugLogsRedirect() {
+export default function DebugPage() {
   redirect(ROUTES.DASHBOARD.DEBUG_LOGS);
 }
