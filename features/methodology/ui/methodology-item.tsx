@@ -41,7 +41,10 @@ export default function MethodologyItem({
             )}
           </div>
           {teams.length > 0 && (
-            <div className='flex flex-wrap gap-1.5'>
+            <div className='flex items-center gap-2 flex-wrap'>
+              <span className='text-xs text-muted-foreground'>
+                Attached teams:
+              </span>
               {teams.map((team) => {
                 return (
                   <span
