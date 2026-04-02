@@ -1,74 +1,40 @@
 import {
   getMainDashboardData,
-  GreetingBlock,
-  MeetingsDayBlock,
-  LastMeetingBlock,
+  MeetingsBlock,
+  UpcomingAgendasBlock,
+  IssuesBlock,
   AgentTasksBlock,
-  KpiOverviewBlock,
-  ChartsBlockLoader,
-  AgentRecommendationsBlock,
-  TopParticipantsBlock,
-  AgentActivityStatsBlock,
-  NextMeetingPrepBlock,
 } from '@/features/main-dashboard';
 
-export const metadata = { title: 'Dashboard' };
+export const metadata = { title: 'Overview' };
 
 /**
  * Main dashboard overview tab page.
  */
 export default async function MainOverviewPage() {
   const {
-    user,
     todayEvents,
     tomorrowEvents,
-    lastMeeting,
+    pastEvents,
     agentTasks,
-    summary,
-    agentStats,
-    recentAgentActivity,
-    agentActivityTotal,
     canManageAgents,
-    upcomingAgenda,
-    latestMeetingTasks,
+    agendas,
+    issues,
   } = await getMainDashboardData();
 
   return (
     <div className='flex flex-col gap-5 p-2'>
-      <GreetingBlock name={user?.name ?? null} />
-
-      {summary && <KpiOverviewBlock summary={summary} />}
-
-      <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
-        <MeetingsDayBlock title='Today' events={todayEvents} />
-        <MeetingsDayBlock title='Tomorrow' events={tomorrowEvents} />
-      </div>
-
-      <div className='grid grid-cols-1 gap-4 lg:grid-cols-2'>
-        <LastMeetingBlock meeting={lastMeeting} />
-        <AgentRecommendationsBlock summary={summary} agentTasks={agentTasks} />
-      </div>
-
-      {summary && <ChartsBlockLoader summary={summary} />}
-
-      <NextMeetingPrepBlock
-        agenda={upcomingAgenda}
-        latestTasks={latestMeetingTasks}
+      <MeetingsBlock
+        todayEvents={todayEvents}
+        tomorrowEvents={tomorrowEvents}
+        pastEvents={pastEvents}
       />
 
-      <div className='grid grid-cols-1 gap-4 lg:grid-cols-2'>
-        <AgentTasksBlock tasks={agentTasks} />
-        {summary && (
-          <TopParticipantsBlock participants={summary.participants.top} />
-        )}
-      </div>
+      <UpcomingAgendasBlock agendas={agendas} />
 
-      <AgentActivityStatsBlock
-        stats={agentStats}
-        recentActivity={recentAgentActivity}
-        activityTotal={agentActivityTotal}
-        canManageAgents={canManageAgents}
-      />
+      <IssuesBlock issues={issues} />
+
+      <AgentTasksBlock tasks={agentTasks} canManageAgents={canManageAgents} />
     </div>
   );
 }
