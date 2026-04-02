@@ -1,27 +1,15 @@
 import type { EventProps } from '@/entities/event';
-import type {
-  AgentActivityItem,
-  AgentTask,
-} from '@/features/agents/model/types';
-import type { AgentStats } from '@/features/main-dashboard/lib/derive-agent-stats';
-import type {
-  LatestMeetingTasksData,
-  UpcomingAgenda,
-} from '@/features/main-dashboard/model/upcoming-agenda-types';
-import type { DashboardApiResponse } from '@/features/summary/types';
-export type { AgentStats } from '@/features/main-dashboard/lib/derive-agent-stats';
+import type { AgentTask } from '@/features/agents/model/types';
+import type { Issue } from '@/features/issues/model/types';
+import type { MeetingAgenda } from '@/features/main-dashboard/model/agenda-types';
 
 export interface MainDashboardData {
   user: { id: number; name: string; email: string } | null;
   todayEvents: EventProps[];
   tomorrowEvents: EventProps[];
-  lastMeeting: EventProps | null;
+  pastEvents: EventProps[];
   agentTasks: AgentTask[];
-  summary: DashboardApiResponse | null;
-  agentStats: AgentStats;
-  recentAgentActivity: AgentActivityItem[];
-  agentActivityTotal: number;
   canManageAgents: boolean;
-  upcomingAgenda: UpcomingAgenda | null;
-  latestMeetingTasks: LatestMeetingTasksData;
+  agendas: MeetingAgenda[];
+  issues: Issue[];
 }

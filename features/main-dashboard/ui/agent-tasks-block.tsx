@@ -1,5 +1,5 @@
 import { format, parseISO } from 'date-fns';
-import { Bot, ChevronRight, Zap } from 'lucide-react';
+import { Bot, ChevronRight, Clock, Zap } from 'lucide-react';
 import Link from 'next/link';
 
 import { ROUTES } from '@/shared/lib/routes';
@@ -20,11 +20,19 @@ const RUN_STATUS_VARIANT: Record<
 };
 
 /**
- * AgentTasksBlock — shows recent agent tasks with their run status.
+ * AgentTasksBlock — shows recent agent tasks with their run status,
+ * plus a "Pending Approvals" section for agent questions awaiting user action.
  * @param root0
  * @param root0.tasks
+ * @param root0.canManageAgents
  */
-export function AgentTasksBlock({ tasks }: { tasks: AgentTask[] }) {
+export function AgentTasksBlock({
+  tasks,
+  canManageAgents,
+}: {
+  tasks: AgentTask[];
+  canManageAgents: boolean;
+}) {
   const displayed = tasks.slice(0, 6);
 
   return (
@@ -36,13 +44,30 @@ export function AgentTasksBlock({ tasks }: { tasks: AgentTask[] }) {
             Agent Tasks
           </h2>
         </div>
-        <Link
-          href={ROUTES.DASHBOARD.AGENT_TASKS}
-          className='text-xs text-primary hover:underline'
-        >
-          View all
-        </Link>
+        {canManageAgents && (
+          <Link
+            href={ROUTES.DASHBOARD.AGENT_TASKS}
+            className='text-xs text-primary hover:underline'
+          >
+            View all
+          </Link>
+        )}
       </div>
+
+      {/* Pending Approvals sub-section */}
+      {/* Pending approvals: wire to backend approval API once contract is defined. */}
+      {/* Backend gap: AgentTaskRun has no "awaiting_approval" status; handoff field is unknown type. */}
+      <div className='px-5 pt-4 pb-2 border-b border-border/50'>
+        <p className='text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3'>
+          Pending Approvals
+        </p>
+        <div className='flex items-center gap-2 py-2'>
+          <Clock className='h-4 w-4 text-muted-foreground/50' />
+          <p className='text-sm text-muted-foreground'>No pending approvals</p>
+        </div>
+      </div>
+
+      {/* Agent tasks list */}
       <div className='px-5'>
         {displayed.length === 0 ? (
           <p className='py-4 text-sm text-muted-foreground text-center'>

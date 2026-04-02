@@ -1,12 +1,6 @@
 export { getMainDashboardData } from './api/main-dashboard';
-export { GreetingBlock } from './ui/greeting-block';
-export { MeetingsDayBlock } from './ui/meetings-today-block';
-export { LastMeetingBlock } from './ui/last-meeting-block';
+export { MeetingsBlock } from './ui/meetings-block';
 export { AgentTasksBlock } from './ui/agent-tasks-block';
-export { KpiOverviewBlock } from './ui/kpi-overview-block';
-export { ChartsBlockLoader } from './ui/charts-block-loader';
-export { AgentRecommendationsBlock } from './ui/agent-recommendations-block';
-export { TopParticipantsBlock } from './ui/top-participants-block';
+export { IssuesBlock } from './ui/issues-block';
+export { UpcomingAgendasBlock } from './ui/upcoming-agendas-block';
 export { DashboardTabsNav } from './ui/dashboard-tabs-nav';
-export { AgentActivityStatsBlock } from './ui/agent-activity-stats-block';
-export { NextMeetingPrepBlock } from './ui/next-meeting-prep-block';
