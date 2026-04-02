@@ -84,10 +84,11 @@ export function getMenuItems({
 
   if (isDev) {
     items.push({
-      id: 'debug-logs',
-      label: 'Debug Logs',
+      id: 'debug',
+      label: 'Debug',
       icon: 'terminal',
-      href: ROUTES.DASHBOARD.DEBUG_LOGS,
+      href: ROUTES.DASHBOARD.DEBUG,
+      activeHref: ROUTES.DASHBOARD.DEBUG,
       position: 10_000,
     });
   }
