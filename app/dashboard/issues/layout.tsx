@@ -1,6 +1,7 @@
 import { getPersons } from '@/features/issues';
 import { IssuesLayoutClient } from '@/features/issues/ui/issues-layout-client';
 import { getOrganizations } from '@/features/organization/api/organization';
+import { getCurrentUserId } from '@/shared/lib/getCurrentUserId';
 import Card from '@/shared/ui/card/Card';
 import PageHeader from '@/widgets/layout/ui/page-header';
 
@@ -14,9 +15,10 @@ export default async function IssuesLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [organizationsResponse, persons] = await Promise.all([
+  const [organizationsResponse, persons, currentUserId] = await Promise.all([
     getOrganizations(),
     getPersons(),
+    getCurrentUserId(),
   ]);
 
   return (
@@ -26,6 +28,7 @@ export default async function IssuesLayout({
         <IssuesLayoutClient
           organizations={organizationsResponse.data ?? []}
           persons={persons}
+          currentUserId={currentUserId ?? null}
         >
           {children}
         </IssuesLayoutClient>

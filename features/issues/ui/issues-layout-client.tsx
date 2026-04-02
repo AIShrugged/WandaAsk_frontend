@@ -24,6 +24,7 @@ import type {
 interface IssuesLayoutClientProps {
   organizations: OrganizationProps[];
   persons: PersonOption[];
+  currentUserId: number | null;
   children: React.ReactNode;
 }
 
@@ -61,23 +62,28 @@ function isIssueType(value: string): value is IssueType {
 export function IssuesLayoutClient({
   organizations,
   persons,
+  currentUserId,
   children,
 }: IssuesLayoutClientProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  // Lazy state init from URL params — runs only on first render
+  // Lazy state init from URL params — runs only on first render.
+  // When assignee_id is absent from URL, default to the current user.
   const [initialFilters] = useState<SharedFilters>(() => {
     const statusRaw = searchParams.get('status') ?? '';
     const typeRaw = searchParams.get('type') ?? '';
+    const assigneeIdRaw = searchParams.has('assignee_id')
+      ? (searchParams.get('assignee_id') ?? '')
+      : (currentUserId?.toString() ?? '');
 
     return {
       organization_id: searchParams.get('organization_id') ?? '',
       team_id: searchParams.get('team_id') ?? '',
       search: searchParams.get('search') ?? '',
       type: isIssueType(typeRaw) ? typeRaw : '',
-      assignee_id: searchParams.get('assignee_id') ?? '',
+      assignee_id: assigneeIdRaw,
       priority: (searchParams.get('priority') ?? '') as IssuePriority | '',
       status: isIssueStatus(statusRaw) ? statusRaw : '',
     };
@@ -101,7 +107,7 @@ export function IssuesLayoutClient({
   const [columnsVersion, setColumnsVersion] = useState(0);
   const isFirstFiltersRender = useRef(true);
 
-  // On mount: remove any stale legacy params
+  // On mount: remove stale legacy params and write default assignee_id if absent.
   useEffect(() => {
     const current = new URLSearchParams(searchParams.toString());
     let dirty = false;
@@ -111,6 +117,11 @@ export function IssuesLayoutClient({
         current.delete(stale);
         dirty = true;
       }
+    }
+
+    if (!searchParams.has('assignee_id') && currentUserId !== null) {
+      current.set('assignee_id', String(currentUserId));
+      dirty = true;
     }
 
     if (dirty) {
