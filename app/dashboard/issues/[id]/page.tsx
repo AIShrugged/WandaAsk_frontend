@@ -46,38 +46,40 @@ export default async function IssueDetailPage({
     ]);
 
   return (
-    <div className='grid h-full gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]'>
-      <div className='flex flex-col gap-6'>
-        <Card className='flex flex-col'>
-          <PageHeader hasButtonBack title='Issue' />
-          <div className='overflow-y-auto'>
-            <CardBody>
-              <IssueForm
-                issue={issue}
-                organizations={organizationsResponse.data ?? []}
-                persons={persons}
-                hideStatusField
-              />
-            </CardBody>
-          </div>
-        </Card>
-        <IssueLinkedTask issue={issue} />
-      </div>
+    <div className='h-full overflow-y-auto'>
+      <div className='grid min-h-full gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]'>
+        <div className='flex flex-col gap-6'>
+          <Card className='flex flex-col'>
+            <PageHeader hasButtonBack title='Issue' />
+            <div className='overflow-y-auto'>
+              <CardBody>
+                <IssueForm
+                  issue={issue}
+                  organizations={organizationsResponse.data ?? []}
+                  persons={persons}
+                  hideStatusField
+                />
+              </CardBody>
+            </div>
+          </Card>
+          <IssueLinkedTask issue={issue} />
+        </div>
 
-      <div className='flex h-full flex-col gap-6'>
-        <IssueOverviewPanel issue={issue} />
+        <div className='flex h-full flex-col gap-6'>
+          <IssueOverviewPanel issue={issue} />
 
-        <Card className='h-full flex flex-col'>
-          <PageHeader title='Attachments' />
-          <div className='h-full overflow-y-auto'>
-            <CardBody>
-              <IssueAttachments
-                issueId={issueId}
-                initialAttachments={attachments}
-              />
-            </CardBody>
-          </div>
-        </Card>
+          <Card className='h-full flex flex-col'>
+            <PageHeader title='Attachments' />
+            <div className='h-full overflow-y-auto'>
+              <CardBody>
+                <IssueAttachments
+                  issueId={issueId}
+                  initialAttachments={attachments}
+                />
+              </CardBody>
+            </div>
+          </Card>
+        </div>
       </div>
     </div>
   );
