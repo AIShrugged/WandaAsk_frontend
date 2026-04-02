@@ -21,13 +21,17 @@ export async function getLatestMeetingTasks(): Promise<LatestMeetingTasksData> {
     `${API_URL}/me/latest-tasks`,
   );
 
-  return (
-    result.data ?? {
-      meeting_title: null,
-      meeting_date: null,
-      meeting_id: null,
-      tasks: [],
-      other_tasks: [],
-    }
-  );
+  const data = result.data ?? {
+    meeting_title: null,
+    meeting_date: null,
+    meeting_id: null,
+    tasks: [],
+    other_tasks: [],
+  };
+
+  return {
+    ...data,
+    tasks: data.tasks ?? [],
+    other_tasks: data.other_tasks ?? [],
+  };
 }
