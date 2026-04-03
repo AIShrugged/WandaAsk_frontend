@@ -1,4 +1,4 @@
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { IssuesPage } from '@/features/issues/ui/issues-page';
@@ -294,8 +294,8 @@ describe('IssuesPage', () => {
     });
 
     renderPage([makeIssue()]);
-    // InfiniteScrollStatus typically renders "Showing N items" or similar
-    expect(screen.getByText(/1/)).toBeInTheDocument();
+    // InfiniteScrollStatus renders "Loaded: N items"
+    expect(screen.getByText(/Loaded:\s*1\s*items/)).toBeInTheDocument();
   });
 
   it('shows spinner when isLoading is true', () => {
@@ -352,7 +352,7 @@ describe('IssuesPage', () => {
     // second "Change" button belongs to the assignee cell
     await userEvent.click(changeButtons.at(-1));
 
-    expect(screen.getByText('Assignee')).toBeInTheDocument();
+    expect(screen.getAllByText('Assignee').at(-1)).toBeInTheDocument();
   });
 
   // ── updateIssue inline ──────────────────────────────────────────────────────
@@ -371,26 +371,24 @@ describe('IssuesPage', () => {
     const changeButtons = screen.getAllByText('Change');
     await userEvent.click(changeButtons[0]);
 
-    // Select a new status from the InputDropdown
-    const options = screen.getAllByRole('option');
+    // InputDropdown renders a combobox - click to open dropdown
+    const combobox = screen.getByRole('combobox');
+    await userEvent.click(combobox);
+
+    // Now options should be visible with role='option' inside role='listbox'
+    const listbox = screen.getByRole('listbox');
+    expect(listbox).toBeInTheDocument();
+
+    const options = within(listbox).getAllByRole('option');
     if (options.length > 0) {
       await act(async () => {
         await userEvent.click(options[0]);
       });
-    } else {
-      // InputDropdown may render as custom UI — trigger change via select if present
-      const selects = document.querySelectorAll('select');
-      if (selects.length > 0) {
-        await act(async () => {
-          await userEvent.selectOptions(selects[0], 'done');
-        });
-      }
     }
 
     await waitFor(() => {
-      if (mockUpdateIssue.mock.calls.length > 0) {
-        expect(toast.success).toHaveBeenCalledWith('Issue updated');
-      }
+      expect(mockUpdateIssue).toHaveBeenCalled();
+      expect(toast.success).toHaveBeenCalledWith('Issue updated');
     });
   });
 
