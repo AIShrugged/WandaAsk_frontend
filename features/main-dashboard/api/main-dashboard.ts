@@ -20,21 +20,14 @@ export async function getMainDashboardData(): Promise<MainDashboardData> {
     agentTasksResult,
     accessResult,
     agendasResult,
-    openIssuesResult,
-    inProgressIssuesResult,
+    allIssuesResult,
   ] = await Promise.allSettled([
     getUser(),
     getEvents(),
     getAgentTasks(),
     getAgentAccessContext(),
     getMyAgendas(),
-    getIssues({ status: 'open', sort: 'created_at', order: 'desc', limit: 20 }),
-    getIssues({
-      status: 'in_progress',
-      sort: 'created_at',
-      order: 'desc',
-      limit: 20,
-    }),
+    getIssues({ sort: 'created_at', order: 'desc', limit: 100 }),
   ]);
 
   const user = userResult.status === 'fulfilled' ? userResult.value.data : null;
@@ -48,17 +41,19 @@ export async function getMainDashboardData(): Promise<MainDashboardData> {
       : false;
   const agendas =
     agendasResult.status === 'fulfilled' ? agendasResult.value : [];
-  const openIssues =
-    openIssuesResult.status === 'fulfilled' ? openIssuesResult.value.data : [];
-  const inProgressIssues =
-    inProgressIssuesResult.status === 'fulfilled'
-      ? inProgressIssuesResult.value.data
-      : [];
+  const allIssues =
+    allIssuesResult.status === 'fulfilled' ? allIssuesResult.value.data : [];
 
-  // Merge and sort open + in_progress issues by created_at desc
-  const issues = [...openIssues, ...inProgressIssues].toSorted((a, b) => {
-    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-  });
+  // Filter out 'done' status and sort by created_at desc
+  const issues = allIssues
+    .filter((issue) => {
+      return issue.status !== 'done';
+    })
+    .toSorted((a, b) => {
+      return (
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+    });
 
   const now = new Date();
   const todayStr = now.toISOString().slice(0, 10);

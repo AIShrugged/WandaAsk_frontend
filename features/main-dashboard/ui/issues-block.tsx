@@ -19,11 +19,15 @@ const STATUS_VARIANT: Record<
 > = {
   open: 'default',
   in_progress: 'warning',
+  paused: 'destructive',
+  done: 'success',
 };
 
 const STATUS_LABEL: Record<string, string> = {
   open: 'Open',
   in_progress: 'In Progress',
+  paused: 'Paused',
+  done: 'Done',
 };
 
 const ISSUES_CAP = 10;
@@ -62,17 +66,6 @@ export function IssuesBlock({ issues }: IssuesBlockProps) {
               </h2>
             </div>
           </div>
-          <div className='flex items-center gap-3'>
-            <span className='text-xs text-muted-foreground'>
-              Open &amp; In Progress · Newest first
-            </span>
-            <Link
-              href={ROUTES.DASHBOARD.ISSUES}
-              className='text-xs text-primary hover:underline'
-            >
-              View all
-            </Link>
-          </div>
         </div>
 
         {/* Issue stats deferred: pending GET /api/v1/issues/stats backend endpoint. */}
@@ -81,7 +74,7 @@ export function IssuesBlock({ issues }: IssuesBlockProps) {
         <div className='px-5'>
           {displayed.length === 0 ? (
             <p className='py-8 text-sm text-muted-foreground text-center'>
-              No open or in-progress issues
+              No issues
             </p>
           ) : (
             displayed.map((issue) => {
