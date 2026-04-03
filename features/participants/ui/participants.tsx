@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { ParticipantList } from '@/features/participants/ui/participant-list';
-import ParticipantsTitle from '@/features/participants/ui/participants-title';
+import { ParticipantList } from '@/shared/ui/participant/participant-list';
+import ParticipantsTitle from '@/shared/ui/participant/participants-title';
 
 import type { AttendeeProps, GuestProps } from '@/entities/participant';
 

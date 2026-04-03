@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 
-import ParticipantData from '@/features/participants/ui/participant-data';
+import ParticipantData from '@/shared/ui/participant/participant-data';
 
 import type { AttendeeProps, GuestProps } from '@/entities/participant';
 
@@ -17,7 +17,7 @@ jest.mock('@/features/participants/ui/participants', () => {
   };
 });
 
-jest.mock('@/features/participants/ui/participant-matcher', () => {
+jest.mock('@/shared/ui/participant/participant-matcher', () => {
   return {
     __esModule: true,
     default: ({ eventId }: { eventId: number }) => {

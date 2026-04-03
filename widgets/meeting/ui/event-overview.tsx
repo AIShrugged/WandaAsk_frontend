@@ -3,7 +3,7 @@ import {
   getAttendees,
   getGuests,
 } from '@/features/participants/api/participants';
-import ParticipantData from '@/features/participants/ui/participant-data';
+import ParticipantData from '@/shared/ui/participant/participant-data';
 
 import type { EventProps } from '@/entities/event';
 

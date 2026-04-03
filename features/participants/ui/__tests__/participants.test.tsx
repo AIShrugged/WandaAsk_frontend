@@ -1,13 +1,13 @@
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 
-import ParticipantMatcher from '@/features/participants/ui/participant-matcher';
 import Participants from '@/features/participants/ui/participants';
+import ParticipantMatcher from '@/shared/ui/participant/participant-matcher';
 
 import type { AttendeeProps, GuestProps } from '@/entities/participant';
 
 // Stub sub-components to keep tests focused on the composition
-jest.mock('@/features/participants/ui/participants-title', () => {
+jest.mock('@/shared/ui/participant/participants-title', () => {
   return {
     __esModule: true,
     default: ({ children }: { children: React.ReactNode }) => {
@@ -16,7 +16,7 @@ jest.mock('@/features/participants/ui/participants-title', () => {
   };
 });
 
-jest.mock('@/features/participants/ui/participant-list', () => {
+jest.mock('@/shared/ui/participant/participant-list', () => {
   return {
     ParticipantList: ({ data }: { data: unknown[] }) => {
       return (
@@ -30,7 +30,7 @@ jest.mock('@/features/participants/ui/participant-list', () => {
   };
 });
 
-jest.mock('@/features/participants/ui/participant-matching', () => {
+jest.mock('@/shared/ui/participant/participant-matching', () => {
   return {
     __esModule: true,
     default: ({

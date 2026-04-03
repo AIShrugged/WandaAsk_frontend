@@ -59,7 +59,7 @@ jest.mock('@/shared/ui/input/InputDropdown', () => {
 });
 
 import { setProfile } from '@/features/participants/api/participants';
-import ParticipantMatching from '@/features/participants/ui/participant-matching';
+import ParticipantMatching from '@/shared/ui/participant/participant-matching';
 
 import type { AttendeeProps, GuestProps } from '@/entities/participant';
 

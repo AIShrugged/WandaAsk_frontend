@@ -23,7 +23,7 @@ jest.mock('@/features/event/ui/event-summary', () => {
   };
 });
 
-jest.mock('@/features/participants/ui/participant-data', () => {
+jest.mock('@/shared/ui/participant/participant-data', () => {
   return {
     __esModule: true,
     default: ({

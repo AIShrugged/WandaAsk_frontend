@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 
-import { ParticipantList } from '@/features/participants/ui/participant-list';
+import { ParticipantList } from '@/shared/ui/participant/participant-list';
 
 import type { AttendeeProps, GuestProps } from '@/entities/participant';
 
