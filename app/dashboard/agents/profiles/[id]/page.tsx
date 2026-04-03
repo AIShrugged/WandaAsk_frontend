@@ -8,6 +8,7 @@ import {
 import { getAgentAccessContext } from '@/features/agents/lib/access';
 import {
   formatDateTime,
+  normalizeAllowedTools,
   normalizeMetaOptions,
   normalizeToolOptions,
 } from '@/features/agents/lib/format';
@@ -100,7 +101,7 @@ export default async function AgentProfileDetailPage({
                 {formatDateTime(profile.updated_at)}
               </p>
               <div className='flex flex-wrap gap-2'>
-                {(profile.allowed_tools ?? []).map((tool) => {
+                {normalizeAllowedTools(profile.allowed_tools).map((tool) => {
                   return <Badge key={tool}>{tool}</Badge>;
                 })}
               </div>

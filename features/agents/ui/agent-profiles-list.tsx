@@ -1,6 +1,9 @@
 import Link from 'next/link';
 
-import { formatDateTime } from '@/features/agents/lib/format';
+import {
+  formatDateTime,
+  normalizeAllowedTools,
+} from '@/features/agents/lib/format';
 import { ROUTES } from '@/shared/lib/routes';
 import { Badge } from '@/shared/ui/badge';
 
@@ -35,7 +38,7 @@ export function AgentProfilesList({ profiles }: { profiles: AgentProfile[] }) {
                 </p>
               )}
               <div className='mt-2 flex flex-wrap gap-1.5'>
-                {(profile.allowed_tools ?? []).map((tool) => {
+                {normalizeAllowedTools(profile.allowed_tools).map((tool) => {
                   return <Badge key={tool}>{tool}</Badge>;
                 })}
               </div>
@@ -91,10 +94,13 @@ export function AgentProfilesList({ profiles }: { profiles: AgentProfile[] }) {
                   </td>
                   <td className='px-4 py-3'>
                     <div className='flex flex-wrap gap-2'>
-                      {(profile.allowed_tools ?? []).length > 0 ? (
-                        profile.allowed_tools?.map((tool) => {
-                          return <Badge key={tool}>{tool}</Badge>;
-                        })
+                      {normalizeAllowedTools(profile.allowed_tools).length >
+                      0 ? (
+                        normalizeAllowedTools(profile.allowed_tools).map(
+                          (tool) => {
+                            return <Badge key={tool}>{tool}</Badge>;
+                          },
+                        )
                       ) : (
                         <span className='text-muted-foreground'>—</span>
                       )}

@@ -10,6 +10,7 @@ import {
   updateAgentTask,
   validateAgentProfilePayload,
 } from '@/features/agents/api/agents';
+import { normalizeAllowedTools } from '@/features/agents/lib/format';
 import { parseJsonInput, stringifyJson } from '@/features/agents/lib/json';
 import { isAgentActionError } from '@/features/agents/model/types';
 import { getTeams } from '@/features/teams/api/team';
@@ -97,7 +98,7 @@ export function AgentTaskForm({
       execution_mode: task?.execution_mode ?? '',
       agent_task_type: task?.agent_task_type ?? '',
       output_mode: task?.output_mode ?? '',
-      allowed_tools: task?.allowed_tools ?? [],
+      allowed_tools: normalizeAllowedTools(task?.allowed_tools),
       input_payload: stringifyJson(task?.input_payload),
       metadata: stringifyJson(task?.metadata),
       enabled: task?.enabled ?? true,

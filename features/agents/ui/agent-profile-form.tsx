@@ -10,6 +10,7 @@ import {
   updateAgentProfile,
   validateAgentProfilePayload,
 } from '@/features/agents/api/agents';
+import { normalizeAllowedTools } from '@/features/agents/lib/format';
 import { parseJsonInput, stringifyJson } from '@/features/agents/lib/json';
 import { isAgentActionError } from '@/features/agents/model/types';
 import { ROUTES } from '@/shared/lib/routes';
@@ -62,7 +63,7 @@ export function AgentProfileForm({
       system_prompt: profile?.system_prompt ?? '',
       metadata: stringifyJson(profile?.metadata),
       sandbox_profile: profile?.sandbox_profile ?? '',
-      allowed_tools: profile?.allowed_tools ?? [],
+      allowed_tools: normalizeAllowedTools(profile?.allowed_tools),
       model: profile?.model ?? '',
       config: stringifyJson(profile?.config),
       validation_payload: '',
