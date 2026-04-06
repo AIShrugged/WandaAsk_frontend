@@ -1,0 +1,81 @@
+import { cookies } from 'next/headers';
+import { NextRequest, NextResponse } from 'next/server';
+
+import { API_URL } from '@/shared/lib/config';
+import { logApiError } from '@/shared/lib/logger';
+
+import type { CalendarEventListItem } from '@/features/meetings/model/types';
+import type { ApiResponse } from '@/shared/types/common';
+
+const DEFAULT_LIMIT = 20;
+const MAX_LIMIT = 100;
+
+function parsePositiveInt(value: string | null, fallback: number) {
+  const parsed = Number(value);
+
+  if (!Number.isFinite(parsed) || parsed < 0) {
+    return fallback;
+  }
+
+  return Math.floor(parsed);
+}
+
+/**
+ * GET /api/meetings?offset=0&limit=20
+ */
+export async function GET(request: NextRequest) {
+  const offset = parsePositiveInt(
+    request.nextUrl.searchParams.get('offset'),
+    0,
+  );
+  const requestedLimit = parsePositiveInt(
+    request.nextUrl.searchParams.get('limit'),
+    DEFAULT_LIMIT,
+  );
+  const limit = Math.min(Math.max(requestedLimit, 1), MAX_LIMIT);
+
+  const cookieStore = await cookies();
+  const token = cookieStore.get('token')?.value;
+
+  if (!token) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const backendRes = await fetch(
+    `${API_URL}/calendar-events?offset=${offset}&limit=${limit}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/json',
+      },
+      cache: 'no-store',
+    },
+  );
+
+  if (!backendRes.ok) {
+    const body = await backendRes.text();
+
+    logApiError({
+      method: 'GET',
+      url: `${API_URL}/calendar-events?offset=${offset}&limit=${limit}`,
+      status: backendRes.status,
+      statusText: backendRes.statusText,
+      body,
+    });
+
+    return NextResponse.json(
+      { error: 'Failed to load meetings' },
+      { status: backendRes.status },
+    );
+  }
+
+  const json = (await backendRes.json()) as ApiResponse<
+    CalendarEventListItem[]
+  >;
+  const totalCount = Number(backendRes.headers.get('Items-Count') ?? '0');
+
+  return NextResponse.json({
+    items: json.data ?? [],
+    totalCount,
+  });
+}
