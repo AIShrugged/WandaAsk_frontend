@@ -162,14 +162,18 @@ export function IssueLinkedTask({ issue }: IssueLinkedTaskProps) {
                   Task #{issue.agent_task_id.toString()}
                 </Link>
                 {issue.agent_task_run?.status ? (
-                  <Badge variant={runStatusVariant(issue.agent_task_run.status)}>
+                  <Badge
+                    variant={runStatusVariant(issue.agent_task_run.status)}
+                  >
                     {issue.agent_task_run.status}
                   </Badge>
                 ) : null}
               </div>
-              {isProcessing && issue.agent_task_run?.current_tool_description ? (
+              {isProcessing &&
+              issue.agent_task_run?.current_tool_description ? (
                 <p className='mt-2 text-xs text-muted-foreground animate-pulse'>
-                  {issue.agent_task_run.current_tool_description.split('. ')[0]}…
+                  {issue.agent_task_run.current_tool_description.split('. ')[0]}
+                  …
                 </p>
               ) : null}
             </div>
@@ -187,7 +191,11 @@ export function IssueLinkedTask({ issue }: IssueLinkedTaskProps) {
             onClick={handleDispatch}
             disabled={isPending || isProcessing}
           >
-            {isProcessing ? 'Agent is working…' : isPending ? 'Dispatching…' : buttonLabel}
+            {isProcessing
+              ? 'Agent is working…'
+              : isPending
+                ? 'Dispatching…'
+                : buttonLabel}
           </Button>
         </div>
       </CardBody>

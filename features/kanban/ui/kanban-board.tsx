@@ -1,5 +1,6 @@
 'use client';
 
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   AlertTriangle,
   ArrowUp,
@@ -10,7 +11,6 @@ import {
   Paperclip,
   X,
 } from 'lucide-react';
-import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
 import { useEffect, useState, useTransition } from 'react';
 import { toast } from 'sonner';
