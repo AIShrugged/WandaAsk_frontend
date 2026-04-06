@@ -225,6 +225,10 @@ function AgendaList({ agendas }: { agendas: CalendarEventAgendaItem[] }) {
 }
 
 function KeyTakeawayItem({ takeaway }: { takeaway: CalendarEventTakeaway }) {
+  const excerpt = takeaway.excerpt.trim();
+  const fullText = takeaway.full_text.trim();
+  const showFullText = fullText.length > 0 && fullText !== excerpt;
+
   return (
     <details
       id={takeaway.read_more?.anchor ?? undefined}
@@ -240,8 +244,8 @@ function KeyTakeawayItem({ takeaway }: { takeaway: CalendarEventTakeaway }) {
             <p className='mt-2 text-sm font-medium text-foreground'>
               {takeaway.title}
             </p>
-            <p className='mt-1 text-sm leading-6 text-muted-foreground'>
-              {takeaway.excerpt}
+            <p className='mt-1 text-sm leading-6 text-muted-foreground group-open:hidden'>
+              {excerpt}
             </p>
           </div>
           <span className='flex-shrink-0 text-xs font-medium text-primary group-open:hidden'>
@@ -250,9 +254,11 @@ function KeyTakeawayItem({ takeaway }: { takeaway: CalendarEventTakeaway }) {
         </div>
       </summary>
 
-      <div className='mt-4 border-t border-border/60 pt-4 text-sm leading-6 text-foreground whitespace-pre-line'>
-        {takeaway.full_text}
-      </div>
+      {showFullText && (
+        <div className='mt-4 border-t border-border/60 pt-4 text-sm leading-6 text-foreground whitespace-pre-line'>
+          {fullText}
+        </div>
+      )}
       {takeaway.read_more?.section && (
         <div className='mt-3 flex flex-wrap gap-2'>
           <Badge variant='default'>Section: {takeaway.read_more.section}</Badge>
