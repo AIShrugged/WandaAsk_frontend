@@ -77,23 +77,29 @@ export async function getEvents() {
 
 /**
  * getCalendarEvents.
+ * @param offset - offset.
+ * @param limit - limit.
  * @returns Promise.
  */
-export async function getCalendarEvents() {
+export async function getCalendarEvents(offset = 0, limit = 20) {
   const authHeaders = await getAuthHeaders();
-  const res = await fetch(`${API_URL}/calendar-events`, {
-    method: 'GET',
-    headers: {
-      ...authHeaders,
+  const res = await fetch(
+    `${API_URL}/calendar-events?offset=${offset}&limit=${limit}`,
+    {
+      method: 'GET',
+      headers: {
+        ...authHeaders,
+      },
+      cache: 'no-store',
     },
-    cache: 'no-store',
-  });
+  );
 
   if (!res.ok) {
     throw new Error('Failed to getCalendarEvents');
   }
 
   const json: ApiResponse<CalendarEventListItem[]> = await res.json();
+  const totalCount = Number(res.headers.get('Items-Count') ?? '0');
 
   if (!json.success || !json.data) {
     throw new Error(json.error ?? 'Invalid API response');
@@ -101,6 +107,7 @@ export async function getCalendarEvents() {
 
   return {
     data: json.data,
+    totalCount,
     status: json.status,
   };
 }

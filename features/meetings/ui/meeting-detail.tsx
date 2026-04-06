@@ -13,7 +13,10 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
-import { getCalendarEventDetail } from '@/features/event/api/calendar-events';
+import {
+  getCalendarEventDetail,
+  getMeetingTasks,
+} from '@/features/event/api/calendar-events';
 import MeetingTasks from '@/features/meeting/ui/meeting-tasks';
 import { ROUTES } from '@/shared/lib/routes';
 import { Badge } from '@/shared/ui/badge';
@@ -485,9 +488,16 @@ function MeetingPlatformLink({
  * @param props.id - Calendar event id.
  */
 export async function MeetingDetail({ id }: { id: string }) {
-  const { data } = await getCalendarEventDetail(id);
+  const [{ data }, fallbackTasks] = await Promise.all([
+    getCalendarEventDetail(id),
+    getMeetingTasks(id),
+  ]);
   const event = data.event;
   const url = (event as { url?: string | null }).url;
+  const tasks =
+    Array.isArray(data.tasks) && data.tasks.length > 0
+      ? data.tasks
+      : fallbackTasks;
   const startsAt = parseDate(event.starts_at);
   const endsAt = parseDate(event.ends_at);
 
@@ -580,10 +590,10 @@ export async function MeetingDetail({ id }: { id: string }) {
         </SectionCard>
 
         <SectionCard
-          title={sectionTitle('Tasks', data.tasks.length)}
+          title={sectionTitle('Tasks', tasks.length)}
           icon={CheckCircle2}
         >
-          <MeetingTasks tasks={data.tasks} />
+          <MeetingTasks tasks={tasks} />
         </SectionCard>
 
         <SectionCard
