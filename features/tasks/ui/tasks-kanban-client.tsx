@@ -221,10 +221,10 @@ export function TasksKanbanClient({
 
       if (thisCall !== fetchCounterRef.current) return;
 
-      if (result.error) {
-        toast.error(result.error);
-      } else {
+      if (result.error === null) {
         setColumns(result.data);
+      } else {
+        toast.error(result.error);
       }
 
       setIsFetching(false);
