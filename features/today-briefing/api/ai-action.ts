@@ -1,10 +1,10 @@
 'use server';
 
+import { parseApiError } from '@/shared/lib/apiError';
 import { API_URL } from '@/shared/lib/config';
+import { ServerError } from '@/shared/lib/errors';
 import { getOrganizationId } from '@/shared/lib/getOrganizationId';
 import { httpClient } from '@/shared/lib/httpClient';
-import { parseApiError } from '@/shared/lib/apiError';
-import { ServerError } from '@/shared/lib/errors';
 
 import type { ActionResult } from '@/shared/types/server-action';
 

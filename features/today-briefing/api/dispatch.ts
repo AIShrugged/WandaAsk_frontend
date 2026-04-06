@@ -1,9 +1,9 @@
 'use server';
 
-import { API_URL } from '@/shared/lib/config';
-import { httpClient } from '@/shared/lib/httpClient';
 import { parseApiError } from '@/shared/lib/apiError';
+import { API_URL } from '@/shared/lib/config';
 import { ServerError } from '@/shared/lib/errors';
+import { httpClient } from '@/shared/lib/httpClient';
 
 import type { ActionResult } from '@/shared/types/server-action';
 

@@ -13,8 +13,8 @@ export function EmptyState() {
         Connect your calendar to get started
       </h3>
       <p className='max-w-sm text-sm text-muted-foreground'>
-        Once connected, I&apos;ll automatically join your meetings and have notes
-        and follow-ups ready for you.
+        Once connected, I&apos;ll automatically join your meetings and have
+        notes and follow-ups ready for you.
       </p>
       <Link
         href={ROUTES.DASHBOARD.PROFILE}

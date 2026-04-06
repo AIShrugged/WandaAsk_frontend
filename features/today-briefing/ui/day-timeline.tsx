@@ -31,11 +31,18 @@ function getHourRange(events: TodayEvent[]): [number, number] {
 const STATE_COLORS: Record<string, string> = {
   ready: 'bg-emerald-500/80 hover:bg-emerald-500/90 border-emerald-500/30',
   waiting: 'bg-amber-500/60 hover:bg-amber-500/70 border-amber-500/30',
-  scheduled: 'bg-muted-foreground/30 hover:bg-muted-foreground/40 border-muted-foreground/20',
+  scheduled:
+    'bg-muted-foreground/30 hover:bg-muted-foreground/40 border-muted-foreground/20',
 };
 
-export function DayTimeline({ events, selectedId, onSelect }: DayTimelineProps) {
-  const [minHour, maxHour] = useMemo(() => getHourRange(events), [events]);
+export function DayTimeline({
+  events,
+  selectedId,
+  onSelect,
+}: DayTimelineProps) {
+  const [minHour, maxHour] = useMemo(() => {
+    return getHourRange(events);
+  }, [events]);
   const totalHours = maxHour - minHour;
 
   // "Now" line — updates every minute, only shown for today
@@ -57,8 +64,12 @@ export function DayTimeline({ events, selectedId, onSelect }: DayTimelineProps) 
     }
 
     setNowPercent(calcNow());
-    const interval = setInterval(() => setNowPercent(calcNow()), 60_000);
-    return () => clearInterval(interval);
+    const interval = setInterval(() => {
+      return setNowPercent(calcNow());
+    }, 60_000);
+    return () => {
+      return clearInterval(interval);
+    };
   }, [events, minHour, totalHours]);
 
   const hours = useMemo(() => {
@@ -78,7 +89,7 @@ export function DayTimeline({ events, selectedId, onSelect }: DayTimelineProps) 
 
     return {
       left: `${(startMins / totalMins) * 100}%`,
-      width: `${Math.max((endMins - startMins) / totalMins * 100, 3)}%`,
+      width: `${Math.max(((endMins - startMins) / totalMins) * 100, 3)}%`,
     };
   }
 
@@ -86,11 +97,13 @@ export function DayTimeline({ events, selectedId, onSelect }: DayTimelineProps) 
     <div className='rounded-lg border border-border bg-card p-4'>
       {/* Hour labels */}
       <div className='flex justify-between mb-2 px-1'>
-        {hours.map((label) => (
-          <span key={label} className='text-[10px] text-muted-foreground'>
-            {label}
-          </span>
-        ))}
+        {hours.map((label) => {
+          return (
+            <span key={label} className='text-[10px] text-muted-foreground'>
+              {label}
+            </span>
+          );
+        })}
       </div>
 
       {/* Track */}
@@ -98,13 +111,16 @@ export function DayTimeline({ events, selectedId, onSelect }: DayTimelineProps) 
         {events.map((event) => {
           const pos = getPosition(event);
           const isSelected = selectedId === event.id;
-          const colorClass = STATE_COLORS[event.meeting_state] ?? STATE_COLORS.scheduled;
+          const colorClass =
+            STATE_COLORS[event.meeting_state] ?? STATE_COLORS.scheduled;
 
           return (
             <button
               key={event.id}
               type='button'
-              onClick={() => onSelect(event.id)}
+              onClick={() => {
+                return onSelect(event.id);
+              }}
               className={`absolute top-1 bottom-1 rounded-md border text-[11px] font-medium text-white px-2 flex items-center gap-1.5 truncate transition-all cursor-pointer ${colorClass} ${isSelected ? 'ring-2 ring-primary ring-offset-1 ring-offset-card' : ''}`}
               style={{ left: pos.left, width: pos.width }}
               title={`${event.title} — ${format(parseISO(event.starts_at), 'HH:mm')}–${format(parseISO(event.ends_at), 'HH:mm')}`}

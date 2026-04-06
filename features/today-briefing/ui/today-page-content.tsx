@@ -26,7 +26,10 @@ export function TodayPageContent({ data }: TodayPageContentProps) {
     return <EmptyState />;
   }
 
-  const selectedEvent = data.events.find((e) => e.id === selectedId) ?? null;
+  const selectedEvent =
+    data.events.find((e) => {
+      return e.id === selectedId;
+    }) ?? null;
 
   return (
     <div className='flex flex-col gap-5 p-4'>

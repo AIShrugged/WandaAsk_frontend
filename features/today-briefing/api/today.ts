@@ -15,9 +15,7 @@ const EMPTY_BRIEFING: TodayBriefing = {
   nudge: null,
 };
 
-export async function getTodayBriefing(
-  date?: string,
-): Promise<TodayBriefing> {
+export async function getTodayBriefing(date?: string): Promise<TodayBriefing> {
   const params = date ? `?date=${date}` : '';
   const { data } = await httpClient<TodayBriefing>(
     `${API_URL}/me/today${params}`,

@@ -35,7 +35,9 @@ export function AiNudge({ text, date }: AiNudgeProps) {
     return (
       <div className='flex items-center gap-3 rounded-lg border border-border bg-card px-4 py-3'>
         <Loader2 className='h-4 w-4 shrink-0 text-muted-foreground animate-spin' />
-        <p className='text-sm text-muted-foreground'>Generating AI insight...</p>
+        <p className='text-sm text-muted-foreground'>
+          Generating AI insight...
+        </p>
       </div>
     );
   }

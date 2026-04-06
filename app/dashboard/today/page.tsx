@@ -3,8 +3,8 @@ import { Suspense } from 'react';
 import { getTodayBriefing, TodayPageContent } from '@/features/today-briefing';
 import Card from '@/shared/ui/card/Card';
 import CardBody from '@/shared/ui/card/CardBody';
-import PageHeader from '@/widgets/layout/ui/page-header';
 import { Skeleton } from '@/shared/ui/layout/skeleton';
+import PageHeader from '@/widgets/layout/ui/page-header';
 
 export const metadata = { title: 'Today' };
 
