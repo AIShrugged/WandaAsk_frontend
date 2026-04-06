@@ -5,9 +5,9 @@ import {
 } from '@/features/issues';
 import { getKanbanIssues } from '@/features/kanban';
 import { getOrganizations } from '@/features/organization/api/organization';
-import { getOrganizationId } from '@/shared/lib/getOrganizationId';
-import { getCurrentUserId } from '@/shared/lib/getCurrentUserId';
 import { TasksKanbanClient } from '@/features/tasks';
+import { getCurrentUserId } from '@/shared/lib/getCurrentUserId';
+import { getOrganizationId } from '@/shared/lib/getOrganizationId';
 
 import type { KanbanFilters } from '@/features/kanban/model/types';
 
