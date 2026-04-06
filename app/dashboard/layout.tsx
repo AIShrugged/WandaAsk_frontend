@@ -6,6 +6,7 @@ import OrganizationSelector from '@/features/organization/ui/organization-select
 import User from '@/features/user/ui/user';
 import { TribesLogo } from '@/shared/ui/brand';
 import { CosmicBackground } from '@/shared/ui/layout/cosmic-background';
+import { DashboardChatColumn, DashboardChatLoader } from '@/widgets/dashboard-chat';
 import MobileSidebar from '@/widgets/layout/ui/mobile-sidebar';
 
 const BACKDROP_BLUR = 'blur(20px)';
@@ -76,6 +77,11 @@ export default async function Layout({ children }: PropsWithChildren) {
         {/* Scrollable content */}
         <main className='flex-1 overflow-y-auto p-2 min-h-0'>{children}</main>
       </div>
+
+      {/* Chat panel — third column, hidden on xl- screens and /dashboard/chat */}
+      <DashboardChatColumn>
+        <DashboardChatLoader />
+      </DashboardChatColumn>
     </div>
   );
 }

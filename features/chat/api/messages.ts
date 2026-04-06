@@ -7,7 +7,7 @@ import { API_URL } from '@/shared/lib/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 import { logApiError } from '@/shared/lib/logger';
 
-import type { AgentRun, Message } from '@/features/chat/types';
+import type { AgentRun, Message, PageContext } from '@/features/chat/types';
 import type { ApiResponse } from '@/shared/types/common';
 
 type MessageActionError = {
@@ -74,12 +74,18 @@ export async function getMessages(
 export async function sendMessage(
   chatId: number,
   content: string,
+  pageContext?: PageContext,
 ): Promise<Message | MessageActionError> {
   const authHeaders = await getAuthHeaders();
   const res = await fetch(`${API_URL}/chats/${chatId}/messages`, {
     method: 'POST',
     headers: { ...authHeaders, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ content }),
+    body: JSON.stringify({
+      content,
+      ...(pageContext?.page_html !== undefined && { page_html: pageContext.page_html }),
+      ...(pageContext?.page_title !== undefined && { page_title: pageContext.page_title }),
+      ...(pageContext?.page_url !== undefined && { page_url: pageContext.page_url }),
+    }),
     cache: 'no-store',
   });
 
