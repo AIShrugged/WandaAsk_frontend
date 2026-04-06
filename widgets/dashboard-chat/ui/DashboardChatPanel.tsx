@@ -4,10 +4,12 @@ import { MessageSquare, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
+import { AgentActivityFeed } from '@/features/agents/ui/agent-activity-feed';
 import { createChat } from '@/features/chat/api/chats';
 import { ChatWindow } from '@/features/chat/ui/chat-window';
 
 import type { OrganizationProps } from '@/entities/organization';
+import type { AgentActivityItem } from '@/features/agents/model/types';
 import type { Chat, Message } from '@/features/chat/types';
 
 interface DashboardChatPanelProps {
@@ -16,6 +18,8 @@ interface DashboardChatPanelProps {
   totalMessagesCount: number;
   startOffset: number;
   organizations: OrganizationProps[];
+  initialActivityItems: AgentActivityItem[];
+  activityTotalCount: number;
 }
 
 /**
@@ -34,7 +38,10 @@ export function DashboardChatPanel({
   initialMessages,
   totalMessagesCount,
   startOffset,
+  initialActivityItems,
+  activityTotalCount,
 }: DashboardChatPanelProps) {
+  const [activeTab, setActiveTab] = useState<'chat' | 'activity'>('chat');
   const [activeChat, setActiveChat] = useState<Chat | null>(initialChat);
   const [activeChatMessages, setActiveChatMessages] =
     useState<Message[]>(initialMessages);
@@ -65,26 +72,56 @@ export function DashboardChatPanel({
   return (
     <div className='flex h-full overflow-hidden rounded-[var(--radius-card)] border border-border bg-card shadow-card'>
       <div className='flex flex-1 min-w-0 flex-col min-h-0'>
-        {activeChat ? (
-          <ChatWindow
-            chat={activeChat}
-            chatId={activeChat.id}
-            initialMessages={activeChatMessages}
-            totalCount={activeChatTotal}
-            startOffset={activeChatOffset}
-          />
-        ) : (
-          <div className='flex flex-1 flex-col items-center justify-center gap-3 text-muted-foreground'>
-            <MessageSquare className='w-10 h-10 text-muted-foreground/30' />
-            <p className='text-sm text-center px-4'>No chats yet</p>
-            <button
-              onClick={handleCreateChat}
-              disabled={isCreating}
-              className='flex items-center gap-1 text-xs text-primary hover:opacity-70 transition-opacity cursor-pointer disabled:opacity-40'
-            >
-              <Plus className='w-3 h-3' />
-              New chat
-            </button>
+        <div className='flex flex-shrink-0 gap-1 border-b border-border px-3 pt-2'>
+          {(['chat', 'activity'] as const).map((tab) => {
+            return (
+              <button
+                key={tab}
+                onClick={() => { setActiveTab(tab); }}
+                className={[
+                  'cursor-pointer px-4 py-2 text-sm font-medium capitalize transition-colors',
+                  activeTab === tab
+                    ? 'border-b-2 border-primary text-primary'
+                    : 'text-muted-foreground hover:text-foreground',
+                ].join(' ')}
+              >
+                {tab === 'chat' ? 'Chat' : 'Activity'}
+              </button>
+            );
+          })}
+        </div>
+
+        {activeTab === 'chat' && (
+          activeChat ? (
+            <ChatWindow
+              chat={activeChat}
+              chatId={activeChat.id}
+              initialMessages={activeChatMessages}
+              totalCount={activeChatTotal}
+              startOffset={activeChatOffset}
+            />
+          ) : (
+            <div className='flex flex-1 flex-col items-center justify-center gap-3 text-muted-foreground'>
+              <MessageSquare className='w-10 h-10 text-muted-foreground/30' />
+              <p className='text-sm text-center px-4'>No chats yet</p>
+              <button
+                onClick={handleCreateChat}
+                disabled={isCreating}
+                className='flex items-center gap-1 text-xs text-primary hover:opacity-70 transition-opacity cursor-pointer disabled:opacity-40'
+              >
+                <Plus className='w-3 h-3' />
+                New chat
+              </button>
+            </div>
+          )
+        )}
+
+        {activeTab === 'activity' && (
+          <div className='flex-1 overflow-y-auto p-3'>
+            <AgentActivityFeed
+              initialItems={initialActivityItems}
+              totalCount={activityTotalCount}
+            />
           </div>
         )}
       </div>
