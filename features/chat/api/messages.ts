@@ -82,9 +82,15 @@ export async function sendMessage(
     headers: { ...authHeaders, 'Content-Type': 'application/json' },
     body: JSON.stringify({
       content,
-      ...(pageContext?.page_html !== undefined && { page_html: pageContext.page_html }),
-      ...(pageContext?.page_title !== undefined && { page_title: pageContext.page_title }),
-      ...(pageContext?.page_url !== undefined && { page_url: pageContext.page_url }),
+      ...(pageContext?.page_html !== undefined && {
+        page_html: pageContext.page_html,
+      }),
+      ...(pageContext?.page_title !== undefined && {
+        page_title: pageContext.page_title,
+      }),
+      ...(pageContext?.page_url !== undefined && {
+        page_url: pageContext.page_url,
+      }),
     }),
     cache: 'no-store',
   });
