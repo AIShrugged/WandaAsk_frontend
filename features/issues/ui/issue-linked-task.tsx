@@ -135,6 +135,13 @@ export function IssueLinkedTask({ issue }: IssueLinkedTaskProps) {
 
   const dispatchLabel = isPending ? 'Dispatching…' : 'Dispatch Agent';
   const buttonLabel = hasAnyTask ? 'Re-dispatch' : dispatchLabel;
+  let buttonText = buttonLabel;
+
+  if (isProcessing) {
+    buttonText = 'Agent is working…';
+  } else if (isPending) {
+    buttonText = 'Dispatching…';
+  }
 
   return (
     <Card>
@@ -191,11 +198,7 @@ export function IssueLinkedTask({ issue }: IssueLinkedTaskProps) {
             onClick={handleDispatch}
             disabled={isPending || isProcessing}
           >
-            {isProcessing
-              ? 'Agent is working…'
-              : isPending
-                ? 'Dispatching…'
-                : buttonLabel}
+            {buttonText}
           </Button>
         </div>
       </CardBody>

@@ -2,7 +2,7 @@
 
 import { format } from 'date-fns';
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState, useTransition } from 'react';
+import { useMemo, useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
 import { updateIssue } from '@/features/issues/api/issues';
@@ -70,13 +70,8 @@ function statusVariant(status: IssueStatus) {
  */
 export function IssueOverviewPanel({ issue }: IssueOverviewPanelProps) {
   const router = useRouter();
-  const [status, setStatus] = useState<IssueStatus>(issue.status);
   const [rootError, setRootError] = useState('');
   const [isPending, startTransition] = useTransition();
-
-  useEffect(() => {
-    setStatus(issue.status);
-  }, [issue.status]);
   const statusOptions = useMemo(() => {
     return ISSUE_STATUS_OPTIONS;
   }, []);
@@ -108,9 +103,8 @@ export function IssueOverviewPanel({ issue }: IssueOverviewPanelProps) {
    * @param nextStatus
    */
   const handleStatusChange = (nextStatus: IssueStatus) => {
-    if (nextStatus === status) return;
+    if (nextStatus === issue.status) return;
 
-    setStatus(nextStatus);
     setRootError('');
 
     startTransition(async () => {
@@ -125,7 +119,6 @@ export function IssueOverviewPanel({ issue }: IssueOverviewPanelProps) {
       });
 
       if ('error' in result) {
-        setStatus(issue.status);
         setRootError(result.error);
 
         return;
@@ -152,13 +145,13 @@ export function IssueOverviewPanel({ issue }: IssueOverviewPanelProps) {
           <div className='rounded-[var(--radius-card)] border border-border bg-background/30 p-4'>
             <p className='text-sm font-medium text-foreground'>Status</p>
             <div className='mt-3 flex items-center gap-3'>
-              <Badge variant={statusVariant(status)}>
-                {formatStatusLabel(status)}
+              <Badge variant={statusVariant(issue.status)}>
+                {formatStatusLabel(issue.status)}
               </Badge>
               <InputDropdown
                 label='Change status'
                 options={statusOptions}
-                value={status}
+                value={issue.status}
                 onChange={(value) => {
                   handleStatusChange(value as IssueStatus);
                 }}
