@@ -77,7 +77,9 @@ export function DashboardChatPanel({
             return (
               <button
                 key={tab}
-                onClick={() => { setActiveTab(tab); }}
+                onClick={() => {
+                  setActiveTab(tab);
+                }}
                 className={[
                   'cursor-pointer px-4 py-2 text-sm font-medium capitalize transition-colors',
                   activeTab === tab
@@ -91,8 +93,8 @@ export function DashboardChatPanel({
           })}
         </div>
 
-        {activeTab === 'chat' && (
-          activeChat ? (
+        {activeTab === 'chat' &&
+          (activeChat ? (
             <ChatWindow
               chat={activeChat}
               chatId={activeChat.id}
@@ -113,8 +115,7 @@ export function DashboardChatPanel({
                 New chat
               </button>
             </div>
-          )
-        )}
+          ))}
 
         {activeTab === 'activity' && (
           <div className='flex-1 overflow-y-auto p-3'>

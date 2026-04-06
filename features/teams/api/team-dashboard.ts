@@ -10,5 +10,6 @@ import type { TeamDashboardData } from '../model/dashboard-types';
  * @param teamId - Team ID.
  * @returns Promise.
  */
-export const getTeamDashboard = async (teamId: string) =>
-  {return httpClient<TeamDashboardData>(`${API_URL}/teams/${teamId}/dashboard`)};
+export const getTeamDashboard = async (teamId: string) => {
+  return httpClient<TeamDashboardData>(`${API_URL}/teams/${teamId}/dashboard`);
+};

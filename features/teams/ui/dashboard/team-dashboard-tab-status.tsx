@@ -29,27 +29,29 @@ export default function TeamDashboardTabStatus({
 
   return (
     <div className='flex flex-col gap-6'>
-      {data.sections.map((section) => {return (
-        <div key={section.key}>
-          <div className='flex items-center gap-2 mb-3'>
-            <span className='text-sm font-semibold text-foreground'>
-              {section.label}
-            </span>
-            <Badge variant={TONE_TO_BADGE_VARIANT[section.tone]}>
-              {section.count}
-            </Badge>
-          </div>
-          {section.items.length > 0 ? (
-            <div>
-              {section.items.map((task) => {return (
-                <TeamDashboardTaskRow key={task.id} task={task} />
-              )})}
+      {data.sections.map((section) => {
+        return (
+          <div key={section.key}>
+            <div className='flex items-center gap-2 mb-3'>
+              <span className='text-sm font-semibold text-foreground'>
+                {section.label}
+              </span>
+              <Badge variant={TONE_TO_BADGE_VARIANT[section.tone]}>
+                {section.count}
+              </Badge>
             </div>
-          ) : (
-            <p className='text-xs text-muted-foreground py-2'>No items</p>
-          )}
-        </div>
-      )})}
+            {section.items.length > 0 ? (
+              <div>
+                {section.items.map((task) => {
+                  return <TeamDashboardTaskRow key={task.id} task={task} />;
+                })}
+              </div>
+            ) : (
+              <p className='text-xs text-muted-foreground py-2'>No items</p>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }

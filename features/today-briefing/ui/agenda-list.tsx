@@ -58,9 +58,9 @@ export function AgendaList({ tasks, totalCount, doneCount }: AgendaListProps) {
           <button
             key={task.id}
             type='button'
-            onClick={() =>
-              setExpandedId(isExpanded ? null : task.id)
-            }
+            onClick={() => {
+              return setExpandedId(isExpanded ? null : task.id);
+            }}
             className='flex items-start gap-2 rounded-md px-2 py-2 text-left hover:bg-muted/50 transition-colors w-full'
           >
             <span className='text-xs text-muted-foreground mt-0.5 w-4 shrink-0'>
@@ -71,7 +71,9 @@ export function AgendaList({ tasks, totalCount, doneCount }: AgendaListProps) {
                 <span className='text-sm text-foreground flex-1'>
                   <Link
                     href={`${ROUTES.DASHBOARD.ISSUES}/${task.id}`}
-                    onClick={(e) => e.stopPropagation()}
+                    onClick={(e) => {
+                      return e.stopPropagation();
+                    }}
                     className='hover:text-primary hover:underline transition-colors'
                   >
                     {task.name}
@@ -91,7 +93,9 @@ export function AgendaList({ tasks, totalCount, doneCount }: AgendaListProps) {
                   }
                   className='shrink-0 text-[10px]'
                 >
-                  {task.is_overdue ? 'Overdue' : (STATUS_LABEL[task.status] ?? task.status)}
+                  {task.is_overdue
+                    ? 'Overdue'
+                    : (STATUS_LABEL[task.status] ?? task.status)}
                 </Badge>
               </div>
               {isExpanded && task.description && (

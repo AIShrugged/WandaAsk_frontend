@@ -37,7 +37,8 @@ export function WaitingOnYou({ tasks }: WaitingOnYouProps) {
                 </Link>
                 {(task.source_meeting_title || task.description) && (
                   <p className='text-xs text-muted-foreground line-clamp-2'>
-                    {task.source_meeting_title && `From ${task.source_meeting_title}`}
+                    {task.source_meeting_title &&
+                      `From ${task.source_meeting_title}`}
                     {task.source_meeting_title && task.description && ' · '}
                     {task.description}
                   </p>

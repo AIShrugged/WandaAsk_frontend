@@ -2,6 +2,7 @@
 
 import { differenceInMinutes, format, parseISO } from 'date-fns';
 import { Clock, Users, Video } from 'lucide-react';
+
 import Card from '@/shared/ui/card/Card';
 
 import { AgendaList } from './agenda-list';

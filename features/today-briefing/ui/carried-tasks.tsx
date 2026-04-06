@@ -23,37 +23,39 @@ export function CarriedTasks({ tasks }: CarriedTasksProps) {
         Carried from previous syncs
       </span>
 
-      {visible.map((task) => (
-        <div
-          key={task.id}
-          className='flex items-center gap-2 rounded-md px-2 py-1.5 text-sm'
-        >
-          <span className='text-xs text-muted-foreground shrink-0 w-16'>
-            {task.syncs_since_created === 1
-              ? 'Yesterday'
-              : `${task.syncs_since_created} syncs`}
-          </span>
-          <span className='flex-1 truncate text-foreground'>
-            {task.assignee_name && (
-              <span className='text-muted-foreground'>
-                {task.assignee_name}:{' '}
-              </span>
-            )}
-            <Link
-              href={`${ROUTES.DASHBOARD.ISSUES}/${task.id}`}
-              className='hover:text-primary hover:underline transition-colors'
-            >
-              {task.name}
-            </Link>
-          </span>
-          <Badge
-            variant={task.status === 'open' ? 'default' : 'primary'}
-            className='shrink-0 text-[10px]'
+      {visible.map((task) => {
+        return (
+          <div
+            key={task.id}
+            className='flex items-center gap-2 rounded-md px-2 py-1.5 text-sm'
           >
-            {task.status === 'open' ? 'Open' : 'In progress'}
-          </Badge>
-        </div>
-      ))}
+            <span className='text-xs text-muted-foreground shrink-0 w-16'>
+              {task.syncs_since_created === 1
+                ? 'Yesterday'
+                : `${task.syncs_since_created} syncs`}
+            </span>
+            <span className='flex-1 truncate text-foreground'>
+              {task.assignee_name && (
+                <span className='text-muted-foreground'>
+                  {task.assignee_name}:{' '}
+                </span>
+              )}
+              <Link
+                href={`${ROUTES.DASHBOARD.ISSUES}/${task.id}`}
+                className='hover:text-primary hover:underline transition-colors'
+              >
+                {task.name}
+              </Link>
+            </span>
+            <Badge
+              variant={task.status === 'open' ? 'default' : 'primary'}
+              className='shrink-0 text-[10px]'
+            >
+              {task.status === 'open' ? 'Open' : 'In progress'}
+            </Badge>
+          </div>
+        );
+      })}
 
       {remaining > 0 && (
         <Link

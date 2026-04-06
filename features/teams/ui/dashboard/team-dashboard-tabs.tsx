@@ -50,7 +50,9 @@ export default function TeamDashboardTabs({
   const router = useRouter();
   const pathname = usePathname();
 
-  const activeTab: TabKey = TABS.some((t) => {return t.key === currentTab})
+  const activeTab: TabKey = TABS.some((t) => {
+    return t.key === currentTab;
+  })
     ? (currentTab as TabKey)
     : 'status';
 
@@ -68,7 +70,9 @@ export default function TeamDashboardTabs({
             <button
               key={tab.key}
               type='button'
-              onClick={() => {return handleTabChange(tab.key)}}
+              onClick={() => {
+                return handleTabChange(tab.key);
+              }}
               className={[
                 'cursor-pointer px-4 py-2 text-sm font-medium transition-colors',
                 isActive

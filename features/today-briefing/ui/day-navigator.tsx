@@ -32,7 +32,9 @@ export function DayNavigator({ date, meetingsCount }: DayNavigatorProps) {
     <div className='flex items-center gap-3'>
       <button
         type='button'
-        onClick={() => navigate(-1)}
+        onClick={() => {
+          return navigate(-1);
+        }}
         className='flex h-8 w-8 items-center justify-center rounded-md border border-border bg-card hover:bg-muted transition-colors'
       >
         <ChevronLeft className='h-4 w-4' />
@@ -44,7 +46,9 @@ export function DayNavigator({ date, meetingsCount }: DayNavigatorProps) {
 
       <button
         type='button'
-        onClick={() => navigate(1)}
+        onClick={() => {
+          return navigate(1);
+        }}
         className='flex h-8 w-8 items-center justify-center rounded-md border border-border bg-card hover:bg-muted transition-colors'
       >
         <ChevronRight className='h-4 w-4' />

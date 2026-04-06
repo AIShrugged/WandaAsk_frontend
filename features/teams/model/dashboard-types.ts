@@ -174,4 +174,7 @@ export const TONE_TO_BADGE_VARIANT = {
   warning: 'warning',
   neutral: 'default',
   info: 'primary',
-} as const satisfies Record<SectionTone, 'success' | 'destructive' | 'warning' | 'default' | 'primary'>;
+} as const satisfies Record<
+  SectionTone,
+  'success' | 'destructive' | 'warning' | 'default' | 'primary'
+>;
