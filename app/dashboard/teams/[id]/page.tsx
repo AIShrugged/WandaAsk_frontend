@@ -49,7 +49,7 @@ export default async function Page({ params, searchParams }: PageProps) {
       : null;
 
   return (
-    <Card className='min-h-full h-full flex flex-col overflow-hidden'>
+    <Card className='min-h-full flex flex-col overflow-y-auto'>
       <PageHeader hasButtonBack title={team.name} />
 
       {dashboard && (
