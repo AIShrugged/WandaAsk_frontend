@@ -6,7 +6,10 @@ import OrganizationSelector from '@/features/organization/ui/organization-select
 import User from '@/features/user/ui/user';
 import { TribesLogo } from '@/shared/ui/brand';
 import { CosmicBackground } from '@/shared/ui/layout/cosmic-background';
-import { DashboardChatColumn, DashboardChatLoader } from '@/widgets/dashboard-chat';
+import {
+  DashboardChatColumn,
+  DashboardChatLoader,
+} from '@/widgets/dashboard-chat';
 import MobileSidebar from '@/widgets/layout/ui/mobile-sidebar';
 
 const BACKDROP_BLUR = 'blur(20px)';

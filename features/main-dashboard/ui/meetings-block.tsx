@@ -45,7 +45,7 @@ function MeetingRow({ event, now, onSelect, isSelected }: MeetingRowProps) {
   const titleNode =
     state === 'completed' || state === 'active' ? (
       <Link
-        href={`${ROUTES.DASHBOARD.MEETING}/${event.id}`}
+        href={`${ROUTES.DASHBOARD.MEETINGS}/${event.id}`}
         onClick={(e) => {
           e.stopPropagation();
         }}

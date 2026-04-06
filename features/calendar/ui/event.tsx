@@ -63,7 +63,7 @@ const Event = ({ event, onFutureEventClick }: EventComponentProps) => {
    * @returns void.
    */
   const navigateToMeeting = () => {
-    push(`${ROUTES.DASHBOARD.MEETING}/${event.id}?tab=summary`);
+    push(`${ROUTES.DASHBOARD.MEETINGS}/${event.id}`);
   };
   /**
    * handleClick handles event pill click.

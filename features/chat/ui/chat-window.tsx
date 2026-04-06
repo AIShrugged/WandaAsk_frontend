@@ -12,7 +12,12 @@ import { ChatMessage } from '@/features/chat/ui/chat-message';
 import { ChatSuggestions } from '@/features/chat/ui/chat-suggestions';
 import { ROUTES } from '@/shared/lib/routes';
 
-import type { Chat, Message, MessageStatus, PageContext } from '@/features/chat/types';
+import type {
+  Chat,
+  Message,
+  MessageStatus,
+  PageContext,
+} from '@/features/chat/types';
 
 const POLL_INTERVAL_MS = 1500;
 const POLL_MAX_ATTEMPTS = 60; // 90 s timeout

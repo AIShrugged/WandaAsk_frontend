@@ -242,7 +242,11 @@ describe('ChatWindow', () => {
         chat_id: 5,
       }),
     );
-    expect(mockSendMessage).toHaveBeenCalledWith(5, 'hello world');
+    expect(mockSendMessage).toHaveBeenCalledWith(
+      5,
+      'hello world',
+      expect.any(Object),
+    );
   });
 
   it('adds queued assistant message after send', async () => {

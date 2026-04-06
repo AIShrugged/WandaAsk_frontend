@@ -8,6 +8,10 @@ import { ROUTES } from '@/shared/lib/routes';
 
 import type { EventProps } from '@/entities/event';
 import type { MeetingTask } from '@/features/meeting/types';
+import type {
+  CalendarEventDetailResponse,
+  CalendarEventListItem,
+} from '@/features/meetings/model/types';
 import type { ApiResponse } from '@/shared/types/common';
 
 /**
@@ -60,6 +64,70 @@ export async function getEvents() {
   }
 
   const json: ApiResponse<EventProps[]> = await res.json();
+
+  if (!json.success || !json.data) {
+    throw new Error(json.error ?? 'Invalid API response');
+  }
+
+  return {
+    data: json.data,
+    status: json.status,
+  };
+}
+
+/**
+ * getCalendarEvents.
+ * @returns Promise.
+ */
+export async function getCalendarEvents() {
+  const authHeaders = await getAuthHeaders();
+  const res = await fetch(`${API_URL}/calendar-events`, {
+    method: 'GET',
+    headers: {
+      ...authHeaders,
+    },
+    cache: 'no-store',
+  });
+
+  if (!res.ok) {
+    throw new Error('Failed to getCalendarEvents');
+  }
+
+  const json: ApiResponse<CalendarEventListItem[]> = await res.json();
+
+  if (!json.success || !json.data) {
+    throw new Error(json.error ?? 'Invalid API response');
+  }
+
+  return {
+    data: json.data,
+    status: json.status,
+  };
+}
+
+/**
+ * getCalendarEventDetail.
+ * @param calendarEventId - calendarEventId.
+ * @returns Promise.
+ */
+export async function getCalendarEventDetail(calendarEventId: string | number) {
+  const authHeaders = await getAuthHeaders();
+  const res = await fetch(
+    `${API_URL}/calendar-events/${calendarEventId}/detail`,
+    {
+      method: 'GET',
+      headers: {
+        ...authHeaders,
+      },
+      cache: 'no-store',
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error('Failed to getCalendarEventDetail');
+  }
+
+  const json: ApiResponse<CalendarEventDetailResponse> = await res.json();
 
   if (!json.success || !json.data) {
     throw new Error(json.error ?? 'Invalid API response');

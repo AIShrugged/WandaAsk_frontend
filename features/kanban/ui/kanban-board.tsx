@@ -662,7 +662,7 @@ export function KanbanBoard({
     }
 
     // When status filter is active, put all matching cards into the target column
-    const targetColId = filters.status ? filters.status : col.id;
+    const targetColId = filters.status || col.id;
 
     for (const card of sourceCards) {
       // Assignee filter
