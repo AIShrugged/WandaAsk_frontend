@@ -8,7 +8,9 @@ import {
   MessageSquare,
   Minus,
   Paperclip,
+  X,
 } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
 import { useEffect, useState, useTransition } from 'react';
 import { toast } from 'sonner';
@@ -72,12 +74,12 @@ function getInitials(name: string): string {
 }
 
 /**
- * TaskPreviewPanel shows a detailed preview of a clicked kanban card.
+ * TaskPreviewModal shows a detailed modal preview of a clicked kanban card.
  * @param props - component props.
  * @param props.card - card to preview, or null when none is selected.
- * @param props.onClose - called to close the panel.
+ * @param props.onClose - called to close the modal.
  */
-function TaskPreviewPanel({
+function TaskPreviewModal({
   card,
   onClose,
 }: {
@@ -104,145 +106,162 @@ function TaskPreviewPanel({
     : null;
 
   return (
-    <div
-      className={[
-        'w-full flex-shrink-0 rounded-xl border transition-all duration-200',
-        'flex flex-col overflow-hidden h-full',
-        card
-          ? 'border-border bg-card/80 opacity-100'
-          : 'border-transparent bg-transparent opacity-0 pointer-events-none',
-      ].join(' ')}
-    >
-      {card ? (
+    <AnimatePresence>
+      {card && (
         <>
-          {/* Header */}
-          <div className='px-4 py-3 border-b border-border/60 flex items-center gap-2'>
-            {colConfig ? (
-              <span
-                className='w-2 h-2 rounded-full flex-shrink-0'
-                style={{ backgroundColor: colConfig.color }}
-              />
-            ) : null}
-            <span className='text-xs font-semibold uppercase tracking-wider text-muted-foreground truncate'>
-              {colConfig?.label}
-            </span>
-            <span className='text-xs text-muted-foreground/60 font-mono flex-shrink-0'>
-              #{card.id}
-            </span>
-            <button
-              type='button'
-              onClick={onClose}
-              className='ml-auto p-0.5 rounded text-muted-foreground hover:text-foreground hover:bg-accent/40 transition-colors'
-              aria-label='Close preview'
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={onClose}
+            className='fixed inset-0 bg-black/40 backdrop-blur-sm z-40'
+          />
+
+          {/* Modal */}
+          <div className='fixed inset-0 flex items-center justify-center z-50 p-4 pointer-events-none'>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              className='bg-card rounded-xl border border-border shadow-lg w-full max-w-md max-h-[85vh] overflow-hidden pointer-events-auto flex flex-col'
             >
-              ✕
-            </button>
-          </div>
-
-          {/* Body */}
-          <div className='flex-1 overflow-y-auto p-4 flex flex-col gap-3'>
-            {/* Title */}
-            <p className='text-sm font-semibold text-foreground leading-snug'>
-              {card.name}
-            </p>
-
-            {/* Type badge */}
-            {card.type ? (
-              <span
-                className={`self-start text-xs px-2 py-0.5 rounded-full font-medium ${typeColors[card.type] ?? 'bg-secondary text-secondary-foreground'}`}
-              >
-                {card.type}
-              </span>
-            ) : null}
-
-            {/* Description */}
-            {card.description ? (
-              <p className='text-xs text-muted-foreground leading-relaxed'>
-                {card.description}
-              </p>
-            ) : (
-              <p className='text-xs text-muted-foreground/40 italic'>
-                No description
-              </p>
-            )}
-
-            {/* Meta grid */}
-            <div className='flex flex-col gap-2 pt-1'>
-              {/* Priority */}
-              <div className='flex items-center justify-between text-xs'>
-                <span className='text-muted-foreground/60'>Priority</span>
-                <span
-                  className={`font-medium ${priorityConfig[card.priority ?? 'low'].color}`}
+              {/* Header */}
+              <div className='px-4 py-3 border-b border-border/60 flex items-center gap-2'>
+                {colConfig ? (
+                  <span
+                    className='w-2 h-2 rounded-full flex-shrink-0'
+                    style={{ backgroundColor: colConfig.color }}
+                  />
+                ) : null}
+                <span className='text-xs font-semibold uppercase tracking-wider text-muted-foreground truncate'>
+                  {colConfig?.label}
+                </span>
+                <span className='text-xs text-muted-foreground/60 font-mono flex-shrink-0'>
+                  #{card.id}
+                </span>
+                <button
+                  type='button'
+                  onClick={onClose}
+                  className='ml-auto p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/40 transition-colors'
+                  aria-label='Close preview'
                 >
-                  {priorityConfig[card.priority ?? 'low'].label}
-                </span>
+                  <X className='h-4 w-4' />
+                </button>
               </div>
 
-              {/* Story points */}
-              {card.story_points !== null && card.story_points !== undefined ? (
-                <div className='flex items-center justify-between text-xs'>
-                  <span className='text-muted-foreground/60'>Story points</span>
-                  <span className='font-medium text-foreground'>
-                    {card.story_points}
-                  </span>
-                </div>
-              ) : null}
+              {/* Body */}
+              <div className='flex-1 overflow-y-auto p-4 flex flex-col gap-3'>
+                {/* Title */}
+                <p className='text-sm font-semibold text-foreground leading-snug'>
+                  {card.name}
+                </p>
 
-              {/* Assignee */}
-              {card.assignee ? (
-                <div className='flex items-center justify-between text-xs'>
-                  <span className='text-muted-foreground/60'>Assignee</span>
-                  <span className='font-medium text-foreground truncate max-w-[140px]'>
-                    {card.assignee.name}
-                  </span>
-                </div>
-              ) : null}
-
-              {/* Created date */}
-              <div className='flex items-center justify-between text-xs'>
-                <span className='text-muted-foreground/60'>Created</span>
-                <span className='flex items-center gap-1 text-muted-foreground'>
-                  <Calendar className='h-3 w-3' />
-                  {new Date(card.created_at).toLocaleDateString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                  })}
-                </span>
-              </div>
-            </div>
-
-            {/* Attachments / comments */}
-            {card.attachments_count > 0 || card.comments_count > 0 ? (
-              <div className='flex items-center gap-3 text-xs text-muted-foreground pt-1 border-t border-border/40'>
-                {card.attachments_count > 0 ? (
-                  <span className='flex items-center gap-1'>
-                    <Paperclip className='h-3 w-3' />
-                    {card.attachments_count}
+                {/* Type badge */}
+                {card.type ? (
+                  <span
+                    className={`self-start text-xs px-2 py-0.5 rounded-full font-medium ${typeColors[card.type] ?? 'bg-secondary text-secondary-foreground'}`}
+                  >
+                    {card.type}
                   </span>
                 ) : null}
-                {card.comments_count > 0 ? (
-                  <span className='flex items-center gap-1'>
-                    <MessageSquare className='h-3 w-3' />
-                    {card.comments_count}
-                  </span>
+
+                {/* Description */}
+                {card.description ? (
+                  <p className='text-xs text-muted-foreground leading-relaxed'>
+                    {card.description}
+                  </p>
+                ) : (
+                  <p className='text-xs text-muted-foreground/40 italic'>
+                    No description
+                  </p>
+                )}
+
+                {/* Meta grid */}
+                <div className='flex flex-col gap-2 pt-1'>
+                  {/* Priority */}
+                  <div className='flex items-center justify-between text-xs'>
+                    <span className='text-muted-foreground/60'>Priority</span>
+                    <span
+                      className={`font-medium ${priorityConfig[card.priority ?? 'low'].color}`}
+                    >
+                      {priorityConfig[card.priority ?? 'low'].label}
+                    </span>
+                  </div>
+
+                  {/* Story points */}
+                  {card.story_points !== null &&
+                  card.story_points !== undefined ? (
+                    <div className='flex items-center justify-between text-xs'>
+                      <span className='text-muted-foreground/60'>
+                        Story points
+                      </span>
+                      <span className='font-medium text-foreground'>
+                        {card.story_points}
+                      </span>
+                    </div>
+                  ) : null}
+
+                  {/* Assignee */}
+                  {card.assignee ? (
+                    <div className='flex items-center justify-between text-xs'>
+                      <span className='text-muted-foreground/60'>Assignee</span>
+                      <span className='font-medium text-foreground truncate max-w-[200px]'>
+                        {card.assignee.name}
+                      </span>
+                    </div>
+                  ) : null}
+
+                  {/* Created date */}
+                  <div className='flex items-center justify-between text-xs'>
+                    <span className='text-muted-foreground/60'>Created</span>
+                    <span className='flex items-center gap-1 text-muted-foreground'>
+                      <Calendar className='h-3 w-3' />
+                      {new Date(card.created_at).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                      })}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Attachments / comments */}
+                {card.attachments_count > 0 || card.comments_count > 0 ? (
+                  <div className='flex items-center gap-3 text-xs text-muted-foreground pt-1 border-t border-border/40'>
+                    {card.attachments_count > 0 ? (
+                      <span className='flex items-center gap-1'>
+                        <Paperclip className='h-3 w-3' />
+                        {card.attachments_count}
+                      </span>
+                    ) : null}
+                    {card.comments_count > 0 ? (
+                      <span className='flex items-center gap-1'>
+                        <MessageSquare className='h-3 w-3' />
+                        {card.comments_count}
+                      </span>
+                    ) : null}
+                  </div>
                 ) : null}
               </div>
-            ) : null}
-          </div>
 
-          {/* Open link */}
-          <div className='px-4 py-3 border-t border-border/60'>
-            <Link
-              href={`${ROUTES.DASHBOARD.ISSUES}/${card.id}`}
-              className='flex items-center justify-center gap-1.5 w-full h-7 text-xs font-medium rounded-lg border border-primary/30 text-primary hover:bg-primary/10 transition-colors'
-            >
-              <ExternalLink className='h-3 w-3' />
-              Open issue
-            </Link>
+              {/* Open link */}
+              <div className='px-4 py-3 border-t border-border/60'>
+                <Link
+                  href={`${ROUTES.DASHBOARD.ISSUES}/${card.id}`}
+                  className='flex items-center justify-center gap-1.5 w-full h-7 text-xs font-medium rounded-lg border border-primary/30 text-primary hover:bg-primary/10 transition-colors'
+                >
+                  <ExternalLink className='h-3 w-3' />
+                  Open issue
+                </Link>
+              </div>
+            </motion.div>
           </div>
         </>
-      ) : null}
-    </div>
+      )}
+    </AnimatePresence>
   );
 }
 
@@ -680,7 +699,7 @@ export function KanbanBoard({
 
   return (
     <div className='flex flex-col h-full gap-3'>
-      {/* Board: columns + preview panel */}
+      {/* Board: columns */}
       <div className='flex gap-3 flex-1 min-h-0'>
         <div className='flex gap-3 overflow-x-auto pb-4 flex-1 min-h-0'>
           {KANBAN_COLUMNS.map((col) => {
@@ -703,22 +722,15 @@ export function KanbanBoard({
             );
           })}
         </div>
-
-        {/* Preview panel — hidden on small screens, revealed on card click */}
-        <div
-          className={[
-            'hidden lg:flex pb-4 flex-shrink-0 self-stretch items-stretch overflow-hidden transition-all duration-200',
-            hoveredCard ? 'w-[260px] xl:w-[300px]' : 'w-0',
-          ].join(' ')}
-        >
-          <TaskPreviewPanel
-            card={hoveredCard}
-            onClose={() => {
-              setHoveredCard(null);
-            }}
-          />
-        </div>
       </div>
+
+      {/* Task preview modal */}
+      <TaskPreviewModal
+        card={hoveredCard}
+        onClose={() => {
+          setHoveredCard(null);
+        }}
+      />
     </div>
   );
 }
