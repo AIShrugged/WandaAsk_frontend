@@ -2,6 +2,7 @@
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
 
 import { FiltersContext } from '@/features/issues/model/filters-context';
 import {
@@ -9,7 +10,7 @@ import {
   ISSUE_TYPE_OPTIONS,
 } from '@/features/issues/model/types';
 import { FiltersModal } from '@/features/issues/ui/filters-modal';
-import { KanbanBoard } from '@/features/kanban';
+import { fetchKanbanIssues, KanbanBoard } from '@/features/kanban';
 
 import type { OrganizationProps } from '@/entities/organization';
 import type {
@@ -20,7 +21,11 @@ import type {
   SharedFilters,
   SortOrder,
 } from '@/features/issues/model/types';
-import type { IssueStatus, KanbanCard } from '@/features/kanban/model/types';
+import type {
+  IssueStatus,
+  KanbanCard,
+  KanbanFilters,
+} from '@/features/kanban/model/types';
 
 interface TasksKanbanClientProps {
   initialColumns: Record<IssueStatus, KanbanCard[]>;
@@ -110,6 +115,12 @@ export function TasksKanbanClient({
   const isFirstFiltersRender = useRef(true);
   const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
 
+  const [columns, setColumns] =
+    useState<Record<IssueStatus, KanbanCard[]>>(initialColumns);
+  const [isFetching, setIsFetching] = useState(false);
+  const fetchCounterRef = useRef(0);
+  const prevSearchRef = useRef(filters.search);
+
   // On mount: remove stale legacy params and write default assignee_id if absent.
   useEffect(() => {
     const current = new URLSearchParams(searchParams.toString());
@@ -186,6 +197,46 @@ export function TasksKanbanClient({
     });
   }, [filters]);
 
+  useEffect(() => {
+    if (isFirstFiltersRender.current) return;
+
+    const thisCall = ++fetchCounterRef.current;
+    const isSearchChange = filters.search !== prevSearchRef.current;
+    prevSearchRef.current = filters.search;
+
+    const run = async () => {
+      setIsFetching(true);
+
+      const kanbanFilters: KanbanFilters = {
+        organization_id: filters.organization_id
+          ? Number(filters.organization_id)
+          : null,
+        team_id: filters.team_id ? Number(filters.team_id) : null,
+        type: filters.type || undefined,
+        assignee_id: filters.assignee_id ? Number(filters.assignee_id) : null,
+        priority: filters.priority || undefined,
+      };
+
+      const result = await fetchKanbanIssues(kanbanFilters);
+
+      if (thisCall !== fetchCounterRef.current) return;
+
+      if (result.error) {
+        toast.error(result.error);
+      } else {
+        setColumns(result.data);
+      }
+
+      setIsFetching(false);
+    };
+
+    const delay = isSearchChange ? 300 : 0;
+    const timer = setTimeout(run, delay);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [filters]);
+
   return (
     <FiltersContext.Provider
       value={{
@@ -221,9 +272,11 @@ export function TasksKanbanClient({
             </button>
           </div>
         </div>
-        <div className='flex-1 overflow-hidden p-3 h-full'>
+        <div
+          className={`flex-1 overflow-hidden p-3 h-full transition-opacity duration-150 ${isFetching ? 'opacity-60' : 'opacity-100'}`}
+        >
           <KanbanBoard
-            initialColumns={initialColumns}
+            initialColumns={columns}
             organizations={organizations}
             persons={persons}
             filters={filters}

@@ -10,6 +10,7 @@ import { logApiError } from '@/shared/lib/logger';
 import type { IssueStatus } from '@/features/issues/model/types';
 import type { KanbanCard, KanbanFilters } from '@/features/kanban/model/types';
 import type { ApiResponse } from '@/shared/types/common';
+import type { ActionResult } from '@/shared/types/server-action';
 
 /**
  * buildKanbanQuery builds query params for kanban issues request.
@@ -144,4 +145,21 @@ export async function moveKanbanCard(
   const json: ApiResponse<KanbanCard> = await res.json();
 
   return json.data!;
+}
+
+/**
+ * fetchKanbanIssues is a callable Server Action for client-side filter re-fetching.
+ * Wraps getKanbanIssues with ActionResult so callers can handle errors gracefully.
+ * @param filters - kanban filters.
+ * @returns ActionResult with grouped cards or error message.
+ */
+export async function fetchKanbanIssues(
+  filters: KanbanFilters,
+): Promise<ActionResult<Record<IssueStatus, KanbanCard[]>>> {
+  try {
+    const data = await getKanbanIssues(filters);
+    return { data, error: null };
+  } catch (error) {
+    return { data: null, error: (error as Error).message };
+  }
 }
