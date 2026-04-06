@@ -1,22 +1,71 @@
-import Card from '@/shared/ui/card/Card';
-import CardBody from '@/shared/ui/card/CardBody';
-import PageHeader from '@/widgets/layout/ui/page-header';
+import {
+  getPersons,
+  ISSUE_TYPE_OPTIONS,
+  type IssueType,
+} from '@/features/issues';
+import { getKanbanIssues } from '@/features/kanban';
+import { getOrganizations } from '@/features/organization/api/organization';
+import { getOrganizationId } from '@/shared/lib/getOrganizationId';
+import { getCurrentUserId } from '@/shared/lib/getCurrentUserId';
+import { TasksKanbanClient } from '@/features/tasks';
+
+import type { KanbanFilters } from '@/features/kanban/model/types';
+
+export const metadata = { title: 'Tasks' };
+
+function isIssueType(value: string): value is IssueType {
+  return ISSUE_TYPE_OPTIONS.some((option) => {
+    return option.value === value;
+  });
+}
 
 /**
- * Tasks page - mock placeholder.
+ * Tasks page — renders the Kanban board with filters for task management.
  */
-export default function TasksPage() {
+export default async function TasksPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const params = await searchParams;
+  const cookieOrgId = await getOrganizationId();
+  const orgId =
+    typeof params.organization_id === 'string'
+      ? params.organization_id
+      : cookieOrgId;
+
+  const typeParam =
+    typeof params.type === 'string' && isIssueType(params.type)
+      ? params.type
+      : '';
+  const assigneeIdParam =
+    typeof params.assignee_id === 'string' ? params.assignee_id : null;
+
+  const kanbanFilters: KanbanFilters = {
+    organization_id: orgId ? Number(orgId) : null,
+    team_id: params.team_id ? Number(params.team_id) : null,
+    type: typeParam || undefined,
+    assignee_id: assigneeIdParam ? Number(assigneeIdParam) : null,
+    priority:
+      typeof params.priority === 'string'
+        ? (params.priority as KanbanFilters['priority'])
+        : undefined,
+  };
+
+  const [organizationsResponse, persons, currentUserId, groupedCards] =
+    await Promise.all([
+      getOrganizations(),
+      getPersons(),
+      getCurrentUserId(),
+      getKanbanIssues(kanbanFilters),
+    ]);
+
   return (
-    <Card className='h-full flex flex-col'>
-      <PageHeader title='Tasks' />
-      <div className='h-full overflow-x-hidden overflow-y-scroll'>
-        <CardBody>
-          <div className='flex flex-col items-center justify-center h-64 text-muted-foreground'>
-            <p className='text-lg font-medium'>Tasks</p>
-            <p className='text-sm'>Coming soon...</p>
-          </div>
-        </CardBody>
-      </div>
-    </Card>
+    <TasksKanbanClient
+      initialColumns={groupedCards}
+      organizations={organizationsResponse.data ?? []}
+      persons={persons}
+      currentUserId={currentUserId ?? null}
+    />
   );
 }

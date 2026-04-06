@@ -9,6 +9,7 @@ import React, {
   forwardRef,
   useImperativeHandle,
 } from 'react';
+import { createPortal } from 'react-dom';
 
 import Error from '@/shared/ui/input/Error';
 
@@ -62,6 +63,11 @@ const InputDropdown = forwardRef<
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const [dropdownPosition, setDropdownPosition] = useState<{
+    top: number;
+    left: number;
+    width: number;
+  } | null>(null);
   const triggerRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -131,7 +137,22 @@ const InputDropdown = forwardRef<
   const toggleOpen = () => {
     if (!disabled) {
       setIsOpen((prev) => {
-        return !prev;
+        const next = !prev;
+
+        // Calculate position when opening
+        if (next && triggerRef.current) {
+          const rect = triggerRef.current.getBoundingClientRect();
+
+          setDropdownPosition({
+            top: rect.bottom + 4,
+            left: rect.left,
+            width: rect.width,
+          });
+        } else if (!next) {
+          setDropdownPosition(null);
+        }
+
+        return next;
       });
 
       if (!isOpen && searchable) {
@@ -141,6 +162,31 @@ const InputDropdown = forwardRef<
       }
     }
   };
+
+  // Reposition dropdown on scroll/resize when open
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const updatePosition = () => {
+      if (triggerRef.current) {
+        const rect = triggerRef.current.getBoundingClientRect();
+
+        setDropdownPosition({
+          top: rect.bottom + 4,
+          left: rect.left,
+          width: rect.width,
+        });
+      }
+    };
+
+    window.addEventListener('scroll', updatePosition, true);
+    window.addEventListener('resize', updatePosition);
+
+    return () => {
+      window.removeEventListener('scroll', updatePosition, true);
+      window.removeEventListener('resize', updatePosition);
+    };
+  }, [isOpen]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -300,74 +346,83 @@ const InputDropdown = forwardRef<
         ) : null}
       </div>
 
-      {isOpen && (
-        <div
-          ref={dropdownRef}
-          id={listboxId}
-          role='listbox'
-          className='absolute z-50 w-full top-[44px] bg-popover border border-border rounded-[var(--radius-card)] shadow-card max-h-80 overflow-auto'
-        >
-          {searchable && (
-            <div className='p-2 border-b border-border sticky top-0 bg-popover'>
-              <input
-                ref={searchInputRef}
-                type='text'
-                value={searchQuery}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  setHighlightedIndex(-1);
-                }}
-                placeholder='Search'
-                className='w-full px-3 h-8 text-sm border border-input rounded-[var(--radius-button)] bg-transparent outline-none focus:border-ring focus:ring-2 focus:ring-ring/30 focus:ring-offset-0'
-                onClick={(e) => {
-                  return e.stopPropagation();
-                }}
-              />
-            </div>
-          )}
-
-          <ul className='py-1'>
-            {filteredOptions.length === 0 ? (
-              <li className='px-4 py-3 text-sm text-muted-foreground'>
-                Nothing found
-              </li>
-            ) : (
-              filteredOptions.map((option, index) => {
-                const isSelected = selectedValues.includes(option.value);
-                const isHighlighted = index === highlightedIndex;
-
-                return (
-                  <li
-                    key={option.value}
-                    role='option'
-                    aria-selected={isSelected}
-                    onClick={() => {
-                      return selectOption(option);
-                    }}
-                    onMouseEnter={() => {
-                      return setHighlightedIndex(index);
-                    }}
-                    className={cn(
-                      'px-4 py-2.5 flex items-center justify-between cursor-pointer transition-colors text-sm',
-                      // bg-accent is terminal green — must use accent-foreground (black, 9.65:1) not foreground (white, 1.84:1)
-                      isHighlighted &&
-                        !isSelected &&
-                        'bg-accent/20 text-foreground',
-                      isSelected && 'bg-primary/15 text-foreground font-medium',
-                      option.disabled && 'opacity-50 cursor-not-allowed',
-                    )}
-                  >
-                    <span>{option.label}</span>
-                    {isSelected && (
-                      <Check className='w-4 h-4 text-violet-300' />
-                    )}
-                  </li>
-                );
-              })
+      {isOpen &&
+        dropdownPosition &&
+        createPortal(
+          <div
+            ref={dropdownRef}
+            id={listboxId}
+            role='listbox'
+            className='fixed z-[100] bg-popover border border-border rounded-[var(--radius-card)] shadow-card max-h-80 overflow-auto'
+            style={{
+              top: `${dropdownPosition.top}px`,
+              left: `${dropdownPosition.left}px`,
+              width: `${dropdownPosition.width}px`,
+            }}
+          >
+            {searchable && (
+              <div className='p-2 border-b border-border sticky top-0 bg-popover'>
+                <input
+                  ref={searchInputRef}
+                  type='text'
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setHighlightedIndex(-1);
+                  }}
+                  placeholder='Search'
+                  className='w-full px-3 h-8 text-sm border border-input rounded-[var(--radius-button)] bg-transparent outline-none focus:border-ring focus:ring-2 focus:ring-ring/30 focus:ring-offset-0'
+                  onClick={(e) => {
+                    return e.stopPropagation();
+                  }}
+                />
+              </div>
             )}
-          </ul>
-        </div>
-      )}
+
+            <ul className='py-1'>
+              {filteredOptions.length === 0 ? (
+                <li className='px-4 py-3 text-sm text-muted-foreground'>
+                  Nothing found
+                </li>
+              ) : (
+                filteredOptions.map((option, index) => {
+                  const isSelected = selectedValues.includes(option.value);
+                  const isHighlighted = index === highlightedIndex;
+
+                  return (
+                    <li
+                      key={option.value}
+                      role='option'
+                      aria-selected={isSelected}
+                      onClick={() => {
+                        return selectOption(option);
+                      }}
+                      onMouseEnter={() => {
+                        return setHighlightedIndex(index);
+                      }}
+                      className={cn(
+                        'px-4 py-2.5 flex items-center justify-between cursor-pointer transition-colors text-sm',
+                        // bg-accent is terminal green — must use accent-foreground (black, 9.65:1) not foreground (white, 1.84:1)
+                        isHighlighted &&
+                          !isSelected &&
+                          'bg-accent/20 text-foreground',
+                        isSelected &&
+                          'bg-primary/15 text-foreground font-medium',
+                        option.disabled && 'opacity-50 cursor-not-allowed',
+                      )}
+                    >
+                      <span>{option.label}</span>
+                      {isSelected && (
+                        <Check className='w-4 h-4 text-violet-300' />
+                      )}
+                    </li>
+                  );
+                })
+              )}
+            </ul>
+          </div>,
+          document.body,
+        )}
 
       {typeof error === 'string' ? <Error id={errorId}>{error}</Error> : null}
     </div>

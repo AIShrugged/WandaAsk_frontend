@@ -8,7 +8,6 @@ import {
   MessageSquare,
   Minus,
   Paperclip,
-  Plus,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState, useTransition } from 'react';
@@ -128,7 +127,7 @@ function TaskPreviewPanel({
               {colConfig?.label}
             </span>
             <span className='text-xs text-muted-foreground/60 font-mono flex-shrink-0'>
-              I{card.id}
+              #{card.id}
             </span>
             <button
               type='button'
@@ -309,6 +308,13 @@ function KanbanCardItem({
         {card.name}
       </Link>
 
+      {/* Description preview (2 lines max) */}
+      {card.description ? (
+        <p className='text-xs text-muted-foreground line-clamp-2 mb-3'>
+          {card.description}
+        </p>
+      ) : null}
+
       {/* Tags */}
       {card.type ? (
         <div className='flex flex-wrap gap-1 mb-3'>
@@ -320,38 +326,24 @@ function KanbanCardItem({
         </div>
       ) : null}
 
-      {/* Footer row */}
-      <div className='flex items-center justify-between text-xs text-muted-foreground'>
-        <div className='flex items-center gap-3'>
-          {/* Issue id + priority */}
-          <span className='text-muted-foreground/60 font-mono'>I{card.id}</span>
-          <PriorityIcon priority={card.priority ?? 'low'} />
-          {card.story_points !== null && card.story_points !== undefined ? (
-            <span>{card.story_points}</span>
-          ) : null}
-        </div>
-
-        <div className='flex items-center gap-3'>
-          {card.attachments_count > 0 ? (
-            <span className='flex items-center gap-1'>
-              <Paperclip className='h-3 w-3' />
-              {card.attachments_count}
-            </span>
-          ) : null}
-          {card.comments_count > 0 ? (
-            <span className='flex items-center gap-1'>
-              <MessageSquare className='h-3 w-3' />
-              {card.comments_count}
-            </span>
-          ) : null}
-
-          {/* Assignee avatar */}
-          {card.assignee ? (
+      {/* Footer row: Avatar + assignee + created_date */}
+      <div className='flex items-center gap-2 text-xs text-muted-foreground'>
+        {card.assignee ? (
+          <>
             <Avatar size='xs' className='text-[10px]'>
               {getInitials(card.assignee.name)}
             </Avatar>
-          ) : null}
-        </div>
+            <span className='text-foreground truncate max-w-[120px]'>
+              {card.assignee.name}
+            </span>
+          </>
+        ) : null}
+        <span className='ml-auto text-muted-foreground/60'>
+          {new Date(card.created_at).toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+          })}
+        </span>
       </div>
 
       {/* Quick move actions — appear on hover */}
@@ -458,12 +450,6 @@ function KanbanColumnComponent({
           <span className='text-xs font-medium text-muted-foreground bg-secondary rounded-full px-2 py-0.5'>
             {cards.length}
           </span>
-          <Link
-            href={`${ROUTES.DASHBOARD.ISSUES}/create?status=${id}`}
-            className='p-0.5 rounded text-muted-foreground hover:text-foreground hover:bg-accent/40 transition-colors'
-          >
-            <Plus className='h-3.5 w-3.5' />
-          </Link>
         </div>
       </div>
 
@@ -638,7 +624,8 @@ export function KanbanBoard({
     handleDrop(card.id, card.status, status);
   };
 
-  // Client-side search + priority filter
+  // Client-side filtering: search, priority, assignee, type, status
+  // Filter against initialColumns to preserve optimistic updates while applying filters
   const lowerSearch = filters.search.toLowerCase();
   const filteredColumns: Record<IssueStatus, KanbanCard[]> = {
     open: [],
@@ -648,21 +635,47 @@ export function KanbanBoard({
   };
 
   for (const col of KANBAN_COLUMNS) {
-    filteredColumns[col.id] = columns[col.id].filter((card) => {
+    const sourceCards = columns[col.id] ?? [];
+
+    // If status filter is set and doesn't match this column, skip entirely
+    if (filters.status && col.id !== filters.status) {
+      continue;
+    }
+
+    // When status filter is active, put all matching cards into the target column
+    const targetColId = filters.status ? filters.status : col.id;
+
+    for (const card of sourceCards) {
+      // Assignee filter
+      if (filters.assignee_id) {
+        const assigneeId = Number(filters.assignee_id);
+
+        if (card.assignee_id !== assigneeId) {
+          continue;
+        }
+      }
+
+      // Type filter
+      if (filters.type && card.type !== filters.type) {
+        continue;
+      }
+
+      // Search filter
       if (
         lowerSearch.length > 0 &&
         !card.name.toLowerCase().includes(lowerSearch) &&
         !(card.description?.toLowerCase().includes(lowerSearch) ?? false)
       ) {
-        return false;
+        continue;
       }
 
+      // Priority filter
       if (filters.priority && card.priority !== filters.priority) {
-        return false;
+        continue;
       }
 
-      return true;
-    });
+      filteredColumns[targetColId].push(card);
+    }
   }
 
   return (
