@@ -54,6 +54,13 @@ export interface IssueAgentFlow {
   steps: IssueAgentFlowStep[];
 }
 
+export interface IssueAgentTaskRun {
+  id: number;
+  status: string | null;
+  current_tool: string | null;
+  current_tool_description: string | null;
+}
+
 export interface Issue {
   id: number;
   name: string;
@@ -64,6 +71,7 @@ export interface Issue {
   organization_id: number | null;
   team_id: number | null;
   agent_task_id?: number | null;
+  agent_task_run?: IssueAgentTaskRun | null;
   agent_flow_id?: number | null;
   agent_flow?: IssueAgentFlow | null;
   assignee_id: number | null;
