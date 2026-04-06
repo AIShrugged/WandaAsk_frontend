@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useTransition } from 'react';
+import { useEffect, useRef, useTransition } from 'react';
 import { toast } from 'sonner';
 
 import { dispatchIssue } from '@/features/issues/api/issues';
@@ -88,6 +88,29 @@ function FlowStepRow({ step }: { step: IssueAgentFlowStep }) {
 export function IssueLinkedTask({ issue }: IssueLinkedTaskProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const isProcessing = issue.status === 'in_progress';
+
+  useEffect(() => {
+    if (isProcessing && !pollingRef.current) {
+      pollingRef.current = setInterval(() => {
+        router.refresh();
+      }, 3000);
+    }
+
+    if (!isProcessing && pollingRef.current) {
+      clearInterval(pollingRef.current);
+      pollingRef.current = null;
+    }
+
+    return () => {
+      if (pollingRef.current) {
+        clearInterval(pollingRef.current);
+        pollingRef.current = null;
+      }
+    };
+  }, [isProcessing, router]);
 
   const flow = issue.agent_flow;
   const hasFlowSteps =
@@ -131,12 +154,24 @@ export function IssueLinkedTask({ issue }: IssueLinkedTaskProps) {
 
           {!hasFlowSteps && issue.agent_task_id ? (
             <div className='rounded-[var(--radius-card)] border border-border bg-background/30 p-4'>
-              <Link
-                href={`/dashboard/agents/tasks/${issue.agent_task_id.toString()}`}
-                className='text-sm font-medium text-foreground transition-colors hover:text-primary'
-              >
-                Task #{issue.agent_task_id.toString()}
-              </Link>
+              <div className='flex items-center justify-between'>
+                <Link
+                  href={`/dashboard/agents/tasks/${issue.agent_task_id.toString()}`}
+                  className='text-sm font-medium text-foreground transition-colors hover:text-primary'
+                >
+                  Task #{issue.agent_task_id.toString()}
+                </Link>
+                {issue.agent_task_run?.status ? (
+                  <Badge variant={runStatusVariant(issue.agent_task_run.status)}>
+                    {issue.agent_task_run.status}
+                  </Badge>
+                ) : null}
+              </div>
+              {isProcessing && issue.agent_task_run?.current_tool_description ? (
+                <p className='mt-2 text-xs text-muted-foreground animate-pulse'>
+                  {issue.agent_task_run.current_tool_description.split('. ')[0]}…
+                </p>
+              ) : null}
             </div>
           ) : null}
 
@@ -150,9 +185,9 @@ export function IssueLinkedTask({ issue }: IssueLinkedTaskProps) {
             type='button'
             className='w-full'
             onClick={handleDispatch}
-            disabled={isPending}
+            disabled={isPending || isProcessing}
           >
-            {isPending ? 'Dispatching…' : buttonLabel}
+            {isProcessing ? 'Agent is working…' : isPending ? 'Dispatching…' : buttonLabel}
           </Button>
         </div>
       </CardBody>

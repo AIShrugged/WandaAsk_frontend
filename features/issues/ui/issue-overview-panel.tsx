@@ -2,7 +2,7 @@
 
 import { format } from 'date-fns';
 import { useRouter } from 'next/navigation';
-import { useMemo, useState, useTransition } from 'react';
+import { useEffect, useMemo, useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
 import { updateIssue } from '@/features/issues/api/issues';
@@ -73,6 +73,10 @@ export function IssueOverviewPanel({ issue }: IssueOverviewPanelProps) {
   const [status, setStatus] = useState<IssueStatus>(issue.status);
   const [rootError, setRootError] = useState('');
   const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    setStatus(issue.status);
+  }, [issue.status]);
   const statusOptions = useMemo(() => {
     return ISSUE_STATUS_OPTIONS;
   }, []);
