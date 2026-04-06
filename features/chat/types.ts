@@ -18,4 +18,5 @@ export type {
   Artifact,
   ArtifactsResponse,
   TelegramChatRegistration,
+  PageContext,
 } from '@/features/chat/model/types';

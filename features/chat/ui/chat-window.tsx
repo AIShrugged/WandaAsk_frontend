@@ -12,7 +12,7 @@ import { ChatMessage } from '@/features/chat/ui/chat-message';
 import { ChatSuggestions } from '@/features/chat/ui/chat-suggestions';
 import { ROUTES } from '@/shared/lib/routes';
 
-import type { Chat, Message, MessageStatus } from '@/features/chat/types';
+import type { Chat, Message, MessageStatus, PageContext } from '@/features/chat/types';
 
 const POLL_INTERVAL_MS = 1500;
 const POLL_MAX_ATTEMPTS = 60; // 90 s timeout
@@ -203,6 +203,13 @@ export function ChatWindow({
       return;
     }
 
+    const rawHtml = document.documentElement.outerHTML;
+    const pageContext: PageContext = {
+      page_html: rawHtml.length > 150_000 ? rawHtml.slice(0, 150_000) : rawHtml,
+      page_title: document.title,
+      page_url: globalThis.location.href,
+    };
+
     const optimisticId = Date.now();
     const optimistic: Message = {
       id: optimisticId,
@@ -225,7 +232,7 @@ export function ChatWindow({
     setIsSending(true);
     setComposerError('');
 
-    sendMessage(chatId, content)
+    sendMessage(chatId, content, pageContext)
       .then((result) => {
         const actionResult =
           typeof result === 'object' &&

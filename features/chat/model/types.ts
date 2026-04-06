@@ -81,6 +81,12 @@ export type {
   TranscriptArtifact,
 } from '@/entities/artifact/model/types';
 
+export interface PageContext {
+  page_html?: string;
+  page_title?: string;
+  page_url?: string;
+}
+
 export interface TelegramChatRegistration {
   id: number;
   channel_conversation_id: string | null;
