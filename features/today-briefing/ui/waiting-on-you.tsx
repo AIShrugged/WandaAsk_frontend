@@ -1,3 +1,7 @@
+import Link from 'next/link';
+
+import { ROUTES } from '@/shared/lib/routes';
+
 import type { WaitingTask } from '../model/types';
 
 interface WaitingOnYouProps {
@@ -25,13 +29,17 @@ export function WaitingOnYou({ tasks }: WaitingOnYouProps) {
                 className={`h-2 w-2 shrink-0 rounded-full ${isUrgent ? 'bg-red-500' : 'bg-blue-500'}`}
               />
               <div className='min-w-0 flex-1'>
-                <p className='text-sm font-medium text-foreground truncate'>
+                <Link
+                  href={`${ROUTES.DASHBOARD.ISSUES}/${task.id}`}
+                  className='text-sm font-medium text-foreground truncate hover:text-primary hover:underline transition-colors block'
+                >
                   {task.name}
-                </p>
-                {task.source_meeting_title && (
-                  <p className='text-xs text-muted-foreground truncate'>
-                    {task.source_meeting_title}
-                    {task.description && ` — ${task.description}`}
+                </Link>
+                {(task.source_meeting_title || task.description) && (
+                  <p className='text-xs text-muted-foreground line-clamp-2'>
+                    {task.source_meeting_title && `From ${task.source_meeting_title}`}
+                    {task.source_meeting_title && task.description && ' · '}
+                    {task.description}
                   </p>
                 )}
               </div>

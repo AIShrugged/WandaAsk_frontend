@@ -1,7 +1,7 @@
 'use client';
 
-import { format, parseISO } from 'date-fns';
-import { useMemo } from 'react';
+import { format, isToday, parseISO } from 'date-fns';
+import { useEffect, useMemo, useState } from 'react';
 
 import type { TodayEvent } from '../model/types';
 
@@ -37,6 +37,29 @@ const STATE_COLORS: Record<string, string> = {
 export function DayTimeline({ events, selectedId, onSelect }: DayTimelineProps) {
   const [minHour, maxHour] = useMemo(() => getHourRange(events), [events]);
   const totalHours = maxHour - minHour;
+
+  // "Now" line — updates every minute, only shown for today
+  const [nowPercent, setNowPercent] = useState<number | null>(null);
+
+  useEffect(() => {
+    function calcNow() {
+      const firstEvent = events[0];
+      if (!firstEvent) return null;
+      const eventDate = parseISO(firstEvent.starts_at);
+      if (!isToday(eventDate)) return null;
+
+      const now = new Date();
+      const nowMins = (now.getHours() - minHour) * 60 + now.getMinutes();
+      const totalMins = totalHours * 60;
+      const pct = (nowMins / totalMins) * 100;
+      if (pct < 0 || pct > 100) return null;
+      return pct;
+    }
+
+    setNowPercent(calcNow());
+    const interval = setInterval(() => setNowPercent(calcNow()), 60_000);
+    return () => clearInterval(interval);
+  }, [events, minHour, totalHours]);
 
   const hours = useMemo(() => {
     const arr: string[] = [];
@@ -95,6 +118,16 @@ export function DayTimeline({ events, selectedId, onSelect }: DayTimelineProps) 
             </button>
           );
         })}
+
+        {/* Now indicator — red line showing current time */}
+        {nowPercent !== null && (
+          <div
+            className='absolute top-0 bottom-0 w-0.5 bg-red-500 z-10'
+            style={{ left: `${nowPercent}%` }}
+          >
+            <div className='absolute -top-1 left-1/2 -translate-x-1/2 h-2 w-2 rounded-full bg-red-500' />
+          </div>
+        )}
       </div>
     </div>
   );

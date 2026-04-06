@@ -39,7 +39,12 @@ export function CarriedTasks({ tasks }: CarriedTasksProps) {
                 {task.assignee_name}:{' '}
               </span>
             )}
-            {task.name}
+            <Link
+              href={`${ROUTES.DASHBOARD.ISSUES}/${task.id}`}
+              className='hover:text-primary hover:underline transition-colors'
+            >
+              {task.name}
+            </Link>
           </span>
           <Badge
             variant={task.status === 'open' ? 'default' : 'primary'}

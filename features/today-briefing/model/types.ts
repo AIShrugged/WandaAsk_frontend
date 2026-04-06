@@ -25,10 +25,14 @@ export interface TodayEvent {
   ends_at: string;
   participants_count: number;
   platform: string | null;
+  meeting_url: string | null;
   meeting_state: MeetingState;
   summary: MeetingSummaryBrief | null;
   review: MeetingReviewBrief | null;
   tasks: MeetingTask[];
+  total_tasks_count: number;
+  done_tasks_count: number;
+  agenda_content: string | null;
 }
 
 export interface MeetingSummaryBrief {
@@ -58,6 +62,7 @@ export interface CarriedTask {
   id: number;
   name: string;
   status: TaskStatus;
+  assignee_id: number | null;
   assignee_name: string | null;
   source_meeting_title: string;
   source_meeting_date: string;

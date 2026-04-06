@@ -1,8 +1,10 @@
 'use client';
 
 import { ChevronDown, ChevronRight } from 'lucide-react';
+import Link from 'next/link';
 import { useState } from 'react';
 
+import { ROUTES } from '@/shared/lib/routes';
 import { Badge } from '@/shared/ui/badge';
 
 import type { MeetingTask } from '../model/types';
@@ -27,40 +29,27 @@ const STATUS_LABEL: Record<string, string> = {
 
 interface AgendaListProps {
   tasks: MeetingTask[];
+  totalCount: number;
+  doneCount: number;
 }
 
-export function AgendaList({ tasks }: AgendaListProps) {
+export function AgendaList({ tasks, totalCount, doneCount }: AgendaListProps) {
   const [expandedId, setExpandedId] = useState<number | null>(null);
 
-  if (tasks.length === 0) {
+  if (totalCount === 0) {
     return (
       <p className='text-xs text-muted-foreground italic'>
-        No tasks extracted from this meeting
+        No tasks from this meeting
       </p>
     );
   }
 
-  const doneCount = tasks.filter((t) => t.status === 'done').length;
-
   return (
     <div className='flex flex-col gap-1'>
-      <div className='flex items-center justify-between mb-2'>
+      <div className='mb-2'>
         <span className='text-xs font-medium uppercase tracking-wide text-muted-foreground'>
-          Agenda
+          Agenda — from open items
         </span>
-        <span className='text-xs text-muted-foreground'>
-          {doneCount} of {tasks.length} done
-        </span>
-      </div>
-
-      {/* Readiness bar */}
-      <div className='h-1.5 w-full rounded-full bg-muted mb-3'>
-        <div
-          className='h-full rounded-full bg-emerald-500 transition-all'
-          style={{
-            width: `${tasks.length > 0 ? (doneCount / tasks.length) * 100 : 0}%`,
-          }}
-        />
       </div>
 
       {tasks.map((task, i) => {
@@ -80,7 +69,13 @@ export function AgendaList({ tasks }: AgendaListProps) {
             <div className='min-w-0 flex-1'>
               <div className='flex items-start gap-2'>
                 <span className='text-sm text-foreground flex-1'>
-                  {task.name}
+                  <Link
+                    href={`${ROUTES.DASHBOARD.ISSUES}/${task.id}`}
+                    onClick={(e) => e.stopPropagation()}
+                    className='hover:text-primary hover:underline transition-colors'
+                  >
+                    {task.name}
+                  </Link>
                   {task.assignee_name && (
                     <span className='text-muted-foreground'>
                       {' '}

@@ -1,3 +1,7 @@
+import Link from 'next/link';
+
+import { ROUTES } from '@/shared/lib/routes';
+
 import type { StaleTask } from '../model/types';
 
 interface StaleItemsProps {
@@ -22,7 +26,12 @@ export function StaleItems({ tasks }: StaleItemsProps) {
             <div className='h-2 w-2 shrink-0 rounded-full bg-orange-500' />
             <div className='min-w-0 flex-1'>
               <p className='text-sm font-medium text-foreground truncate'>
-                {task.name}
+                <Link
+                  href={`${ROUTES.DASHBOARD.ISSUES}/${task.id}`}
+                  className='hover:text-primary hover:underline transition-colors'
+                >
+                  {task.name}
+                </Link>
                 {task.assignee_name && (
                   <span className='text-muted-foreground'>
                     {' '}
@@ -31,7 +40,7 @@ export function StaleItems({ tasks }: StaleItemsProps) {
                 )}
               </p>
               {task.description && (
-                <p className='text-xs text-muted-foreground truncate'>
+                <p className='text-xs text-muted-foreground line-clamp-2'>
                   {task.description}
                 </p>
               )}

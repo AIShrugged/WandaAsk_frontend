@@ -1,7 +1,6 @@
 'use client';
 
 import { addDays, format, isToday, parseISO } from 'date-fns';
-import { ru } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
@@ -9,9 +8,10 @@ import { ROUTES } from '@/shared/lib/routes';
 
 interface DayNavigatorProps {
   date: string;
+  meetingsCount: number;
 }
 
-export function DayNavigator({ date }: DayNavigatorProps) {
+export function DayNavigator({ date, meetingsCount }: DayNavigatorProps) {
   const router = useRouter();
   const current = parseISO(date);
   const isTodayDate = isToday(current);
@@ -39,7 +39,7 @@ export function DayNavigator({ date }: DayNavigatorProps) {
       </button>
 
       <span className='text-sm font-medium text-foreground min-w-[160px] text-center'>
-        {format(current, 'EEEE, d MMMM', { locale: ru })}
+        {format(current, 'EEEE, MMMM d')}
       </span>
 
       <button
@@ -49,6 +49,12 @@ export function DayNavigator({ date }: DayNavigatorProps) {
       >
         <ChevronRight className='h-4 w-4' />
       </button>
+
+      {meetingsCount > 0 && (
+        <span className='text-xs text-muted-foreground'>
+          {meetingsCount} {meetingsCount === 1 ? 'meeting' : 'meetings'}
+        </span>
+      )}
 
       {!isTodayDate && (
         <button

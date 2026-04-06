@@ -26,30 +26,21 @@ export function TodayPageContent({ data }: TodayPageContentProps) {
     return <EmptyState />;
   }
 
-  if (data.state === 'waiting') {
-    return (
-      <div className='flex flex-col gap-5 p-4'>
-        <DayNavigator date={data.date} />
-        <WaitingState events={data.events} />
-      </div>
-    );
-  }
-
   const selectedEvent = data.events.find((e) => e.id === selectedId) ?? null;
 
   return (
     <div className='flex flex-col gap-5 p-4'>
-      <DayNavigator date={data.date} />
+      <DayNavigator date={data.date} meetingsCount={data.events.length} />
 
-      {data.events.length > 0 && (
+      {data.events.length > 0 ? (
         <DayTimeline
           events={data.events}
           selectedId={selectedId}
           onSelect={setSelectedId}
         />
+      ) : (
+        <WaitingState events={[]} />
       )}
-
-      <AiNudge text={data.nudge} />
 
       {selectedEvent && (
         <MeetingDetailCard
@@ -57,6 +48,8 @@ export function TodayPageContent({ data }: TodayPageContentProps) {
           carriedTasks={data.carried_tasks}
         />
       )}
+
+      <AiNudge text={data.nudge} date={data.date} />
 
       <WaitingOnYou tasks={data.waiting_on_you} />
 
