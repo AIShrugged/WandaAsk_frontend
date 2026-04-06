@@ -26,33 +26,37 @@ export default function TeamDashboardTabRisks({
     );
   }
 
-  const sorted = [...data.items].toSorted(
-    (a, b) => SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity],
-  );
+  const sorted = [...data.items].toSorted((a, b) => {
+    return SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity];
+  });
 
   return (
     <div className='flex flex-col'>
-      {sorted.map((item, i) => {return (
-        <div
-          key={item.id}
-          className={`flex items-start gap-3 py-3 ${i < sorted.length - 1 ? 'border-b border-border/50' : ''}`}
-        >
-          {item.severity === 'high' ? (
-            <AlertCircle className='h-4 w-4 text-red-400 flex-shrink-0 mt-0.5' />
-          ) : (
-            <AlertTriangle className='h-4 w-4 text-yellow-300 flex-shrink-0 mt-0.5' />
-          )}
-          <div className='flex-1 min-w-0'>
-            <p className='text-sm font-medium text-foreground'>{item.title}</p>
-            <p className='text-xs text-muted-foreground mt-0.5'>
-              {item.subtitle}
-            </p>
+      {sorted.map((item, i) => {
+        return (
+          <div
+            key={item.id}
+            className={`flex items-start gap-3 py-3 ${i < sorted.length - 1 ? 'border-b border-border/50' : ''}`}
+          >
+            {item.severity === 'high' ? (
+              <AlertCircle className='h-4 w-4 text-red-400 flex-shrink-0 mt-0.5' />
+            ) : (
+              <AlertTriangle className='h-4 w-4 text-yellow-300 flex-shrink-0 mt-0.5' />
+            )}
+            <div className='flex-1 min-w-0'>
+              <p className='text-sm font-medium text-foreground'>
+                {item.title}
+              </p>
+              <p className='text-xs text-muted-foreground mt-0.5'>
+                {item.subtitle}
+              </p>
+            </div>
+            <Badge variant='default' className='flex-shrink-0 capitalize'>
+              {item.source}
+            </Badge>
           </div>
-          <Badge variant='default' className='flex-shrink-0 capitalize'>
-            {item.source}
-          </Badge>
-        </div>
-      )})}
+        );
+      })}
     </div>
   );
 }

@@ -14,13 +14,14 @@ const INITIAL_MESSAGES_LIMIT = 20;
  * @returns JSX element.
  */
 export async function DashboardChatLoader() {
-  const [{ chats }, { data: organizations }, activityResult] = await Promise.all([
-    getChats(0, 20),
-    getOrganizations(),
-    getAgentActivity(0, 20).catch(() => {
-      return { items: [], totalCount: 0, hasMore: false };
-    }),
-  ]);
+  const [{ chats }, { data: organizations }, activityResult] =
+    await Promise.all([
+      getChats(0, 20),
+      getOrganizations(),
+      getAgentActivity(0, 20).catch(() => {
+        return { items: [], totalCount: 0, hasMore: false };
+      }),
+    ]);
 
   const firstChat = chats[0] ?? null;
   let initialMessages: Message[] = [];

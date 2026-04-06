@@ -4,7 +4,10 @@ import Link from 'next/link';
 import { ROUTES } from '@/shared/lib/routes';
 import { Badge } from '@/shared/ui/badge/Badge';
 
-import type { DashboardTaskCard, IssueStatus } from '../../model/dashboard-types';
+import type {
+  DashboardTaskCard,
+  IssueStatus,
+} from '../../model/dashboard-types';
 
 const STATUS_VARIANT: Record<
   IssueStatus,
@@ -50,7 +53,9 @@ export default function TeamDashboardTaskRow({
     <div className='flex items-start gap-3 py-3 border-b border-border/50 last:border-0'>
       {/* Priority dot */}
       <div className='mt-1 flex-shrink-0 w-2 h-2 rounded-full'>
-        {dotColor && <span className={`block w-2 h-2 rounded-full ${dotColor}`} />}
+        {dotColor && (
+          <span className={`block w-2 h-2 rounded-full ${dotColor}`} />
+        )}
       </div>
 
       {/* Content */}

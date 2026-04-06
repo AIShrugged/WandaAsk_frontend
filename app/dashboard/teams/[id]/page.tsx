@@ -44,9 +44,7 @@ export default async function Page({ params, searchParams }: PageProps) {
     return c.team_id === team.id && c.bound_at !== null;
   });
   const dashboard =
-    dashboardResult.status === 'fulfilled'
-      ? dashboardResult.value.data
-      : null;
+    dashboardResult.status === 'fulfilled' ? dashboardResult.value.data : null;
 
   return (
     <Card className='min-h-full h-full flex flex-col overflow-hidden'>
@@ -59,9 +57,7 @@ export default async function Page({ params, searchParams }: PageProps) {
           </div>
 
           {dashboard.upcoming_meeting && (
-            <TeamDashboardMeetingBanner
-              meeting={dashboard.upcoming_meeting}
-            />
+            <TeamDashboardMeetingBanner meeting={dashboard.upcoming_meeting} />
           )}
 
           <TeamDashboardTabs currentTab={tab} tabs={dashboard.tabs} />

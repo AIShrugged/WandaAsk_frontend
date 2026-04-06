@@ -54,17 +54,19 @@ export default function TeamDashboardTabHealth({
       {/* Indicators */}
       {data.indicators.length > 0 && (
         <div className='flex flex-col'>
-          {data.indicators.map((indicator, i) => {return (
-            <div
-              key={indicator.key}
-              className={`flex items-center justify-between py-2.5 text-sm ${i < data.indicators.length - 1 ? 'border-b border-border/50' : ''}`}
-            >
-              <span className='text-muted-foreground'>{indicator.label}</span>
-              <span className='font-medium text-foreground'>
-                {indicator.value}
-              </span>
-            </div>
-          )})}
+          {data.indicators.map((indicator, i) => {
+            return (
+              <div
+                key={indicator.key}
+                className={`flex items-center justify-between py-2.5 text-sm ${i < data.indicators.length - 1 ? 'border-b border-border/50' : ''}`}
+              >
+                <span className='text-muted-foreground'>{indicator.label}</span>
+                <span className='font-medium text-foreground'>
+                  {indicator.value}
+                </span>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>

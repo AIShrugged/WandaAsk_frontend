@@ -29,7 +29,9 @@ interface TeamDashboardTabReadinessProps {
 export default function TeamDashboardTabReadiness({
   data,
 }: TeamDashboardTabReadinessProps) {
-  const passedCount = data.checks.filter((c) => {return c.value}).length;
+  const passedCount = data.checks.filter((c) => {
+    return c.value;
+  }).length;
 
   return (
     <div className='flex flex-col gap-6'>
@@ -54,34 +56,38 @@ export default function TeamDashboardTabReadiness({
       {/* Checklist */}
       {data.checks.length > 0 && (
         <div className='flex flex-col gap-2'>
-          {data.checks.map((check) => {return (
-            <div key={check.key} className='flex items-center gap-2'>
-              {check.value ? (
-                <CheckCircle2 className='h-4 w-4 text-emerald-400 flex-shrink-0' />
-              ) : (
-                <Circle className='h-4 w-4 text-muted-foreground flex-shrink-0' />
-              )}
-              <span
-                className={`text-sm ${check.value ? 'text-foreground' : 'text-muted-foreground'}`}
-              >
-                {check.label}
-              </span>
-            </div>
-          )})}
+          {data.checks.map((check) => {
+            return (
+              <div key={check.key} className='flex items-center gap-2'>
+                {check.value ? (
+                  <CheckCircle2 className='h-4 w-4 text-emerald-400 flex-shrink-0' />
+                ) : (
+                  <Circle className='h-4 w-4 text-muted-foreground flex-shrink-0' />
+                )}
+                <span
+                  className={`text-sm ${check.value ? 'text-foreground' : 'text-muted-foreground'}`}
+                >
+                  {check.label}
+                </span>
+              </div>
+            );
+          })}
         </div>
       )}
 
       {/* Notes */}
       {data.notes.length > 0 && (
         <ul className='flex flex-col gap-1'>
-          {data.notes.map((note, i) => {return (
-            <li
-              key={i}
-              className='text-xs text-muted-foreground italic before:content-["·"] before:mr-1.5'
-            >
-              {note}
-            </li>
-          )})}
+          {data.notes.map((note, i) => {
+            return (
+              <li
+                key={i}
+                className='text-xs text-muted-foreground italic before:content-["·"] before:mr-1.5'
+              >
+                {note}
+              </li>
+            );
+          })}
         </ul>
       )}
 
@@ -96,7 +102,9 @@ export default function TeamDashboardTabReadiness({
               {format(parseISO(data.meeting.starts_at), 'MMM d, HH:mm')} —{' '}
               {format(parseISO(data.meeting.ends_at), 'HH:mm')}
             </span>
-            <span className='capitalize'>{data.meeting.platform.replace('_', ' ')}</span>
+            <span className='capitalize'>
+              {data.meeting.platform.replace('_', ' ')}
+            </span>
             <span className='flex items-center gap-1'>
               <Users className='h-3 w-3' />
               {data.meeting.participants_count}

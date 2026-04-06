@@ -15,7 +15,9 @@ function initials(name: string): string {
   return name
     .split(' ')
     .slice(0, 2)
-    .map((w) => {return w[0]})
+    .map((w) => {
+      return w[0];
+    })
     .join('')
     .toUpperCase();
 }
@@ -50,45 +52,47 @@ export default function TeamDashboardTabPeople({
 
   return (
     <div className='grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
-      {data.members.map((member) => {return (
-        <div
-          key={member.id}
-          className='flex flex-col items-center gap-3 p-4 rounded-[var(--radius-card)] border border-border bg-card hover:shadow-card transition-shadow'
-        >
+      {data.members.map((member) => {
+        return (
           <div
-            className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold text-white flex-shrink-0 ${avatarColor(member.name)}`}
+            key={member.id}
+            className='flex flex-col items-center gap-3 p-4 rounded-[var(--radius-card)] border border-border bg-card hover:shadow-card transition-shadow'
           >
-            {initials(member.name)}
-          </div>
-          <div className='text-center min-w-0 w-full'>
-            <p className='text-sm font-semibold text-foreground truncate'>
-              {member.name}
-            </p>
-            <p className='text-xs text-muted-foreground truncate mt-0.5'>
-              {member.email}
-            </p>
-          </div>
-          <div className='flex items-center justify-center gap-3 text-xs w-full'>
-            <span className='text-muted-foreground'>
-              <span className='text-foreground font-medium'>
-                {member.done_tasks}
-              </span>{' '}
-              done
-            </span>
-            <span className='text-muted-foreground'>
-              <span className='text-foreground font-medium'>
-                {member.open_tasks}
-              </span>{' '}
-              open
-            </span>
-            {member.overdue_tasks > 0 && (
-              <span className='text-red-400 font-medium'>
-                {member.overdue_tasks} overdue
+            <div
+              className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold text-white flex-shrink-0 ${avatarColor(member.name)}`}
+            >
+              {initials(member.name)}
+            </div>
+            <div className='text-center min-w-0 w-full'>
+              <p className='text-sm font-semibold text-foreground truncate'>
+                {member.name}
+              </p>
+              <p className='text-xs text-muted-foreground truncate mt-0.5'>
+                {member.email}
+              </p>
+            </div>
+            <div className='flex items-center justify-center gap-3 text-xs w-full'>
+              <span className='text-muted-foreground'>
+                <span className='text-foreground font-medium'>
+                  {member.done_tasks}
+                </span>{' '}
+                done
               </span>
-            )}
+              <span className='text-muted-foreground'>
+                <span className='text-foreground font-medium'>
+                  {member.open_tasks}
+                </span>{' '}
+                open
+              </span>
+              {member.overdue_tasks > 0 && (
+                <span className='text-red-400 font-medium'>
+                  {member.overdue_tasks} overdue
+                </span>
+              )}
+            </div>
           </div>
-        </div>
-      )})}
+        );
+      })}
     </div>
   );
 }
