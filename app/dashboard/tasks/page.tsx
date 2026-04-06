@@ -66,6 +66,7 @@ export default async function TasksPage({
       organizations={organizationsResponse.data ?? []}
       persons={persons}
       currentUserId={currentUserId ?? null}
+      initialOrgId={orgId ?? ''}
     />
   );
 }

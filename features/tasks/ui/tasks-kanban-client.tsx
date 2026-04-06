@@ -27,6 +27,7 @@ interface TasksKanbanClientProps {
   organizations: OrganizationProps[];
   persons: PersonOption[];
   currentUserId: number | null;
+  initialOrgId: string;
 }
 
 const KEEP_WHEN_EMPTY = new Set(['assignee_id']);
@@ -64,6 +65,7 @@ export function TasksKanbanClient({
   organizations,
   persons,
   currentUserId,
+  initialOrgId,
 }: TasksKanbanClientProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -79,7 +81,7 @@ export function TasksKanbanClient({
       : (currentUserId?.toString() ?? '');
 
     return {
-      organization_id: searchParams.get('organization_id') ?? '',
+      organization_id: searchParams.get('organization_id') ?? initialOrgId,
       team_id: searchParams.get('team_id') ?? '',
       search: searchParams.get('search') ?? '',
       type: isIssueType(typeRaw) ? typeRaw : '',
@@ -118,6 +120,11 @@ export function TasksKanbanClient({
         current.delete(stale);
         dirty = true;
       }
+    }
+
+    if (!searchParams.has('organization_id') && initialOrgId) {
+      current.set('organization_id', initialOrgId);
+      dirty = true;
     }
 
     if (!searchParams.has('assignee_id') && currentUserId !== null) {

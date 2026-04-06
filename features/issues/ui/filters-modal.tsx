@@ -1,9 +1,6 @@
 'use client';
 
-import {
-  ISSUE_PRIORITY_LABELS,
-  ISSUE_STATUS_OPTIONS,
-} from '@/features/issues/model/types';
+import { ISSUE_STATUS_OPTIONS } from '@/features/issues/model/types';
 import { getTeams } from '@/features/teams/api/team';
 import InputDropdown from '@/shared/ui/input/InputDropdown';
 import { TenantScopeFields } from '@/shared/ui/input/tenant-scope-fields';
@@ -11,7 +8,6 @@ import { Modal } from '@/shared/ui/modal/modal';
 
 import type { OrganizationProps } from '@/entities/organization';
 import type {
-  IssuePriority,
   IssueStatus,
   IssueType,
   PersonOption,
@@ -32,13 +28,6 @@ const TYPE_OPTIONS = [
   { value: '', label: 'Any type' },
   { value: 'development', label: 'Development' },
   { value: 'organization', label: 'Organization' },
-];
-
-const PRIORITY_OPTIONS = [
-  { value: '', label: 'Any priority' },
-  ...Object.entries(ISSUE_PRIORITY_LABELS).map(([value, label]) => {
-    return { value, label };
-  }),
 ];
 
 const STATUS_OPTIONS = [
@@ -121,15 +110,6 @@ export function FiltersModal({
               onChange({ assignee_id: value as string });
             }}
             searchable
-            disabled={disabled}
-          />
-          <InputDropdown
-            label='Priority'
-            options={PRIORITY_OPTIONS}
-            value={filters.priority}
-            onChange={(value) => {
-              onChange({ priority: value as IssuePriority | '' });
-            }}
             disabled={disabled}
           />
         </div>
