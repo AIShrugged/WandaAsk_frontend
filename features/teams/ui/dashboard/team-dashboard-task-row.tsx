@@ -56,9 +56,12 @@ export default function TeamDashboardTaskRow({
       {/* Content */}
       <div className='flex-1 min-w-0'>
         <div className='flex items-center gap-2 flex-wrap'>
-          <span className='text-sm font-medium text-foreground truncate'>
+          <Link
+            href={`${ROUTES.DASHBOARD.ISSUES}/${task.id}`}
+            className='text-sm font-medium text-foreground truncate hover:text-primary transition-colors'
+          >
             {task.title}
-          </span>
+          </Link>
           <Badge variant={STATUS_VARIANT[task.status]}>
             {STATUS_LABEL[task.status]}
           </Badge>
