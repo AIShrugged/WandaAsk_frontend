@@ -28,9 +28,14 @@ const makeEvent = (id: number, startsAt: string): EventProps => {
   return {
     id,
     title: `Event ${id}`,
+    description: '',
     starts_at: startsAt,
     ends_at: startsAt,
-    color: '#ff0000',
+    platform: 'zoom',
+    url: '',
+    required_bot: false,
+    creator_user_id: 1,
+    has_summary: false,
   };
 };
 const renderEvent = (event: EventProps) => {

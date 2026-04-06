@@ -31,14 +31,14 @@ const makeGuest = (id: number): GuestProps => {
     id,
     name: `Guest ${id}`,
     email: `guest${id}@test.com`,
-  } as GuestProps;
+  } as unknown as GuestProps;
 };
 const makeAttendee = (id: number): AttendeeProps => {
   return {
     id,
     name: `Attendee ${id}`,
     email: `attendee${id}@test.com`,
-  } as AttendeeProps;
+  } as unknown as AttendeeProps;
 };
 
 describe('ParticipantData', () => {

@@ -47,19 +47,32 @@ function buildSuggestions(
 
   // 1. Send follow-up — if meeting has summary
   if (event.summary) {
+    const keyPoints = event.summary.key_points
+      .map((p) => {
+        return `- ${p}`;
+      })
+      .join('\n');
+    const decisions =
+      event.summary.decisions
+        .map((d) => {
+          return `- ${d}`;
+        })
+        .join('\n') || 'No decisions';
     actions.push({
       key: 'followup',
       icon: <Mail className='h-4 w-4' />,
       title: `Send follow-up from ${event.title}`,
       description: 'Draft recap with decisions and action items for the team',
       type: 'agent',
-      prompt: `Составь recap встречи "${event.title}" на основе следующих данных и отправь в Telegram команде.\n\nSummary: ${event.summary.summary}\n\nKey points:\n${event.summary.key_points.map((p) => `- ${p}`).join('\n')}\n\nDecisions:\n${event.summary.decisions.map((d) => `- ${d}`).join('\n') || 'Нет решений'}`,
+      prompt: `Draft a recap for meeting "${event.title}" based on the following data and send it to the team in Telegram.\n\nSummary: ${event.summary.summary}\n\nKey points:\n${keyPoints}\n\nDecisions:\n${decisions}`,
     });
   }
 
   // 2. Message assignee about stale task — direct Telegram message
   const staleCarried = carriedTasks
-    .filter((t) => t.syncs_since_created >= 3 && t.assignee_name && t.assignee_id)
+    .filter((t) => {
+      return t.syncs_since_created >= 3 && t.assignee_name && t.assignee_id;
+    })
     .slice(0, 2);
 
   for (const task of staleCarried) {
@@ -71,7 +84,7 @@ function buildSuggestions(
       type: 'message',
       prompt: '',
       recipientUserId: task.assignee_id!,
-      messageText: `Привет! По задаче "${task.name}" прошло уже ${task.syncs_since_created} встреч без прогресса. Нужна ли помощь? Когда можно ожидать результат?`,
+      messageText: `Hi! Task "${task.name}" has had no progress for ${task.syncs_since_created} syncs. Do you need help? When can we expect a result?`,
     });
   }
 
@@ -82,27 +95,24 @@ function buildSuggestions(
     title: 'Prepare status summary',
     description: 'Per-person progress across recent syncs for quick reference',
     type: 'agent',
-    prompt: `Подготовь краткий status summary по задачам команды на основе данных о встрече "${event.title}". Покажи прогресс по каждому участнику: какие задачи в работе, что завершено, что застряло. Формат: имя → статус задач.`,
+    prompt: `Prepare a brief status summary of the team's tasks based on the meeting "${event.title}". Show progress per participant: tasks in progress, completed, and blocked. Format: name → task status.`,
   });
 
   return actions;
 }
 
-export function AiPrepPanel({
-  event,
-  tasks,
-  carriedTasks,
-}: AiPrepPanelProps) {
+export function AiPrepPanel({ event, tasks, carriedTasks }: AiPrepPanelProps) {
   const [expanded, setExpanded] = useState(false);
   const [loadingKey, setLoadingKey] = useState<string | null>(null);
   const [doneKeys, setDoneKeys] = useState<Set<string>>(new Set());
   const router = useRouter();
 
-  const dispatchable = tasks.filter((t) => t.status !== 'done');
-  const suggestions = useMemo(
-    () => buildSuggestions(event, carriedTasks),
-    [event, carriedTasks],
-  );
+  const dispatchable = tasks.filter((t) => {
+    return t.status !== 'done';
+  });
+  const suggestions = useMemo(() => {
+    return buildSuggestions(event, carriedTasks);
+  }, [event, carriedTasks]);
 
   async function handleDispatchTask(taskId: number) {
     const key = `task-${taskId}`;
@@ -113,7 +123,9 @@ export function AiPrepPanel({
       toast.error(result.error);
     } else {
       toast.success('Task dispatched to agent');
-      setDoneKeys((prev) => new Set(prev).add(key));
+      setDoneKeys((prev) => {
+        return new Set(prev).add(key);
+      });
       router.refresh();
     }
     setLoadingKey(null);
@@ -122,13 +134,22 @@ export function AiPrepPanel({
   async function handleAiAction(action: AiAction) {
     setLoadingKey(action.key);
 
-    if (action.type === 'message' && action.recipientUserId && action.messageText) {
-      const result = await sendDirectMessage(action.recipientUserId, action.messageText);
+    if (
+      action.type === 'message' &&
+      action.recipientUserId &&
+      action.messageText
+    ) {
+      const result = await sendDirectMessage(
+        action.recipientUserId,
+        action.messageText,
+      );
       if (result.error) {
         toast.error(result.error);
       } else {
         toast.success('Message sent via Telegram');
-        setDoneKeys((prev) => new Set(prev).add(action.key));
+        setDoneKeys((prev) => {
+          return new Set(prev).add(action.key);
+        });
       }
     } else {
       const result = await executeAiAction(action.title, action.prompt);
@@ -136,7 +157,9 @@ export function AiPrepPanel({
         toast.error(result.error);
       } else {
         toast.success(`"${action.title}" dispatched to agent`);
-        setDoneKeys((prev) => new Set(prev).add(action.key));
+        setDoneKeys((prev) => {
+          return new Set(prev).add(action.key);
+        });
         router.refresh();
       }
     }
@@ -151,7 +174,9 @@ export function AiPrepPanel({
       <div className='flex items-center gap-2'>
         <button
           type='button'
-          onClick={() => setExpanded(!expanded)}
+          onClick={() => {
+            return setExpanded(!expanded);
+          }}
           className='flex items-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-sm font-medium text-foreground hover:bg-muted transition-colors cursor-pointer'
         >
           <Bot className='h-4 w-4 text-primary' />
@@ -203,7 +228,9 @@ export function AiPrepPanel({
                     <button
                       type='button'
                       disabled={loadingKey !== null}
-                      onClick={() => handleAiAction(action)}
+                      onClick={() => {
+                        return handleAiAction(action);
+                      }}
                       className='shrink-0 text-xs text-primary hover:underline disabled:opacity-50 flex items-center gap-1 mt-0.5 cursor-pointer disabled:cursor-wait'
                     >
                       {isLoading ? (
@@ -252,7 +279,9 @@ export function AiPrepPanel({
                         <button
                           type='button'
                           disabled={loadingKey !== null}
-                          onClick={() => handleDispatchTask(task.id)}
+                          onClick={() => {
+                            return handleDispatchTask(task.id);
+                          }}
                           className='shrink-0 text-xs text-primary hover:underline disabled:opacity-50 flex items-center gap-1 cursor-pointer disabled:cursor-wait'
                         >
                           {isLoading ? (

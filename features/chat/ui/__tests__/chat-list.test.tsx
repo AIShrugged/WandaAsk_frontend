@@ -39,11 +39,11 @@ const mockGetChats = jest.fn(() => {
 
 jest.mock('@/features/chat/api/chats', () => {
   return {
-    createChat: (...args: unknown[]) => {
-      return mockCreateChat(...args);
+    createChat: () => {
+      return mockCreateChat();
     },
-    getChats: (...args: unknown[]) => {
-      return mockGetChats(...args);
+    getChats: () => {
+      return mockGetChats();
     },
   };
 });

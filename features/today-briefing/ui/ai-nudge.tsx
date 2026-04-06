@@ -11,7 +11,7 @@ interface AiNudgeProps {
 }
 
 export function AiNudge({ text, date }: AiNudgeProps) {
-  const [nudge, setNudge] = useState(text);
+  const [nudge, setNudge] = useState<string | null>(text);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -20,22 +20,32 @@ export function AiNudge({ text, date }: AiNudgeProps) {
       return;
     }
 
+    let cancelled = false;
+
     // No cached nudge — generate in background
-    setLoading(true);
-    generateNudge(date)
-      .then((result) => {
-        setNudge(result);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    async function fetchNudge() {
+      setLoading(true);
+      try {
+        const result = await generateNudge(date);
+        if (!cancelled) setNudge(result);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    void fetchNudge();
+    return () => {
+      cancelled = true;
+    };
   }, [text, date]);
 
   if (loading) {
     return (
       <div className='flex items-center gap-3 rounded-lg border border-border bg-card px-4 py-3'>
         <Loader2 className='h-4 w-4 shrink-0 text-muted-foreground animate-spin' />
-        <p className='text-sm text-muted-foreground'>Generating AI insight...</p>
+        <p className='text-sm text-muted-foreground'>
+          Generating AI insight...
+        </p>
       </div>
     );
   }

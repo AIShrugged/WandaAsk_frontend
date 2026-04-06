@@ -70,7 +70,7 @@ const makeArtifacts = (type = 'task_table'): ArtifactsResponse => {
         id: ARTIFACT_ID,
         type: type as 'task_table',
         title: ARTIFACT_TITLE,
-        status: 'done',
+        status: 'ready',
         data: {} as never,
       },
     },

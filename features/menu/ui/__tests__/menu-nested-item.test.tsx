@@ -46,6 +46,7 @@ const makeItem = (overrides: Partial<MenuProps> = {}): MenuProps => {
     id: 'dashboard',
     label: 'Dashboard',
     href: '/dashboard',
+    position: 0,
     ...overrides,
   };
 };

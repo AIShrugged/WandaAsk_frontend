@@ -316,7 +316,7 @@ describe('Stepper (via DemoSeedButton)', () => {
       return b.textContent?.includes('plus');
     });
 
-    await user.click(plusButton);
+    await user.click(plusButton!);
     await act(async () => {
       await user.click(screen.getByRole('button', { name: 'Generate' }));
     });
@@ -337,7 +337,7 @@ describe('Stepper (via DemoSeedButton)', () => {
       return b.textContent?.includes('minus');
     });
 
-    await user.click(minusButton);
+    await user.click(minusButton!);
     await act(async () => {
       await user.click(screen.getByRole('button', { name: 'Generate' }));
     });
@@ -360,7 +360,7 @@ describe('Stepper (via DemoSeedButton)', () => {
 
     // Click minus many times — should clamp to min (3)
     for (let i = 0; i < 10; i++) {
-      await user.click(minusButton);
+      await user.click(minusButton!);
     }
     await act(async () => {
       await user.click(screen.getByRole('button', { name: 'Generate' }));

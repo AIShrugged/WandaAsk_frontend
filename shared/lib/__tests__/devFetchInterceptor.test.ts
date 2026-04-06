@@ -120,8 +120,8 @@ describe('installClientFetchDebugger', () => {
     const cleanup = installClientFetchDebugger();
 
     // The wrapper function is named "debugFetch"
-    // @ts-expect-error — internal name check
-    expect(globalThis.fetch.name).toBe('debugFetch');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expect((globalThis.fetch as any).name).toBe('debugFetch');
     cleanup();
     // After cleanup the patch flag is cleared, so a re-install can patch again
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
