@@ -10,6 +10,9 @@ import {
   File,
   Terminal,
   UsersRound,
+  Clock,
+  Users,
+  CheckSquare,
 } from 'lucide-react';
 
 import { ROUTES } from '@/shared/lib/routes';
@@ -28,6 +31,34 @@ export function getMenuItems({
   canManageAgents: boolean;
 }): MenuProps[] {
   const items: MenuProps[] = [
+    {
+      id: 'today',
+      label: 'Today',
+      icon: 'clock',
+      href: ROUTES.DASHBOARD.TODAY,
+      position: 1,
+    },
+    {
+      id: 'meetings',
+      label: 'Meetings',
+      icon: 'users',
+      href: ROUTES.DASHBOARD.MEETINGS,
+      position: 2,
+    },
+    {
+      id: 'tasks',
+      label: 'Tasks',
+      icon: 'checkSquare',
+      href: ROUTES.DASHBOARD.TASKS,
+      position: 3,
+    },
+    {
+      id: 'team',
+      label: 'Team',
+      icon: 'users',
+      href: ROUTES.DASHBOARD.TEAM,
+      position: 4,
+    },
     {
       id: 'main-dashboard',
       label: 'Dashboard',
@@ -121,4 +152,7 @@ export const ICONS_MAP = {
   messageSquare: MessageSquare,
   bug: Bug,
   terminal: Terminal,
+  clock: Clock,
+  users: Users,
+  checkSquare: CheckSquare,
 } as const;
