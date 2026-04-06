@@ -9,6 +9,8 @@ export {
   sendInvite,
   loadTeamsChunk,
 } from './api/team';
+export { getTeamDashboard } from './api/team-dashboard';
+export type { TeamDashboardData } from './model/dashboard-types';
 export { TEAM_CREATE_VALUES, TEAM_CREATE_FIELDS } from './model/fields';
 export { TeamList } from './ui/team-list';
 export { default as TeamCreateForm } from './ui/team-create-form';

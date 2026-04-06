@@ -9,7 +9,6 @@ export const ROUTES = {
     TODAY: '/dashboard/today',
     MEETINGS: '/dashboard/meetings',
     TASKS: '/dashboard/tasks',
-    TEAM: '/dashboard/team',
     CALENDAR: '/dashboard/calendar',
     CHAT: '/dashboard/chat',
     ISSUES: '/dashboard/issues',

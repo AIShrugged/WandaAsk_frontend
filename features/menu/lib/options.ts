@@ -53,13 +53,6 @@ export function getMenuItems({
       position: 3,
     },
     {
-      id: 'team',
-      label: 'Team',
-      icon: 'users',
-      href: ROUTES.DASHBOARD.TEAM,
-      position: 4,
-    },
-    {
       id: 'main-dashboard',
       label: 'Dashboard',
       icon: 'layoutDashboard',
@@ -85,7 +78,7 @@ export function getMenuItems({
       label: 'Teams',
       icon: 'teams',
       href: ROUTES.DASHBOARD.TEAMS,
-      position: 80,
+      position: 5,
     },
     {
       id: 'methodology',
