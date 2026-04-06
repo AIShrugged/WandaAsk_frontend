@@ -51,7 +51,7 @@ export default async function AgentTasksPage() {
       <div className='mb-6 flex flex-wrap items-center justify-between gap-3'>
         <p className='text-sm text-muted-foreground'>
           Active organization context: {activeOrganization?.name ?? 'Unknown'} ·{' '}
-          {tasksTotal} tasks
+          {tasksTotal > 0 ? tasksTotal : tasks.length} tasks
         </p>
         <Link
           href={ROUTES.DASHBOARD.AGENT_TASKS_NEW}

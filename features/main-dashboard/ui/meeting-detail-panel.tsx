@@ -64,7 +64,7 @@ export function MeetingDetailPanel({
           </p>
           {state === 'completed' || state === 'active' ? (
             <Link
-              href={`${ROUTES.DASHBOARD.MEETING}/${event.id}`}
+              href={`${ROUTES.DASHBOARD.MEETINGS}/${event.id}`}
               className='text-base font-semibold text-foreground hover:text-primary transition-colors line-clamp-2'
             >
               {event.title}
@@ -155,7 +155,7 @@ export function MeetingDetailPanel({
         ) : null}
         {(state === 'completed' || state === 'active') && (
           <Link
-            href={`${ROUTES.DASHBOARD.MEETING}/${event.id}`}
+            href={`${ROUTES.DASHBOARD.MEETINGS}/${event.id}`}
             className='inline-flex items-center justify-center gap-2 rounded-md border border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-accent/30 transition-colors'
           >
             View full meeting

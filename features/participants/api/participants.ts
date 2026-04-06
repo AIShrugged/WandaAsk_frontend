@@ -105,6 +105,7 @@ export async function setProfile(
   }
 
   revalidatePath(ROUTES.DASHBOARD.MEETING);
+  revalidatePath(ROUTES.DASHBOARD.MEETINGS);
 
   return { success: true };
 }

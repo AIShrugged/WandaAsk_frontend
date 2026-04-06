@@ -46,6 +46,10 @@ export function AgentTasksList({ initialTasks, totalCount }: Props) {
 
     return { items: result.data, hasMore: result.hasMore };
   }, []);
+  const initialHasMore =
+    totalCount > 0
+      ? initialTasks.length < totalCount
+      : initialTasks.length === PAGE_SIZE;
   const {
     items: tasks,
     isLoading,
@@ -54,7 +58,7 @@ export function AgentTasksList({ initialTasks, totalCount }: Props) {
   } = useInfiniteScroll({
     fetchMore,
     initialItems: initialTasks,
-    initialHasMore: initialTasks.length < totalCount,
+    initialHasMore,
   });
 
   return (

@@ -253,9 +253,11 @@ export async function validateAgentProfilePayload(
  * @param limit
  */
 export async function getAgentTasks(offset = 0, limit = 20) {
+  const safeLimit = Math.min(Math.max(limit, 1), 200);
+  const safeOffset = Math.max(offset, 0);
   const params = new URLSearchParams({
-    offset: String(offset),
-    limit: String(limit),
+    offset: String(safeOffset),
+    limit: String(safeLimit),
   });
   const { response, json } = await requestAgentApi<AgentTask[]>(
     `/agent-tasks?${params}`,
@@ -264,11 +266,14 @@ export async function getAgentTasks(offset = 0, limit = 20) {
   );
   const data = json.data ?? [];
   const totalCount = Number(response.headers.get('Items-Count') ?? '0');
+  const hasTotalCount = Number.isFinite(totalCount) && totalCount > 0;
 
   return {
     data,
     totalCount,
-    hasMore: offset + data.length < totalCount,
+    hasMore: hasTotalCount
+      ? safeOffset + data.length < totalCount
+      : data.length === safeLimit,
   };
 }
 
