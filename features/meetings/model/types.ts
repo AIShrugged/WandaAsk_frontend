@@ -41,10 +41,17 @@ export interface CalendarEventParticipant {
 
 export interface CalendarEventAgendaItem {
   id?: number | string;
+  type?: string | null;
+  status?: string | null;
   title?: string | null;
   text?: string | null;
   description?: string | null;
+  content?: string | null;
   order?: number | null;
+  sent_at?: string | null;
+  send_scheduled_at?: string | null;
+  created_at?: string | null;
+  updated_at?: string | null;
   [key: string]: unknown;
 }
 
