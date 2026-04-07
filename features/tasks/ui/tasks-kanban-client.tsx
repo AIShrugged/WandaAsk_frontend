@@ -223,6 +223,8 @@ export function TasksKanbanClient({
 
       if (result.error === null) {
         setColumns(result.data);
+        columnsVersionRef.current += 1;
+        setColumnsVersion(columnsVersionRef.current);
       } else {
         toast.error(result.error);
       }
