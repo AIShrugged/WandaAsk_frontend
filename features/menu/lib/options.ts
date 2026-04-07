@@ -87,13 +87,13 @@ export function getMenuItems({
       href: ROUTES.DASHBOARD.METHODOLOGY,
       position: 70,
     },
-    {
+    /* {
       id: 'calendar',
       label: 'Calendar',
       icon: 'calendar',
       href: ROUTES.DASHBOARD.CALENDAR,
       position: 20,
-    },
+    },*/
     {
       id: 'follow-ups',
       label: 'Follow ups (meetings)',

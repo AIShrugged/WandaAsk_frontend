@@ -1,6 +1,10 @@
 import Card from '@/shared/ui/card/Card';
-import CardBody from '@/shared/ui/card/CardBody';
-import PageHeader from '@/widgets/layout/ui/page-header';
+import SpinLoader from '@/shared/ui/layout/spin-loader';
+
+const TABS = [
+  { id: 'meetings', label: 'Meetings' },
+  { id: 'calendar', label: 'Calendar' },
+] as const;
 
 /**
  * Loading state for Meetings page.
@@ -8,15 +12,24 @@ import PageHeader from '@/widgets/layout/ui/page-header';
 export default function Loading() {
   return (
     <Card className='h-full flex flex-col overflow-hidden'>
-      <PageHeader title='Meetings' />
-      <CardBody>
-        <div className='flex flex-col gap-4'>
-          <div className='h-4 w-24 rounded bg-muted/60' />
-          <div className='h-36 rounded-[var(--radius-card)] border border-border bg-muted/30' />
-          <div className='h-36 rounded-[var(--radius-card)] border border-border bg-muted/30' />
-          <div className='h-36 rounded-[var(--radius-card)] border border-border bg-muted/30' />
+      <div className='flex gap-1 border-b border-border'>
+        {TABS.map((tab) => {
+          return (
+            <div
+              key={tab.id}
+              className='px-4 py-2 text-sm font-medium text-muted-foreground'
+            >
+              {tab.label}
+            </div>
+          );
+        })}
+      </div>
+      <div className='flex flex-1 items-center justify-center'>
+        <div className='flex flex-col items-center gap-4 px-8 py-6'>
+          <SpinLoader />
+          <p className='text-muted-foreground'>Loading...</p>
         </div>
-      </CardBody>
+      </div>
     </Card>
   );
 }
