@@ -189,7 +189,7 @@ export function OrganizationIssueTypesSettings({
           <span>Repo payload example:</span>
           <Badge>github</Badge>
           <Badge>AIShrugged</Badge>
-          <Badge>WandaAsk_backend</Badge>
+          <Badge>Tribes_backend</Badge>
         </div>
       </div>
 
