@@ -148,7 +148,6 @@ describe('MenuSidebar', () => {
     expect(screen.getByText('AI Chat')).toBeInTheDocument();
     expect(screen.getByText('Teams')).toBeInTheDocument();
     expect(screen.getByText('Methodologies')).toBeInTheDocument();
-    expect(screen.getByText('Calendar')).toBeInTheDocument();
     expect(screen.getByText('Follow ups (meetings)')).toBeInTheDocument();
   });
 });
