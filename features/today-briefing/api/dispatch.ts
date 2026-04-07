@@ -15,7 +15,7 @@ export async function dispatchTaskToAgent(
       `${API_URL}/issues/${issueId}/dispatch`,
       { method: 'POST' },
     );
-    return { data, error: null };
+    return { data: data ?? { success: true }, error: null };
   } catch (error) {
     if (error instanceof ServerError) {
       const parsed = parseApiError(

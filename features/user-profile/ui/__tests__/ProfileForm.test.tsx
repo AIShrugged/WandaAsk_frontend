@@ -4,14 +4,15 @@ import userEvent from '@testing-library/user-event';
 import { ProfileForm } from '@/features/user-profile/ui/ProfileForm';
 
 import type { UserProps } from '@/entities/user';
+import type { ActionResult } from '@/shared/types/server-action';
 
-const mockUpdateProfile = jest.fn(() => {
-  return Promise.resolve({ error: null });
+const mockUpdateProfile = jest.fn((): Promise<ActionResult> => {
+  return Promise.resolve({ data: undefined, error: null });
 });
 
 jest.mock('@/features/user-profile/api/profile', () => {
   return {
-    updateProfile: (...args: unknown[]) => {
+    updateProfile: (...args: Parameters<typeof mockUpdateProfile>) => {
       return mockUpdateProfile(...args);
     },
   };
@@ -40,7 +41,7 @@ const user = userEvent.setup({ delay: null });
 describe('ProfileForm', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUpdateProfile.mockResolvedValue({ error: null });
+    mockUpdateProfile.mockResolvedValue({ data: undefined, error: null });
   });
   it('renders name input with user value', () => {
     render(<ProfileForm user={makeUser()} />);
@@ -123,7 +124,7 @@ describe('ProfileForm', () => {
       toast: { error: jest.Mock };
     };
 
-    mockUpdateProfile.mockResolvedValue({ error: 'Server error' });
+    mockUpdateProfile.mockResolvedValue({ data: null, error: 'Server error' });
     render(<ProfileForm user={makeUser()} />);
     await user.clear(screen.getByDisplayValue('Jane Doe'));
     await user.type(screen.getByRole('textbox'), 'Bad Name');

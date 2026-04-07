@@ -23,6 +23,7 @@ import type { ModalContextValue } from '@/shared/types/modal';
 
 const EVENT_TYPE_LABELS: Record<string, string> = {
   meeting_summary: 'Meeting summary',
+  meeting_tasks: 'Meeting tasks',
 };
 
 // ─── Add modal ────────────────────────────────────────────────────────────────
@@ -47,6 +48,8 @@ function AddNotificationModal({
   const [selectedChatId, setSelectedChatId] = useState<string>(
     availableChats[0] ? String(availableChats[0].id) : '',
   );
+  const [selectedEventType, setSelectedEventType] =
+    useState<string>('meeting_summary');
   const [isPending, startTransition] = useTransition();
   /**
    *
@@ -56,7 +59,7 @@ function AddNotificationModal({
 
     startTransition(async () => {
       const result = await createTeamNotificationSetting(teamId, {
-        event_type: 'meeting_summary',
+        event_type: selectedEventType,
         channel_type: 'telegram',
         telegram_chat_registration_id: Number(selectedChatId),
         enabled: true,
@@ -77,10 +80,28 @@ function AddNotificationModal({
       <ModalBody>
         <div className='flex flex-col gap-6'>
           <div className='flex flex-col gap-1.5'>
-            <p className='text-sm text-muted-foreground'>Event</p>
-            <p className='text-sm font-medium text-foreground'>
-              Meeting summary
-            </p>
+            <label
+              className='text-sm text-muted-foreground'
+              htmlFor='event-type-select'
+            >
+              Event
+            </label>
+            <select
+              id='event-type-select'
+              value={selectedEventType}
+              onChange={(e) => {
+                return setSelectedEventType(e.target.value);
+              }}
+              className='w-full h-10 px-3 rounded-[var(--radius-button)] border border-input bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring'
+            >
+              {Object.entries(EVENT_TYPE_LABELS).map(([value, label]) => {
+                return (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                );
+              })}
+            </select>
           </div>
 
           <div className='flex flex-col gap-1.5'>

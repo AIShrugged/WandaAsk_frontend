@@ -41,10 +41,10 @@ const makeEvent = (id: number): EventProps => {
     title: `Event ${id}`,
     description: '',
     ends_at: '2024-01-12 11:00:00',
-    external_id: `ext-${id}`,
     platform: 'google',
     required_bot: false,
-    source_id: 1,
+    creator_user_id: 1,
+    has_summary: false,
     starts_at: '2024-01-12 10:00:00',
     url: `https://example.com/event/${id}`,
   };

@@ -47,23 +47,24 @@ function buildSuggestions(
 
   // 1. Send follow-up — if meeting has summary
   if (event.summary) {
+    const keyPoints = event.summary.key_points
+      .map((p) => {
+        return `- ${p}`;
+      })
+      .join('\n');
+    const decisions =
+      event.summary.decisions
+        .map((d) => {
+          return `- ${d}`;
+        })
+        .join('\n') || 'No decisions';
     actions.push({
       key: 'followup',
       icon: <Mail className='h-4 w-4' />,
       title: `Send follow-up from ${event.title}`,
       description: 'Draft recap with decisions and action items for the team',
       type: 'agent',
-      prompt: `Составь recap встречи "${event.title}" на основе следующих данных и отправь в Telegram команде.\n\nSummary: ${event.summary.summary}\n\nKey points:\n${event.summary.key_points
-        .map((p) => {
-          return `- ${p}`;
-        })
-        .join('\n')}\n\nDecisions:\n${
-        event.summary.decisions
-          .map((d) => {
-            return `- ${d}`;
-          })
-          .join('\n') || 'Нет решений'
-      }`,
+      prompt: `Draft a recap for meeting "${event.title}" based on the following data and send it to the team in Telegram.\n\nSummary: ${event.summary.summary}\n\nKey points:\n${keyPoints}\n\nDecisions:\n${decisions}`,
     });
   }
 
@@ -83,7 +84,7 @@ function buildSuggestions(
       type: 'message',
       prompt: '',
       recipientUserId: task.assignee_id!,
-      messageText: `Привет! По задаче "${task.name}" прошло уже ${task.syncs_since_created} встреч без прогресса. Нужна ли помощь? Когда можно ожидать результат?`,
+      messageText: `Hi! Task "${task.name}" has had no progress for ${task.syncs_since_created} syncs. Do you need help? When can we expect a result?`,
     });
   }
 
@@ -94,7 +95,7 @@ function buildSuggestions(
     title: 'Prepare status summary',
     description: 'Per-person progress across recent syncs for quick reference',
     type: 'agent',
-    prompt: `Подготовь краткий status summary по задачам команды на основе данных о встрече "${event.title}". Покажи прогресс по каждому участнику: какие задачи в работе, что завершено, что застряло. Формат: имя → статус задач.`,
+    prompt: `Prepare a brief status summary of the team's tasks based on the meeting "${event.title}". Show progress per participant: tasks in progress, completed, and blocked. Format: name → task status.`,
   });
 
   return actions;

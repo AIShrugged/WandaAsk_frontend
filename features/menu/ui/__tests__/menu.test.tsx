@@ -90,6 +90,7 @@ const makeItem = (overrides: Partial<MenuProps> = {}): MenuProps => {
     id: 'item-1',
     label: 'Item One',
     href: '/dashboard/item',
+    position: 0,
     ...overrides,
   };
 };

@@ -350,7 +350,7 @@ describe('IssuesPage', () => {
 
     const changeButtons = screen.getAllByText('Change');
     // second "Change" button belongs to the assignee cell
-    await userEvent.click(changeButtons.at(-1));
+    await userEvent.click(changeButtons.at(-1)!);
 
     expect(screen.getAllByText('Assignee').at(-1)).toBeInTheDocument();
   });

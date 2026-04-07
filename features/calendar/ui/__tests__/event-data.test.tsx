@@ -22,9 +22,9 @@ const makeEvent = (): EventProps => {
     ends_at: '2026-03-10T11:00:00Z',
     platform: 'zoom',
     url: '',
-    external_id: '1',
     required_bot: false,
-    source_id: 1,
+    creator_user_id: 1,
+    has_summary: false,
   };
 };
 

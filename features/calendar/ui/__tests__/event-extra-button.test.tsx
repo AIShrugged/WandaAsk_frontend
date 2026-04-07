@@ -10,9 +10,14 @@ const makeEvent = (id: number): EventProps => {
   return {
     id,
     title: `Event ${id}`,
-    start: '2024-01-01T10:00:00Z',
-    end: '2024-01-01T11:00:00Z',
-    color: '#ff0000',
+    description: '',
+    starts_at: '2024-01-01T10:00:00Z',
+    ends_at: '2024-01-01T11:00:00Z',
+    platform: 'zoom',
+    url: '',
+    required_bot: false,
+    creator_user_id: 1,
+    has_summary: false,
   };
 };
 const user = userEvent.setup({ delay: null });

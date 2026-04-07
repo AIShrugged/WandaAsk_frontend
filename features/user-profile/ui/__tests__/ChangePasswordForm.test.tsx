@@ -3,17 +3,15 @@ import userEvent from '@testing-library/user-event';
 
 import { ChangePasswordForm } from '@/features/user-profile/ui/ChangePasswordForm';
 
-const mockChangePassword = jest.fn(() => {
-  return Promise.resolve({ error: null });
+import type { ActionResult } from '@/shared/types/server-action';
+
+const mockChangePassword = jest.fn((): Promise<ActionResult> => {
+  return Promise.resolve({ data: undefined, error: null });
 });
 
 jest.mock('@/features/user-profile/api/profile', () => {
   return {
-    /**
-     *
-     * @param {...any} args
-     */
-    changePassword: (...args: unknown[]) => {
+    changePassword: (...args: Parameters<typeof mockChangePassword>) => {
       return mockChangePassword(...args);
     },
   };
@@ -27,7 +25,7 @@ jest.mock('sonner', () => {
 
 describe('ChangePasswordForm', () => {
   beforeEach(() => {
-    mockChangePassword.mockResolvedValue({ error: null });
+    mockChangePassword.mockResolvedValue({ data: undefined, error: null });
   });
 
   it('renders all three password fields', () => {

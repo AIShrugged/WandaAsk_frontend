@@ -46,36 +46,41 @@ export function DayTimeline({
   const totalHours = maxHour - minHour;
 
   // "Now" line — updates every minute, only shown for today
-  const [nowPercent, setNowPercent] = useState<number | null>(null);
+  const [now, setNow] = useState(() => {
+    return new Date();
+  });
 
   useEffect(() => {
-    function calcNow() {
-      const firstEvent = events[0];
-      if (!firstEvent) return null;
-      const eventDate = parseISO(firstEvent.starts_at);
-      if (!isToday(eventDate)) return null;
-
-      const now = new Date();
-      const nowMins = (now.getHours() - minHour) * 60 + now.getMinutes();
-      const totalMins = totalHours * 60;
-      const pct = (nowMins / totalMins) * 100;
-      if (pct < 0 || pct > 100) return null;
-      return pct;
-    }
-
-    setNowPercent(calcNow());
     const interval = setInterval(() => {
-      return setNowPercent(calcNow());
+      return setNow(new Date());
     }, 60_000);
     return () => {
       return clearInterval(interval);
     };
-  }, [events, minHour, totalHours]);
+  }, []);
+
+  const nowPercent = useMemo(() => {
+    const firstEvent = events[0];
+    if (!firstEvent) return null;
+    const eventDate = parseISO(firstEvent.starts_at);
+    if (!isToday(eventDate)) return null;
+
+    const nowMins = (now.getHours() - minHour) * 60 + now.getMinutes();
+    const totalMins = totalHours * 60;
+    const pct = (nowMins / totalMins) * 100;
+    if (pct < 0 || pct > 100) return null;
+    return pct;
+  }, [now, events, minHour, totalHours]);
 
   const hours = useMemo(() => {
+    function formatHour(h: number): string {
+      if (h < 12) return `${h} AM`;
+      if (h === 12) return '12 PM';
+      return `${h - 12} PM`;
+    }
     const arr: string[] = [];
     for (let h = minHour; h <= maxHour; h++) {
-      arr.push(h <= 12 ? `${h} AM` : h === 12 ? '12 PM' : `${h - 12} PM`);
+      arr.push(formatHour(h));
     }
     return arr;
   }, [minHour, maxHour]);

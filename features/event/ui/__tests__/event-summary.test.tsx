@@ -51,9 +51,9 @@ const makeEvent = (overrides: Partial<EventProps> = {}): EventProps => {
     ends_at: '2024-03-15 11:00:00',
     url: 'https://meet.example.com/room',
     platform: 'zoom',
-    external_id: 'ext-1',
     required_bot: false,
-    source_id: 1,
+    creator_user_id: 1,
+    has_summary: false,
     ...overrides,
   };
 };

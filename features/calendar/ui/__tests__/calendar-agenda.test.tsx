@@ -13,9 +13,9 @@ const makeEvent = (id: number, title: string, startsAt: string): EventProps => {
     ends_at: startsAt,
     platform: 'zoom',
     url: 'https://zoom.us',
-    external_id: String(id),
     required_bot: false,
-    source_id: 1,
+    creator_user_id: 1,
+    has_summary: false,
   };
 };
 const CURRENT_MONTH = '2026-03-01';

@@ -29,8 +29,8 @@ import { redirect } from 'next/navigation';
 
 import { logApiError } from '@/shared/lib/logger';
 
-const mockRedirect = redirect as jest.Mock;
-const mockLogApiError = logApiError as jest.Mock;
+const mockRedirect = redirect as unknown as jest.Mock;
+const mockLogApiError = logApiError as unknown as jest.Mock;
 
 // ---------------------------------------------------------------------------
 // Helpers

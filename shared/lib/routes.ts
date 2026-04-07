@@ -21,6 +21,9 @@ export const ROUTES = {
     TELEGRAM_CHATS: '/dashboard/chat/telegram',
     MEETING: '/dashboard/meeting',
     TEAMS: '/dashboard/teams',
+    TEAM: (teamId: number | string) => {
+      return `/dashboard/teams/${teamId}`;
+    },
     METHODOLOGY: '/dashboard/methodology',
     STATISTICS: '/dashboard/statistics',
     FOLLOWUPS: '/dashboard/follow-ups',

@@ -51,9 +51,9 @@ const makeEvent = (overrides: Partial<EventProps> = {}): EventProps => {
     ends_at: '2024-06-01T11:00:00Z',
     platform: 'zoom',
     url: 'https://zoom.us/j/123',
-    external_id: 'ext-1',
     required_bot: false,
-    source_id: 10,
+    creator_user_id: 1,
+    has_summary: false,
     ...overrides,
   };
 };
