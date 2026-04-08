@@ -18,6 +18,7 @@ import { TenantScopeFields } from '@/shared/ui/input/tenant-scope-fields';
 
 import type { OrganizationProps } from '@/entities/organization';
 import type {
+  IssuePriority,
   IssueSortField,
   IssueType,
   PersonOption,
