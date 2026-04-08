@@ -296,3 +296,47 @@ broad keywords.
 Your MEMORY.md is currently empty. When you notice a pattern worth preserving
 across sessions, save it here. Anything in MEMORY.md will be included in your
 system prompt next time.
+
+---
+
+## Tab Navigation Convention
+
+When a feature requires tab-based navigation between views, **always** use
+route-based sub-routes — never query params or useState.
+
+### Rules
+
+1. **Every tab = a Next.js sub-route**: create `app/parent/tab-name/page.tsx`
+2. **Parent route** redirects to default tab:
+   ```tsx
+   // app/dashboard/section/page.tsx
+   import { redirect } from 'next/navigation';
+   import { ROUTES } from '@/shared/lib/routes';
+   export default function Page() {
+     redirect(ROUTES.DASHBOARD.SECTION_DEFAULT);
+   }
+   ```
+3. **Tab strip in layout**: place nav component in `app/parent/layout.tsx`
+4. **Use `PageTabsNav`** from `@/shared/ui/navigation/page-tabs-nav`:
+   ```tsx
+   // features/<name>/ui/<name>-tabs-nav.tsx
+   'use client';
+   import { PageTabsNav } from '@/shared/ui/navigation/page-tabs-nav';
+   import { ROUTES } from '@/shared/lib/routes';
+   const TABS = [
+     { href: ROUTES.DASHBOARD.SECTION_TAB1, label: 'Tab 1' },
+     { href: ROUTES.DASHBOARD.SECTION_TAB2, label: 'Tab 2' },
+   ] as const;
+   export function SectionTabsNav() {
+     return <PageTabsNav tabs={TABS} />;
+   }
+   ```
+5. **`preserveSearchParams`** — pass this prop only when filter params must
+   persist across tab switches (e.g. Issues section with shared filter bar)
+6. **`variant="segmented"`** — use for in-page detail tabs (not section-level
+   navigation), e.g. agent task detail overview/runs/config/json
+7. **Each sub-route must have `loading.tsx`** — keeps tab strip visible during
+   data loading
+8. **Add route constants** to `shared/lib/routes.ts` for every new tab path
+9. **Never use**: `?tab=` params, `router.replace('?tab=')`, `useState` for
+   active tab state, inline tab components inside `page.tsx`

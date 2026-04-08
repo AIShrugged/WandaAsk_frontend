@@ -39,5 +39,7 @@ export const ROUTES = {
     MAIN_STATISTICS: '/dashboard/main/statistics',
     ISSUES_LIST: '/dashboard/issues/list',
     ISSUES_KANBAN: '/dashboard/issues/kanban',
+    MEETINGS_LIST: '/dashboard/meetings/list',
+    MEETINGS_CALENDAR: '/dashboard/meetings/calendar',
   },
 } as const;

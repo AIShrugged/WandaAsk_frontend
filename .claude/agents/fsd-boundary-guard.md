@@ -164,3 +164,26 @@ export {};
 
 After applying fixes, re-run the audit to confirm violations are resolved.
 Report what was fixed vs what still requires manual attention.
+
+---
+
+## Tab Navigation Convention Check
+
+Also verify that any tab-based navigation follows the route-based pattern:
+
+**Flag as violation** if you find:
+
+- `?tab=` query params used to switch between views (not just filter params)
+- `useState` controlling which tab content is displayed
+- Inline tab nav components defined inside `page.tsx` or `layout.tsx` instead of
+  dedicated `features/<name>/ui/<name>-tabs-nav.tsx` files
+- Custom tab strip styling not using `PageTabsNav` from
+  `@/shared/ui/navigation/page-tabs-nav`
+- Missing `loading.tsx` in a new tab sub-route
+
+**Correct pattern:**
+
+- Each tab is `app/parent/tab-name/page.tsx`
+- Parent route: `redirect('/parent/default-tab')`
+- Tab strip: `PageTabsNav` from `@/shared/ui/navigation/page-tabs-nav`
+- Tab nav component lives in `features/<name>/ui/<name>-tabs-nav.tsx`

@@ -507,3 +507,32 @@ The agent **cannot** auto-fix and will report for manual attention:
 - If ESLint output shows errors in files not in the diff, mention but do not
   block for pre-existing issues
 - Be specific: always include file path and line number for every issue
+
+---
+
+## Tab Navigation Convention
+
+Flag as **🔴 Blocking** any code that violates these rules:
+
+1. **Every tab must be a Next.js sub-route** — use
+   `app/parent/tab-name/page.tsx`, NOT `?tab=` query params or `useState` for
+   switching views
+2. **Parent route redirects** — `app/parent/page.tsx` must call
+   `redirect('/parent/default-tab')`, not render content
+3. **Tab strip in layout** — the tab nav component lives in
+   `app/parent/layout.tsx`, never duplicated per page
+4. **Use `PageTabsNav` from `@/shared/ui/navigation/page-tabs-nav`** — do NOT
+   create custom styled tab strips. Feature wrappers are allowed:
+   ```tsx
+   // features/<name>/ui/<name>-tabs-nav.tsx
+   'use client';
+   import { PageTabsNav } from '@/shared/ui/navigation/page-tabs-nav';
+   const TABS = [{ href: '...', label: '...' }] as const;
+   export function MyTabsNav() {
+     return <PageTabsNav tabs={TABS} />;
+   }
+   ```
+5. **`preserveSearchParams`** only when filter params must survive tab switches
+6. **Each sub-route must have `loading.tsx`** so the tab strip stays visible
+7. **Never use**: `<a href="?tab=...">`, `router.replace('?tab=...')`,
+   `useState` for active tab, inline tab components in `page.tsx`

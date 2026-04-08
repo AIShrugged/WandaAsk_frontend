@@ -249,6 +249,39 @@ styles/             # Global styles
 - `tsconfig.json` — TypeScript strict mode, `@/*` path alias to `./*` (project
   root, no `src/`)
 
+## Tab Navigation Convention
+
+Every tab-based navigation in this project **must** use Next.js route-based
+sub-pages. This is mandatory — no exceptions.
+
+**Rules:**
+
+1. Each tab is a sub-route: `app/dashboard/<section>/<tab>/page.tsx`
+2. Parent route redirects to default tab:
+   `redirect(ROUTES.DASHBOARD.SECTION_TAB1)`
+3. Tab strip lives in `app/dashboard/<section>/layout.tsx`
+4. Use `PageTabsNav` from `@/shared/ui/navigation/page-tabs-nav` — **never**
+   create custom styled tab components
+5. Feature wrapper pattern:
+   ```tsx
+   // features/<name>/ui/<name>-tabs-nav.tsx
+   'use client';
+   import { PageTabsNav } from '@/shared/ui/navigation/page-tabs-nav';
+   import { ROUTES } from '@/shared/lib/routes';
+   const TABS = [{ href: ROUTES.DASHBOARD.X, label: 'X' }] as const;
+   export function XTabsNav() {
+     return <PageTabsNav tabs={TABS} />;
+   }
+   ```
+6. `preserveSearchParams` prop — only when filter params must survive tab
+   switches
+7. `variant="segmented"` — for in-page detail view tabs (e.g. task detail)
+8. Each sub-route must have `loading.tsx`
+9. Add every new tab route to `shared/lib/routes.ts` as a constant
+
+**Never use:** `?tab=` query params, `router.replace('?tab=...')`, `useState`
+for active tab, inline tab components in page files.
+
 ## Conventions
 
 - No `any` — define interfaces for all API responses

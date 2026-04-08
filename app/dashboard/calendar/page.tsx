@@ -1,9 +1,9 @@
 import { redirect } from 'next/navigation';
 
+import { ROUTES } from '@/shared/lib/routes';
+
 /**
- * Calendar page — now redirected to /dashboard/meetings?tab=calendar
- * @param root0
- * @param root0.searchParams
+ * Calendar page — redirected to /dashboard/meetings/calendar
  */
 export default async function Page({
   searchParams,
@@ -11,8 +11,11 @@ export default async function Page({
   searchParams: Promise<{ month?: string; attached?: string }>;
 }) {
   const params = await searchParams;
-  const monthParam = params.month ? `&month=${params.month}` : '';
-  const attachedParam = params.attached ? `&attached=${params.attached}` : '';
 
-  redirect(`/dashboard/meetings?tab=calendar${monthParam}${attachedParam}`);
+  const queryParts: string[] = [];
+  if (params.month) queryParts.push(`month=${params.month}`);
+  if (params.attached) queryParts.push(`attached=${params.attached}`);
+  const queryString = queryParts.length > 0 ? `?${queryParts.join('&')}` : '';
+
+  redirect(`${ROUTES.DASHBOARD.MEETINGS_CALENDAR}${queryString}`);
 }

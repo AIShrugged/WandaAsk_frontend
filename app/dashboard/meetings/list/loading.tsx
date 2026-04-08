@@ -1,7 +1,7 @@
 import SpinLoader from '@/shared/ui/layout/spin-loader';
 
 /**
- * Loading state for Meetings page (shown while layout sub-route loads).
+ * Loading state for Meetings list tab.
  */
 export default function Loading() {
   return (
