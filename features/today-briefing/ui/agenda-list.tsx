@@ -31,15 +31,20 @@ interface AgendaListProps {
   tasks: MeetingTask[];
   totalCount: number;
   doneCount: number;
+  meetingState: string;
 }
 
-export function AgendaList({ tasks, totalCount, doneCount }: AgendaListProps) {
+export function AgendaList({ tasks, totalCount, doneCount, meetingState }: AgendaListProps) {
   const [expandedId, setExpandedId] = useState<number | null>(null);
+
+  const isReady = meetingState === 'ready';
+  const label = isReady ? 'Action items from this meeting' : 'Tasks from last sync';
+  const emptyText = isReady ? 'No tasks from this meeting' : 'No tasks from previous meeting';
 
   if (totalCount === 0) {
     return (
       <p className='text-xs text-muted-foreground italic'>
-        No tasks from previous meeting
+        {emptyText}
       </p>
     );
   }
@@ -48,7 +53,7 @@ export function AgendaList({ tasks, totalCount, doneCount }: AgendaListProps) {
     <div className='flex flex-col gap-1'>
       <div className='mb-2'>
         <span className='text-xs font-medium uppercase tracking-wide text-muted-foreground'>
-          Tasks from last sync
+          {label}
         </span>
       </div>
 
