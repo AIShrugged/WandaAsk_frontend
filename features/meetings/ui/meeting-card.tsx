@@ -4,6 +4,7 @@ import { startOfDay } from 'date-fns';
 import {
   ArrowRight,
   Bot,
+  BotOff,
   CheckCircle2,
   ExternalLink,
   Video,
@@ -78,6 +79,32 @@ function PlatformLink({
   );
 }
 
+type BotStatus = 'not_required' | 'scheduled' | 'missed' | 'attended';
+
+function getBotStatus(meeting: CalendarEventListItem, now: Date): BotStatus {
+  if (!meeting.required_bot) return 'not_required';
+  if (meeting.has_summary) return 'attended';
+  return new Date(meeting.starts_at) > now ? 'scheduled' : 'missed';
+}
+
+const BOT_BADGE_CONFIG: Record<
+  BotStatus,
+  {
+    variant: 'default' | 'primary' | 'success' | 'destructive';
+    label: string;
+    icon: 'bot' | 'bot-off';
+  }
+> = {
+  not_required: {
+    variant: 'default',
+    label: 'Bot not required',
+    icon: 'bot-off',
+  },
+  scheduled: { variant: 'primary', label: 'Bot scheduled', icon: 'bot' },
+  missed: { variant: 'destructive', label: 'Bot missed', icon: 'bot-off' },
+  attended: { variant: 'success', label: 'Bot attended', icon: 'bot' },
+};
+
 interface MeetingCardProps {
   meeting: CalendarEventListItem;
 }
@@ -92,6 +119,8 @@ export function MeetingCard({ meeting }: MeetingCardProps) {
   const startsAt = new Date(meeting.starts_at);
   const endsAt = new Date(meeting.ends_at);
   const isReady = Boolean(meeting.has_summary);
+  const botStatus = getBotStatus(meeting, new Date());
+  const botBadge = BOT_BADGE_CONFIG[botStatus];
 
   return (
     <article
@@ -135,12 +164,14 @@ export function MeetingCard({ meeting }: MeetingCardProps) {
           <PlatformLink platform={meeting.platform} url={meeting.url} />
         </Badge>
 
-        {meeting.required_bot && (
-          <Badge variant='warning' className='gap-1'>
+        <Badge variant={botBadge.variant} className='gap-1'>
+          {botBadge.icon === 'bot' ? (
             <Bot className='h-3.5 w-3.5' />
-            Bot required
-          </Badge>
-        )}
+          ) : (
+            <BotOff className='h-3.5 w-3.5' />
+          )}
+          {botBadge.label}
+        </Badge>
 
         {isReady && (
           <Badge variant='success' className='gap-1'>
