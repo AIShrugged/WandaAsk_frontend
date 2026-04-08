@@ -9,7 +9,8 @@ import type { OrganizationProps } from '@/entities/organization';
  * @param role
  */
 export function isOrganizationManager(role: string | null | undefined) {
-  return role?.trim().toLowerCase() === 'manager';
+  const normalized = role?.trim().toLowerCase();
+  return normalized === 'manager' || normalized === 'employee';
 }
 
 /**
