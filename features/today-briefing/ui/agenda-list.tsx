@@ -39,7 +39,7 @@ export function AgendaList({ tasks, totalCount, doneCount }: AgendaListProps) {
   if (totalCount === 0) {
     return (
       <p className='text-xs text-muted-foreground italic'>
-        No tasks from this meeting
+        No tasks from previous meeting
       </p>
     );
   }
@@ -48,7 +48,7 @@ export function AgendaList({ tasks, totalCount, doneCount }: AgendaListProps) {
     <div className='flex flex-col gap-1'>
       <div className='mb-2'>
         <span className='text-xs font-medium uppercase tracking-wide text-muted-foreground'>
-          Agenda — from open items
+          Tasks from last sync
         </span>
       </div>
 
