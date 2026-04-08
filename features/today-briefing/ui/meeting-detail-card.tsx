@@ -118,7 +118,7 @@ export function MeetingDetailCard({
         )}
 
         {/* Carried tasks */}
-        <CarriedTasks tasks={relevantCarried} />
+        <CarriedTasks count={relevantCarried.length} />
 
         {/* AI Prep */}
         <AiPrepPanel
