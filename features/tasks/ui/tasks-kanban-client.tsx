@@ -1,5 +1,6 @@
 'use client';
 
+import { Search } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -7,14 +8,16 @@ import { toast } from 'sonner';
 import { FiltersContext } from '@/features/issues/model/filters-context';
 import {
   isIssueStatus,
+  ISSUE_STATUS_OPTIONS,
   ISSUE_TYPE_OPTIONS,
 } from '@/features/issues/model/types';
-import { FiltersModal } from '@/features/issues/ui/filters-modal';
 import { fetchKanbanIssues, KanbanBoard } from '@/features/kanban';
+import { getTeams } from '@/features/teams/api/team';
+import InputDropdown from '@/shared/ui/input/InputDropdown';
+import { TenantScopeFields } from '@/shared/ui/input/tenant-scope-fields';
 
 import type { OrganizationProps } from '@/entities/organization';
 import type {
-  IssuePriority,
   IssueSortField,
   IssueType,
   PersonOption,
@@ -37,6 +40,17 @@ interface TasksKanbanClientProps {
 
 const KEEP_WHEN_EMPTY = new Set(['assignee_id']);
 const STALE_PARAMS = ['assignee'] as const;
+
+const TYPE_OPTIONS = [
+  { value: '', label: 'Any type' },
+  { value: 'development', label: 'Development' },
+  { value: 'organization', label: 'Organization' },
+];
+
+const STATUS_OPTIONS = [
+  { value: '', label: 'Any status' },
+  ...ISSUE_STATUS_OPTIONS,
+];
 
 const VALID_SORT_FIELDS = new Set<IssueSortField>([
   'id',
@@ -113,7 +127,6 @@ export function TasksKanbanClient({
   const columnsVersionRef = useRef(0);
   const [columnsVersion, setColumnsVersion] = useState(0);
   const isFirstFiltersRender = useRef(true);
-  const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
 
   const [columns, setColumns] =
     useState<Record<IssueStatus, KanbanCard[]>>(initialColumns);
@@ -239,6 +252,16 @@ export function TasksKanbanClient({
     };
   }, [filters]);
 
+  const personOptions = [
+    { value: '', label: 'Any assignee' },
+    ...persons.map((person) => {
+      return {
+        value: String(person.id),
+        label: person.email ? `${person.name} (${person.email})` : person.name,
+      };
+    }),
+  ];
+
   return (
     <FiltersContext.Provider
       value={{
@@ -250,28 +273,63 @@ export function TasksKanbanClient({
       }}
     >
       <div className='flex flex-col h-full overflow-hidden'>
-        <div className='px-4 pt-4 shrink-0'>
-          <div className='flex gap-3 items-end'>
-            <div className='flex-1 max-w-md'>
-              <input
-                type='text'
-                placeholder='Search by name...'
-                value={filters.search}
-                onChange={(e) => {
-                  handleFiltersChange({ search: e.target.value });
+        <div className='px-4 pt-3 shrink-0'>
+          <div className='grid gap-3 rounded-[var(--radius-card)] border border-border bg-card p-3'>
+            <TenantScopeFields
+              organizations={organizations}
+              organizationId={filters.organization_id}
+              teamId={filters.team_id}
+              fetchTeams={getTeams}
+              onOrganizationChange={(value) => {
+                handleFiltersChange({ organization_id: value, team_id: '' });
+              }}
+              onTeamChange={(value) => {
+                handleFiltersChange({ team_id: value });
+              }}
+              disabled={isFetching}
+            />
+            <div className='grid gap-3 sm:grid-cols-2 xl:grid-cols-4'>
+              <div className='relative'>
+                <Search className='absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none' />
+                <input
+                  type='text'
+                  placeholder='Search by name...'
+                  value={filters.search}
+                  onChange={(e) => {
+                    handleFiltersChange({ search: e.target.value });
+                  }}
+                  className='h-9 w-full rounded-[var(--radius-button)] border border-border bg-background pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary'
+                />
+              </div>
+              <InputDropdown
+                label='Status'
+                options={STATUS_OPTIONS}
+                value={filters.status}
+                onChange={(value) => {
+                  handleFiltersChange({ status: value as IssueStatus | '' });
                 }}
-                className='h-10 w-full rounded-[var(--radius-button)] border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary'
+                disabled={isFetching}
+              />
+              <InputDropdown
+                label='Type'
+                options={TYPE_OPTIONS}
+                value={filters.type}
+                onChange={(value) => {
+                  handleFiltersChange({ type: value as IssueType | '' });
+                }}
+                disabled={isFetching}
+              />
+              <InputDropdown
+                label='Assignee'
+                options={personOptions}
+                value={filters.assignee_id}
+                onChange={(value) => {
+                  handleFiltersChange({ assignee_id: value });
+                }}
+                searchable
+                disabled={isFetching}
               />
             </div>
-            <button
-              type='button'
-              onClick={() => {
-                setIsFiltersModalOpen(true);
-              }}
-              className='h-10 px-4 rounded-[var(--radius-button)] border border-border bg-background text-sm text-foreground hover:bg-accent transition-colors'
-            >
-              Filters
-            </button>
           </div>
         </div>
         <div
@@ -286,16 +344,6 @@ export function TasksKanbanClient({
           />
         </div>
       </div>
-      <FiltersModal
-        isOpen={isFiltersModalOpen}
-        onClose={() => {
-          setIsFiltersModalOpen(false);
-        }}
-        filters={filters}
-        organizations={organizations}
-        persons={persons}
-        onChange={handleFiltersChange}
-      />
     </FiltersContext.Provider>
   );
 }
