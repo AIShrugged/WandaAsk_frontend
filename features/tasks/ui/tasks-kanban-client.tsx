@@ -325,7 +325,9 @@ export function TasksKanbanClient({
                 options={personOptions}
                 value={filters.assignee_id}
                 onChange={(value) => {
-                  handleFiltersChange({ assignee_id: value });
+                  handleFiltersChange({
+                    assignee_id: Array.isArray(value) ? value[0] : value,
+                  });
                 }}
                 searchable
                 disabled={isFetching}
