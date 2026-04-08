@@ -98,6 +98,7 @@ export function MeetingDetailCard({
           tasks={event.tasks}
           totalCount={event.total_tasks_count}
           doneCount={event.done_tasks_count}
+          meetingState={event.meeting_state}
         />
 
         {/* Readiness bar */}
