@@ -34,19 +34,24 @@ interface AgendaListProps {
   meetingState: string;
 }
 
-export function AgendaList({ tasks, totalCount, doneCount, meetingState }: AgendaListProps) {
+export function AgendaList({
+  tasks,
+  totalCount,
+  doneCount,
+  meetingState,
+}: AgendaListProps) {
   const [expandedId, setExpandedId] = useState<number | null>(null);
 
   const isReady = meetingState === 'ready';
-  const label = isReady ? 'Action items from this meeting' : 'Tasks from last sync';
-  const emptyText = isReady ? 'No tasks from this meeting' : 'No tasks from previous meeting';
+  const label = isReady
+    ? 'Action items from this meeting'
+    : 'Tasks from last sync';
+  const emptyText = isReady
+    ? 'No tasks from this meeting'
+    : 'No tasks from previous meeting';
 
   if (totalCount === 0) {
-    return (
-      <p className='text-xs text-muted-foreground italic'>
-        {emptyText}
-      </p>
-    );
+    return <p className='text-xs text-muted-foreground italic'>{emptyText}</p>;
   }
 
   return (
