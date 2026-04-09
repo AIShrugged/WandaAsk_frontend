@@ -2,17 +2,17 @@ image:
   repository: tribes/spodial_hr_frontend
   pullPolicy: IfNotPresent
   registry: registry.fabit.ru
-  tag: ""
+  tag: ''
   credentials:
     username: username
     password: password
 
 envs:
-  apiUrl: ""
+  apiUrl: ''
 
 imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
+nameOverride: ''
+fullnameOverride: ''
 
 service:
   type: ClusterIP

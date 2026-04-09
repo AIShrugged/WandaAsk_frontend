@@ -12,3 +12,9 @@ export interface PageProps {
 }
 
 export type RequestID = string | null;
+
+export interface PaginatedResult<T> {
+  data: T[];
+  totalCount: number;
+  hasMore: boolean;
+}

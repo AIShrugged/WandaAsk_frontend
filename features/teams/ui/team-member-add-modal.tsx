@@ -4,6 +4,11 @@ import ModalHeader from '@/shared/ui/modal/modal-header';
 
 import type { ModalContextValue } from '@/shared/types/modal';
 
+/**
+ * TeamMemberAddModal component.
+ * @param props - Component props.
+ * @param props.close
+ */
 export default function TeamMemberAddModal({ close }: ModalContextValue) {
   return (
     <>
@@ -15,7 +20,7 @@ export default function TeamMemberAddModal({ close }: ModalContextValue) {
           team
         </p>
 
-        <TeamMemberAddForm />
+        <TeamMemberAddForm close={close} />
       </ModalBody>
     </>
   );

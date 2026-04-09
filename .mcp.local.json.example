@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "wanda-backend": {
+      "type": "http",
+      "url": "https://dev-api.shrugged.ai/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_SANCTUM_TOKEN_HERE",
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+      }
+    }
+  }
+}

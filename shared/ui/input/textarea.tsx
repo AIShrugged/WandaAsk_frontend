@@ -2,12 +2,17 @@ import React, {
   forwardRef,
   useId,
   useState,
-  useEffect,
   type TextareaHTMLAttributes,
 } from 'react';
 
-const cn = (...parts: Array<string | false | null | undefined>) =>
-  parts.filter(Boolean).join(' ');
+/**
+ * cn.
+ * @param parts - parts.
+ * @returns Result.
+ */
+const cn = (...parts: Array<string | false | null | undefined>) => {
+  return parts.filter(Boolean).join(' ');
+};
 
 interface TextareaProps
   extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'value'> {
@@ -15,9 +20,7 @@ interface TextareaProps
   error?: boolean | string;
   floating?: boolean;
   containerClassName?: string;
-  /** Фиксированная высота, например: 120, "120px", "200px" */
   height?: string | number;
-  /** Отключает стандартный гриппер в правом нижнем углу */
   resizable?: boolean;
   value?: string;
   defaultValue?: string;
@@ -46,37 +49,34 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   ) => {
     const autoId = useId();
     const textareaId = id ?? `textarea-${autoId}`;
-
     const [isFocused, setIsFocused] = useState(false);
-    const [internalValue, setInternalValue] = useState<string | undefined>(
-      defaultValue === undefined ? undefined : String(defaultValue),
-    );
-
-    // Синхронизация при controlled-использовании
-    useEffect(() => {
-      if (propValue === undefined) return;
-      setInternalValue(String(propValue ?? ''));
-    }, [propValue]);
-
-    const currentValue = propValue ?? internalValue ?? '';
+    const currentValue = propValue ?? '';
     const hasValue = currentValue.length > 0 || !!placeholder;
-
     const floatingActive = floating && (isFocused || hasValue);
-
+    /**
+     * handleFocus.
+     * @param e - e.
+     * @returns Result.
+     */
     const handleFocus = (e: React.FocusEvent<HTMLTextAreaElement>) => {
       setIsFocused(true);
       onFocus?.(e);
     };
-
+    /**
+     * handleBlur.
+     * @param e - e.
+     * @returns Result.
+     */
     const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
       setIsFocused(false);
       onBlur?.(e);
     };
-
+    /**
+     * handleChange.
+     * @param e - e.
+     * @returns Result.
+     */
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      if (propValue === undefined) {
-        setInternalValue(e.target.value);
-      }
       onChange?.(e);
     };
 
@@ -84,11 +84,10 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       <div className={cn('relative flex flex-col w-full', containerClassName)}>
         <div
           className={cn(
-            'relative w-full rounded-2xl border bg-white pl-6 px-1.5 py-3',
-            'transition-colors focus-within:border-primary focus-within:ring-2 focus-within:ring-[#4FB268]',
-            error ? 'border-red-700' : 'border-secondary',
+            'relative w-full rounded-[var(--radius-button)] border border-input bg-background pl-4 px-1.5 py-3',
+            'transition-colors focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/30',
+            error ? 'border-destructive' : '',
           )}
-          // Если передана фиксированная высота — задаём её контейнеру
           style={height ? { height } : undefined}
         >
           <textarea
@@ -102,15 +101,12 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
             onBlur={handleBlur}
             onChange={handleChange}
             className={cn(
-              'peer w-full bg-transparent outline-none placeholder-transparent',
+              'peer w-full bg-transparent outline-none placeholder-muted-foreground/70',
               'scrollbar-thin scrollbar-thumb-gray-300',
-              // Авто-ресайз только если высота не фиксирована
               !height && 'min-h-20 max-h-96 field-sizing-content',
-              // Отключаем гриппер
               !resizable && 'resize-none',
               className,
             )}
-            // Если высота фиксирована — включаем скролл
             style={{
               ...(height && { height: '100%', overflowY: 'auto' }),
             }}
@@ -121,11 +117,11 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
             <label
               htmlFor={textareaId}
               className={cn(
-                'absolute left-6 top-2.5 origin-left pointer-events-none select-none transition-all duration-200',
+                'absolute left-4 top-2.5 origin-left pointer-events-none select-none transition-all duration-200 text-sm',
                 floatingActive
-                  ? '-translate-y-9 scale-90 bg-white px-1 text-xs text-tertiary'
-                  : 'translate-y-0 scale-100 text-secondary',
-                error && 'text-red-600',
+                  ? '-translate-y-7 scale-90 bg-background px-1 text-xs text-muted-foreground'
+                  : 'translate-y-0 scale-100 text-muted-foreground',
+                error && 'text-destructive',
               )}
               style={{ zIndex: 10 }}
             >
@@ -135,7 +131,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         </div>
 
         {typeof error === 'string' && (
-          <span className='mt-1 text-sm text-red-600'>{error}</span>
+          <span className='mt-1 text-sm text-destructive'>{error}</span>
         )}
       </div>
     );

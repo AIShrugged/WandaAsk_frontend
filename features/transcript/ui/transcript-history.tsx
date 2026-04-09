@@ -1,13 +1,18 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback } from 'react';
 
-import { loadTranscriptChunk } from '@/app/actions/transcript';
+import { loadTranscriptChunk } from '@/features/transcript/api/transcript';
 import { filters } from '@/features/transcript/lib/options';
 import TranscriptList from '@/features/transcript/ui/transcript-list';
+import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
+import { InfiniteScrollStatus } from '@/shared/ui/layout/infinite-scroll-status';
 import SpinLoader from '@/shared/ui/layout/spin-loader';
 
-import type { TranscriptsProps } from '@/features/transcript/model/types';
+import type {
+  TranscriptsProps,
+  TranscriptProps,
+} from '@/features/transcript/model/types';
 
 type Props = {
   eventId: string;
@@ -15,64 +20,44 @@ type Props = {
   initialTotal: number;
 };
 
+/**
+ * TranscriptHistory component.
+ * @param root0
+ * @param root0.eventId
+ * @param root0.initialData
+ * @param root0.initialTotal
+ */
 export default function TranscriptHistory({
   eventId,
   initialData,
   initialTotal,
 }: Props) {
-  const [items, setItems] = useState(initialData.data);
-  const [offset, setOffset] = useState(initialData.data.length);
-  const [hasMore, setHasMore] = useState(
-    initialData.data.length < initialTotal,
-  );
-  const [isLoading, setIsLoading] = useState(false);
-  const sentinelRef = useRef<HTMLDivElement>(null);
-
-  const loadMore = async () => {
-    if (isLoading || !hasMore) return;
-    setIsLoading(true);
-
-    try {
-      const { data, hasMore: more } = await loadTranscriptChunk(
+  const fetchMore = useCallback(
+    async (offset: number) => {
+      const { data, hasMore } = await loadTranscriptChunk(
         eventId,
         offset,
         filters.limit,
       );
 
-      setItems(prev => [...prev, ...data.data]);
-      setOffset(prev => prev + data.data.length);
-      setHasMore(more);
-    } catch (error) {
-      console.error('Failed to load more', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (!sentinelRef.current) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && hasMore && !isLoading) {
-          void loadMore();
-        }
-      },
-      { rootMargin: '20px' },
-    );
-
-    observer.observe(sentinelRef.current);
-    return () => observer.disconnect();
-  }, [hasMore, isLoading, offset]);
+      return { items: data.data as TranscriptProps[], hasMore };
+    },
+    [eventId],
+  );
+  const { items, isLoading, hasMore, sentinelRef } =
+    useInfiniteScroll<TranscriptProps>({
+      fetchMore,
+      initialItems: initialData.data,
+      initialHasMore: initialData.data.length < initialTotal,
+      maxItems: 500,
+    });
 
   return (
     <div className='space-y-4'>
       <TranscriptList data={items} />
 
       {!hasMore && items.length > 0 ? (
-        <div className='text-center text-gray-500'>
-          Loaded: {items.length} (all) items
-        </div>
+        <InfiniteScrollStatus itemCount={items.length} />
       ) : (
         <div ref={sentinelRef} className='h-10' />
       )}

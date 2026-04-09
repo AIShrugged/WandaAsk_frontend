@@ -1,9 +1,6 @@
 import { emailField } from '@/shared/lib/fields';
 
-import type {
-  TeamAddMemberDTO,
-  TeamCreateDTO,
-} from '@/features/teams/model/types';
+import type { TeamAddMemberDTO, TeamCreateDTO } from '@/entities/team';
 
 export const TEAM_CREATE_FIELDS = [
   {

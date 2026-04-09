@@ -1,21 +1,29 @@
 import { Minus, Plus } from 'lucide-react';
 import React, { type JSX, useTransition } from 'react';
 
-import { switchBot } from '@/app/actions/calendar-events';
+import { switchBot } from '@/features/event/api/calendar-events';
 import EventSummary from '@/features/event/ui/event-summary';
-import { participants } from '@/features/participants/lib/options';
+import {
+  participantLabels as participants,
+  Participants,
+} from '@/features/participants';
 import { Button } from '@/shared/ui/button/Button';
 import ModalBody from '@/shared/ui/modal/modal-body';
 import ModalFooter from '@/shared/ui/modal/modal-footer';
 import ModalHeader from '@/shared/ui/modal/modal-header';
-import Participants from '@/widgets/event/ui/participants';
 
-import type { EventProps } from '@/features/event/model/types';
-import type {
-  AttendeeProps,
-  GuestProps,
-} from '@/features/participants/model/types';
+import type { EventProps } from '@/entities/event';
+import type { AttendeeProps, GuestProps } from '@/entities/participant';
 
+/**
+ * EventPopup component.
+ * @param root0 - Component props.
+ * @param root0.event - The event to display.
+ * @param root0.close - Callback to close the popup.
+ * @param root0.attendees - List of attendees.
+ * @param root0.guests - List of guests.
+ * @returns JSX element.
+ */
 export function EventPopup({
   event,
   close,
@@ -28,16 +36,20 @@ export function EventPopup({
   guests: GuestProps[];
 }): JSX.Element {
   const [isPending, startTransition] = useTransition();
-
   const isBotAdded = event.required_bot;
   const Icon = isBotAdded ? Minus : Plus;
   const actionText = isBotAdded ? 'remove bot' : 'add bot';
-
+  /**
+   * handleSwitchBot.
+   */
   const handleSwitchBot = () => {
     startTransition(async () => {
       try {
-        await switchBot(event.id, !event.required_bot).then(() => close());
+        await switchBot(event.id, !event.required_bot).then(() => {
+          return close();
+        });
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.warn('name', {
           message: (error as Error).message,
         });
@@ -60,7 +72,7 @@ export function EventPopup({
       </ModalBody>
 
       <ModalFooter>
-        <div className={'ml-auto w-[250px]'}>
+        <div className={'w-full md:w-[250px] md:ml-auto'}>
           <Button
             onClick={handleSwitchBot}
             disabled={isPending}

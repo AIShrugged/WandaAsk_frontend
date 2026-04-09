@@ -1,0 +1,72 @@
+import {
+  getPersons,
+  ISSUE_TYPE_OPTIONS,
+  type IssueType,
+} from '@/features/issues';
+import { getKanbanIssues } from '@/features/kanban';
+import { getOrganizations } from '@/features/organization/api/organization';
+import { TasksKanbanClient } from '@/features/tasks';
+import { getCurrentUserId } from '@/shared/lib/getCurrentUserId';
+import { getOrganizationId } from '@/shared/lib/getOrganizationId';
+
+import type { KanbanFilters } from '@/features/kanban/model/types';
+
+export const metadata = { title: 'Tasks' };
+
+function isIssueType(value: string): value is IssueType {
+  return ISSUE_TYPE_OPTIONS.some((option) => {
+    return option.value === value;
+  });
+}
+
+/**
+ * Tasks page — renders the Kanban board with filters for task management.
+ */
+export default async function TasksPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const params = await searchParams;
+  const cookieOrgId = await getOrganizationId();
+  const orgId =
+    typeof params.organization_id === 'string'
+      ? params.organization_id
+      : cookieOrgId;
+
+  const typeParam =
+    typeof params.type === 'string' && isIssueType(params.type)
+      ? params.type
+      : '';
+  const assigneeIdParam =
+    typeof params.assignee_id === 'string' ? params.assignee_id : null;
+
+  const kanbanFilters: KanbanFilters = {
+    organization_id: orgId ? Number(orgId) : null,
+    team_id: params.team_id ? Number(params.team_id) : null,
+    type: typeParam || undefined,
+    assignee_id: assigneeIdParam ? Number(assigneeIdParam) : null,
+    priority:
+      typeof params.priority === 'string'
+        ? (params.priority as KanbanFilters['priority'])
+        : undefined,
+  };
+
+  const [organizationsResponse, persons, currentUserId, groupedCards] =
+    await Promise.all([
+      getOrganizations(),
+      getPersons(),
+      getCurrentUserId(),
+      getKanbanIssues(kanbanFilters),
+    ]);
+
+  return (
+    <TasksKanbanClient
+      initialColumns={groupedCards}
+      organizations={organizationsResponse.data ?? []}
+      persons={persons}
+      currentUserId={currentUserId ?? null}
+      initialOrgId={orgId ?? ''}
+    />
+  );
+}

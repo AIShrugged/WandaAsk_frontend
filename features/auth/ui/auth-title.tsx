@@ -4,6 +4,12 @@ import {
 } from '@/features/auth/lib/options';
 import { H1 } from '@/shared/ui/typography/H1';
 
+/**
+ * AuthTitle component.
+ * @param props - Component props.
+ * @param props.type - The variant that determines which title to display.
+ * @returns Result.
+ */
 export default function AuthTitle({ type }: { type: AuthTitleVariant }) {
   const titleVariant = {
     [AUTH_TITLE_VARIANT.SIGN_IN]: 'Sign In',
@@ -12,7 +18,7 @@ export default function AuthTitle({ type }: { type: AuthTitleVariant }) {
   };
 
   return (
-    <div className={'flex justify-center mb-[70px]'}>
+    <div className={'flex justify-center mb-8 md:mb-[70px]'}>
       <H1>{titleVariant[type]}</H1>
     </div>
   );

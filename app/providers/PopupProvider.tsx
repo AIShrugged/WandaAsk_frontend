@@ -1,38 +1,32 @@
 'use client';
 
-import React, { createContext, useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-interface PopupConfig {
-  width?: number;
-  preferredPosition?: 'top' | 'bottom' | 'left' | 'right';
-  offset?: number;
-  content: React.ReactNode;
-}
+import {
+  PopupContext,
+  type PopupConfig,
+} from '@/shared/ui/popup/popup-context';
 
 interface PopupPosition {
   top: number;
   left: number;
 }
 
-interface PopupContextValue {
-  open: (anchor: HTMLElement, config: PopupConfig) => void;
-  close: () => void;
-}
-
-export const PopupContext = createContext<PopupContextValue | null>(null);
-
+/**
+ * PopupProvider component.
+ * @param props - Component props.
+ * @param props.children
+ */
 export function PopupProvider({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
   const [config, setConfig] = useState<PopupConfig | null>(null);
   const [position, setPosition] = useState<PopupPosition>({ top: 0, left: 0 });
-
   const calculatePosition = useCallback(
     (anchor: HTMLElement, cfg: PopupConfig): PopupPosition => {
       const rect = anchor.getBoundingClientRect();
       const offset = cfg.offset ?? 8;
       const width = cfg.width ?? 200;
-
       let top = 0;
       let left = 0;
 
@@ -69,12 +63,15 @@ export function PopupProvider({ children }: { children: React.ReactNode }) {
       if (left + width > viewportWidth) {
         left = viewportWidth - width - offset;
       }
+
       if (left < offset) {
         left = offset;
       }
+
       if (top < offset) {
         top = offset;
       }
+
       if (top + 300 > viewportHeight) {
         // Assume max height 300
         top = viewportHeight - 300 - offset;
@@ -84,17 +81,16 @@ export function PopupProvider({ children }: { children: React.ReactNode }) {
     },
     [],
   );
-
   const open = useCallback(
     (anchor: HTMLElement, cfg: PopupConfig) => {
       const pos = calculatePosition(anchor, cfg);
+
       setPosition(pos);
       setConfig(cfg);
       setIsOpen(true);
     },
     [calculatePosition],
   );
-
   const close = useCallback(() => {
     setIsOpen(false);
     setConfig(null);
@@ -103,20 +99,34 @@ export function PopupProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!isOpen) return;
 
+    /**
+     * handleClick.
+     * @param e - e.
+     * @returns Result.
+     */
     const handleClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
+
       if (!target.closest('[data-popup]')) {
         close();
       }
     };
 
     document.addEventListener('click', handleClick);
-    return () => document.removeEventListener('click', handleClick);
+
+    return () => {
+      return document.removeEventListener('click', handleClick);
+    };
   }, [isOpen, close]);
 
   useEffect(() => {
     if (!isOpen) return;
 
+    /**
+     * handleEscape.
+     * @param e - e.
+     * @returns Result.
+     */
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         close();
@@ -124,7 +134,10 @@ export function PopupProvider({ children }: { children: React.ReactNode }) {
     };
 
     document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
+
+    return () => {
+      return document.removeEventListener('keydown', handleEscape);
+    };
   }, [isOpen, close]);
 
   return (

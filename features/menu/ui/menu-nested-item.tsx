@@ -3,13 +3,19 @@
 import { motion } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';
-import { useSelectedLayoutSegment } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
 import { ICONS_MAP } from '@/features/menu/lib/options';
 
 import type { MenuProps } from '@/features/menu/model/types';
 
+/**
+ * NestedMenuItem component.
+ * @param root0
+ * @param root0.item
+ * @param root0.level
+ */
 export function NestedMenuItem({
   item,
   level,
@@ -17,29 +23,32 @@ export function NestedMenuItem({
   item: MenuProps;
   level: number;
 }) {
-  const [isOpen, setIsOpen] = useState(false);
   const hasChildren = item.children && item.children.length > 0;
-
-  const segment = useSelectedLayoutSegment();
-  const isActive = item.id === segment;
-
+  const pathname = usePathname();
+  const fallbackHref = item.activeHref ?? item.href;
+  const activeHrefs = item.activeHrefs ?? (fallbackHref ? [fallbackHref] : []);
+  const isActive = activeHrefs.some((href) => {
+    return pathname === href || pathname.startsWith(`${href}/`);
+  });
+  const [isOpen, setIsOpen] = useState(isActive);
+  /**
+   * handleToggle.
+   */
   const handleToggle = () => {
     if (hasChildren) {
       setIsOpen(!isOpen);
     }
   };
-
   const Icon = item.icon ? ICONS_MAP[item.icon] : null;
-
   const Content = (
     <div
       className={`
-        flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer
-        transition-all duration-200 group
+        flex items-center gap-3 px-4 py-2 min-h-[36px] rounded-md cursor-pointer
+        transition-all duration-200
         ${
           isActive
-            ? 'bg-white text-accent'
-            : 'text-neutral-700 hover:bg-neutral-100'
+            ? 'bg-sidebar-accent text-sidebar-accent-foreground'
+            : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground'
         }
       `}
       style={{ paddingLeft: `${level * 16 + 16}px` }}
@@ -47,7 +56,7 @@ export function NestedMenuItem({
     >
       {Icon && (
         <Icon
-          className={`w-5 h-5 ${isActive ? 'text-primary-600' : 'text-neutral-500'}`}
+          className={`w-4 h-4 ${isActive ? 'text-primary' : 'text-muted-foreground'}`}
         />
       )}
       <span className='flex-1 text-sm font-medium'>{item.label}</span>
@@ -56,7 +65,7 @@ export function NestedMenuItem({
           animate={{ rotate: isOpen ? 90 : 0 }}
           transition={{ duration: 0.2 }}
         >
-          <ChevronRight className='w-4 h-4 text-neutral-400' />
+          <ChevronRight className='w-4 h-4 text-muted-foreground' />
         </motion.div>
       )}
     </div>
@@ -78,9 +87,11 @@ export function NestedMenuItem({
           transition={{ duration: 0.2, ease: 'easeInOut' }}
           className='overflow-hidden'
         >
-          {item.children?.map(child => (
-            <NestedMenuItem key={child.id} item={child} level={level + 1} />
-          ))}
+          {item.children?.map((child) => {
+            return (
+              <NestedMenuItem key={child.id} item={child} level={level + 1} />
+            );
+          })}
         </motion.div>
       )}
     </div>

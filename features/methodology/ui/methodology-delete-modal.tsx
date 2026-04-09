@@ -1,6 +1,3 @@
-import { useActionState } from 'react';
-
-import { deleteMethodology } from '@/app/actions/methodology';
 import { BUTTON } from '@/shared/lib/buttons';
 import { BUTTON_VARIANT } from '@/shared/types/button';
 import { Button } from '@/shared/ui/button/Button';
@@ -15,6 +12,12 @@ interface MethodologyDeleteModalProps extends ModalContextValue {
   methodology: MethodologyProps;
 }
 
+/**
+ * MethodologyDeleteModal component.
+ * @param root0
+ * @param root0.close
+ * @param root0.methodology
+ */
 export default function MethodologyDeleteModal({
   close,
   methodology,

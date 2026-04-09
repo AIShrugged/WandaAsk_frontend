@@ -17,6 +17,13 @@ interface AvatarProps extends PropsWithChildren {
   className?: string;
 }
 
+/**
+ * Avatar component.
+ * @param root0
+ * @param root0.children
+ * @param root0.size
+ * @param root0.className
+ */
 export default function Avatar({
   children,
   size = 'md',
@@ -25,7 +32,7 @@ export default function Avatar({
   return (
     <div
       className={clsx(
-        'flex items-center shrink-0 justify-center rounded-full bg-primary text-white capitalize font-medium',
+        'flex items-center shrink-0 justify-center rounded-full bg-primary text-primary-foreground capitalize font-medium',
         sizeClasses[size],
         className,
       )}

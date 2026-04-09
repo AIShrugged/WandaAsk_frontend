@@ -1,28 +1,53 @@
 import clsx from 'clsx';
 
-import { BUTTON_VARIANT, type ButtonVariant } from '@/shared/types/button';
+import {
+  BUTTON_SIZE,
+  BUTTON_VARIANT,
+  type ButtonSize,
+  type ButtonVariant,
+} from '@/shared/types/button';
 
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
 interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
   variant?: ButtonVariant;
+  size?: ButtonSize;
   className?: string;
   loading?: boolean;
   loadingText?: string;
 }
 
-const Loader = ({ text }: { text: string }) => (
-  <div className='flex items-center justify-center gap-2'>
-    <div className='animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent' />
-    <p>{text}</p>
-  </div>
-);
+/**
+ * Loader component.
+ * @param props - Component props.
+ * @param props.text
+ */
+const Loader = ({ text }: { text: string }) => {
+  return (
+    <div className='flex items-center justify-center gap-2'>
+      <div className='animate-spin rounded-full h-5 w-5 border-2 border-primary-foreground border-t-transparent' />
+      <p>{text}</p>
+    </div>
+  );
+};
 
+/**
+ * Button component.
+ * @param root0
+ * @param root0.loadingText
+ * @param root0.children
+ * @param root0.variant
+ * @param root0.className
+ * @param root0.loading
+ * @param root0.disabled
+ * @param root0.type
+ */
 export function Button({
-  loadingText = 'Please, wait',
+  loadingText = 'Please wait',
   children,
   variant = BUTTON_VARIANT.primary,
+  size = BUTTON_SIZE.md,
   className,
   loading = false,
   disabled = false,
@@ -30,32 +55,45 @@ export function Button({
   ...rest
 }: Props) {
   const isDisabled = disabled || loading;
-
+  const disabledClass = isDisabled ? 'opacity-50 cursor-not-allowed' : null;
+  const loadingClass = loading ? 'cursor-wait' : null;
   const base =
-    'relative h-[56px] w-full px-6 py-3 rounded-full font-inter text-base font-medium transition-all duration-200 flex items-center justify-center gap-3';
-
+    'relative w-full rounded-[var(--radius-button)] font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2';
+  const sizes = {
+    [BUTTON_SIZE.md]: 'h-10 px-6 py-2',
+    [BUTTON_SIZE.sm]: 'h-9 px-4 py-1.5',
+  };
   const variants = {
     [BUTTON_VARIANT.primary]: clsx(
-      'bg-[#4FB268] cursor-pointer text-white hover:bg-[#45a05a] active:bg-[#3d8f50]',
-      disabled && 'bg-[#A0D9B0] text-white/70 cursor-not-allowed',
-      loading && 'cursor-wait',
+      'bg-gradient-to-b from-violet-500 to-violet-700 text-primary-foreground cursor-pointer',
+      'border border-violet-400/20 border-t-violet-300/30',
+      'shadow-[0_2px_12px_rgba(124,58,237,0.25)]',
+      'hover:from-violet-400 hover:to-violet-600 hover:shadow-[0_4px_20px_rgba(124,58,237,0.5)]',
+      'active:from-violet-600 active:to-violet-800 active:shadow-[0_1px_8px_rgba(124,58,237,0.3)]',
+      disabledClass,
+      loadingClass,
     ),
     [BUTTON_VARIANT.secondary]: clsx(
-      'border-2 cursor-pointer border-button-secondary text-secondary bg-transparent hover:bg-[#4FB268]/5 active:bg-[#4FB268]/10',
-      disabled && 'border-[#A0D9B0] text-[#A0D9B0] cursor-not-allowed',
-      loading && 'cursor-wait',
+      'border border-input bg-background text-foreground cursor-pointer hover:bg-accent hover:text-accent-foreground active:bg-accent/80',
+      disabledClass,
+      loadingClass,
     ),
     [BUTTON_VARIANT.danger]: clsx(
-      'bg-error cursor-pointer text-white ',
-      disabled && 'bg-[#A0D9B0] text-white/70 cursor-not-allowed',
-      loading && 'cursor-wait',
+      'bg-destructive text-destructive-foreground cursor-pointer hover:bg-destructive/90 active:bg-destructive/80',
+      disabledClass,
+      loadingClass,
+    ),
+    [BUTTON_VARIANT.ghostDanger]: clsx(
+      'border border-destructive/50 bg-background text-destructive cursor-pointer hover:bg-destructive hover:text-destructive-foreground active:bg-destructive/90',
+      disabledClass,
+      loadingClass,
     ),
   };
 
   return (
     <button
       type={type}
-      className={clsx(base, variants[variant], className)}
+      className={clsx(base, sizes[size], variants[variant], className)}
       disabled={isDisabled}
       aria-disabled={isDisabled}
       {...rest}

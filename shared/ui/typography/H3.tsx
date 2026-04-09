@@ -4,10 +4,17 @@ interface Props {
   children: ReactNode;
   className?: string;
 }
+
+/**
+ * H3 component.
+ * @param className.children
+ * @param className - className.
+ * @param className.className
+ */
 export function H3({ children, className }: Props) {
   return (
-    <h1 className={`text-[20px] text-accent font-bold ${className}`}>
+    <h3 className={`text-xl font-semibold text-foreground ${className ?? ''}`}>
       {children}
-    </h1>
+    </h3>
   );
 }

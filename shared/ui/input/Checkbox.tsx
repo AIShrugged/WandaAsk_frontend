@@ -2,6 +2,9 @@ import React, { forwardRef, type ReactNode } from 'react';
 
 import Hover from '@/shared/ui/animation/Hover';
 
+/**
+ * CheckboxIcon component.
+ */
 const CheckboxIcon = () => {
   return (
     <svg
@@ -39,11 +42,10 @@ const Checkbox = forwardRef<HTMLInputElement, Props>(function Checkbox(
   ref,
 ) {
   const isChecked = value;
-
-  const baseBorder = error ? 'border-red-500' : 'border-primary';
+  const baseBorder = error ? 'border-destructive' : 'border-border';
   const checkedStyles = isChecked
-    ? 'bg-primary border-primary text-white'
-    : 'bg-white';
+    ? 'bg-primary border-primary text-primary-foreground'
+    : 'bg-background';
 
   return (
     <label
@@ -76,7 +78,7 @@ const Checkbox = forwardRef<HTMLInputElement, Props>(function Checkbox(
         )}
       </Hover>
       {label && <span>{label}</span>}
-      {labelExtra && labelExtra}
+      {labelExtra}
       {rest.children}
     </label>
   );

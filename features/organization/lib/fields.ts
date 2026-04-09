@@ -1,4 +1,4 @@
-import type { OrganizationDTO } from '@/features/organization/model/types';
+import type { OrganizationDTO } from '@/entities/organization';
 
 const NAME_VALIDATION_RULES = {
   required: {
@@ -14,9 +14,17 @@ const NAME_VALIDATION_RULES = {
     message: 'Organization name must not exceed 255 characters',
   },
   validate: {
-    noOnlySpaces: (value: string) =>
-      value.trim().length >= 3 ||
-      'Organization name cannot contain only spaces',
+    /**
+     * noOnlySpaces.
+     * @param value - value.
+     * @returns Result.
+     */
+    noOnlySpaces: (value: string) => {
+      return (
+        value.trim().length >= 3 ||
+        'Organization name cannot contain only spaces'
+      );
+    },
   },
 } as const;
 

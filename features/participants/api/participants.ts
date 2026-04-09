@@ -1,0 +1,111 @@
+'use server';
+
+import { revalidatePath } from 'next/cache';
+import { cache } from 'react';
+
+import { API_URL } from '@/shared/lib/config';
+import { getAuthHeaders } from '@/shared/lib/getAuthToken';
+import { ROUTES } from '@/shared/lib/routes';
+
+import type { AttendeeProps, GuestProps } from '@/entities/participant';
+import type { ApiResponse } from '@/shared/types/common';
+
+export const getAttendees = cache(
+  async (id: string): Promise<ApiResponse<AttendeeProps[]>> => {
+    const authHeaders = await getAuthHeaders();
+    const res = await fetch(`${API_URL}/calendar-events/${id}/participants`, {
+      method: 'GET',
+      headers: {
+        ...authHeaders,
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store',
+    });
+
+    if (!res.ok) {
+      const text = await res.text();
+
+      throw new Error(
+        `getAttendees failed: ${res.status} ${res.statusText} — ${text}`,
+      );
+    }
+
+    const json: ApiResponse<AttendeeProps[]> = await res.json();
+
+    if (!json.success || !json.data) {
+      throw new Error(json.error ?? 'Invalid API response');
+    }
+
+    return { data: json.data };
+  },
+);
+
+export const getGuests = cache(
+  async (id: string): Promise<ApiResponse<GuestProps[]>> => {
+    const authHeaders = await getAuthHeaders();
+    const res = await fetch(`${API_URL}/calendar-events/${id}/profiles`, {
+      method: 'GET',
+      headers: {
+        ...authHeaders,
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store',
+    });
+
+    if (!res.ok) {
+      const text = await res.text();
+
+      throw new Error(
+        `getGuests failed: ${res.status} ${res.statusText} — ${text}`,
+      );
+    }
+
+    const json: ApiResponse<GuestProps[]> = await res.json();
+
+    if (!json.success || !json.data) {
+      throw new Error(json.error ?? 'Invalid API response');
+    }
+
+    return { data: json.data };
+  },
+);
+
+/**
+ * setProfile.
+ * @param eventId
+ * @param participantId
+ * @param guestId
+ * @returns Promise.
+ */
+export async function setProfile(
+  eventId: number,
+  participantId: number,
+  guestId: string | null,
+) {
+  const authHeaders = await getAuthHeaders();
+  const payload = {
+    calendar_event_id: eventId,
+    participant_id: participantId,
+    profile_id: guestId,
+  };
+  const res = await fetch(
+    `${API_URL}/calendar-events/${eventId}/participants/${participantId}/set-profile`,
+    {
+      method: 'POST',
+      headers: {
+        ...authHeaders,
+      },
+      body: JSON.stringify(payload),
+      cache: 'no-store',
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error('Failed to save participant mapping');
+  }
+
+  revalidatePath(ROUTES.DASHBOARD.MEETING);
+  revalidatePath(ROUTES.DASHBOARD.MEETINGS);
+
+  return { success: true };
+}

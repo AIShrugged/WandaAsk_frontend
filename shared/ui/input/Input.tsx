@@ -1,6 +1,6 @@
 'use client';
 
-import React, { forwardRef, useId, useState, useEffect } from 'react';
+import React, { forwardRef, useId, useState } from 'react';
 
 import Error from '@/shared/ui/input/Error';
 
@@ -14,9 +14,14 @@ export interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   value: string;
 }
 
-const cn = (...parts: Array<string | false | null | undefined>) =>
-  parts.filter(Boolean).join(' ');
-
+/**
+ * cn.
+ * @param parts - parts.
+ * @returns Result.
+ */
+const cn = (...parts: Array<string | false | null | undefined>) => {
+  return parts.filter(Boolean).join(' ');
+};
 const Input = forwardRef<HTMLInputElement, Props>(function Input(
   {
     id,
@@ -39,36 +44,36 @@ const Input = forwardRef<HTMLInputElement, Props>(function Input(
   const autoId = useId();
   const inputId = id ?? `input-${autoId}`;
   const errorId = `${inputId}-error`;
-
-  // local state to track focus and (when uncontrolled) value
   const [isFocused, setIsFocused] = useState(false);
-  const [internalValue, setInternalValue] = useState<string | undefined>(
-    defaultValue === undefined ? undefined : String(defaultValue),
-  );
-
-  useEffect(() => {
-    if (value === undefined) return;
-    setInternalValue(String(value ?? ''));
-  }, [value]);
-
   const hasValue =
-    (value ?? internalValue ?? rest.placeholder) !== undefined &&
-    (value ?? internalValue ?? '').toString().length > 0;
+    (value || rest.placeholder) !== undefined && (value || '').length > 0;
 
+  /**
+   * handleFocus.
+   * @param e - e.
+   * @returns Result.
+   */
   function handleFocus(e: React.FocusEvent<HTMLInputElement>) {
     setIsFocused(true);
     onFocus?.(e);
   }
 
+  /**
+   * handleBlur.
+   * @param e - e.
+   * @returns Result.
+   */
   function handleBlur(e: React.FocusEvent<HTMLInputElement>) {
     setIsFocused(false);
     onBlur?.(e);
   }
 
+  /**
+   * handleChange.
+   * @param e - e.
+   * @returns Result.
+   */
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    if (value === undefined) {
-      setInternalValue(e.target.value);
-    }
     onChange?.(e);
   }
 
@@ -83,14 +88,14 @@ const Input = forwardRef<HTMLInputElement, Props>(function Input(
     >
       <div
         className={cn(
-          'px-6 flex items-center rounded-full h-[54px] w-full',
-          'border bg-white transition-colors focus-within:border-primary focus-within:ring-2 focus-within:ring-offset-0 focus-within:ring-[#4FB268]',
-          error ? 'border-red-700' : 'border-secondary',
+          'px-4 flex items-center rounded-[var(--radius-button)] h-10 w-full',
+          'border border-input bg-background transition-colors focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/30 focus-within:ring-offset-0',
+          error ? 'border-destructive' : '',
           'relative',
         )}
       >
         {startAdornment ? (
-          <div className='flex items-center mr-2 pl-2'>{startAdornment}</div>
+          <div className='flex items-center mr-2'>{startAdornment}</div>
         ) : null}
 
         <input
@@ -103,7 +108,7 @@ const Input = forwardRef<HTMLInputElement, Props>(function Input(
           onBlur={handleBlur}
           onChange={handleChange}
           className={cn(
-            'peer bg-transparent outline-none w-full placeholder-transparent py-2.5',
+            'peer bg-transparent outline-none w-full placeholder-muted-foreground/70 py-2',
             className ?? '',
           )}
           aria-invalid={!!error}
@@ -118,17 +123,17 @@ const Input = forwardRef<HTMLInputElement, Props>(function Input(
           <label
             htmlFor={inputId}
             className={cn(
-              'absolute left-3 transition-all pointer-events-none select-none',
+              'absolute left-3 transition-all pointer-events-none select-none text-sm',
               floatingActive
-                ? '-translate-y-4 scale-100 px-[4px] bg-white text-xs text-tertiary'
-                : 'translate-y-0 scale-100 text-secondary',
-              startAdornment ? 'left-10' : 'left-8',
-              error ? 'text-red-600' : '',
+                ? '-translate-y-5 scale-90 px-1 bg-background text-xs text-muted-foreground'
+                : 'translate-y-0 scale-100 text-muted-foreground',
+              startAdornment ? 'left-8' : 'left-4',
+              error ? 'text-destructive' : '',
             )}
             style={
               {
                 zIndex: 10,
-                top: floatingActive ? -10 : '50%',
+                top: floatingActive ? -9 : '50%',
                 transformOrigin: 'left center',
                 translate: floatingActive ? '0' : '0 -50%',
               } as React.CSSProperties

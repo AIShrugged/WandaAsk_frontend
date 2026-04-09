@@ -1,8 +1,8 @@
 import { useRouter } from 'next/navigation';
 import { type ReactNode, useTransition } from 'react';
 
-import { logout } from '@/app/actions/auth';
 import { USER_MENU } from '@/features/user/lib/options';
+import { logout } from '@/shared/api/session';
 import { ROUTES } from '@/shared/lib/routes';
 
 interface MenuItem {
@@ -11,10 +11,19 @@ interface MenuItem {
   icon?: ReactNode;
   action: string;
 }
+/**
+ * UserMenuPopup component.
+ * @param props - Component props.
+ * @param props.close
+ */
 export function UserMenuPopup({ close }: { close: () => void }) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
-
+  /**
+   * handleAction.
+   * @param action - action.
+   * @returns Result.
+   */
   const handleAction = (action: MenuItem['action']) => {
     startTransition(async () => {
       try {
@@ -26,31 +35,35 @@ export function UserMenuPopup({ close }: { close: () => void }) {
             break;
           }
 
-          case 'settings': {
-            router.push('/settings');
+          case 'profile': {
+            router.push(ROUTES.DASHBOARD.PROFILE);
             close();
             break;
           }
         }
-      } catch (error) {
-        console.error('Action failed:', error);
+      } catch {
+        // silently fail — action errors should not crash the UI
       }
     });
   };
 
   return (
-    <div className='bg-white shadow-lg rounded-xl border border-gray-200 overflow-hidden'>
+    <div className='bg-popover shadow-card rounded-[var(--radius-card)] border border-border overflow-hidden'>
       <div className='py-1'>
-        {USER_MENU.map(menu => (
-          <button
-            key={menu.id}
-            onClick={() => handleAction(menu.action)}
-            disabled={isPending}
-            className='cursor-pointer w-full px-4 py-2 text-left text-sm hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
-          >
-            {menu.title}
-          </button>
-        ))}
+        {USER_MENU.map((menu) => {
+          return (
+            <button
+              key={menu.id}
+              onClick={() => {
+                return handleAction(menu.action);
+              }}
+              disabled={isPending}
+              className='cursor-pointer w-full px-4 py-2 text-left text-sm text-foreground hover:bg-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+            >
+              {menu.title}
+            </button>
+          );
+        })}
       </div>
     </div>
   );

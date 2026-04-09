@@ -3,15 +3,34 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+interface PopupState {
+  anchorEl: HTMLElement;
+  content: React.ReactNode;
+  width?: number | string;
+}
+
+/**
+ * GlobalPopup component.
+ */
 export default function GlobalPopup() {
-  const [state, setState] = useState<any>(null);
+  const [state, setState] = useState<PopupState | null>(null);
   const popupRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handler = (e: any) => {
-      setState(e.detail);
+    /**
+     * handler.
+     * @param e - e.
+     * @returns Result.
+     */
+    const handler = (e: Event) => {
+      setState((e as CustomEvent<PopupState>).detail);
     };
-    const closeHandler = () => setState(null);
+    /**
+     * closeHandler.
+     */
+    const closeHandler = () => {
+      return setState(null);
+    };
 
     globalThis.addEventListener('open-global-popup', handler);
     globalThis.addEventListener('close-global-popup', closeHandler);
@@ -24,6 +43,11 @@ export default function GlobalPopup() {
 
   useEffect(() => {
     if (!state) return;
+    /**
+     * clickOutside.
+     * @param e - e.
+     * @returns Result.
+     */
     const clickOutside = (e: MouseEvent) => {
       if (
         popupRef.current &&
@@ -34,8 +58,12 @@ export default function GlobalPopup() {
         setState(null);
       }
     };
+
     document.addEventListener('mousedown', clickOutside);
-    return () => document.removeEventListener('mousedown', clickOutside);
+
+    return () => {
+      return document.removeEventListener('mousedown', clickOutside);
+    };
   }, [state]);
 
   if (!state) return null;
@@ -52,7 +80,11 @@ export default function GlobalPopup() {
   };
 
   return createPortal(
-    <div ref={popupRef} style={style} className='shadow-2xl rounded-full'>
+    <div
+      ref={popupRef}
+      style={style}
+      className='shadow-card rounded-[var(--radius-card)]'
+    >
       {state.content}
     </div>,
     document.body,

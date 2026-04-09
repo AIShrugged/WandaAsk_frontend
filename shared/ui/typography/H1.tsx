@@ -5,10 +5,16 @@ interface Props {
   className?: string;
 }
 
+/**
+ * H1 component.
+ * @param className.children
+ * @param className - className.
+ * @param className.className
+ */
 export function H1({ children, className }: Props) {
   return (
     <h1
-      className={`text-[64px] font-normal leading-normal text-[#344137] font-inter ${className}`}
+      className={`text-3xl font-bold tracking-tight text-foreground ${className ?? ''}`}
     >
       {children}
     </h1>

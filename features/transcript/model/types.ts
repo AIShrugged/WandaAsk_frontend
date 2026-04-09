@@ -1,4 +1,4 @@
-import type { ParticipantEvent } from '@/features/participants/model/types';
+import type { ParticipantEvent } from '@/entities/participant';
 
 export interface TranscriptsProps {
   data: TranscriptProps[];

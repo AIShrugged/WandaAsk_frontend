@@ -1,0 +1,1 @@
+export { TribesLogo } from './TribesLogo';
