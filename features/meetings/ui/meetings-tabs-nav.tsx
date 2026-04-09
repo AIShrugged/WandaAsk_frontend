@@ -6,6 +6,10 @@ import { PageTabsNav } from '@/shared/ui/navigation/page-tabs-nav';
 const TABS = [
   { href: ROUTES.DASHBOARD.MEETINGS_LIST, label: 'Meetings' },
   { href: ROUTES.DASHBOARD.MEETINGS_CALENDAR, label: 'Calendar' },
+  {
+    href: ROUTES.DASHBOARD.MEETINGS_ORGANIZATION,
+    label: 'Organization Calendar',
+  },
 ] as const;
 
 /**

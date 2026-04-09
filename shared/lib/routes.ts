@@ -41,5 +41,6 @@ export const ROUTES = {
     ISSUES_KANBAN: '/dashboard/issues/kanban',
     MEETINGS_LIST: '/dashboard/meetings/list',
     MEETINGS_CALENDAR: '/dashboard/meetings/calendar',
+    MEETINGS_ORGANIZATION: '/dashboard/meetings/organization',
   },
 } as const;
