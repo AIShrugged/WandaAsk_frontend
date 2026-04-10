@@ -1,37 +1,33 @@
+import { endOfMonth, format, startOfMonth } from 'date-fns';
+
 import { getOrgCalendarEvents } from '@/features/meetings/api/org-calendar';
-import { MEETINGS_PAGE_SIZE } from '@/features/meetings/model/constants';
-import { getDefaultDateRange } from '@/features/meetings/model/utils';
-import { OrgMeetingsList } from '@/features/meetings/ui/org-meetings-list';
+import { OrgCalendarView } from '@/features/meetings/ui/org-calendar-view';
 
 interface PageProps {
-  searchParams: Promise<{ date_from?: string; date_to?: string }>;
+  searchParams: Promise<{ month?: string }>;
 }
 
 /**
- * Organization Calendar tab — shows all org meetings where the bot was added.
+ * Organization Calendar tab — shows all org meetings where the bot was added,
+ * rendered as a monthly calendar grid.
  */
 export default async function OrganizationCalendarPage({
   searchParams,
 }: PageProps) {
   const params = await searchParams;
-  const defaultRange = getDefaultDateRange();
+  const currentMonth =
+    params.month ?? format(startOfMonth(new Date()), 'yyyy-MM-dd');
 
-  const dateFrom = params.date_from ?? defaultRange.from;
-  const dateTo = params.date_to ?? defaultRange.to;
+  const monthStart = startOfMonth(currentMonth);
+  const dateFrom = format(monthStart, 'yyyy-MM-dd');
+  const dateTo = format(endOfMonth(monthStart), 'yyyy-MM-dd');
 
-  const { data: meetings = [], totalCount } = await getOrgCalendarEvents(
+  const { data: meetings = [] } = await getOrgCalendarEvents(
     0,
-    MEETINGS_PAGE_SIZE,
+    200,
     dateFrom,
     dateTo,
   );
 
-  return (
-    <OrgMeetingsList
-      initialItems={meetings}
-      totalCount={totalCount}
-      defaultDateFrom={dateFrom}
-      defaultDateTo={dateTo}
-    />
-  );
+  return <OrgCalendarView events={meetings} currentMonth={currentMonth} />;
 }
