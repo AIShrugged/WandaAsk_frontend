@@ -70,7 +70,9 @@ export function MeetingDetailCard({
         {/* Briefing (from past meeting summary) */}
         {event.summary && (
           <div>
-            <p className='text-xs font-semibold text-muted-foreground mb-2'>Briefing</p>
+            <p className='text-xs font-semibold text-muted-foreground mb-2'>
+              Briefing
+            </p>
             <MarkdownContent>{event.summary.summary}</MarkdownContent>
             {event.review?.key_insight && (
               <p className='mt-2 text-xs text-muted-foreground italic'>

@@ -65,9 +65,7 @@ export function MeetingCard({ data }: { data: MeetingCardArtifact['data'] }) {
       </div>
 
       {/* Summary */}
-      {data.summary && (
-        <MarkdownContent>{data.summary}</MarkdownContent>
-      )}
+      {data.summary && <MarkdownContent>{data.summary}</MarkdownContent>}
 
       {/* Key points */}
       {keyPoints.length > 0 && (
