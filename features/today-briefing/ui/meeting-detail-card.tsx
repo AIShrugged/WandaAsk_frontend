@@ -4,6 +4,7 @@ import { differenceInMinutes, format, parseISO } from 'date-fns';
 import { Clock, Users, Video } from 'lucide-react';
 
 import Card from '@/shared/ui/card/Card';
+import { MarkdownContent } from '@/shared/ui/markdown-content';
 
 import { AgendaList } from './agenda-list';
 import { AiPrepPanel } from './ai-prep-panel';
@@ -69,10 +70,8 @@ export function MeetingDetailCard({
         {/* Briefing (from past meeting summary) */}
         {event.summary && (
           <div>
-            <p className='text-sm text-foreground'>
-              <span className='font-semibold'>Briefing: </span>
-              {event.summary.summary}
-            </p>
+            <p className='text-xs font-semibold text-muted-foreground mb-2'>Briefing</p>
+            <MarkdownContent>{event.summary.summary}</MarkdownContent>
             {event.review?.key_insight && (
               <p className='mt-2 text-xs text-muted-foreground italic'>
                 {event.review.key_insight}
