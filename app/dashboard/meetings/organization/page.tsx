@@ -43,5 +43,9 @@ export default async function OrganizationCalendarPage({
     if (offset >= totalCount || data.length === 0) break;
   }
 
-  return <OrgCalendarView events={allMeetings} currentMonth={currentMonth} />;
+  return (
+    <div className='h-full flex flex-col overflow-hidden'>
+      <OrgCalendarView events={allMeetings} currentMonth={currentMonth} />
+    </div>
+  );
 }
