@@ -1,2 +1,3 @@
-module.exports = () => {};
-module.exports.default = () => {};
+function remarkGfm() {}
+export default remarkGfm;
+export { remarkGfm };

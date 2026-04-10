@@ -1,5 +1,5 @@
 const ReactMarkdown = ({ children }) => {
   return children;
 };
-module.exports = ReactMarkdown;
-module.exports.default = ReactMarkdown;
+export default ReactMarkdown;
+export { ReactMarkdown };
