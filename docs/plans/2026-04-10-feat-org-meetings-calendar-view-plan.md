@@ -2,7 +2,7 @@
 title:
   'feat: Replace card list with calendar grid on Organization Meetings page'
 type: feat
-status: active
+status: completed
 date: 2026-04-10
 ---
 
