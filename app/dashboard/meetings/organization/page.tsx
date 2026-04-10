@@ -3,6 +3,10 @@ import { endOfMonth, format, startOfMonth } from 'date-fns';
 import { getOrgCalendarEvents } from '@/features/meetings/api/org-calendar';
 import { OrgCalendarView } from '@/features/meetings/ui/org-calendar-view';
 
+import type { CalendarEventListItem } from '@/features/meetings/model/types';
+
+const PAGE_SIZE = 100;
+
 interface PageProps {
   searchParams: Promise<{ month?: string }>;
 }
@@ -22,12 +26,22 @@ export default async function OrganizationCalendarPage({
   const dateFrom = format(monthStart, 'yyyy-MM-dd');
   const dateTo = format(endOfMonth(monthStart), 'yyyy-MM-dd');
 
-  const { data: meetings = [] } = await getOrgCalendarEvents(
-    0,
-    200,
-    dateFrom,
-    dateTo,
-  );
+  const allMeetings: CalendarEventListItem[] = [];
+  let offset = 0;
 
-  return <OrgCalendarView events={meetings} currentMonth={currentMonth} />;
+  while (true) {
+    const { data = [], totalCount } = await getOrgCalendarEvents(
+      offset,
+      PAGE_SIZE,
+      dateFrom,
+      dateTo,
+    );
+
+    allMeetings.push(...data);
+    offset += data.length;
+
+    if (offset >= totalCount || data.length === 0) break;
+  }
+
+  return <OrgCalendarView events={allMeetings} currentMonth={currentMonth} />;
 }
