@@ -20,6 +20,7 @@ import {
 import MeetingTasks from '@/features/meeting/ui/meeting-tasks';
 import { ROUTES } from '@/shared/lib/routes';
 import { Badge } from '@/shared/ui/badge';
+import { MarkdownContent } from '@/shared/ui/markdown-content';
 
 import type {
   CalendarEventAgendaItem,
@@ -684,7 +685,11 @@ export async function MeetingDetail({ id }: { id: string }) {
           <TakeawaysList takeaways={data.key_takeaways} />
         </SectionCard>
 
-        <DetailBlock title='Summary' icon={BookOpen} value={data.summary} />
+        {data.summary && (
+          <SectionCard title='Summary' icon={BookOpen}>
+            <MarkdownContent>{data.summary as string}</MarkdownContent>
+          </SectionCard>
+        )}
         <DetailBlock
           title='Review / Insights'
           icon={FileText}
