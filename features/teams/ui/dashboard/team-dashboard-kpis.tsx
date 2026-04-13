@@ -15,6 +15,8 @@ export default function TeamDashboardKpis({ kpis }: TeamDashboardKpisProps) {
       ? 'text-emerald-400'
       : 'text-yellow-300';
 
+  console.log(kpis.action_items);
+
   return (
     <div className='grid grid-cols-3 gap-4'>
       {/* Action Items */}
