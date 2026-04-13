@@ -19,7 +19,7 @@ export default async function IssueCreatePage() {
 
   return (
     <Card className='h-full flex flex-col'>
-      <PageHeader hasButtonBack title='Create Issue' />
+      <PageHeader hasButtonBack title='Create task' />
       <div className='h-full overflow-y-auto'>
         <CardBody>
           <IssueForm

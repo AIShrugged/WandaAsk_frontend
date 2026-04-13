@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronUp, ChevronDown, Settings } from 'lucide-react';
+import { ChevronUp, ChevronDown } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import {
   useState,
@@ -48,19 +48,16 @@ function noop() {}
  * @param root0.organization - Organization to render.
  * @param root0.isActive - Whether this org is currently active.
  * @param root0.pending - Whether a form action is in flight.
- * @param root0.onSettingsClick - Click handler for the settings icon.
  * @returns JSX element.
  */
 function OrgItem({
   organization,
   isActive,
   pending,
-  onSettingsClick,
 }: {
   organization: OrganizationProps;
   isActive: boolean;
   pending: boolean;
-  onSettingsClick: () => void;
 }) {
   if (isActive) {
     return (
@@ -73,12 +70,6 @@ function OrgItem({
             {organization.pivot.role}
           </p>
         </div>
-        <button
-          className='cursor-pointer text-muted-foreground hover:text-foreground transition-colors'
-          onClick={onSettingsClick}
-        >
-          <Settings size={16} />
-        </button>
       </div>
     );
   }
@@ -184,7 +175,7 @@ export default function OrganizationDropdown({
 
       setDropdownPos({
         top: rect.bottom + 4,
-        left: Math.min(rect.left, window.innerWidth - 280 - 8),
+        left: Math.min(rect.left, globalThis.innerWidth - 280 - 8),
         minWidth: rect.width,
       });
     }
@@ -271,12 +262,6 @@ export default function OrganizationDropdown({
                     organization={organization}
                     isActive={organization.id === organizationActiveId}
                     pending={pending}
-                    onSettingsClick={() => {
-                      setOpen(false);
-                      push(
-                        `${ROUTES.DASHBOARD.ORGANIZATION}/${organization.id}`,
-                      );
-                    }}
                   />
                 </form>
               );

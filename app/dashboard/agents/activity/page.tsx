@@ -42,16 +42,9 @@ export default async function AgentActivityPage() {
   }
 
   return (
-    <div>
-      <div className='mb-6'>
-        <p className='text-sm text-muted-foreground'>
-          Activity feed for all agents. Showing {activityTotal} entries.
-        </p>
-      </div>
-      <AgentActivityFeed
-        initialItems={activityItems}
-        totalCount={activityTotal}
-      />
-    </div>
+    <AgentActivityFeed
+      initialItems={activityItems}
+      totalCount={activityTotal}
+    />
   );
 }

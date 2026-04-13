@@ -4,7 +4,6 @@ import { getIssue, getIssueAttachments, getPersons } from '@/features/issues';
 import { IssueAttachments } from '@/features/issues/ui/issue-attachments';
 import { IssueForm } from '@/features/issues/ui/issue-form';
 import { IssueLinkedTask } from '@/features/issues/ui/issue-linked-task';
-import { IssueOverviewPanel } from '@/features/issues/ui/issue-overview-panel';
 import { getOrganizations } from '@/features/organization/api/organization';
 import Card from '@/shared/ui/card/Card';
 import CardBody from '@/shared/ui/card/CardBody';
@@ -50,14 +49,13 @@ export default async function IssueDetailPage({
       <div className='grid min-h-full gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]'>
         <div className='flex flex-col gap-6'>
           <Card className='flex flex-col'>
-            <PageHeader hasButtonBack title='Issue' />
+            <PageHeader hasButtonBack title='Task' />
             <div className='overflow-y-auto'>
               <CardBody>
                 <IssueForm
                   issue={issue}
                   organizations={organizationsResponse.data ?? []}
                   persons={persons}
-                  hideStatusField
                 />
               </CardBody>
             </div>
@@ -66,8 +64,6 @@ export default async function IssueDetailPage({
         </div>
 
         <div className='flex h-full flex-col gap-6'>
-          <IssueOverviewPanel issue={issue} />
-
           <Card className='h-full flex flex-col'>
             <PageHeader title='Attachments' />
             <div className='h-full overflow-y-auto'>
