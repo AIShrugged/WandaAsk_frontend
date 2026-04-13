@@ -29,6 +29,9 @@ export const ROUTES = {
     FOLLOWUPS: '/dashboard/follow-ups',
     ORGANIZATION: '/dashboard/organization',
     PROFILE: '/dashboard/profile',
+    PROFILE_ACCOUNT: '/dashboard/profile/account',
+    PROFILE_PASSWORD: '/dashboard/profile/password', // eslint-disable-line sonarjs/no-hardcoded-passwords
+    PROFILE_CALENDAR: '/dashboard/profile/calendar',
     SUMMARY: '/dashboard/summary',
     KANBAN: '/dashboard/kanban',
     DEBUG: '/dashboard/debug',
