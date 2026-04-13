@@ -46,5 +46,20 @@ export const ROUTES = {
     MEETINGS_LIST: '/dashboard/meetings/list',
     MEETINGS_CALENDAR: '/dashboard/meetings/calendar',
     MEETINGS_ORGANIZATION: '/dashboard/meetings/organization',
+    MEETING_DETAIL: (id: string | number) => {
+      return `/dashboard/meetings/${id}`;
+    },
+    MEETING_DETAIL_OVERVIEW: (id: string | number) => {
+      return `/dashboard/meetings/${id}/overview`;
+    },
+    MEETING_DETAIL_AGENDA: (id: string | number) => {
+      return `/dashboard/meetings/${id}/agenda`;
+    },
+    MEETING_DETAIL_TASKS: (id: string | number) => {
+      return `/dashboard/meetings/${id}/tasks`;
+    },
+    MEETING_DETAIL_TRANSCRIPT: (id: string | number) => {
+      return `/dashboard/meetings/${id}/transcript`;
+    },
   },
 } as const;

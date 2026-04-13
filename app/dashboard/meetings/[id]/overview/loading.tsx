@@ -1,8 +1,5 @@
 import { Skeleton } from '@/shared/ui/layout/skeleton';
 
-/**
- * Loading state for the meeting detail root (while redirecting to overview).
- */
 export default function Loading() {
   return (
     <div className='mx-auto w-full max-w-4xl px-6 py-6'>

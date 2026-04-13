@@ -172,6 +172,8 @@ export async function switchBot(eventId: number, botRequired: boolean) {
   }
 
   revalidatePath(ROUTES.DASHBOARD.CALENDAR);
+  revalidatePath(ROUTES.DASHBOARD.MEETINGS_LIST);
+  revalidatePath(ROUTES.DASHBOARD.MEETINGS_ORGANIZATION);
 
   return await res.json();
 }
