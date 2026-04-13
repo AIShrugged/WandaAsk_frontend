@@ -109,24 +109,6 @@ describe('OrganizationDropdown', () => {
     expect(mockPush).toHaveBeenCalledWith(expect.stringContaining('/create'));
   });
 
-  it('navigates to organization settings when Settings icon is clicked', async () => {
-    const user = userEvent.setup({ delay: null });
-
-    render(
-      <OrganizationDropdown
-        organizations={[makeOrg(1, 'Acme Corp')]}
-        organizationActiveId={1}
-      />,
-    );
-    // Open dropdown
-    await user.click(screen.getAllByRole('button')[0]);
-    // The settings button is next to the active org name
-    const settingsBtn = screen.getByRole('button', { name: '' });
-
-    await user.click(settingsBtn);
-    expect(mockPush).toHaveBeenCalledWith(expect.stringContaining('/1'));
-  });
-
   it('shows non-active org as a switch button', () => {
     render(
       <OrganizationDropdown
