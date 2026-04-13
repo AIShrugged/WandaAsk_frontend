@@ -1,19 +1,42 @@
-import { getCalendarEvents } from '@/features/event/api/calendar-events';
-import { MEETINGS_PAGE_SIZE } from '@/features/meetings/model/constants';
-import { MeetingsList } from '@/features/meetings/ui/meetings-list';
+import { getMeetingsForThreeDays } from '@/features/meetings/api/meetings';
+import { MeetingsColumnView } from '@/features/meetings/ui/meetings-column-view';
+
+function formatColumnDate(date: Date): string {
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    day: 'numeric',
+  }).format(date);
+}
 
 /**
- * Meetings list tab.
+ * Meetings list tab — shows bot meetings for yesterday, today, and tomorrow.
  */
 export default async function MeetingsListPage() {
-  const { data: meetings = [], totalCount } = await getCalendarEvents(
-    0,
-    MEETINGS_PAGE_SIZE,
-  );
+  const { yesterday, today, tomorrow } = await getMeetingsForThreeDays();
+
+  const now = new Date();
+  const yesterdayDate = new Date(now);
+
+  yesterdayDate.setDate(now.getDate() - 1);
+
+  const tomorrowDate = new Date(now);
+
+  tomorrowDate.setDate(now.getDate() + 1);
 
   return (
-    <div className='w-full max-w-4xl px-6 py-6'>
-      <MeetingsList initialItems={meetings} totalCount={totalCount} />
-    </div>
+    <MeetingsColumnView
+      yesterday={yesterday.filter((m) => {
+        return m.required_bot;
+      })}
+      today={today.filter((m) => {
+        return m.required_bot;
+      })}
+      tomorrow={tomorrow.filter((m) => {
+        return m.required_bot;
+      })}
+      yesterdayDate={formatColumnDate(yesterdayDate)}
+      todayDate={formatColumnDate(now)}
+      tomorrowDate={formatColumnDate(tomorrowDate)}
+    />
   );
 }

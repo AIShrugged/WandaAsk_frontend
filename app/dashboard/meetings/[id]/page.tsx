@@ -1,9 +1,9 @@
-import { MeetingDetail } from '@/features/meetings/ui/meeting-detail';
-import Card from '@/shared/ui/card/Card';
+import { redirect } from 'next/navigation';
+
+import { ROUTES } from '@/shared/lib/routes';
 
 /**
- * Meeting detail page.
- * @param params - Route params.
+ * Meeting detail root — redirects to the overview tab.
  */
 export default async function MeetingDetailPage({
   params,
@@ -12,13 +12,5 @@ export default async function MeetingDetailPage({
 }) {
   const { id } = await params;
 
-  return (
-    <Card className='h-full flex flex-col overflow-hidden'>
-      <div className='flex-1 overflow-y-auto'>
-        <div className='mx-auto w-full max-w-4xl px-6 py-6'>
-          <MeetingDetail id={id} />
-        </div>
-      </div>
-    </Card>
-  );
+  redirect(ROUTES.DASHBOARD.MEETING_DETAIL_OVERVIEW(id));
 }

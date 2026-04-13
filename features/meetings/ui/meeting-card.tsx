@@ -1,10 +1,14 @@
 'use client';
 
-import { Bot, BotOff, CheckCircle2, ExternalLink, Video } from 'lucide-react';
+import { Bot, BotOff, CheckCircle2, ExternalLink } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
+import { getMeetingDisplayState } from '@/features/meetings/model/meeting-state';
 import { ROUTES } from '@/shared/lib/routes';
 import { Badge } from '@/shared/ui/badge';
+
+import { BotToggleButton } from './bot-toggle-button';
+import { MeetingJoinButton } from './meeting-join-button';
 
 import type { CalendarEventListItem } from '@/features/meetings/model/types';
 
@@ -53,6 +57,7 @@ type BotStatus = 'not_required' | 'scheduled' | 'missed' | 'attended';
 function getBotStatus(meeting: CalendarEventListItem, now: Date): BotStatus {
   if (!meeting.required_bot) return 'not_required';
   if (meeting.has_summary) return 'attended';
+
   return new Date(meeting.starts_at) > now ? 'scheduled' : 'missed';
 }
 
@@ -74,6 +79,18 @@ const BOT_BADGE_CONFIG: Record<
   attended: { variant: 'success', label: 'Bot attended', icon: 'bot' },
 };
 
+const STATE_BORDER_CLASS: Record<
+  ReturnType<typeof getMeetingDisplayState>,
+  string
+> = {
+  active: 'border-emerald-500/40',
+  upcoming_with_bot: 'border-primary/30',
+  upcoming_no_bot: 'border-border',
+  past_with_summary: 'border-primary/20',
+  past_missed_bot: 'border-destructive/20',
+  past_no_bot: 'border-border',
+};
+
 interface MeetingCardProps {
   meeting: CalendarEventListItem;
 }
@@ -85,21 +102,36 @@ interface MeetingCardProps {
  */
 export function MeetingCard({ meeting }: MeetingCardProps) {
   const router = useRouter();
+  const now = new Date();
   const startsAt = new Date(meeting.starts_at);
   const endsAt = new Date(meeting.ends_at);
   const isReady = Boolean(meeting.has_summary);
-  const botStatus = getBotStatus(meeting, new Date());
+  const botStatus = getBotStatus(meeting, now);
   const botBadge = BOT_BADGE_CONFIG[botStatus];
+  const displayState = getMeetingDisplayState(meeting, now);
+  const isCompleted = isReady;
+  const borderClass = STATE_BORDER_CLASS[displayState];
 
   return (
     <article
       role='button'
       tabIndex={0}
-      className='relative cursor-pointer overflow-hidden rounded-[var(--radius-card)] border border-border bg-card px-5 py-4 shadow-card transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg'
+      className={`relative cursor-pointer overflow-hidden rounded-[var(--radius-card)] border ${borderClass} bg-card px-5 py-4 shadow-card transition-all hover:-translate-y-0.5 hover:shadow-lg`}
       onClick={() => {
-        router.push(`${ROUTES.DASHBOARD.MEETINGS}/${meeting.id}`);
+        router.push(ROUTES.DASHBOARD.MEETING_DETAIL(meeting.id));
+      }}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          router.push(ROUTES.DASHBOARD.MEETING_DETAIL(meeting.id));
+        }
       }}
     >
+      {/* Active indicator */}
+      {displayState === 'active' && (
+        <div className='absolute left-0 top-0 h-full w-1 rounded-l-[var(--radius-card)] bg-emerald-500' />
+      )}
+
       <div className='flex items-start justify-between gap-4'>
         <div className='min-w-0 flex-1'>
           <h3 className='text-base font-semibold text-foreground transition-colors hover:text-primary'>
@@ -119,11 +151,6 @@ export function MeetingCard({ meeting }: MeetingCardProps) {
       </p>
 
       <div className='mt-4 flex flex-wrap items-center gap-2'>
-        <Badge variant='default' className='gap-1'>
-          <Video className='h-3.5 w-3.5' />
-          <PlatformLink platform={meeting.platform} url={meeting.url} />
-        </Badge>
-
         <Badge variant={botBadge.variant} className='gap-1'>
           {botBadge.icon === 'bot' ? (
             <Bot className='h-3.5 w-3.5' />
@@ -139,6 +166,13 @@ export function MeetingCard({ meeting }: MeetingCardProps) {
             Summary ready
           </Badge>
         )}
+
+        <MeetingJoinButton url={meeting.url} isCompleted={isCompleted} />
+
+        <BotToggleButton
+          eventId={meeting.id}
+          isBotAdded={meeting.required_bot}
+        />
       </div>
     </article>
   );

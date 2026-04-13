@@ -4,14 +4,15 @@ import { Suspense } from 'react';
 import { getSources } from '@/features/calendar/api/source';
 import CalendarAttachedToast from '@/features/calendar/ui/calendar-attached-toast';
 import OnboardingTrigger from '@/features/calendar/ui/onboarding-trigger';
-import { getEvents } from '@/features/event/api/calendar-events';
+import { getCalendarEventsForMonth } from '@/features/meetings/api/meetings';
 import SpinLoader from '@/shared/ui/layout/spin-loader';
 import { CalendarPage } from '@/widgets/calendar-view';
 
 import type { EventProps } from '@/entities/event';
 
 /**
- * Meetings calendar tab.
+ * Meetings personal calendar tab.
+ * Fetches all events for the selected month via parallel per-day requests.
  */
 export default async function MeetingsCalendarPage({
   searchParams,
@@ -38,7 +39,7 @@ export default async function MeetingsCalendarPage({
   }
 
   const month = params.month ?? new Date().toISOString().slice(0, 7) + '-01';
-  const { data: events } = await getEvents();
+  const events = await getCalendarEventsForMonth(month);
 
   return (
     <div className='h-full flex flex-col overflow-hidden'>
