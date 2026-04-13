@@ -22,7 +22,7 @@ export default async function ProfilePage() {
 
   return (
     <Card className='h-full flex flex-col overflow-y-auto'>
-      <PageHeader title='Profile' hasButtonBack />
+      <PageHeader title='Profile' />
 
       <div className='flex flex-col gap-8 p-6 max-w-xl'>
         {user ? (
