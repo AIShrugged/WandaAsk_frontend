@@ -20,11 +20,19 @@ export function StaleItems({ tasks }: StaleItemsProps) {
   return (
     <div className='flex flex-col gap-2'>
       <button
-        onClick={() => setIsExpanded((v) => !v)}
+        onClick={() => {
+          return setIsExpanded((v) => {
+            return !v;
+          });
+        }}
         className='flex items-center justify-between text-xs font-medium uppercase tracking-wide text-muted-foreground hover:text-foreground transition-colors'
       >
         <span>Stale — no progress across meetings</span>
-        {isExpanded ? <ChevronUp className='h-3 w-3' /> : <ChevronDown className='h-3 w-3' />}
+        {isExpanded ? (
+          <ChevronUp className='h-3 w-3' />
+        ) : (
+          <ChevronDown className='h-3 w-3' />
+        )}
       </button>
 
       {isExpanded && (
