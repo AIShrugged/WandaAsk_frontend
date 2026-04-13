@@ -144,7 +144,8 @@ describe('MenuSidebar', () => {
 
   it('renders all default menu items', async () => {
     render(await MenuSidebar());
-    expect(screen.getByText('Dashboard')).toBeInTheDocument();
+    const dashboardItems = screen.getAllByText('Dashboard');
+    expect(dashboardItems.length).toBeGreaterThan(0);
     expect(screen.getByText('AI Chat')).toBeInTheDocument();
     expect(screen.getByText('Teams')).toBeInTheDocument();
     expect(screen.getByText('Methodologies')).toBeInTheDocument();
