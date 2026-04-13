@@ -33,7 +33,7 @@ export function getMenuItems({
   const items: MenuProps[] = [
     {
       id: 'today',
-      label: 'Today',
+      label: 'Dashboard',
       icon: 'clock',
       href: ROUTES.DASHBOARD.TODAY,
       position: 1,
@@ -44,13 +44,6 @@ export function getMenuItems({
       icon: 'users',
       href: ROUTES.DASHBOARD.MEETINGS,
       position: 2,
-    },
-    {
-      id: 'tasks',
-      label: 'Tasks',
-      icon: 'checkSquare',
-      href: ROUTES.DASHBOARD.TASKS,
-      position: 3,
     },
     {
       id: 'main-dashboard',
@@ -68,10 +61,10 @@ export function getMenuItems({
     },
     {
       id: 'issues',
-      label: 'Tasktracker',
-      icon: 'bug',
+      label: 'Tasks',
+      icon: 'checkSquare',
       href: ROUTES.DASHBOARD.ISSUES,
-      position: 30,
+      position: 3,
     },
     {
       id: 'teams',

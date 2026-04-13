@@ -4,10 +4,7 @@ import { Plus, Search } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
-import {
-  ISSUE_PRIORITY_LABELS,
-  ISSUE_STATUS_OPTIONS,
-} from '@/features/issues/model/types';
+import { ISSUE_STATUS_OPTIONS } from '@/features/issues/model/types';
 import { getTeams } from '@/features/teams/api/team';
 import { ROUTES } from '@/shared/lib/routes';
 import InputDropdown from '@/shared/ui/input/InputDropdown';
@@ -15,7 +12,6 @@ import { TenantScopeFields } from '@/shared/ui/input/tenant-scope-fields';
 
 import type { OrganizationProps } from '@/entities/organization';
 import type {
-  IssuePriority,
   IssueStatus,
   IssueType,
   PersonOption,
@@ -34,13 +30,6 @@ const TYPE_OPTIONS = [
   { value: '', label: 'Any type' },
   { value: 'development', label: 'Development' },
   { value: 'organization', label: 'Organization' },
-];
-
-const PRIORITY_OPTIONS = [
-  { value: '', label: 'Any priority' },
-  ...Object.entries(ISSUE_PRIORITY_LABELS).map(([value, label]) => {
-    return { value, label };
-  }),
 ];
 
 const STATUS_OPTIONS = [
@@ -100,7 +89,7 @@ export function SharedFiltersBar({
         </Link>
       </div>
 
-      <div className='grid gap-4 rounded-[var(--radius-card)] border border-border bg-card p-4'>
+      <div className='grid gap-2 rounded-[var(--radius-card)] border border-border bg-card p-4'>
         <div className='relative'>
           <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
           <input
@@ -129,7 +118,7 @@ export function SharedFiltersBar({
           disabled={disabled}
         />
 
-        <div className='grid gap-4 sm:grid-cols-2 xl:grid-cols-4'>
+        <div className='grid gap-2 sm:grid-cols-2 xl:grid-cols-4'>
           <InputDropdown
             label='Status'
             options={STATUS_OPTIONS}
@@ -156,15 +145,6 @@ export function SharedFiltersBar({
               onChange({ assignee_id: value as string });
             }}
             searchable
-            disabled={disabled}
-          />
-          <InputDropdown
-            label='Priority'
-            options={PRIORITY_OPTIONS}
-            value={filters.priority}
-            onChange={(value) => {
-              onChange({ priority: value as IssuePriority | '' });
-            }}
             disabled={disabled}
           />
         </div>

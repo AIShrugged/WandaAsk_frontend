@@ -13,7 +13,6 @@ import { SharedFiltersBar } from '@/features/issues/ui/shared-filters-bar';
 
 import type { OrganizationProps } from '@/entities/organization';
 import type {
-  IssuePriority,
   IssueSortField,
   IssueType,
   PersonOption,
@@ -84,7 +83,6 @@ export function IssuesLayoutClient({
       search: searchParams.get('search') ?? '',
       type: isIssueType(typeRaw) ? typeRaw : '',
       assignee_id: assigneeIdRaw,
-      priority: (searchParams.get('priority') ?? '') as IssuePriority | '',
       status: isIssueStatus(statusRaw) ? statusRaw : '',
     };
   });
@@ -173,7 +171,6 @@ export function IssuesLayoutClient({
       search: filters.search,
       type: filters.type,
       assignee_id: filters.assignee_id,
-      priority: filters.priority,
       status: filters.status,
     });
   }, [filters]);

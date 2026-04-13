@@ -5,6 +5,8 @@ import { getCurrentUserId } from '@/shared/lib/getCurrentUserId';
 import Card from '@/shared/ui/card/Card';
 import PageHeader from '@/widgets/layout/ui/page-header';
 
+import type { ReactNode } from 'react';
+
 /**
  * IssuesLayout — shared layout for the issues/kanban sub-routes.
  * Fetches organizations and persons once server-side.
@@ -13,7 +15,7 @@ import PageHeader from '@/widgets/layout/ui/page-header';
 export default async function IssuesLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   const [organizationsResponse, persons, currentUserId] = await Promise.all([
     getOrganizations(),
@@ -23,7 +25,7 @@ export default async function IssuesLayout({
 
   return (
     <Card className='h-full flex flex-col'>
-      <PageHeader title='Tasktracker' />
+      <PageHeader title='Tasks' />
       <div className='flex-1 overflow-hidden'>
         <IssuesLayoutClient
           organizations={organizationsResponse.data ?? []}

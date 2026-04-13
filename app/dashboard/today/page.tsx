@@ -6,7 +6,7 @@ import CardBody from '@/shared/ui/card/CardBody';
 import { Skeleton } from '@/shared/ui/layout/skeleton';
 import PageHeader from '@/widgets/layout/ui/page-header';
 
-export const metadata = { title: 'Today' };
+export const metadata = { title: 'Dashboard' };
 
 export default async function TodayPage({
   searchParams,
@@ -18,7 +18,7 @@ export default async function TodayPage({
 
   return (
     <Card className='h-full flex flex-col'>
-      <PageHeader title='Today' />
+      <PageHeader title='Dashboard' />
       <div className='h-full overflow-x-hidden overflow-y-scroll'>
         <CardBody>
           <Suspense
