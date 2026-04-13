@@ -1,43 +1,12 @@
 'use client';
 
-import { startOfDay } from 'date-fns';
-import {
-  ArrowRight,
-  Bot,
-  BotOff,
-  CheckCircle2,
-  ExternalLink,
-  Video,
-} from 'lucide-react';
+import { Bot, BotOff, CheckCircle2, ExternalLink, Video } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 import { ROUTES } from '@/shared/lib/routes';
 import { Badge } from '@/shared/ui/badge';
 
 import type { CalendarEventListItem } from '@/features/meetings/model/types';
-
-/**
- * formatCardDate.
- * @param date - date.
- * @returns formatted date.
- */
-function formatCardDate(date: Date) {
-  const now = new Date();
-  const diffDays = Math.round(
-    (startOfDay(date).getTime() - startOfDay(now).getTime()) / 86_400_000,
-  );
-
-  const dateLabel = new Intl.DateTimeFormat('en-US', {
-    month: 'short',
-    day: 'numeric',
-  }).format(date);
-
-  if (diffDays === 0) return `Today, ${dateLabel}`;
-  if (diffDays === 1) return `Tomorrow, ${dateLabel}`;
-  if (diffDays === -1) return `Yesterday, ${dateLabel}`;
-
-  return dateLabel;
-}
 
 function formatTimeRange(startsAt: Date, endsAt: Date) {
   const formatter = new Intl.DateTimeFormat('en-US', {
@@ -126,14 +95,9 @@ export function MeetingCard({ meeting }: MeetingCardProps) {
     <article
       role='button'
       tabIndex={0}
-      className='relative overflow-hidden rounded-[var(--radius-card)] border border-border bg-card px-5 py-4 shadow-card transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg'
+      className='relative cursor-pointer overflow-hidden rounded-[var(--radius-card)] border border-border bg-card px-5 py-4 shadow-card transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg'
       onClick={() => {
         router.push(`${ROUTES.DASHBOARD.MEETINGS}/${meeting.id}`);
-      }}
-      onKeyDown={(event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          router.push(`${ROUTES.DASHBOARD.MEETINGS}/${meeting.id}`);
-        }
       }}
     >
       <div className='flex items-start justify-between gap-4'>
@@ -147,10 +111,6 @@ export function MeetingCard({ meeting }: MeetingCardProps) {
             <span className='text-border'>•</span>
             <PlatformLink platform={meeting.platform} url={meeting.url} />
           </div>
-        </div>
-
-        <div className='flex-shrink-0 text-sm text-muted-foreground'>
-          {formatCardDate(startsAt)}
         </div>
       </div>
 
@@ -179,11 +139,6 @@ export function MeetingCard({ meeting }: MeetingCardProps) {
             Summary ready
           </Badge>
         )}
-      </div>
-
-      <div className='mt-4 flex items-center gap-1 text-xs text-primary opacity-0 transition-opacity hover:opacity-100'>
-        Open detail
-        <ArrowRight className='h-3.5 w-3.5' />
       </div>
     </article>
   );

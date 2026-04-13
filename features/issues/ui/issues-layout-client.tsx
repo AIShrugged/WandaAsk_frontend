@@ -186,7 +186,7 @@ export function IssuesLayoutClient({
       }}
     >
       <div className='flex flex-col h-full overflow-hidden'>
-        <div className='px-4 pt-4 shrink-0'>
+        <div className='px-2 pt-4 shrink-0'>
           <SharedFiltersBar
             filters={filters}
             organizations={organizations}

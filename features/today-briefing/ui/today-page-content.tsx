@@ -32,7 +32,7 @@ export function TodayPageContent({ data }: TodayPageContentProps) {
     }) ?? null;
 
   return (
-    <div className='flex flex-col gap-5 p-4'>
+    <div className='flex flex-col gap-4'>
       <DayNavigator date={data.date} meetingsCount={data.events.length} />
 
       {data.events.length > 0 ? (

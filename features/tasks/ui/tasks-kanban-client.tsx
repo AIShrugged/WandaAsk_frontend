@@ -18,7 +18,6 @@ import { TenantScopeFields } from '@/shared/ui/input/tenant-scope-fields';
 
 import type { OrganizationProps } from '@/entities/organization';
 import type {
-  IssuePriority,
   IssueSortField,
   IssueType,
   PersonOption,
@@ -106,7 +105,6 @@ export function TasksKanbanClient({
       search: searchParams.get('search') ?? '',
       type: isIssueType(typeRaw) ? typeRaw : '',
       assignee_id: assigneeIdRaw,
-      priority: (searchParams.get('priority') ?? '') as IssuePriority | '',
       status: isIssueStatus(statusRaw) ? statusRaw : '',
     };
   });
@@ -206,7 +204,6 @@ export function TasksKanbanClient({
       search: filters.search,
       type: filters.type,
       assignee_id: filters.assignee_id,
-      priority: filters.priority,
       status: filters.status,
     });
   }, [filters]);
@@ -228,7 +225,6 @@ export function TasksKanbanClient({
         team_id: filters.team_id ? Number(filters.team_id) : null,
         type: filters.type || undefined,
         assignee_id: filters.assignee_id ? Number(filters.assignee_id) : null,
-        priority: filters.priority || undefined,
       };
 
       const result = await fetchKanbanIssues(kanbanFilters);

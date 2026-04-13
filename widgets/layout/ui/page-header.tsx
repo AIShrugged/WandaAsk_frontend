@@ -13,14 +13,17 @@ import { H2 } from '@/shared/ui/typography/H2';
 export default function PageHeader({
   title,
   hasButtonBack,
+  extraContent,
 }: {
   title: string;
   hasButtonBack?: boolean;
+  extraContent?: React.ReactNode;
 }) {
   return (
     <ComponentHeader>
       {hasButtonBack && <ButtonBack />}
       <H2>{title}</H2>
+      <div className='ml-auto'>{extraContent}</div>
     </ComponentHeader>
   );
 }

@@ -92,7 +92,6 @@ function makeIssue(overrides: Partial<Issue> = {}): Issue {
     description: null,
     type: 'development',
     status: 'open',
-    priority: null,
     organization_id: null,
     team_id: null,
     assignee_id: null,
@@ -109,7 +108,6 @@ const DEFAULT_FILTERS: SharedFilters = {
   search: '',
   type: '',
   assignee_id: '',
-  priority: '',
   status: '',
 };
 
@@ -231,33 +229,6 @@ describe('IssuesPage', () => {
       }),
     ]);
     expect(screen.getByText('Alice')).toBeInTheDocument();
-  });
-
-  // ── priority client-side filter ─────────────────────────────────────────────
-
-  it('filters out issues that do not match priority filter', () => {
-    const { useInfiniteScroll } = jest.requireMock(
-      '@/shared/hooks/use-infinite-scroll',
-    ) as { useInfiniteScroll: jest.Mock };
-
-    const issues = [
-      makeIssue({ id: 1, name: 'High issue', priority: 'high' }),
-      makeIssue({ id: 2, name: 'Low issue', priority: 'low' }),
-    ];
-
-    useInfiniteScroll.mockReturnValueOnce({
-      items: issues,
-      isLoading: false,
-      hasMore: false,
-      sentinelRef: { current: null },
-    });
-
-    renderPage(issues, {
-      filters: { ...DEFAULT_FILTERS, priority: 'high' },
-    });
-
-    expect(screen.getByText('High issue')).toBeInTheDocument();
-    expect(screen.queryByText('Low issue')).not.toBeInTheDocument();
   });
 
   // ── loading / pagination ────────────────────────────────────────────────────

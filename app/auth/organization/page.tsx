@@ -34,7 +34,7 @@ export default async function Page() {
         className={'w-full max-w-[690px] py-8 px-4 md:py-[100px] md:px-[72px]'}
       >
         <AuthTitle type={AUTH_TITLE_VARIANT.ORGANIZATION} />
-        <OrganizationList organizations={organizations} />
+        <OrganizationList organizations={organizations || []} />
         <OrganizationCreateLink />
       </div>
     </Card>

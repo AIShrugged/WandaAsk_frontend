@@ -688,11 +688,6 @@ export function KanbanBoard({
         continue;
       }
 
-      // Priority filter
-      if (filters.priority && card.priority !== filters.priority) {
-        continue;
-      }
-
       filteredColumns[targetColId].push(card);
     }
   }

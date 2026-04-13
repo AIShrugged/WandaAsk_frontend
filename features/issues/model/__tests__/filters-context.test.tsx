@@ -14,7 +14,6 @@ const defaultValue: FiltersContextValue = {
     search: '',
     type: '',
     assignee_id: '',
-    priority: '',
     status: '',
   },
   filtersVersion: 0,

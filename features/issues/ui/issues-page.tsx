@@ -28,7 +28,6 @@ import { SortableHeader } from '@/shared/ui/table/SortableHeader';
 
 import type {
   Issue,
-  IssuePriority,
   IssueSortField,
   IssueStatus,
   PersonOption,
@@ -232,12 +231,7 @@ export function IssuesPage({
     initialHasMore: firstPage.hasMore,
   });
 
-  // Client-side priority filter (backend doesn't support priority filtering)
-  const items = filters.priority
-    ? rawItems.filter((issue) => {
-        return issue.priority === (filters.priority as IssuePriority);
-      })
-    : rawItems;
+  const items = rawItems;
 
   const handleSort = useCallback(
     (field: string) => {

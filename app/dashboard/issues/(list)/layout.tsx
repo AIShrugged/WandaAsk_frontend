@@ -1,4 +1,5 @@
 import { getPersons } from '@/features/issues';
+import IssueCreateButton from '@/features/issues/ui/issue-create-button';
 import { IssuesLayoutClient } from '@/features/issues/ui/issues-layout-client';
 import { getOrganizations } from '@/features/organization/api/organization';
 import { getCurrentUserId } from '@/shared/lib/getCurrentUserId';
@@ -25,7 +26,7 @@ export default async function IssuesLayout({
 
   return (
     <Card className='h-full flex flex-col'>
-      <PageHeader title='Tasks' />
+      <PageHeader title='Tasks' extraContent={<IssueCreateButton />} />
       <div className='flex-1 overflow-hidden'>
         <IssuesLayoutClient
           organizations={organizationsResponse.data ?? []}
