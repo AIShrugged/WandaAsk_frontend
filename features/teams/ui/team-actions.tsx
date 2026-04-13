@@ -58,13 +58,13 @@ export function TeamActions({ id, actions }: Props) {
         const error = await deleteTeam(id);
 
         if (error) {
-          toast.error('Не удалось удалить команду');
+          toast.error('Failed to delete team');
         } else {
           useTeamsStore.getState().invalidate();
-          toast.success('Команда успешно удалена');
+          toast.success('Team deleted');
         }
       } catch {
-        toast.error('Произошла ошибка при удалении команды');
+        toast.error('An error occurred while deleting the team');
       }
     });
   };

@@ -36,7 +36,7 @@ export default async function Page({
     return (
       <Card className='h-full flex flex-col'>
         <PageHeader title='Teams' />
-        <TeamsEmptyState organizationId={organizationId} />
+        <TeamsEmptyState />
       </Card>
     );
   }
@@ -73,8 +73,6 @@ export default async function Page({
       ? (dashboardResult.value.data ?? null)
       : null;
 
-  console.log(dashboard);
-
   return (
     <Card className='min-h-full flex flex-col overflow-y-auto'>
       <PageHeader title='Teams' />
@@ -86,7 +84,6 @@ export default async function Page({
         settings={settings}
         availableChats={teamChats}
         currentTab={tab}
-        organizationId={organizationId}
       />
     </Card>
   );

@@ -6,8 +6,6 @@ import TeamDashboardKpis from '@/features/teams/ui/dashboard/team-dashboard-kpis
 import TeamDashboardMeetingBanner from '@/features/teams/ui/dashboard/team-dashboard-meeting-banner';
 import TeamDashboardSections from '@/features/teams/ui/dashboard/team-dashboard-sections';
 import TeamDashboardTabs from '@/features/teams/ui/dashboard/team-dashboard-tabs';
-import TeamMembers from '@/features/teams/ui/team-members';
-import TeamNotificationSettings from '@/features/teams/ui/team-notification-settings';
 import TeamsHeader from '@/features/teams/ui/teams-header';
 
 import type { TeamProps } from '@/entities/team';
@@ -22,7 +20,6 @@ interface TeamsPageClientProps {
   settings: TeamNotificationSetting[];
   availableChats: TelegramChatRegistration[];
   currentTab: string;
-  organizationId: string;
 }
 
 /**
@@ -36,7 +33,6 @@ export default function TeamsPageClient({
   settings,
   availableChats,
   currentTab,
-  organizationId,
 }: TeamsPageClientProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -50,22 +46,12 @@ export default function TeamsPageClient({
     router.replace(`${pathname}?${params.toString()}`);
   };
 
-  const handleTeamCreated = (teamId: number) => {
-    const params = new URLSearchParams(searchParams.toString());
-
-    params.set('team_id', String(teamId));
-    params.delete('tab');
-    router.replace(`${pathname}?${params.toString()}`);
-  };
-
   return (
     <div className='flex flex-col flex-1 overflow-hidden'>
       <TeamsHeader
         teams={teams}
         selectedTeamId={team.id}
-        organizationId={organizationId}
         onTeamChange={handleTeamChange}
-        onTeamCreated={handleTeamCreated}
       />
 
       <div className='flex flex-col flex-1 overflow-y-auto'>
@@ -81,24 +67,36 @@ export default function TeamsPageClient({
               />
             )}
 
-            <TeamDashboardTabs currentTab={currentTab} tabs={dashboard.tabs} />
+            <TeamDashboardTabs
+              currentTab={currentTab}
+              tabs={dashboard.tabs}
+              teamId={team.id}
+              settings={settings}
+              availableChats={availableChats}
+              members={team.members}
+            />
 
-            {(dashboard.sections.since_last_week.length > 0 ||
-              dashboard.sections.deadlines_and_priorities.length > 0 ||
-              dashboard.sections.decisions_needed.length > 0) && (
-              <div className='border-t border-border px-6 py-4 flex-shrink-0'>
-                <TeamDashboardSections sections={dashboard.sections} />
-              </div>
-            )}
+            {currentTab === 'status' &&
+              (dashboard.sections.since_last_week.length > 0 ||
+                dashboard.sections.deadlines_and_priorities.length > 0 ||
+                dashboard.sections.decisions_needed.length > 0) && (
+                <div className='border-t border-border px-6 py-4 flex-shrink-0'>
+                  <TeamDashboardSections sections={dashboard.sections} />
+                </div>
+              )}
           </>
         )}
 
-        <TeamMembers data={team} />
-        <TeamNotificationSettings
-          teamId={team.id}
-          settings={settings}
-          availableChats={availableChats}
-        />
+        {!dashboard && (
+          <TeamDashboardTabs
+            currentTab={currentTab}
+            tabs={null}
+            teamId={team.id}
+            settings={settings}
+            availableChats={availableChats}
+            members={team.members}
+          />
+        )}
       </div>
     </div>
   );

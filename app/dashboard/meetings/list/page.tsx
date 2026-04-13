@@ -12,7 +12,7 @@ export default async function MeetingsListPage() {
   );
 
   return (
-    <div className='mx-auto w-full max-w-4xl px-6 py-6'>
+    <div className='w-full max-w-4xl px-6 py-6'>
       <MeetingsList initialItems={meetings} totalCount={totalCount} />
     </div>
   );

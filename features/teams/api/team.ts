@@ -11,6 +11,7 @@ import type {
   TeamCreateDTO,
   TeamFollowUpDTO,
   TeamProps,
+  TeamUserRecord,
 } from '@/entities/team';
 import type { FollowUpDetailProps } from '@/features/follow-up/model/types';
 import type { ApiResponse } from '@/shared/types/common';
@@ -96,7 +97,7 @@ export async function deleteTeam(teamId: number) {
   if (!res.ok) {
     return await res.text();
   }
-  revalidatePath('/teams');
+  revalidatePath('/dashboard/teams');
 }
 
 // ------------------------------
@@ -150,7 +151,7 @@ export async function updateTeam(id: number, data: TeamCreateDTO) {
     body: JSON.stringify(data),
   });
 
-  revalidatePath('/team');
+  revalidatePath('/dashboard/teams');
 }
 
 /**
@@ -219,6 +220,55 @@ export const getTeamFollowUp = async (
 };
 
 /**
+ * getTeamUsers — list team members as TeamUser pivot records (includes team_user id needed for kick).
+ * @param teamId - teamId.
+ * @returns Promise.
+ */
+export const getTeamUsers = async (
+  teamId: number | string,
+): Promise<TeamUserRecord[]> => {
+  const { data } = await httpClient<TeamUserRecord[]>(
+    `${API_URL}/teams/${teamId}/users`,
+  );
+
+  return data ?? [];
+};
+
+/**
+ * kickTeamMember — remove a user from a team by their user id.
+ * Resolves the TeamUser pivot record internally.
+ * @param teamId - team id.
+ * @param userId - User.id (from team.members).
+ * @returns Promise with ActionResult.
+ */
+export async function kickTeamMember(
+  teamId: number | string,
+  userId: number | string,
+): Promise<{ error: string | null }> {
+  try {
+    const teamUsers = await getTeamUsers(teamId);
+    const teamUser = teamUsers.find((tu) => {
+      return tu.user.id === Number(userId);
+    });
+
+    if (!teamUser) {
+      return { error: 'Member not found in team' };
+    }
+
+    await httpClient(`${API_URL}/teams/${teamId}/users/${teamUser.id}/kick`, {
+      method: 'POST',
+    });
+    revalidatePath('/dashboard/teams');
+
+    return { error: null };
+  } catch (error) {
+    return {
+      error: (error as Error).message ?? 'Failed to remove member',
+    };
+  }
+}
+
+/**
  * sendInvite.
  * @param teamId - teamId.
  * @param data - data.
@@ -239,6 +289,8 @@ export const sendInvite = async (teamId: number, data: TeamAddMemberDTO) => {
   if (!res.ok || !json.success) {
     throw new Error(json.message ?? 'Failed to send invite');
   }
+
+  revalidatePath('/dashboard/teams');
 
   return { data: json.data, message: json.message as string };
 };

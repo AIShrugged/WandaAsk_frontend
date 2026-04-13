@@ -1,79 +1,52 @@
 'use client';
 
 import { Plus } from 'lucide-react';
-import { useState } from 'react';
+import Link from 'next/link';
 
+import { ROUTES } from '@/shared/lib/routes';
 import InputDropdown from '@/shared/ui/input/InputDropdown';
-
-import TeamCreateModal from './team-create-modal';
 
 import type { TeamProps } from '@/entities/team';
 
 interface TeamsHeaderProps {
   teams: TeamProps[];
   selectedTeamId: number;
-  organizationId: string;
   onTeamChange: (id: number) => void;
-  onTeamCreated: (teamId: number) => void;
 }
 
 /**
- * TeamsHeader — team selector dropdown + "Add Team" button.
+ * TeamsHeader — team selector dropdown + "New Team" link.
  */
 export default function TeamsHeader({
   teams,
   selectedTeamId,
-  organizationId,
   onTeamChange,
-  onTeamCreated,
 }: TeamsHeaderProps) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
   const options = teams.map((t) => {
     return { value: String(t.id), label: t.name };
   });
 
   return (
-    <>
-      <div className='flex items-center gap-3 px-4 py-2 border-b border-border'>
-        <div className='w-56 flex-shrink-0'>
-          <InputDropdown
-            options={options}
-            value={String(selectedTeamId)}
-            onChange={(val) => {
-              onTeamChange(Number(val));
-            }}
-            placeholder='Select team'
-            searchable={options.length > 5}
-          />
-        </div>
-
-        <div className='ml-auto'>
-          <button
-            type='button'
-            onClick={() => {
-              return setIsModalOpen(true);
-            }}
-            className='flex items-center gap-1.5 text-sm text-violet-500 hover:text-violet-400 transition-colors font-medium'
-          >
-            <Plus className='size-4' />
-            Add Team
-          </button>
-        </div>
+    <div className='flex items-center gap-3 px-4 py-2 border-b border-border'>
+      <div className='w-56 flex-shrink-0'>
+        <InputDropdown
+          options={options}
+          value={String(selectedTeamId)}
+          onChange={(val) => {
+            onTeamChange(Number(val));
+          }}
+          placeholder='Select team'
+          searchable={options.length > 5}
+        />
       </div>
 
-      {isModalOpen && (
-        <TeamCreateModal
-          close={() => {
-            return setIsModalOpen(false);
-          }}
-          organizationId={organizationId}
-          onTeamCreated={(teamId) => {
-            setIsModalOpen(false);
-            onTeamCreated(teamId);
-          }}
-        />
-      )}
-    </>
+      <Link
+        href={ROUTES.DASHBOARD.TEAMS_CREATE}
+        className='ml-auto inline-flex h-8 items-center justify-center gap-1.5 rounded-[var(--radius-button)] bg-gradient-to-b from-violet-500 to-violet-700 px-3 text-xs font-medium text-primary-foreground shadow-[0_2px_8px_rgba(124,58,237,0.25)] transition-all hover:from-violet-400 hover:to-violet-600'
+      >
+        <Plus className='size-3.5' />
+        New
+      </Link>
+    </div>
   );
 }

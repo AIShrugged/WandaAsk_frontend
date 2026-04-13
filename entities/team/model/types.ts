@@ -24,6 +24,15 @@ export interface TeamAddMemberDTO {
 
 export type TeamActionType = 'add-member' | 'delete' | 'view';
 
+export interface TeamUserRecord {
+  id: number; // TeamUser pivot ID — used for kick
+  user: {
+    id: number;
+    name: string;
+    email: string;
+  };
+}
+
 export interface TeamFollowUpDTO {
   id: number;
   team_id: number;
