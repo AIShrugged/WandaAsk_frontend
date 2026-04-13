@@ -83,7 +83,7 @@ export function MeetingDetailCard({
         )}
 
         {/* Agenda content (upcoming/general agenda for future meetings) */}
-        {!event.summary && event.agenda_content && (
+        {event.meeting_state !== 'ready' && event.agenda_content && (
           <div>
             <span className='text-xs font-medium uppercase tracking-wide text-muted-foreground'>
               Agenda

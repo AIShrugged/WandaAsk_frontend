@@ -35,15 +35,13 @@ export function TodayPageContent({ data }: TodayPageContentProps) {
     <div className='flex flex-col gap-4'>
       <DayNavigator date={data.date} meetingsCount={data.events.length} />
 
-      {data.events.length > 0 ? (
-        <DayTimeline
-          events={data.events}
-          selectedId={selectedId}
-          onSelect={setSelectedId}
-        />
-      ) : (
-        <WaitingState events={[]} />
-      )}
+      <DayTimeline
+        events={data.events}
+        selectedId={selectedId}
+        onSelect={setSelectedId}
+      />
+
+      {data.events.length === 0 && <WaitingState events={[]} />}
 
       {selectedEvent && (
         <MeetingDetailCard
@@ -52,7 +50,7 @@ export function TodayPageContent({ data }: TodayPageContentProps) {
         />
       )}
 
-      <AiNudge text={data.nudge} date={data.date} />
+      {data.events.length > 0 && <AiNudge text={data.nudge} date={data.date} />}
 
       <WaitingOnYou tasks={data.waiting_on_you} />
 
