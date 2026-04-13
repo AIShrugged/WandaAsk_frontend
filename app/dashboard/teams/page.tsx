@@ -59,7 +59,6 @@ export default async function Page({
   const team = teamResult.status === 'fulfilled' ? teamResult.value.data : null;
 
   if (!team) {
-    // team_id is invalid — redirect to first known team
     redirect(`${ROUTES.DASHBOARD.TEAMS}?team_id=${teams[0].id}`);
   }
 
@@ -73,6 +72,8 @@ export default async function Page({
     dashboardResult.status === 'fulfilled'
       ? (dashboardResult.value.data ?? null)
       : null;
+
+  console.log(dashboard);
 
   return (
     <Card className='min-h-full flex flex-col overflow-y-auto'>
