@@ -1,5 +1,6 @@
 'use client';
 
+import { SlidersHorizontal } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -99,6 +100,7 @@ export function IssuesLayoutClient({
     return isSortOrder(raw) ? raw : 'desc';
   });
 
+  const [filtersVisible, setFiltersVisible] = useState(true);
   const [filters, setFilters] = useState<SharedFilters>(initialFilters);
   const [filtersVersion, setFiltersVersion] = useState(0);
   const columnsVersionRef = useRef(0);
@@ -187,12 +189,30 @@ export function IssuesLayoutClient({
     >
       <div className='flex flex-col h-full overflow-hidden'>
         <div className='px-2 pt-4 shrink-0'>
-          <SharedFiltersBar
-            filters={filters}
-            organizations={organizations}
-            persons={persons}
-            onChange={handleFiltersChange}
-          />
+          <div className='flex items-center justify-between mb-2'>
+            <button
+              type='button'
+              onClick={() => {
+                return setFiltersVisible((v) => {
+                  return !v;
+                });
+              }}
+              aria-label={filtersVisible ? 'Hide filters' : 'Show filters'}
+              aria-expanded={filtersVisible}
+              className='flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer select-none'
+            >
+              <SlidersHorizontal className='h-3.5 w-3.5' />
+              {filtersVisible ? 'Hide filters' : 'Show filters'}
+            </button>
+          </div>
+          {filtersVisible && (
+            <SharedFiltersBar
+              filters={filters}
+              organizations={organizations}
+              persons={persons}
+              onChange={handleFiltersChange}
+            />
+          )}
         </div>
         <div className='shrink-0 mt-4'>
           <IssuesTabsNav />

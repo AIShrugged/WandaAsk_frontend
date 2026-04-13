@@ -2,12 +2,9 @@
 
 import { AnimatePresence, motion } from 'framer-motion';
 import {
-  AlertTriangle,
-  ArrowUp,
   Calendar,
   ExternalLink,
   MessageSquare,
-  Minus,
   Paperclip,
   X,
 } from 'lucide-react';
@@ -37,24 +34,6 @@ interface KanbanBoardProps {
   persons: PersonOption[];
   filters: SharedFilters;
   columnsVersion: number;
-}
-
-/**
- * priorityIcon renders priority indicator icon.
- * @param priority - card priority.
- * @param priority.priority
- * @returns JSX element.
- */
-function PriorityIcon({ priority }: { priority: KanbanPriority }) {
-  if (priority === 'critical') {
-    return <AlertTriangle className='h-3 w-3 text-red-400' />;
-  }
-
-  if (priority === 'high') {
-    return <ArrowUp className='h-3 w-3 text-orange-400' />;
-  }
-
-  return <Minus className='h-3 w-3 text-muted-foreground' />;
 }
 
 /**
@@ -429,7 +408,7 @@ function KanbanColumnComponent({
   return (
     <div
       className={[
-        'flex flex-col min-w-[280px] w-[280px] rounded-xl border transition-colors',
+        'flex flex-col w-[calc(25%-9px)] min-w-[200px] shrink-0 rounded-xl border transition-colors',
         isDragOver
           ? 'border-primary/40 bg-primary/5'
           : 'border-border bg-card/50',
