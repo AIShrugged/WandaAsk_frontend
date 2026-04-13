@@ -1,6 +1,8 @@
 import { Suspense } from 'react';
 
 import { getTodayBriefing, TodayPageContent } from '@/features/today-briefing';
+
+export const dynamic = 'force-dynamic';
 import Card from '@/shared/ui/card/Card';
 import CardBody from '@/shared/ui/card/CardBody';
 import { Skeleton } from '@/shared/ui/layout/skeleton';
@@ -26,7 +28,7 @@ export default async function TodayPage({
               <Skeleton className='h-48 rounded-[var(--radius-card)]' />
             }
           >
-            <TodayPageContent data={data} />
+            <TodayPageContent key={data.date} data={data} />
           </Suspense>
         </CardBody>
       </div>
