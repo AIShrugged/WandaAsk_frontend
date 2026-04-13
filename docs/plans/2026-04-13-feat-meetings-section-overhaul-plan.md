@@ -3,7 +3,7 @@ title:
   'feat: Meetings Section Overhaul — Column View, Detail Tabs, Bot Controls,
   Connect Button'
 type: feat
-status: active
+status: completed
 date: 2026-04-13
 ---
 
