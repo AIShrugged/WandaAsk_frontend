@@ -22,14 +22,9 @@ import type { MenuProps } from '@/features/menu/model/types';
 /**
  * Builds the sidebar navigation items for the current user.
  * @param root0 - Options object.
- * @param root0.canManageAgents - Whether the user has the agent-management permission.
  * @returns Array of menu item descriptors to render in the sidebar.
  */
-export function getMenuItems({
-  canManageAgents,
-}: {
-  canManageAgents: boolean;
-}): MenuProps[] {
+export function getMenuItems(): MenuProps[] {
   const items: MenuProps[] = [
     {
       id: 'today',
@@ -45,20 +40,20 @@ export function getMenuItems({
       href: ROUTES.DASHBOARD.MEETINGS,
       position: 2,
     },
-    {
+    /* {
       id: 'main-dashboard',
       label: 'Dashboard',
       icon: 'layoutDashboard',
       href: ROUTES.DASHBOARD.MAIN,
       position: 10,
-    },
-    {
+    },*/
+    /* {
       id: 'chat',
       label: 'AI Chat',
       icon: 'messageSquare',
       href: ROUTES.DASHBOARD.CHAT,
       position: 50,
-    },
+    },*/
     {
       id: 'issues',
       label: 'Tasks',
@@ -73,13 +68,13 @@ export function getMenuItems({
       href: ROUTES.DASHBOARD.TEAMS,
       position: 5,
     },
-    {
+    /* {
       id: 'methodology',
       label: 'Methodologies',
       icon: 'bookOpen',
       href: ROUTES.DASHBOARD.METHODOLOGY,
       position: 70,
-    },
+    },*/
     /* {
       id: 'calendar',
       label: 'Calendar',
@@ -87,39 +82,22 @@ export function getMenuItems({
       href: ROUTES.DASHBOARD.CALENDAR,
       position: 20,
     },*/
-    {
+    /* {
       id: 'follow-ups',
       label: 'Follow ups (meetings)',
       icon: 'file',
       href: ROUTES.DASHBOARD.FOLLOWUPS,
       position: 60,
-    },
-  ];
-  const isDev =
-    process.env.NODE_ENV === 'development' ||
-    process.env.NEXT_PUBLIC_APP_ENV === 'development';
-
-  if (isDev) {
-    items.push({
+    },*/
+    /* {
       id: 'debug',
       label: 'Debug',
       icon: 'terminal',
       href: ROUTES.DASHBOARD.DEBUG,
       activeHref: ROUTES.DASHBOARD.DEBUG,
       position: 10_000,
-    });
-  }
-
-  if (canManageAgents) {
-    items.push({
-      id: 'agents',
-      label: 'Agents',
-      icon: 'bot',
-      href: ROUTES.DASHBOARD.AGENTS,
-      activeHref: ROUTES.DASHBOARD.AGENTS,
-      position: 90,
-    });
-  }
+    },*/
+  ];
 
   return items.toSorted((a, b) => {
     return a.position - b.position;
