@@ -248,12 +248,17 @@ describe('createTeam', () => {
     expect(body.name).toBe('Gamma');
   });
 
-  it('returns { error: null } on success', async () => {
-    globalThis.fetch = jest.fn().mockResolvedValue(makeResponse(201, {}));
+  it('returns { error: null, data } on success', async () => {
+    globalThis.fetch = jest
+      .fn()
+      .mockResolvedValue(
+        makeResponse(201, { success: true, data: { id: 42 } }),
+      );
 
     const result = await createTeam('5', { name: 'Team' });
 
-    expect(result).toEqual({ error: null });
+    expect(result.error).toBeNull();
+    expect(result.data).toBeTruthy();
   });
 
   it('returns { error: string } on failure', async () => {

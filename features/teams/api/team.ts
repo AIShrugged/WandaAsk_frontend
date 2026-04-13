@@ -108,7 +108,10 @@ export async function deleteTeam(teamId: number) {
  * @param data - data.
  * @returns Promise.
  */
-export async function createTeam(organizationId: string, data: TeamCreateDTO) {
+export async function createTeam(
+  organizationId: string,
+  data: TeamCreateDTO,
+): Promise<{ error: string; data: null } | { error: null; data: TeamProps }> {
   const authHeaders = await getAuthHeaders();
   const res = await fetch(`${API_URL}/teams`, {
     method: 'POST',
@@ -125,12 +128,14 @@ export async function createTeam(organizationId: string, data: TeamCreateDTO) {
   if (!res.ok) {
     const text = await res.text();
 
-    return { error: text || 'Failed to create team' };
+    return { error: text || 'Failed to create team', data: null };
   }
 
-  revalidatePath('/team');
+  revalidatePath('/dashboard/teams');
 
-  return { error: null };
+  const json: ApiResponse<TeamProps> = await res.json();
+
+  return { error: null, data: json.data ?? ({ id: 0 } as TeamProps) };
 }
 
 /**

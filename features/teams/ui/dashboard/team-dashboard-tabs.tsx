@@ -1,6 +1,6 @@
 'use client';
 
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import TeamDashboardTabHealth from './team-dashboard-tab-health';
 import TeamDashboardTabPeople from './team-dashboard-tab-people';
@@ -49,6 +49,7 @@ export default function TeamDashboardTabs({
 }: TeamDashboardTabsProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const activeTab: TabKey = TABS.some((t) => {
     return t.key === currentTab;
@@ -57,7 +58,10 @@ export default function TeamDashboardTabs({
     : 'status';
 
   const handleTabChange = (key: TabKey) => {
-    router.push(`${pathname}?tab=${key}`, { scroll: false });
+    const params = new URLSearchParams(searchParams.toString());
+
+    params.set('tab', key);
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
   return (
