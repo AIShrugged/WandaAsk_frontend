@@ -80,6 +80,6 @@ test.describe('Calendar — authenticated', () => {
       .locator('body')
       .textContent({ timeout: 10_000 });
 
-    expect(bodyText.trim().length).toBeGreaterThan(0);
+    expect(bodyText?.trim().length ?? 0).toBeGreaterThan(0);
   });
 });

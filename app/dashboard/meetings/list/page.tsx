@@ -25,15 +25,9 @@ export default async function MeetingsListPage() {
 
   return (
     <MeetingsColumnView
-      yesterday={yesterday.filter((m) => {
-        return m.required_bot;
-      })}
-      today={today.filter((m) => {
-        return m.required_bot;
-      })}
-      tomorrow={tomorrow.filter((m) => {
-        return m.required_bot;
-      })}
+      yesterday={yesterday}
+      today={today}
+      tomorrow={tomorrow}
       yesterdayDate={formatColumnDate(yesterdayDate)}
       todayDate={formatColumnDate(now)}
       tomorrowDate={formatColumnDate(tomorrowDate)}
