@@ -2,6 +2,7 @@
 
 import { Bot, BotOff } from 'lucide-react';
 import { useTransition } from 'react';
+import { toast } from 'sonner';
 
 import { switchBot } from '@/features/event/api/calendar-events';
 
@@ -19,7 +20,11 @@ export function BotToggleButton({ eventId, isBotAdded }: BotToggleButtonProps) {
 
   const handleToggle = () => {
     startTransition(async () => {
-      await switchBot(eventId, !isBotAdded);
+      try {
+        await switchBot(eventId, !isBotAdded);
+      } catch {
+        toast.error(isBotAdded ? 'Failed to remove bot' : 'Failed to add bot');
+      }
     });
   };
 
