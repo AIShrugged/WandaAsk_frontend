@@ -4,7 +4,9 @@ import { redirect } from 'next/navigation';
 
 import { parseApiError } from '@/shared/lib/apiError';
 import { API_URL, FILES_URL } from '@/shared/lib/config';
+import { ServerError } from '@/shared/lib/errors';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
+import { httpClient, httpClientList } from '@/shared/lib/httpClient';
 import { logApiError } from '@/shared/lib/logger';
 
 import type { AgentTaskRun } from '@/features/agents/model/types';
@@ -16,6 +18,7 @@ import type {
   PersonOption,
 } from '@/features/issues/model/types';
 import type { ApiResponse } from '@/shared/types/common';
+import type { ActionResult } from '@/shared/types/server-action';
 
 type IssueActionError = {
   data: null;
@@ -416,29 +419,11 @@ export async function getPersons(): Promise<PersonOption[]> {
 export async function getIssueAttachments(
   issueId: number,
 ): Promise<IssueAttachment[]> {
-  const authHeaders = await getAuthHeaders();
-  const res = await fetch(`${API_URL}/issues/${issueId}/attachments`, {
-    headers: { ...authHeaders },
-    cache: 'no-store',
-  });
+  const result = await httpClientList<IssueAttachmentApiResource>(
+    `${API_URL}/issues/${issueId}/attachments`,
+  );
 
-  if (!res.ok) {
-    if (res.status === 401) redirect('/api/auth/clear-session');
-    const text = await res.text();
-
-    logApiError({
-      method: 'GET',
-      url: res.url,
-      status: res.status,
-      statusText: res.statusText,
-      body: text,
-    });
-    throw new Error(parseApiError(text, 'Failed to load attachments').message);
-  }
-
-  const json: ApiResponse<IssueAttachmentApiResource[]> = await res.json();
-
-  return (json.data ?? []).map((attachment) => {
+  return result.data.map((attachment) => {
     return normalizeIssueAttachment(attachment);
   });
 }
@@ -447,38 +432,28 @@ export async function getIssueAttachments(
  * uploadIssueAttachment.
  * @param issueId - issue id.
  * @param formData - upload form data.
- * @returns uploaded attachment or validation error.
+ * @returns uploaded attachment or error.
  */
 export async function uploadIssueAttachment(
   issueId: number,
   formData: FormData,
-): Promise<IssueAttachment | IssueActionError> {
-  const authHeaders = await getAuthHeaders();
-  const headers = new Headers(authHeaders);
+): Promise<ActionResult<IssueAttachment>> {
+  try {
+    const { data } = await httpClient<IssueAttachmentApiResource>(
+      `${API_URL}/issues/${issueId}/attachments`,
+      { method: 'POST', body: formData },
+    );
 
-  headers.delete('Content-Type');
+    if (!data) return { data: null, error: 'Upload failed' };
 
-  const res = await fetch(`${API_URL}/issues/${issueId}/attachments`, {
-    method: 'POST',
-    headers,
-    body: formData,
-    cache: 'no-store',
-  });
+    return { data: normalizeIssueAttachment(data), error: null };
+  } catch (error) {
+    if (error instanceof ServerError) {
+      const parsed = parseApiError(
+        error.responseBody ?? '',
+        'Failed to upload attachment',
+      );
 
-  if (!res.ok) {
-    if (res.status === 401) redirect('/api/auth/clear-session');
-    const text = await res.text();
-    const parsed = parseApiError(text, 'Failed to upload attachment');
-
-    logApiError({
-      method: 'POST',
-      url: res.url,
-      status: res.status,
-      statusText: res.statusText,
-      body: text,
-    });
-
-    if (res.status === 422) {
       return {
         data: null,
         error: parsed.message,
@@ -486,38 +461,34 @@ export async function uploadIssueAttachment(
       };
     }
 
-    throw new Error(parsed.message);
+    throw error;
   }
-
-  const json: ApiResponse<IssueAttachmentApiResource> = await res.json();
-
-  return normalizeIssueAttachment(json.data!);
 }
 
 /**
  * deleteAttachment.
  * @param attachmentId - attachment id.
- * @returns Promise.
+ * @returns action result.
  */
-export async function deleteAttachment(attachmentId: number): Promise<void> {
-  const authHeaders = await getAuthHeaders();
-  const res = await fetch(`${API_URL}/attachments/${attachmentId}`, {
-    method: 'DELETE',
-    headers: { ...authHeaders },
-    cache: 'no-store',
-  });
-
-  if (!res.ok) {
-    if (res.status === 401) redirect('/api/auth/clear-session');
-    const text = await res.text();
-
-    logApiError({
+export async function deleteAttachment(
+  attachmentId: number,
+): Promise<ActionResult<null>> {
+  try {
+    await httpClient(`${API_URL}/attachments/${attachmentId}`, {
       method: 'DELETE',
-      url: res.url,
-      status: res.status,
-      statusText: res.statusText,
-      body: text,
     });
-    throw new Error(parseApiError(text, 'Failed to delete attachment').message);
+
+    return { data: null, error: null };
+  } catch (error) {
+    if (error instanceof ServerError) {
+      const parsed = parseApiError(
+        error.responseBody ?? '',
+        'Failed to delete attachment',
+      );
+
+      return { data: null, error: parsed.message, fieldErrors: undefined };
+    }
+
+    throw error;
   }
 }
