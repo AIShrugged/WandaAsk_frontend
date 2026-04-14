@@ -20,8 +20,4 @@ export async function register(): Promise<void> {
 
   // Guard 2: Edge runtime — has its own fetch implementation; don't patch.
   if (process.env.NEXT_RUNTIME !== 'nodejs') return;
-
-  const { patchServerFetch } = await import('@/shared/lib/fetchDebugger');
-
-  patchServerFetch();
 }

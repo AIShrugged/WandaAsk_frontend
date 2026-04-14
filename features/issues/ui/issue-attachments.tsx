@@ -43,7 +43,9 @@ function attachmentLabel(attachment: IssueAttachment) {
  * @returns normalized url.
  */
 function attachmentUrl(attachment: IssueAttachment) {
-  return attachment.url ?? null;
+  if (!attachment.id) return null;
+
+  return `/api/attachment?id=${attachment.id}`;
 }
 
 /**
@@ -319,11 +321,7 @@ export function IssueAttachments({
               if (!file) return;
 
               startTransition(async () => {
-                const formData = new FormData();
-
-                formData.append('file', file);
-
-                const result = await uploadIssueAttachment(issueId, formData);
+                const result = await uploadIssueAttachment(issueId, file);
 
                 if (result.error) {
                   toast.error(result.error);

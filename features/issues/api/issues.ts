@@ -431,14 +431,18 @@ export async function getIssueAttachments(
 /**
  * uploadIssueAttachment.
  * @param issueId - issue id.
- * @param formData - upload form data.
+ * @param file - file to upload.
  * @returns uploaded attachment or error.
  */
 export async function uploadIssueAttachment(
   issueId: number,
-  formData: FormData,
+  file: File,
 ): Promise<ActionResult<IssueAttachment>> {
   try {
+    const formData = new FormData();
+
+    formData.append('file', file);
+
     const { data } = await httpClient<IssueAttachmentApiResource>(
       `${API_URL}/issues/${issueId}/attachments`,
       { method: 'POST', body: formData },
