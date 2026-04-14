@@ -5,6 +5,8 @@ import { filters } from '@/features/transcript/lib/options';
 import TranscriptHistory from '@/features/transcript/ui/transcript-history';
 import { ServerError } from '@/shared/lib/errors';
 
+import type { TranscriptProps } from '@/features/transcript/model/types';
+
 /**
  * Transcript server component — fetches the initial chunk and renders the
  * infinite-scroll history, or an empty state when no transcript exists.
@@ -12,8 +14,8 @@ import { ServerError } from '@/shared/lib/errors';
  * @param props.id
  */
 export default async function Transcript({ id }: { id: string }) {
-  let items;
-  let totalCount;
+  let items: TranscriptProps[];
+  let totalCount: number;
 
   try {
     const result = await loadTranscriptChunk(id, 0, filters.limit * 2);
