@@ -1,38 +1,26 @@
 'use server';
 
 import { API_URL } from '@/shared/lib/config';
-import { getAuthHeaders } from '@/shared/lib/getAuthToken';
+import { httpClientList } from '@/shared/lib/httpClient';
+
+import type { TranscriptProps } from '@/features/transcript/model/types';
 
 /**
- * loadTranscriptChunk.
- * @param id
- * @param offset
- * @param limit
- * @returns Promise.
+ * Load a paginated chunk of transcript entries for a calendar event.
  */
 export async function loadTranscriptChunk(
   id: string,
   offset: number,
   limit: number,
-) {
-  const authHeaders = await getAuthHeaders();
-  const res = await fetch(
-    `${API_URL}/calendar-events/${id}/transcript?offset=${offset}&limit=${limit}`,
-    {
-      method: 'GET',
-      headers: {
-        ...authHeaders,
-      },
-      cache: 'no-store',
-    },
+): Promise<{ items: TranscriptProps[]; totalCount: number; hasMore: boolean }> {
+  const params = new URLSearchParams({
+    offset: String(offset),
+    limit: String(limit),
+  });
+
+  const { data, totalCount, hasMore } = await httpClientList<TranscriptProps>(
+    `${API_URL}/calendar-events/${id}/transcript?${params.toString()}`,
   );
 
-  if (!res.ok) {
-    throw new Error('Failed to load transcript chunk');
-  }
-
-  const data = await res.json();
-  const totalCount = Number(res.headers.get('Items-Count') || '0');
-
-  return { data, totalCount, hasMore: offset + limit < totalCount };
+  return { items: data, totalCount, hasMore };
 }

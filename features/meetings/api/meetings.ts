@@ -1,7 +1,6 @@
 'use server';
 
 import { API_URL } from '@/shared/lib/config';
-import { ServerError } from '@/shared/lib/errors';
 import { httpClientList } from '@/shared/lib/httpClient';
 
 import type { EventProps } from '@/entities/event';
@@ -85,43 +84,4 @@ export async function getCalendarEventsForMonth(
   const results = await Promise.all(dayRequests);
 
   return results.flat();
-}
-
-export interface TranscriptParticipant {
-  id: number;
-  name: string | null;
-  email: string | null;
-}
-
-export interface TranscriptEntry {
-  id: number;
-  participant: TranscriptParticipant;
-  text: string;
-  start_relative: number;
-  end_relative: number;
-  start_absolute: string;
-  end_absolute: string;
-}
-
-/**
- * Fetch transcript entries for a calendar event.
- * Returns null if the transcript is not available (404).
- */
-export async function getMeetingTranscript(
-  id: string,
-): Promise<TranscriptEntry[] | null> {
-  try {
-    const params = new URLSearchParams({ limit: '500' });
-    const result = await httpClientList<TranscriptEntry>(
-      `${API_URL}/calendar-events/${id}/transcript?${params.toString()}`,
-    );
-
-    return result.data;
-  } catch (error) {
-    if (error instanceof ServerError && error.status === 404) {
-      return null;
-    }
-
-    throw error;
-  }
 }
