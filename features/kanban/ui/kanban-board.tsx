@@ -153,7 +153,7 @@ function TaskPreviewModal({
                     {card.description}
                   </p>
                 ) : (
-                  <p className='text-xs text-muted-foreground/40 italic'>
+                  <p className='text-xs text-muted-foreground italic'>
                     No description
                   </p>
                 )}
@@ -162,7 +162,7 @@ function TaskPreviewModal({
                 <div className='flex flex-col gap-2 pt-1'>
                   {/* Priority */}
                   <div className='flex items-center justify-between text-xs'>
-                    <span className='text-muted-foreground/60'>Priority</span>
+                    <span className='text-muted-foreground'>Priority</span>
                     <span
                       className={`font-medium ${priorityConfig[card.priority ?? 'low'].color}`}
                     >
@@ -174,7 +174,7 @@ function TaskPreviewModal({
                   {card.story_points !== null &&
                   card.story_points !== undefined ? (
                     <div className='flex items-center justify-between text-xs'>
-                      <span className='text-muted-foreground/60'>
+                      <span className='text-muted-foreground'>
                         Story points
                       </span>
                       <span className='font-medium text-foreground'>
@@ -186,7 +186,7 @@ function TaskPreviewModal({
                   {/* Assignee */}
                   {card.assignee ? (
                     <div className='flex items-center justify-between text-xs'>
-                      <span className='text-muted-foreground/60'>Assignee</span>
+                      <span className='text-muted-foreground'>Assignee</span>
                       <span className='font-medium text-foreground truncate max-w-[200px]'>
                         {card.assignee.name}
                       </span>
@@ -195,7 +195,7 @@ function TaskPreviewModal({
 
                   {/* Created date */}
                   <div className='flex items-center justify-between text-xs'>
-                    <span className='text-muted-foreground/60'>Created</span>
+                    <span className='text-muted-foreground'>Created</span>
                     <span className='flex items-center gap-1 text-muted-foreground'>
                       <Calendar className='h-3 w-3' />
                       {new Date(card.created_at).toLocaleDateString('en-US', {
@@ -336,7 +336,7 @@ function KanbanCardItem({
             </span>
           </>
         ) : null}
-        <span className='ml-auto text-muted-foreground/60'>
+        <span className='ml-auto text-muted-foreground'>
           {new Date(card.created_at).toLocaleDateString('en-US', {
             month: 'short',
             day: 'numeric',
@@ -466,7 +466,7 @@ function KanbanColumnComponent({
           );
         })}
         {cards.length === 0 ? (
-          <div className='flex items-center justify-center h-20 text-xs text-muted-foreground/50 select-none'>
+          <div className='flex items-center justify-center h-20 text-xs text-muted-foreground select-none'>
             Drop cards here
           </div>
         ) : null}

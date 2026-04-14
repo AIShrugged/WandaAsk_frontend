@@ -34,7 +34,10 @@ function MeetingsColumn({ column }: { column: ColumnData }) {
         </div>
       ) : (
         <div className='flex flex-col items-center gap-2 py-8 text-center'>
-          <CalendarOff className='h-7 w-7 text-muted-foreground/40' />
+          <CalendarOff
+            className='h-7 w-7 text-muted-foreground/40'
+            aria-hidden='true'
+          />
           <p className='text-xs text-muted-foreground'>No bot meetings</p>
         </div>
       )}

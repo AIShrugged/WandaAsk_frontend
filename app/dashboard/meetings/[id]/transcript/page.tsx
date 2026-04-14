@@ -24,7 +24,10 @@ export default async function MeetingTranscriptPage({
     return (
       <div className='mx-auto w-full max-w-4xl px-6 py-6'>
         <div className='flex flex-col items-center gap-4 py-20 text-center'>
-          <MicOff className='h-10 w-10 text-muted-foreground/40' />
+          <MicOff
+            className='h-10 w-10 text-muted-foreground/40'
+            aria-hidden='true'
+          />
           <div>
             <p className='text-sm font-medium text-foreground'>
               Transcript not available

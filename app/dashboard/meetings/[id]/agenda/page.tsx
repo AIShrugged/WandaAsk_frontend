@@ -63,7 +63,10 @@ function AgendaList({ agendas }: { agendas: CalendarEventAgendaItem[] }) {
   if (agendas.length === 0) {
     return (
       <div className='flex flex-col items-center gap-3 py-16 text-center'>
-        <ListOrdered className='h-8 w-8 text-muted-foreground/40' />
+        <ListOrdered
+          className='h-8 w-8 text-muted-foreground/40'
+          aria-hidden='true'
+        />
         <p className='text-sm text-muted-foreground'>No agenda items yet.</p>
       </div>
     );
