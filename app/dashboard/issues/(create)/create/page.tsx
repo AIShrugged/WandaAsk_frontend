@@ -27,6 +27,9 @@ export default async function IssueCreatePage() {
             persons={persons}
             defaultOrganizationId={organizationId}
           />
+          <p className='mt-4 text-sm text-muted-foreground'>
+            You can add attachments after saving the task.
+          </p>
         </CardBody>
       </div>
     </Card>

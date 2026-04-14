@@ -206,18 +206,31 @@ interface AttachmentInlinePreviewProps {
  * @param props.attachment - the attachment to preview.
  */
 function AttachmentInlinePreview({ attachment }: AttachmentInlinePreviewProps) {
+  const [imgError, setImgError] = useState(false);
   const url = attachmentUrl(attachment);
   const kind = getAttachmentPreviewKind(attachment);
 
   if (!url || kind === 'none') return null;
 
   if (kind === 'image') {
+    if (imgError) {
+      return (
+        <div className='flex items-center gap-2 rounded-[var(--radius-card)] border border-border bg-background/30 p-3 text-sm text-muted-foreground'>
+          <Paperclip className='h-4 w-4' />
+          Preview unavailable — open the file to view it.
+        </div>
+      );
+    }
+
     return (
       <div className='overflow-hidden rounded-[var(--radius-card)] border border-border bg-black/10'>
         <img
           src={url}
           alt={attachmentLabel(attachment)}
           className='max-h-[420px] w-full object-contain'
+          onError={() => {
+            setImgError(true);
+          }}
         />
       </div>
     );
@@ -312,7 +325,7 @@ export function IssueAttachments({
 
                 const result = await uploadIssueAttachment(issueId, formData);
 
-                if ('error' in result) {
+                if (result.error) {
                   toast.error(result.error);
 
                   return;
@@ -377,7 +390,14 @@ export function IssueAttachments({
                     disabled={isPending}
                     onClick={() => {
                       startTransition(async () => {
-                        await deleteAttachment(attachment.id);
+                        const result = await deleteAttachment(attachment.id);
+
+                        if (result.error) {
+                          toast.error(result.error);
+
+                          return;
+                        }
+
                         toast.success('Attachment deleted');
                         await refresh();
                       });

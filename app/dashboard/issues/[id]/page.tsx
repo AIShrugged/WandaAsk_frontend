@@ -1,7 +1,11 @@
 import { notFound } from 'next/navigation';
 
-import { getIssue, getIssueAttachments, getPersons } from '@/features/issues';
-import { IssueAttachments } from '@/features/issues/ui/issue-attachments';
+import {
+  getIssue,
+  getIssueAttachments,
+  getPersons,
+  IssueAttachments,
+} from '@/features/issues';
 import { IssueForm } from '@/features/issues/ui/issue-form';
 import { IssueLinkedTask } from '@/features/issues/ui/issue-linked-task';
 import { getOrganizations } from '@/features/organization/api/organization';
