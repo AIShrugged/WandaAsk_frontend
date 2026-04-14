@@ -6,7 +6,15 @@ import type { EventProps } from '@/entities/event';
 
 jest.mock('@/features/event/api/calendar-events', () => {
   return {
-    switchBot: jest.fn().mockResolvedValue({}),
+    switchBot: jest.fn().mockResolvedValue({ data: null, error: null }),
+  };
+});
+
+jest.mock('next/navigation', () => {
+  return {
+    useRouter: () => {
+      return { refresh: jest.fn() };
+    },
   };
 });
 

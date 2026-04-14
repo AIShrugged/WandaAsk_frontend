@@ -1,4 +1,5 @@
 import { ExternalLink, Minus, Plus } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import React, { type JSX, useTransition } from 'react';
 import { toast } from 'sonner';
 
@@ -37,6 +38,7 @@ export function EventPopup({
   guests: GuestProps[];
 }): JSX.Element {
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
   const isBotAdded = event.required_bot;
   const Icon = isBotAdded ? Minus : Plus;
   const actionText = isBotAdded ? 'remove bot' : 'add bot';
@@ -45,13 +47,13 @@ export function EventPopup({
    */
   const handleSwitchBot = () => {
     startTransition(async () => {
-      try {
-        await switchBot(event.id, !event.required_bot).then(() => {
-          return close();
-        });
-      } catch {
-        toast.error(isBotAdded ? 'Failed to remove bot' : 'Failed to add bot');
+      const result = await switchBot(event.id, !event.required_bot);
+      if (result.error) {
+        toast.error(result.error);
+        return;
       }
+      router.refresh();
+      close();
     });
   };
 
