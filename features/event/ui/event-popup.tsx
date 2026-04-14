@@ -1,5 +1,6 @@
 import { ExternalLink, Minus, Plus } from 'lucide-react';
 import React, { type JSX, useTransition } from 'react';
+import { toast } from 'sonner';
 
 import { switchBot } from '@/features/event/api/calendar-events';
 import EventSummary from '@/features/event/ui/event-summary';
@@ -48,11 +49,8 @@ export function EventPopup({
         await switchBot(event.id, !event.required_bot).then(() => {
           return close();
         });
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.warn('name', {
-          message: (error as Error).message,
-        });
+      } catch {
+        toast.error(isBotAdded ? 'Failed to remove bot' : 'Failed to add bot');
       }
     });
   };

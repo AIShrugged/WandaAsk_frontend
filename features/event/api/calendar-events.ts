@@ -163,19 +163,30 @@ export async function switchBot(eventId: number, botRequired: boolean) {
     cache: 'no-store',
     headers: {
       ...authHeaders,
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify(payload),
   });
 
   if (!res.ok) {
-    throw new Error('Failed to switchBot');
+    const body = await res.text();
+    throw new Error(`Failed to switchBot: ${res.status} ${body}`);
+  }
+
+  const json: ApiResponse<CalendarEventDetailResponse> = await res.json();
+
+  if (!json.success || !json.data) {
+    throw new Error(json.message ?? 'Invalid API response');
   }
 
   revalidatePath(ROUTES.DASHBOARD.CALENDAR);
   revalidatePath(ROUTES.DASHBOARD.MEETINGS_LIST);
   revalidatePath(ROUTES.DASHBOARD.MEETINGS_ORGANIZATION);
 
-  return await res.json();
+  return {
+    data: json.data,
+    status: json.status,
+  };
 }
 
 /**
