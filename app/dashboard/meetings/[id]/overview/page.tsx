@@ -189,7 +189,7 @@ function KeyTakeawayItem({ takeaway }: { takeaway: CalendarEventTakeaway }) {
               {takeaway.label ?? formatKey(takeaway.kind)}
             </div>
             <p className='mt-2 text-sm font-medium text-foreground'>
-              {takeaway.title}
+              {String(takeaway.title)}
             </p>
             <p className='mt-1 text-sm leading-6 text-muted-foreground group-open:hidden'>
               {excerpt}
@@ -467,11 +467,13 @@ export default async function MeetingOverviewPage({
         )}
 
         {/* Summary */}
-        {data.summary && (
-          <SectionCard title='Summary' icon={BookOpen}>
-            <MarkdownContent>{data.summary as string}</MarkdownContent>
-          </SectionCard>
-        )}
+        {data.summary &&
+          typeof data.summary === 'object' &&
+          'summary' in data.summary && (
+            <SectionCard title='Summary' icon={BookOpen}>
+              <MarkdownContent>{String(data.summary.summary)}</MarkdownContent>
+            </SectionCard>
+          )}
 
         {/* Review / Insights */}
         <DetailBlock
