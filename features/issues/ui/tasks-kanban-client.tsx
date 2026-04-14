@@ -335,11 +335,10 @@ export function TasksKanbanClient({
           className={`flex-1 overflow-hidden p-3 h-full transition-opacity duration-150 ${isFetching ? 'opacity-60' : 'opacity-100'}`}
         >
           <KanbanBoard
-            initialColumns={columns}
+            columns={columns}
             organizations={organizations}
             persons={persons}
             filters={filters}
-            columnsVersion={columnsVersion}
           />
         </div>
       </div>

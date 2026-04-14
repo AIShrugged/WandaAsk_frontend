@@ -21,6 +21,7 @@ import {
 } from '@/features/kanban/model/types';
 import { ROUTES } from '@/shared/lib/routes';
 import Avatar from '@/shared/ui/common/avatar';
+import SpinLoader from '@/shared/ui/layout/spin-loader';
 
 import type { OrganizationProps } from '@/entities/organization';
 import type {
@@ -29,11 +30,11 @@ import type {
 } from '@/features/issues/model/types';
 
 interface KanbanBoardProps {
-  initialColumns: Record<IssueStatus, KanbanCard[]>;
+  columns: Record<IssueStatus, KanbanCard[]>;
   organizations: OrganizationProps[];
   persons: PersonOption[];
   filters: SharedFilters;
-  columnsVersion: number;
+  isFetching?: boolean;
 }
 
 /**
@@ -479,30 +480,36 @@ function KanbanColumnComponent({
  * KanbanBoard is the main kanban board client component.
  * Shared filters (org, team, search, type, assignee, priority) come from parent via props.
  * @param props - component props.
- * @param props.initialColumns - initial grouped cards by status.
+ * @param props.columns - grouped cards by status from the parent fetcher.
  * @param props.organizations - organizations list (unused here, kept for future use).
  * @param props.persons - persons list (unused here, kept for future use).
  * @param props.filters - shared filter values from parent.
- * @param props.columnsVersion - increments when server re-fetches with new filters.
+ * @param props.isFetching - shows loading overlay when parent is refetching.
  * @returns JSX element.
  */
 export function KanbanBoard({
-  initialColumns,
+  columns,
   organizations: _organizations,
   persons: _persons,
   filters,
-  columnsVersion,
+  isFetching = false,
 }: KanbanBoardProps) {
-  const [columns, setColumns] =
-    useState<Record<IssueStatus, KanbanCard[]>>(initialColumns);
+  // Optimistic override for drag-and-drop. Reset whenever server columns change.
+  const [optimisticColumns, setOptimisticColumns] = useState<Record<
+    IssueStatus,
+    KanbanCard[]
+  > | null>(null);
   const [movingCardId, setMovingCardId] = useState<number | null>(null);
   const [hoveredCard, setHoveredCard] = useState<KanbanCard | null>(null);
   const [, startTransition] = useTransition();
 
-  // Sync columns when server re-fetches data with new filters
+  // When server data changes (new fetch result), clear any optimistic override.
   useEffect(() => {
-    setColumns(initialColumns);
-  }, [columnsVersion]);
+    setOptimisticColumns(null);
+  }, [columns]);
+
+  // The active column data: optimistic (mid-drag) or latest server data.
+  const activeColumns = optimisticColumns ?? columns;
 
   /**
    *
@@ -566,7 +573,7 @@ export function KanbanBoard({
     sourceStatus: IssueStatus,
     targetStatus: IssueStatus,
   ) => {
-    const sourceCards = columns[sourceStatus];
+    const sourceCards = activeColumns[sourceStatus];
     const card = sourceCards.find((c) => {
       return c.id === cardId;
     });
@@ -575,9 +582,9 @@ export function KanbanBoard({
 
     const frozenCard = card;
 
-    setColumns((prev) => {
+    setOptimisticColumns((prev) => {
       return applyOptimisticMove(
-        prev,
+        prev ?? activeColumns,
         cardId,
         frozenCard,
         sourceStatus,
@@ -596,9 +603,9 @@ export function KanbanBoard({
 
         toast.success(`Moved to ${colLabel}`);
       } catch (error) {
-        setColumns((prev) => {
+        setOptimisticColumns((prev) => {
           return revertOptimisticMove(
-            prev,
+            prev ?? activeColumns,
             cardId,
             frozenCard,
             sourceStatus,
@@ -623,7 +630,6 @@ export function KanbanBoard({
   };
 
   // Client-side filtering: search, priority, assignee, type, status
-  // Filter against initialColumns to preserve optimistic updates while applying filters
   const lowerSearch = filters.search.toLowerCase();
   const filteredColumns: Record<IssueStatus, KanbanCard[]> = {
     open: [],
@@ -633,7 +639,7 @@ export function KanbanBoard({
   };
 
   for (const col of KANBAN_COLUMNS) {
-    const sourceCards = columns[col.id] ?? [];
+    const sourceCards = activeColumns[col.id] ?? [];
 
     // If status filter is set and doesn't match this column, skip entirely
     if (filters.status && col.id !== filters.status) {
@@ -672,7 +678,14 @@ export function KanbanBoard({
   }
 
   return (
-    <div className='flex flex-col h-full gap-3'>
+    <div className='flex flex-col h-full gap-3 relative'>
+      {/* Loading overlay */}
+      {isFetching && (
+        <div className='absolute inset-0 bg-background/50 backdrop-blur-sm z-10 flex items-center justify-center rounded-lg'>
+          <SpinLoader />
+        </div>
+      )}
+
       {/* Board: columns */}
       <div className='flex gap-3 flex-1 min-h-0'>
         <div className='flex gap-3 overflow-x-auto pb-4 flex-1 min-h-0'>
