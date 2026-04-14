@@ -77,7 +77,7 @@ export default function CalendarAgenda({
                   >
                     <span className='truncate flex-1'>{ev.title}</span>
                     {noSummary && (
-                      <span className='text-xs text-muted-foreground/60 whitespace-nowrap flex-shrink-0'>
+                      <span className='text-xs text-muted-foreground whitespace-nowrap flex-shrink-0'>
                         No summary
                       </span>
                     )}

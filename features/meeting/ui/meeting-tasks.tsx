@@ -15,12 +15,12 @@ const STATUS_CONFIG: Record<
   in_progress: {
     label: 'In progress',
     icon: <CircleDot className='w-3.5 h-3.5' />,
-    className: 'text-blue-600 bg-blue-50 dark:bg-blue-950/40',
+    className: 'text-blue-300 bg-blue-500/15',
   },
   done: {
     label: 'Done',
     icon: <CircleCheck className='w-3.5 h-3.5' />,
-    className: 'text-green-600 bg-green-50 dark:bg-green-950/40',
+    className: 'text-emerald-400 bg-emerald-500/15',
   },
   cancelled: {
     label: 'Cancelled',

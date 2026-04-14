@@ -72,7 +72,10 @@ export function DashboardChatPanel({
           />
         ) : (
           <div className='flex flex-1 flex-col items-center justify-center gap-3 text-muted-foreground'>
-            <MessageSquare className='w-10 h-10 text-muted-foreground/30' />
+            <MessageSquare
+              className='w-10 h-10 text-muted-foreground/30'
+              aria-hidden='true'
+            />
             <p className='text-sm text-center px-4'>No chats yet</p>
             <button
               onClick={handleCreateChat}

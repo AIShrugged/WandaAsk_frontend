@@ -73,7 +73,10 @@ export function UpcomingAgendasBlock({ agendas }: UpcomingAgendasBlockProps) {
 
       {agendas.length === 0 ? (
         <div className='flex flex-col items-center justify-center gap-2 px-5 py-10 text-center'>
-          <ClipboardList className='h-8 w-8 text-muted-foreground/40' />
+          <ClipboardList
+            className='h-8 w-8 text-muted-foreground/40'
+            aria-hidden='true'
+          />
           <p className='text-sm font-medium text-muted-foreground'>
             No upcoming agendas
           </p>

@@ -23,7 +23,10 @@ export default async function ChatPage() {
 
       {/* Empty state — hidden on mobile (ChatList fills screen) */}
       <div className='hidden md:flex flex-1 flex-col items-center justify-center gap-3 text-muted-foreground'>
-        <MessageSquare className='w-12 h-12 text-muted-foreground/40' />
+        <MessageSquare
+          className='w-12 h-12 text-muted-foreground/40'
+          aria-hidden='true'
+        />
         <p className='text-sm'>Select a chat or create a new one</p>
       </div>
     </div>
