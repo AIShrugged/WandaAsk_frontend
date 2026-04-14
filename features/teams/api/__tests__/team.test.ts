@@ -407,75 +407,81 @@ describe('sendInvite', () => {
     jest.clearAllMocks();
   });
 
-  it('returns data and message on success', async () => {
-    const responseData = { invite_id: 1 };
+  it('returns data on success', async () => {
+    const responseData = {
+      id: 1,
+      email: 'user@example.com',
+      status: 'pending',
+    };
 
-    globalThis.fetch = jest.fn().mockResolvedValue(
-      makeResponse(200, {
-        success: true,
-        data: responseData,
-        message: 'Invite sent',
-      }),
-    );
+    mockHttpClient.mockResolvedValue({ data: responseData });
 
     const result = await sendInvite(1, { email: 'user@example.com' });
 
     expect(result.data).toEqual(responseData);
-    expect(result.message).toBe('Invite sent');
+    expect(result.error).toBeNull();
   });
 
   it('sends POST to correct URL', async () => {
-    globalThis.fetch = jest
-      .fn()
-      .mockResolvedValue(
-        makeResponse(200, { success: true, data: {}, message: 'OK' }),
-      );
+    mockHttpClient.mockResolvedValue({
+      data: { id: 1, email: 'a@b.com', status: 'pending' },
+    });
 
     await sendInvite(3, { email: 'a@b.com' });
 
-    expect(globalThis.fetch).toHaveBeenCalledWith(
+    expect(mockHttpClient).toHaveBeenCalledWith(
       'https://api.test/teams/3/invites',
-      expect.objectContaining({ method: 'POST' }),
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({ email: 'a@b.com' }),
+      }),
     );
   });
 
   it('sends member data in body', async () => {
-    globalThis.fetch = jest
-      .fn()
-      .mockResolvedValue(
-        makeResponse(200, { success: true, data: {}, message: 'OK' }),
-      );
+    mockHttpClient.mockResolvedValue({
+      data: { id: 1, email: 'member@example.com', status: 'pending' },
+    });
 
     await sendInvite(1, { email: 'member@example.com' });
 
-    const [, options] = (globalThis.fetch as jest.Mock).mock.calls[0] as [
-      string,
-      RequestInit,
-    ];
-    const body = JSON.parse(options.body as string) as Record<string, unknown>;
-
-    expect(body.email).toBe('member@example.com');
-  });
-
-  it('throws when response is not ok', async () => {
-    globalThis.fetch = jest
-      .fn()
-      .mockResolvedValue(
-        makeResponse(422, { success: false, message: 'User already in team' }),
-      );
-
-    await expect(sendInvite(1, { email: 'a@b.com' })).rejects.toThrow(
-      'User already in team',
+    expect(mockHttpClient).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        body: JSON.stringify({ email: 'member@example.com' }),
+      }),
     );
   });
 
-  it('throws with default message when no message in body', async () => {
-    globalThis.fetch = jest
-      .fn()
-      .mockResolvedValue(makeResponse(500, { success: false }));
+  it('returns error when response is not ok', async () => {
+    const { ServerError } = await import('@/shared/lib/errors');
 
-    await expect(sendInvite(1, { email: 'a@b.com' })).rejects.toThrow(
-      'Failed to send invite',
+    mockHttpClient.mockRejectedValue(
+      new ServerError('User already in team', {
+        status: 422,
+        responseBody: JSON.stringify({ message: 'User already in team' }),
+      }),
     );
+
+    const result = await sendInvite(1, { email: 'a@b.com' });
+
+    expect(result.data).toBeNull();
+    expect(result.error).toBe('User already in team');
+  });
+
+  it('returns default error message when no message in body', async () => {
+    const { ServerError } = await import('@/shared/lib/errors');
+
+    mockHttpClient.mockRejectedValue(
+      new ServerError('Internal Server Error', {
+        status: 500,
+        responseBody: '',
+      }),
+    );
+
+    const result = await sendInvite(1, { email: 'a@b.com' });
+
+    expect(result.data).toBeNull();
+    expect(result.error).toBe('Failed to send invite');
   });
 });

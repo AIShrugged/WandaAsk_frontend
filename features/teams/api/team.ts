@@ -2,7 +2,9 @@
 
 import { revalidatePath } from 'next/cache';
 
+import { parseApiError } from '@/shared/lib/apiError';
 import { API_URL } from '@/shared/lib/config';
+import { ServerError } from '@/shared/lib/errors';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 import { httpClient } from '@/shared/lib/httpClient';
 
@@ -15,6 +17,7 @@ import type {
 } from '@/entities/team';
 import type { FollowUpDetailProps } from '@/features/follow-up/model/types';
 import type { ApiResponse } from '@/shared/types/common';
+import type { ActionResult } from '@/shared/types/server-action';
 
 // ------------------------------
 // Teams API
@@ -274,23 +277,40 @@ export async function kickTeamMember(
  * @param data - data.
  * @returns Promise.
  */
-export const sendInvite = async (teamId: number, data: TeamAddMemberDTO) => {
-  const authHeaders = await getAuthHeaders();
-  const res = await fetch(`${API_URL}/teams/${teamId}/invites`, {
-    method: 'POST',
-    headers: {
-      ...authHeaders,
-    },
-    body: JSON.stringify(data),
-    cache: 'no-store',
-  });
-  const json = await res.json();
+export async function sendInvite(
+  teamId: number,
+  data: TeamAddMemberDTO,
+): Promise<ActionResult<{ id: number; email: string; status: string }>> {
+  try {
+    const { data: invite } = await httpClient<{
+      id: number;
+      email: string;
+      status: string;
+    }>(`${API_URL}/teams/${teamId}/invites`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
 
-  if (!res.ok || !json.success) {
-    throw new Error(json.message ?? 'Failed to send invite');
+    revalidatePath('/dashboard/teams');
+
+    return {
+      data: invite ?? { id: 0, email: data.email, status: 'pending' },
+      error: null,
+    };
+  } catch (error) {
+    if (error instanceof ServerError) {
+      const parsed = parseApiError(
+        error.responseBody ?? '',
+        'Failed to send invite',
+      );
+
+      return {
+        data: null,
+        error: parsed.message,
+        fieldErrors: parsed.fieldErrors,
+      };
+    }
+
+    throw error;
   }
-
-  revalidatePath('/dashboard/teams');
-
-  return { data: json.data, message: json.message as string };
-};
+}
