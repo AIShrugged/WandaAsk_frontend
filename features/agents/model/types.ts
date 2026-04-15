@@ -62,6 +62,7 @@ export interface AgentTask {
   enabled: boolean;
   next_run_at: string | null;
   latest_run_status?: string | null;
+  latest_run?: AgentTaskLatestRun | null;
   organization?: AgentTaskOrganization | null;
   team?: AgentTaskTeam | null;
   agent_profile?: Pick<AgentProfile, 'id' | 'name'> | null;
@@ -122,6 +123,33 @@ export interface AgentActivityItem {
   success: boolean;
   agent_run_uuid: string | null;
   created_at: string;
+}
+
+export interface AgentTaskActivityItem {
+  id: number;
+  tool_name: string;
+  description: string;
+  tool_result: Record<string, unknown> | null;
+  success: boolean;
+  created_at: string;
+}
+
+export interface AgentTaskLatestRun {
+  id: number;
+  paperclip_issue_id: number | null;
+  status: 'queued' | 'processing' | 'completed' | 'failed' | null;
+  attempt: number;
+  scheduled_for: string | null;
+  started_at: string | null;
+  finished_at: string | null;
+  error_message: string | null;
+  metadata: {
+    sandbox_result: unknown;
+    sandbox: unknown;
+    tool_calls: unknown[];
+    llm_calls: unknown[];
+  };
+  activity: AgentTaskActivityItem[] | null;
 }
 
 export interface AgentActivityResponse {
