@@ -7,6 +7,7 @@ import {
   DayTimeline,
   EmptyState,
   MeetingDetailCard,
+  TaskStatsBlock,
   WaitingState,
 } from '@/features/today-briefing';
 import CardBody from '@/shared/ui/card/CardBody';
@@ -45,6 +46,9 @@ export function MeetingsContent({ data }: MeetingsContentProps) {
           <DayNavigator date={data.date} meetingsCount={data.events.length} />
         }
       />
+      <div className='px-6 pt-4'>
+        <TaskStatsBlock data={data} />
+      </div>
       <div className='h-full overflow-x-hidden overflow-y-scroll'>
         <CardBody>
           <Suspense
