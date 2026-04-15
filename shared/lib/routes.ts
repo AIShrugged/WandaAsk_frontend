@@ -7,6 +7,9 @@ export const ROUTES = {
   DASHBOARD: {
     HOME: 'dashboard',
     TODAY: '/dashboard/today',
+    TODAY_MEETINGS: '/dashboard/today/meetings',
+    TODAY_TASKS: '/dashboard/today/tasks',
+    TODAY_ACTIVITY: '/dashboard/today/activity',
     MEETINGS: '/dashboard/meetings',
     TASKS: '/dashboard/tasks',
     CALENDAR: '/dashboard/calendar',
