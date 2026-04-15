@@ -33,6 +33,15 @@ export interface TeamUserRecord {
   };
 }
 
+export interface TeamInvite {
+  id: number;
+  email: string;
+  status: 'pending' | 'accepted' | 'cancelled' | 'expired';
+  expires_at: string | null;
+  accepted_at: string | null;
+  created_at: string;
+}
+
 export interface TeamFollowUpDTO {
   id: number;
   team_id: number;

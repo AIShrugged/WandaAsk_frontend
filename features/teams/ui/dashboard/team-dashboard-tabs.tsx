@@ -6,7 +6,6 @@ import TeamDashboardTabHealth from './team-dashboard-tab-health';
 import TeamDashboardTabPeople from './team-dashboard-tab-people';
 import TeamDashboardTabReadiness from './team-dashboard-tab-readiness';
 import TeamDashboardTabRisks from './team-dashboard-tab-risks';
-import TeamDashboardTabSettings from './team-dashboard-tab-settings';
 import TeamDashboardTabStatus from './team-dashboard-tab-status';
 
 import type {
@@ -16,14 +15,9 @@ import type {
   TabRisks,
   TabStatus,
 } from '../../model/dashboard-types';
+import type { TeamInvite, TeamProps } from '@/entities/team';
 import type { TelegramChatRegistration } from '@/features/chat/types';
 import type { TeamNotificationSetting } from '@/features/teams/model/types';
-
-interface TeamMember {
-  id: number;
-  name: string;
-  email: string;
-}
 
 const TABS = [
   { key: 'status', label: 'Status' },
@@ -31,7 +25,6 @@ const TABS = [
   { key: 'people', label: 'People' },
   { key: 'health', label: 'Health' },
   { key: 'risks', label: 'Risks' },
-  { key: 'settings', label: 'Settings' },
 ] as const;
 
 type TabKey = (typeof TABS)[number]['key'];
@@ -48,7 +41,9 @@ interface TeamDashboardTabsProps {
   currentTab: string;
   tabs: DashboardTabs | null;
   teamId: number;
-  members: TeamMember[];
+  members: TeamProps['members'];
+  pendingInvites: TeamInvite[];
+  isManager: boolean;
   settings: TeamNotificationSetting[];
   availableChats: TelegramChatRegistration[];
 }
@@ -60,6 +55,8 @@ interface TeamDashboardTabsProps {
  * @param props.tabs
  * @param props.teamId
  * @param props.members
+ * @param props.pendingInvites
+ * @param props.isManager
  * @param props.settings
  * @param props.availableChats
  */
@@ -68,6 +65,8 @@ export default function TeamDashboardTabs({
   tabs,
   teamId,
   members,
+  pendingInvites,
+  isManager,
   settings,
   availableChats,
 }: TeamDashboardTabsProps) {
@@ -75,10 +74,13 @@ export default function TeamDashboardTabs({
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
+  // Redirect legacy ?tab=settings to ?tab=people
+  const resolvedTab = currentTab === 'settings' ? 'people' : currentTab;
+
   const activeTab: TabKey = TABS.some((t) => {
-    return t.key === currentTab;
+    return t.key === resolvedTab;
   })
-    ? (currentTab as TabKey)
+    ? (resolvedTab as TabKey)
     : 'status';
 
   const handleTabChange = (key: TabKey) => {
@@ -117,24 +119,24 @@ export default function TeamDashboardTabs({
 
       {/* Tab content */}
       <div className='flex-1 overflow-y-auto px-6 py-4'>
-        {activeTab === 'settings' && (
-          <TeamDashboardTabSettings
-            teamId={teamId}
+        {activeTab === 'people' && (
+          <TeamDashboardTabPeople
+            analyticsData={tabs?.people ?? null}
             members={members}
+            pendingInvites={pendingInvites}
+            teamId={teamId}
+            isManager={isManager}
             settings={settings}
             availableChats={availableChats}
           />
         )}
-        {activeTab !== 'settings' && tabs && (
+        {activeTab !== 'people' && tabs && (
           <>
             {activeTab === 'status' && (
               <TeamDashboardTabStatus data={tabs.status} />
             )}
             {activeTab === 'readiness' && (
               <TeamDashboardTabReadiness data={tabs.meeting_readiness} />
-            )}
-            {activeTab === 'people' && (
-              <TeamDashboardTabPeople data={tabs.people} />
             )}
             {activeTab === 'health' && (
               <TeamDashboardTabHealth data={tabs.health} />
@@ -144,7 +146,7 @@ export default function TeamDashboardTabs({
             )}
           </>
         )}
-        {activeTab !== 'settings' && !tabs && (
+        {activeTab !== 'people' && !tabs && (
           <p className='text-sm text-muted-foreground text-center py-10'>
             No dashboard data available.
           </p>
