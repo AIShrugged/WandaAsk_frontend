@@ -5,4 +5,5 @@ export type {
   TeamActionType,
   TeamFollowUpDTO,
   TeamUserRecord,
+  TeamInvite,
 } from './model/types';

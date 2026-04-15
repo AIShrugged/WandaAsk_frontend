@@ -8,7 +8,7 @@ import TeamDashboardSections from '@/features/teams/ui/dashboard/team-dashboard-
 import TeamDashboardTabs from '@/features/teams/ui/dashboard/team-dashboard-tabs';
 import TeamsHeader from '@/features/teams/ui/teams-header';
 
-import type { TeamProps } from '@/entities/team';
+import type { TeamInvite, TeamProps } from '@/entities/team';
 import type { TelegramChatRegistration } from '@/features/chat/types';
 import type { TeamDashboardData } from '@/features/teams/model/dashboard-types';
 import type { TeamNotificationSetting } from '@/features/teams/model/types';
@@ -19,6 +19,8 @@ interface TeamsPageClientProps {
   dashboard: TeamDashboardData | null;
   settings: TeamNotificationSetting[];
   availableChats: TelegramChatRegistration[];
+  pendingInvites: TeamInvite[];
+  isManager: boolean;
   currentTab: string;
 }
 
@@ -32,6 +34,8 @@ export default function TeamsPageClient({
   dashboard,
   settings,
   availableChats,
+  pendingInvites,
+  isManager,
   currentTab,
 }: TeamsPageClientProps) {
   const router = useRouter();
@@ -71,9 +75,11 @@ export default function TeamsPageClient({
               currentTab={currentTab}
               tabs={dashboard.tabs}
               teamId={team.id}
+              members={team.members}
+              pendingInvites={pendingInvites}
+              isManager={isManager}
               settings={settings}
               availableChats={availableChats}
-              members={team.members}
             />
 
             {currentTab === 'status' &&
@@ -92,9 +98,11 @@ export default function TeamsPageClient({
             currentTab={currentTab}
             tabs={null}
             teamId={team.id}
+            members={team.members}
+            pendingInvites={pendingInvites}
+            isManager={isManager}
             settings={settings}
             availableChats={availableChats}
-            members={team.members}
           />
         )}
       </div>

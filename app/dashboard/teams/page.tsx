@@ -3,7 +3,7 @@ import React from 'react';
 
 import { getTelegramChats } from '@/features/chat/api/telegram';
 import { getTeamNotificationSettings } from '@/features/teams/api/notification-settings';
-import { getTeam, getTeams } from '@/features/teams/api/team';
+import { getTeam, getTeamInvites, getTeams } from '@/features/teams/api/team';
 import { getTeamDashboard } from '@/features/teams/api/team-dashboard';
 import TeamsEmptyState from '@/features/teams/ui/teams-empty-state';
 import TeamsPageClient from '@/features/teams/ui/teams-page-client';
@@ -48,13 +48,19 @@ export default async function Page({
 
   const resolvedTeamId = String(team_id);
 
-  const [teamResult, settingsResult, chatsResult, dashboardResult] =
-    await Promise.allSettled([
-      getTeam(resolvedTeamId),
-      getTeamNotificationSettings(resolvedTeamId),
-      getTelegramChats(),
-      getTeamDashboard(resolvedTeamId),
-    ]);
+  const [
+    teamResult,
+    settingsResult,
+    chatsResult,
+    dashboardResult,
+    invitesResult,
+  ] = await Promise.allSettled([
+    getTeam(resolvedTeamId),
+    getTeamNotificationSettings(resolvedTeamId),
+    getTelegramChats(),
+    getTeamDashboard(resolvedTeamId),
+    getTeamInvites(resolvedTeamId),
+  ]);
 
   const team = teamResult.status === 'fulfilled' ? teamResult.value.data : null;
 
@@ -73,6 +79,21 @@ export default async function Page({
       ? (dashboardResult.value.data ?? null)
       : null;
 
+  const pendingInvites =
+    invitesResult.status === 'fulfilled' ? invitesResult.value : [];
+
+  // Derive manager status: look up the current viewer in team.members by id.
+  // Falls back to false for org-level managers not explicitly in the members list.
+  const viewerId = dashboard?.viewer.id ?? null;
+  const viewerMember = viewerId
+    ? (team.members.find((m) => {
+        return m.id === viewerId;
+      }) ?? null)
+    : null;
+  // TeamMember type does not expose role yet — treat presence in list as manager signal.
+  // Request viewer.is_manager from backend dashboard payload for more accurate detection.
+  const isManager = viewerMember !== null;
+
   return (
     <Card className='min-h-full flex flex-col overflow-y-auto'>
       <PageHeader title='Teams' />
@@ -83,6 +104,8 @@ export default async function Page({
         dashboard={dashboard}
         settings={settings}
         availableChats={teamChats}
+        pendingInvites={pendingInvites}
+        isManager={isManager}
         currentTab={tab}
       />
     </Card>

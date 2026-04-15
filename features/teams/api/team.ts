@@ -6,12 +6,13 @@ import { parseApiError } from '@/shared/lib/apiError';
 import { API_URL } from '@/shared/lib/config';
 import { ServerError } from '@/shared/lib/errors';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
-import { httpClient } from '@/shared/lib/httpClient';
+import { httpClient, httpClientList } from '@/shared/lib/httpClient';
 
 import type {
   TeamAddMemberDTO,
   TeamCreateDTO,
   TeamFollowUpDTO,
+  TeamInvite,
   TeamProps,
   TeamUserRecord,
 } from '@/entities/team';
@@ -309,6 +310,53 @@ export async function sendInvite(
         error: parsed.message,
         fieldErrors: parsed.fieldErrors,
       };
+    }
+
+    throw error;
+  }
+}
+
+/**
+ * getTeamInvites — list all invitations for a team (manager-only).
+ * @param teamId - teamId.
+ * @returns Promise with list of TeamInvite.
+ */
+export async function getTeamInvites(
+  teamId: number | string,
+): Promise<TeamInvite[]> {
+  const { data } = await httpClientList<TeamInvite>(
+    `${API_URL}/teams/${teamId}/invites`,
+  );
+
+  return data ?? [];
+}
+
+/**
+ * cancelTeamInvite — cancel a pending invitation.
+ * @param teamId - teamId.
+ * @param inviteId - inviteId.
+ * @returns Promise with ActionResult.
+ */
+export async function cancelTeamInvite(
+  teamId: number | string,
+  inviteId: number,
+): Promise<ActionResult<void>> {
+  try {
+    await httpClient(`${API_URL}/teams/${teamId}/invites/${inviteId}`, {
+      method: 'DELETE',
+    });
+
+    revalidatePath('/dashboard/teams');
+
+    return { data: undefined, error: null };
+  } catch (error) {
+    if (error instanceof ServerError) {
+      const parsed = parseApiError(
+        error.responseBody ?? '',
+        'Failed to cancel invite',
+      );
+
+      return { data: null, error: parsed.message };
     }
 
     throw error;
