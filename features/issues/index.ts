@@ -32,3 +32,6 @@ export {
 } from '@/features/issues/model/types';
 export { TasksKanbanClient } from '../issues/ui/tasks-kanban-client';
 export { IssueAttachments } from './ui/issue-attachments';
+export { IssueComments } from './ui/issue-comments';
+export { getIssueComments } from './api/comments';
+export type { IssueComment, IssueCommentUser } from './model/types';
