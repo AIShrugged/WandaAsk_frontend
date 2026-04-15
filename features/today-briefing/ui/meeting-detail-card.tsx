@@ -129,7 +129,7 @@ export function MeetingDetailCard({ event }: MeetingDetailCardProps) {
               )}
 
             {event.review?.key_insight && (
-              <p className='text-xs text-muted-foreground italic'>
+              <p className='text-md text-foreground'>
                 {event.review.key_insight}
               </p>
             )}
