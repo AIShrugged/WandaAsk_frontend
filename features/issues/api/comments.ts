@@ -10,7 +10,9 @@ import { httpClient, httpClientList } from '@/shared/lib/httpClient';
 import type { IssueComment } from '@/features/issues/model/types';
 import type { ActionResult } from '@/shared/types/server-action';
 
-export async function getIssueComments(issueId: number): Promise<IssueComment[]> {
+export async function getIssueComments(
+  issueId: number,
+): Promise<IssueComment[]> {
   const result = await httpClientList<IssueComment>(
     `${API_URL}/issues/${issueId}/comments`,
   );
@@ -34,8 +36,15 @@ export async function createIssueComment(
     return { data, error: null };
   } catch (error) {
     if (error instanceof ServerError) {
-      const parsed = parseApiError(error.responseBody ?? '', 'Failed to post comment');
-      return { data: null, error: parsed.message, fieldErrors: parsed.fieldErrors };
+      const parsed = parseApiError(
+        error.responseBody ?? '',
+        'Failed to post comment',
+      );
+      return {
+        data: null,
+        error: parsed.message,
+        fieldErrors: parsed.fieldErrors,
+      };
     }
     throw error;
   }
@@ -59,8 +68,15 @@ export async function updateIssueComment(
     return { data, error: null };
   } catch (error) {
     if (error instanceof ServerError) {
-      const parsed = parseApiError(error.responseBody ?? '', 'Failed to update comment');
-      return { data: null, error: parsed.message, fieldErrors: parsed.fieldErrors };
+      const parsed = parseApiError(
+        error.responseBody ?? '',
+        'Failed to update comment',
+      );
+      return {
+        data: null,
+        error: parsed.message,
+        fieldErrors: parsed.fieldErrors,
+      };
     }
     throw error;
   }
@@ -76,7 +92,10 @@ export async function deleteIssueComment(
     return { data: null, error: null };
   } catch (error) {
     if (error instanceof ServerError) {
-      const parsed = parseApiError(error.responseBody ?? '', 'Failed to delete comment');
+      const parsed = parseApiError(
+        error.responseBody ?? '',
+        'Failed to delete comment',
+      );
       return { data: null, error: parsed.message };
     }
     throw error;

@@ -9,10 +9,10 @@ import {
   deleteIssueComment,
   updateIssueComment,
 } from '@/features/issues/api/comments';
-import { Button } from '@/shared/ui/button/Button';
-import { MarkdownContent } from '@/shared/ui/markdown-content';
-import Textarea from '@/shared/ui/input/textarea';
 import { BUTTON_SIZE, BUTTON_VARIANT } from '@/shared/types/button';
+import { Button } from '@/shared/ui/button/Button';
+import Textarea from '@/shared/ui/input/textarea';
+import { MarkdownContent } from '@/shared/ui/markdown-content';
 
 import type { IssueComment } from '@/features/issues/model/types';
 
@@ -41,13 +41,17 @@ function formatDate(dateStr: string): string {
   const date = new Date(dateStr);
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
-  const diffMin = Math.floor(diffMs / 60000);
+  const diffMin = Math.floor(diffMs / 60_000);
 
   if (diffMin < 1) return 'just now';
   if (diffMin < 60) return `${diffMin}m ago`;
   const diffH = Math.floor(diffMin / 60);
   if (diffH < 24) return `${diffH}h ago`;
-  return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  return date.toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
 }
 
 /**
@@ -73,7 +77,11 @@ function CommentItem({
   function handleEdit() {
     startTransition(async () => {
       if (!editContent.trim()) return;
-      const result = await updateIssueComment(issueId, comment.id, editContent.trim());
+      const result = await updateIssueComment(
+        issueId,
+        comment.id,
+        editContent.trim(),
+      );
       if (result.error) {
         toast.error(result.error);
         return;
@@ -115,6 +123,21 @@ function CommentItem({
     });
   }
 
+  function handleCancelEdit() {
+    setIsEditing(false);
+    setEditContent(comment.content);
+  }
+
+  function handleToggleReply() {
+    setIsReplying((v) => {
+      return !v;
+    });
+  }
+
+  function handleStartEdit() {
+    setIsEditing(true);
+  }
+
   return (
     <div className={isReply ? 'ml-8 mt-2' : ''}>
       <div className='group flex gap-3'>
@@ -133,7 +156,9 @@ function CommentItem({
               {formatDate(comment.created_at)}
             </span>
             {comment.updated_at !== comment.created_at && (
-              <span className='text-xs text-muted-foreground italic'>(edited)</span>
+              <span className='text-xs text-muted-foreground italic'>
+                (edited)
+              </span>
             )}
           </div>
 
@@ -142,7 +167,9 @@ function CommentItem({
             <div className='flex flex-col gap-2'>
               <Textarea
                 value={editContent}
-                onChange={(e) => setEditContent(e.target.value)}
+                onChange={(e) => {
+                  return setEditContent(e.target.value);
+                }}
                 resizable={false}
                 height={80}
                 autoFocus
@@ -161,7 +188,7 @@ function CommentItem({
                 <Button
                   size={BUTTON_SIZE.sm}
                   variant={BUTTON_VARIANT.secondary}
-                  onClick={() => { setIsEditing(false); setEditContent(comment.content); }}
+                  onClick={handleCancelEdit}
                   disabled={isPending}
                 >
                   <X className='w-3.5 h-3.5 mr-1' />
@@ -179,7 +206,7 @@ function CommentItem({
               {!isReply && (
                 <button
                   className='text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors'
-                  onClick={() => setIsReplying((v) => !v)}
+                  onClick={handleToggleReply}
                   disabled={isPending}
                 >
                   <Reply className='w-3 h-3' />
@@ -190,7 +217,7 @@ function CommentItem({
                 <>
                   <button
                     className='text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors'
-                    onClick={() => setIsEditing(true)}
+                    onClick={handleStartEdit}
                     disabled={isPending}
                   >
                     <Pencil className='w-3 h-3' />
@@ -214,7 +241,9 @@ function CommentItem({
             <div className='flex flex-col gap-2 mt-2'>
               <Textarea
                 value={replyContent}
-                onChange={(e) => setReplyContent(e.target.value)}
+                onChange={(e) => {
+                  return setReplyContent(e.target.value);
+                }}
                 placeholder='Write a reply...'
                 resizable={false}
                 height={72}
@@ -233,7 +262,10 @@ function CommentItem({
                 <Button
                   size={BUTTON_SIZE.sm}
                   variant={BUTTON_VARIANT.secondary}
-                  onClick={() => { setIsReplying(false); setReplyContent(''); }}
+                  onClick={() => {
+                    setIsReplying(false);
+                    setReplyContent('');
+                  }}
                   disabled={isPending}
                 >
                   Cancel
@@ -247,18 +279,20 @@ function CommentItem({
       {/* Replies */}
       {!isReply && comment.replies.length > 0 && (
         <div className='border-l-2 border-border ml-4 pl-2 mt-2 flex flex-col gap-3'>
-          {comment.replies.map((reply) => (
-            <CommentItem
-              key={reply.id}
-              comment={reply}
-              issueId={issueId}
-              currentUserId={currentUserId}
-              isReply
-              onReplyPosted={onReplyPosted}
-              onUpdated={onUpdated}
-              onDeleted={onDeleted}
-            />
-          ))}
+          {comment.replies.map((reply) => {
+            return (
+              <CommentItem
+                key={reply.id}
+                comment={reply}
+                issueId={issueId}
+                currentUserId={currentUserId}
+                isReply
+                onReplyPosted={onReplyPosted}
+                onUpdated={onUpdated}
+                onDeleted={onDeleted}
+              />
+            );
+          })}
         </div>
       )}
     </div>
@@ -280,49 +314,91 @@ export function IssueComments({
   function handlePost() {
     startTransition(async () => {
       if (!newComment.trim()) return;
-      const result = await createIssueComment(issueId, { content: newComment.trim() });
+      const result = await createIssueComment(issueId, {
+        content: newComment.trim(),
+      });
       if (result.error) {
         toast.error(result.error);
         return;
       }
       if (result.data) {
-        setComments((prev) => [...prev, { ...result.data!, replies: [] }]);
+        setComments((prev) => {
+          return [...prev, { ...result.data!, replies: [] }];
+        });
         setNewComment('');
       }
     });
   }
 
   function handleReplyPosted(parentId: number, reply: IssueComment) {
-    setComments((prev) =>
-      prev.map((c) =>
-        c.id === parentId ? { ...c, replies: [...c.replies, reply] } : c,
-      ),
-    );
+    setComments((prev) => {
+      return prev.map((c) => {
+        return c.id === parentId ? { ...c, replies: [...c.replies, reply] } : c;
+      });
+    });
+  }
+
+  function updateCommentInList(
+    comments: IssueComment[],
+    updated: IssueComment,
+  ): IssueComment[] {
+    return comments.map((c) => {
+      if (c.id === updated.id) return { ...updated, replies: c.replies };
+      return {
+        ...c,
+        replies: updateReplyInList(c.replies, updated),
+      };
+    });
+  }
+
+  function updateReplyInList(
+    replies: IssueComment[],
+    updated: IssueComment,
+  ): IssueComment[] {
+    return replies.map((r) => {
+      return r.id === updated.id ? updated : r;
+    });
   }
 
   function handleUpdated(updated: IssueComment) {
-    setComments((prev) =>
-      prev.map((c) => {
-        if (c.id === updated.id) return { ...updated, replies: c.replies };
-        return {
-          ...c,
-          replies: c.replies.map((r) => (r.id === updated.id ? updated : r)),
-        };
-      }),
-    );
+    setComments((prev) => {
+      return updateCommentInList(prev, updated);
+    });
+  }
+
+  function deleteCommentFromList(
+    comments: IssueComment[],
+    commentId: number,
+  ): IssueComment[] {
+    return comments.filter((c) => {
+      return c.id !== commentId;
+    });
+  }
+
+  function deleteReplyFromParent(
+    comments: IssueComment[],
+    commentId: number,
+    parentId: number,
+  ): IssueComment[] {
+    return comments.map((c) => {
+      return c.id === parentId
+        ? {
+            ...c,
+            replies: deleteCommentFromList(c.replies, commentId),
+          }
+        : c;
+    });
   }
 
   function handleDeleted(commentId: number, parentId: number | null) {
     if (parentId === null) {
-      setComments((prev) => prev.filter((c) => c.id !== commentId));
+      setComments((prev) => {
+        return deleteCommentFromList(prev, commentId);
+      });
     } else {
-      setComments((prev) =>
-        prev.map((c) =>
-          c.id === parentId
-            ? { ...c, replies: c.replies.filter((r) => r.id !== commentId) }
-            : c,
-        ),
-      );
+      setComments((prev) => {
+        return deleteReplyFromParent(prev, commentId, parentId);
+      });
     }
   }
 
@@ -333,17 +409,19 @@ export function IssueComments({
         <p className='text-sm text-muted-foreground'>No comments yet.</p>
       ) : (
         <div className='flex flex-col gap-4'>
-          {comments.map((comment) => (
-            <CommentItem
-              key={comment.id}
-              comment={comment}
-              issueId={issueId}
-              currentUserId={currentUserId}
-              onReplyPosted={handleReplyPosted}
-              onUpdated={handleUpdated}
-              onDeleted={handleDeleted}
-            />
-          ))}
+          {comments.map((comment) => {
+            return (
+              <CommentItem
+                key={comment.id}
+                comment={comment}
+                issueId={issueId}
+                currentUserId={currentUserId}
+                onReplyPosted={handleReplyPosted}
+                onUpdated={handleUpdated}
+                onDeleted={handleDeleted}
+              />
+            );
+          })}
         </div>
       )}
 
@@ -351,7 +429,9 @@ export function IssueComments({
       <div className='flex flex-col gap-2 pt-2 border-t border-border'>
         <Textarea
           value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
+          onChange={(e) => {
+            return setNewComment(e.target.value);
+          }}
           placeholder='Add a comment...'
           resizable={false}
           height={80}

@@ -32,24 +32,34 @@ export default async function IssueDetailPage({
 
   if (!Number.isFinite(issueId) || issueId <= 0) notFound();
 
-  const [issue, attachments, organizationsResponse, persons, comments, userResponse] =
-    await Promise.all([
-      getIssue(issueId).catch((error: Error) => {
-        if (
-          error.message.includes('404') ||
-          error.message.toLowerCase().includes('not found') ||
-          error.message.toLowerCase().includes('no query results')
-        ) {
-          notFound();
-        }
-        throw error;
-      }),
-      getIssueAttachments(issueId).catch(() => []),
-      getOrganizations(),
-      getPersons(),
-      getIssueComments(issueId).catch(() => []),
-      getUser(),
-    ]);
+  const [
+    issue,
+    attachments,
+    organizationsResponse,
+    persons,
+    comments,
+    userResponse,
+  ] = await Promise.all([
+    getIssue(issueId).catch((error: Error) => {
+      if (
+        error.message.includes('404') ||
+        error.message.toLowerCase().includes('not found') ||
+        error.message.toLowerCase().includes('no query results')
+      ) {
+        notFound();
+      }
+      throw error;
+    }),
+    getIssueAttachments(issueId).catch(() => {
+      return [];
+    }),
+    getOrganizations(),
+    getPersons(),
+    getIssueComments(issueId).catch(() => {
+      return [];
+    }),
+    getUser(),
+  ]);
 
   const currentUserId = userResponse.data?.data?.id ?? 0;
 
