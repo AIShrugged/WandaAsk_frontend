@@ -73,7 +73,10 @@ export function AgentTasksBlock({
             Pending Approvals
           </p>
           <div className='flex items-center gap-2 py-2'>
-            <Clock className='h-4 w-4 text-muted-foreground/50' />
+            <Clock
+              className='h-4 w-4 text-muted-foreground/50'
+              aria-hidden='true'
+            />
             <p className='text-sm text-muted-foreground'>
               No pending approvals
             </p>

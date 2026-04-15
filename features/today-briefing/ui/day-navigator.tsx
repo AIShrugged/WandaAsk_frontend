@@ -2,9 +2,7 @@
 
 import { addDays, format, isToday, parseISO } from 'date-fns';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-
-import { ROUTES } from '@/shared/lib/routes';
+import { usePathname, useRouter } from 'next/navigation';
 
 interface DayNavigatorProps {
   date: string;
@@ -13,19 +11,20 @@ interface DayNavigatorProps {
 
 export function DayNavigator({ date, meetingsCount }: DayNavigatorProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const current = parseISO(date);
   const isTodayDate = isToday(current);
 
   function navigate(offset: number) {
     const newDate = addDays(current, offset);
     const dateStr = format(newDate, 'yyyy-MM-dd');
-    router.push(`${ROUTES.DASHBOARD.TODAY}?date=${dateStr}`, {
+    router.push(`${pathname}?date=${dateStr}`, {
       scroll: false,
     });
   }
 
   function goToday() {
-    router.push(ROUTES.DASHBOARD.TODAY, { scroll: false });
+    router.push(pathname, { scroll: false });
   }
 
   return (
@@ -66,7 +65,7 @@ export function DayNavigator({ date, meetingsCount }: DayNavigatorProps) {
           onClick={goToday}
           className='ml-1 rounded-md border border-primary bg-primary/10 px-3 py-1 text-xs font-medium text-primary hover:bg-primary/20 transition-colors'
         >
-          Today
+          Back Today
         </button>
       )}
     </div>

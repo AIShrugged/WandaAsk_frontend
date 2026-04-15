@@ -9,46 +9,44 @@ import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
 import { InfiniteScrollStatus } from '@/shared/ui/layout/infinite-scroll-status';
 import SpinLoader from '@/shared/ui/layout/spin-loader';
 
-import type {
-  TranscriptsProps,
-  TranscriptProps,
-} from '@/features/transcript/model/types';
+import type { TranscriptProps } from '@/features/transcript/model/types';
 
 type Props = {
   eventId: string;
-  initialData: TranscriptsProps;
+  initialItems: TranscriptProps[];
   initialTotal: number;
 };
 
 /**
- * TranscriptHistory component.
+ * TranscriptHistory component — client wrapper with infinite scroll.
  * @param root0
  * @param root0.eventId
- * @param root0.initialData
+ * @param root0.initialItems
  * @param root0.initialTotal
  */
 export default function TranscriptHistory({
   eventId,
-  initialData,
+  initialItems,
   initialTotal,
 }: Props) {
   const fetchMore = useCallback(
     async (offset: number) => {
-      const { data, hasMore } = await loadTranscriptChunk(
+      const { items, hasMore } = await loadTranscriptChunk(
         eventId,
         offset,
         filters.limit,
       );
 
-      return { items: data.data as TranscriptProps[], hasMore };
+      return { items, hasMore };
     },
     [eventId],
   );
+
   const { items, isLoading, hasMore, sentinelRef } =
     useInfiniteScroll<TranscriptProps>({
       fetchMore,
-      initialItems: initialData.data,
-      initialHasMore: initialData.data.length < initialTotal,
+      initialItems,
+      initialHasMore: initialItems.length < initialTotal,
       maxItems: 500,
     });
 

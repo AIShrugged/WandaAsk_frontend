@@ -24,9 +24,11 @@ import type { TeamCreateDTO, TeamProps } from '@/entities/team';
 export default function TeamCreateForm({
   values,
   organization_id,
+  onSuccess,
 }: {
   values: TeamProps;
   organization_id: string;
+  onSuccess?: (teamId: number) => void;
 }) {
   const FORM_ID = 'team-create-form';
   const isEdit = Boolean(values?.id);
@@ -51,6 +53,13 @@ export default function TeamCreateForm({
       try {
         if (isEdit) {
           await updateTeam(values.id, data);
+          useTeamsStore.getState().invalidate();
+
+          if (onSuccess) {
+            onSuccess(values.id);
+          } else {
+            router.push(ROUTES.DASHBOARD.TEAMS);
+          }
         } else {
           const result = await createTeam(organization_id, data);
 
@@ -59,10 +68,15 @@ export default function TeamCreateForm({
 
             return;
           }
-        }
 
-        useTeamsStore.getState().invalidate();
-        router.push(ROUTES.DASHBOARD.TEAMS);
+          useTeamsStore.getState().invalidate();
+
+          if (onSuccess && result.data) {
+            onSuccess(result.data.id);
+          } else {
+            router.push(ROUTES.DASHBOARD.TEAMS);
+          }
+        }
       } catch (error) {
         toast.error((error as Error).message);
       }

@@ -35,11 +35,16 @@ export interface TodayEvent {
   agenda_content: string | null;
 }
 
+export interface MeetingAttendee {
+  name: string;
+}
+
 export interface MeetingSummaryBrief {
   title: string;
   summary: string;
   key_points: string[];
   decisions: string[];
+  attendees: MeetingAttendee[];
 }
 
 export interface MeetingReviewBrief {

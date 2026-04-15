@@ -45,14 +45,6 @@ jest.mock('next/navigation', () => {
   };
 });
 
-jest.mock('@/features/agents/lib/access', () => {
-  return {
-    getAgentAccessContext: jest.fn(() => {
-      return Promise.resolve({ canManageAgents: false });
-    }),
-  };
-});
-
 jest.mock('lucide-react', () => {
   return {
     ChevronRight: () => {
@@ -142,23 +134,23 @@ describe('MenuSidebar', () => {
     expect(screen.getByRole('navigation')).toBeInTheDocument();
   });
 
-  it('renders all default menu items', async () => {
+  it('renders default menu items', async () => {
     render(await MenuSidebar());
-    expect(screen.getByText('Dashboard')).toBeInTheDocument();
-    expect(screen.getByText('AI Chat')).toBeInTheDocument();
+    expect(screen.getByText('Meetings')).toBeInTheDocument();
+    expect(screen.getByText('Tasks')).toBeInTheDocument();
     expect(screen.getByText('Teams')).toBeInTheDocument();
-    expect(screen.getByText('Methodologies')).toBeInTheDocument();
-    expect(screen.getByText('Follow ups (meetings)')).toBeInTheDocument();
   });
 });
 
 describe('getMenuItems', () => {
-  it('includes Agents item for agent managers', () => {
-    const items = getMenuItems({ canManageAgents: true });
+  it('returns the expected menu items', () => {
+    const items = getMenuItems();
     const labels = items.map((item) => {
       return item.label;
     });
 
-    expect(labels).toContain('Agents');
+    expect(labels).toContain('Meetings');
+    expect(labels).toContain('Tasks');
+    expect(labels).toContain('Teams');
   });
 });

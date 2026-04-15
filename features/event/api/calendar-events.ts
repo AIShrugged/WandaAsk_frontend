@@ -2,8 +2,11 @@
 
 import { revalidatePath } from 'next/cache';
 
+import { parseApiError } from '@/shared/lib/apiError';
 import { API_URL } from '@/shared/lib/config';
+import { ServerError } from '@/shared/lib/errors';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
+import { httpClient } from '@/shared/lib/httpClient';
 import { ROUTES } from '@/shared/lib/routes';
 
 import type { EventProps } from '@/entities/event';
@@ -13,6 +16,7 @@ import type {
   CalendarEventListItem,
 } from '@/features/meetings/model/types';
 import type { ApiResponse } from '@/shared/types/common';
+import type { ActionResult } from '@/shared/types/server-action';
 
 /**
  * getEvent.
@@ -152,28 +156,39 @@ export async function getCalendarEventDetail(calendarEventId: string | number) {
  * @param botRequired - botRequired.
  * @returns Promise.
  */
-export async function switchBot(eventId: number, botRequired: boolean) {
-  const authHeaders = await getAuthHeaders();
-  const payload = {
-    calendar_event_id: eventId,
-    required_bot: botRequired,
-  };
-  const res = await fetch(`${API_URL}/calendar-events/${eventId}/bot/require`, {
-    method: 'POST',
-    cache: 'no-store',
-    headers: {
-      ...authHeaders,
-    },
-    body: JSON.stringify(payload),
-  });
+export async function switchBot(
+  eventId: number,
+  botRequired: boolean,
+): Promise<ActionResult<CalendarEventDetailResponse>> {
+  try {
+    const { data } = await httpClient<CalendarEventDetailResponse>(
+      `${API_URL}/calendar-events/${eventId}/bot/require`,
+      {
+        method: 'POST',
+        body: JSON.stringify({ required_bot: botRequired }),
+        headers: { 'Content-Type': 'application/json' },
+      },
+    );
 
-  if (!res.ok) {
-    throw new Error('Failed to switchBot');
+    if (!data) {
+      return { data: null, error: 'Invalid API response' };
+    }
+
+    revalidatePath(ROUTES.DASHBOARD.CALENDAR);
+    revalidatePath(ROUTES.DASHBOARD.MEETINGS_LIST);
+    revalidatePath(ROUTES.DASHBOARD.MEETINGS_ORGANIZATION);
+
+    return { data, error: null };
+  } catch (error) {
+    if (error instanceof ServerError) {
+      const parsed = parseApiError(
+        error.responseBody ?? '',
+        'Failed to update bot',
+      );
+      return { data: null, error: parsed.message };
+    }
+    throw error;
   }
-
-  revalidatePath(ROUTES.DASHBOARD.CALENDAR);
-
-  return await res.json();
 }
 
 /**

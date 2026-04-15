@@ -67,7 +67,6 @@ export interface Issue {
   description: string | null;
   type: IssueType;
   status: IssueStatus;
-  priority?: IssuePriority | null;
   organization_id: number | null;
   team_id: number | null;
   agent_task_id?: number | null;
@@ -93,31 +92,6 @@ export interface IssueAttachment {
   created_at?: string | null;
   updated_at?: string | null;
 }
-
-export type IssuePriority = 'low' | 'medium' | 'high' | 'critical';
-
-export const ISSUE_PRIORITY_VALUES: IssuePriority[] = [
-  'low',
-  'medium',
-  'high',
-  'critical',
-];
-
-/**
- * isIssuePriority — type guard for IssuePriority.
- * @param value - raw string.
- * @returns boolean.
- */
-export function isIssuePriority(value: string): value is IssuePriority {
-  return (ISSUE_PRIORITY_VALUES as string[]).includes(value);
-}
-
-export const ISSUE_PRIORITY_LABELS: Record<IssuePriority, string> = {
-  low: 'Low',
-  medium: 'Medium',
-  high: 'High',
-  critical: 'Critical',
-};
 
 export type IssueSortField =
   | 'id'
@@ -172,7 +146,6 @@ export interface SharedFilters {
   search: string;
   type: IssueType | '';
   assignee_id: string;
-  priority: IssuePriority | '';
   status: IssueStatus | '';
 }
 
@@ -187,6 +160,22 @@ export interface IssueFilters {
   sort?: IssueSortField;
   order?: SortOrder;
   search?: string;
+}
+
+export interface IssueCommentUser {
+  id: number;
+  name: string;
+}
+
+export interface IssueComment {
+  id: number;
+  issue_id: number;
+  parent_id: number | null;
+  content: string;
+  user: IssueCommentUser;
+  replies: IssueComment[];
+  created_at: string;
+  updated_at: string;
 }
 
 export interface IssueUpsertDTO {

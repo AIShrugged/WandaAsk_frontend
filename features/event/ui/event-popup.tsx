@@ -1,5 +1,7 @@
-import { Minus, Plus } from 'lucide-react';
+import { ExternalLink, Minus, Plus } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import React, { type JSX, useTransition } from 'react';
+import { toast } from 'sonner';
 
 import { switchBot } from '@/features/event/api/calendar-events';
 import EventSummary from '@/features/event/ui/event-summary';
@@ -36,6 +38,7 @@ export function EventPopup({
   guests: GuestProps[];
 }): JSX.Element {
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
   const isBotAdded = event.required_bot;
   const Icon = isBotAdded ? Minus : Plus;
   const actionText = isBotAdded ? 'remove bot' : 'add bot';
@@ -44,16 +47,13 @@ export function EventPopup({
    */
   const handleSwitchBot = () => {
     startTransition(async () => {
-      try {
-        await switchBot(event.id, !event.required_bot).then(() => {
-          return close();
-        });
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.warn('name', {
-          message: (error as Error).message,
-        });
+      const result = await switchBot(event.id, !event.required_bot);
+      if (result.error) {
+        toast.error(result.error);
+        return;
       }
+      router.refresh();
+      close();
     });
   };
 
@@ -72,18 +72,31 @@ export function EventPopup({
       </ModalBody>
 
       <ModalFooter>
-        <div className={'w-full md:w-[250px] md:ml-auto'}>
-          <Button
-            onClick={handleSwitchBot}
-            disabled={isPending}
-            loading={isPending}
-            aria-label={isBotAdded ? 'remove bot' : 'add bot'}
-          >
-            <div className='flex items-center gap-3'>
-              <Icon size={24} aria-hidden='true' />
-              <span>{actionText}</span>
-            </div>
-          </Button>
+        <div className='flex flex-wrap items-center gap-3 w-full'>
+          {event.url && !event.has_summary && (
+            <a
+              href={event.url}
+              target='_blank'
+              rel='noreferrer'
+              className='inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-4 py-2 text-sm font-medium text-emerald-400 transition-colors hover:bg-emerald-500/20'
+            >
+              <ExternalLink size={16} aria-hidden='true' />
+              Connect
+            </a>
+          )}
+          <div className={'flex-1 md:w-[250px] md:ml-auto md:flex-none'}>
+            <Button
+              onClick={handleSwitchBot}
+              disabled={isPending}
+              loading={isPending}
+              aria-label={isBotAdded ? 'remove bot' : 'add bot'}
+            >
+              <div className='flex items-center gap-3'>
+                <Icon size={24} aria-hidden='true' />
+                <span>{actionText}</span>
+              </div>
+            </Button>
+          </div>
         </div>
       </ModalFooter>
     </>

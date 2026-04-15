@@ -306,7 +306,7 @@ export function ChatWindow({
     }, 100);
   }, [searchParams]);
 
-  let chatScopeLabel = 'Personal web chat';
+  let chatScopeLabel = 'Personal chat';
 
   if ((chat.organization_id ?? null) !== null) {
     chatScopeLabel = chat.team_id
@@ -334,9 +334,6 @@ export function ChatWindow({
           {/* Desktop: icon + label */}
           <MessageSquare className='hidden md:block w-4 h-4 text-primary' />
           <div className='hidden md:flex flex-col'>
-            <span className='text-sm font-semibold text-foreground'>
-              {chat.title ?? 'Untitled chat'}
-            </span>
             <span className='text-xs text-muted-foreground'>
               {chatScopeLabel}
             </span>
@@ -383,12 +380,12 @@ export function ChatWindow({
             <div className='flex items-start gap-3'>
               <div className='min-w-0 flex-1'>
                 <p className='text-sm font-medium text-foreground'>
-                  Выберите рабочий контекст
+                  Select a work context
                 </p>
                 <p className='mt-1 text-sm text-muted-foreground'>
-                  Personal chat не требует постоянной привязки. Если backend
-                  просит `organization_id`, переключите организацию в верхней
-                  панели и повторите действие.
+                  Personal chat doesn't require a permanent link. If the backend
+                  requests an `organization_id`, switch the organization in the
+                  top panel and repeat the action.
                 </p>
                 {composerError ? (
                   <p className='mt-2 text-sm text-destructive'>

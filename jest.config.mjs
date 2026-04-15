@@ -8,6 +8,8 @@ export default createJestConfig({
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   moduleNameMapper: {
     '^next/cache$': '<rootDir>/__mocks__/next-cache.js',
+    '^react-markdown$': '<rootDir>/__mocks__/react-markdown.js',
+    '^remark-gfm$': '<rootDir>/__mocks__/remark-gfm.js',
     '^@/(.*)$': '<rootDir>/$1',
   },
   testPathIgnorePatterns: [

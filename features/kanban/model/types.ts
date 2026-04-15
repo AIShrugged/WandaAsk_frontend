@@ -6,7 +6,6 @@ export interface KanbanCard {
   description: string | null;
   type: string;
   status: IssueStatus;
-  priority: KanbanPriority;
   organization_id: number | null;
   team_id: number | null;
   assignee_id: number | null;
@@ -17,8 +16,6 @@ export interface KanbanCard {
   created_at: string;
   updated_at: string;
 }
-
-export type KanbanPriority = 'low' | 'medium' | 'high' | 'critical';
 
 export interface KanbanColumn {
   id: IssueStatus;
@@ -32,7 +29,6 @@ export interface KanbanFilters {
   team_id?: number | null;
   type?: string;
   assignee_id?: number | null;
-  priority?: KanbanPriority | '';
   search?: string;
 }
 
@@ -43,10 +39,4 @@ export const KANBAN_COLUMNS: Pick<KanbanColumn, 'id' | 'label' | 'color'>[] = [
   { id: 'done', label: 'Done', color: '#34d399' },
 ];
 
-export const KANBAN_PRIORITY_LABELS: Record<KanbanPriority, string> = {
-  low: 'Low',
-  medium: 'Medium',
-  high: 'High',
-  critical: 'Critical',
-};
 export { type IssueStatus } from '@/features/issues/model/types';

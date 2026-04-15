@@ -1,7 +1,7 @@
 'use client';
 
-import { ExternalLink, Eye, Paperclip, Trash2, Upload } from 'lucide-react';
-import { useEffect, useMemo, useState, useTransition } from 'react';
+import { ExternalLink, Paperclip, Trash2, Upload } from 'lucide-react';
+import { useEffect, useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
 import { ChatMessageContent } from '@/features/chat/ui/chat-message-content';
@@ -32,6 +32,7 @@ function attachmentLabel(attachment: IssueAttachment) {
     attachment.original_name ??
     attachment.file_name ??
     attachment.name ??
+    (attachment.file_path ? attachment.file_path.split('/').pop() : null) ??
     `Attachment #${attachment.id}`
   );
 }
@@ -42,12 +43,14 @@ function attachmentLabel(attachment: IssueAttachment) {
  * @returns normalized url.
  */
 function attachmentUrl(attachment: IssueAttachment) {
-  return attachment.url ?? null;
+  if (!attachment.id) return null;
+
+  return `/api/attachment?id=${attachment.id}`;
 }
 
 /**
- *
- * @param attachment
+ * attachmentExtension — returns the lowercase file extension including the dot.
+ * @param attachment - attachment.
  */
 function attachmentExtension(attachment: IssueAttachment) {
   const label = attachmentLabel(attachment).toLowerCase();
@@ -68,8 +71,8 @@ type AttachmentPreviewKind =
   | 'none';
 
 /**
- *
- * @param attachment
+ * getAttachmentPreviewKind — maps file extension to a preview kind.
+ * @param attachment - attachment.
  */
 function getAttachmentPreviewKind(
   attachment: IssueAttachment,
@@ -125,11 +128,155 @@ function getAttachmentPreviewKind(
   return 'none';
 }
 
+interface TextAttachmentPreviewProps {
+  url: string;
+  kind: 'markdown' | 'text';
+}
+
 /**
- * isImageAttachment.
- * @param attachment - attachment.
- * @returns Result.
+ * TextAttachmentPreview — fetches and displays text or markdown file content.
+ * Manages its own loading/error state so the parent component stays clean.
+ * @param props - component props.
+ * @param props.url - file URL to fetch.
+ * @param props.kind - preview kind ('markdown' or 'text').
  */
+function TextAttachmentPreview({ url, kind }: TextAttachmentPreviewProps) {
+  const [content, setContent] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    fetch(url, { signal: controller.signal })
+      .then(async (response) => {
+        if (!response.ok) {
+          throw new Error('Failed to load attachment');
+        }
+
+        const text = await response.text();
+
+        setContent(text);
+      })
+      .catch((fetchError: Error) => {
+        if (fetchError.name === 'AbortError') return;
+
+        setError(fetchError.message || 'Failed to load attachment');
+      });
+
+    return () => {
+      controller.abort();
+    };
+  }, [url]);
+
+  let previewContent: ReactNode;
+
+  if (error !== null) {
+    previewContent = <p className='text-sm text-destructive'>{error}</p>;
+  } else if (content === null) {
+    previewContent = (
+      <p className='text-sm text-muted-foreground'>Loading...</p>
+    );
+  } else if (kind === 'markdown') {
+    previewContent = (
+      <div className='max-h-[480px] overflow-auto'>
+        <ChatMessageContent content={content} />
+      </div>
+    );
+  } else {
+    previewContent = (
+      <pre className='max-h-[480px] overflow-auto whitespace-pre-wrap break-words rounded-md bg-muted p-3 text-xs leading-relaxed text-foreground'>
+        {content}
+      </pre>
+    );
+  }
+
+  return (
+    <div className='rounded-[var(--radius-card)] border border-border bg-background p-4'>
+      {previewContent}
+    </div>
+  );
+}
+
+interface AttachmentInlinePreviewProps {
+  attachment: IssueAttachment;
+}
+
+/**
+ * AttachmentInlinePreview — always-visible inline content for an attachment.
+ * Returns null for unsupported types ('none' kind).
+ * @param props - component props.
+ * @param props.attachment - the attachment to preview.
+ */
+function AttachmentInlinePreview({ attachment }: AttachmentInlinePreviewProps) {
+  const [imgError, setImgError] = useState(false);
+  const url = attachmentUrl(attachment);
+  const kind = getAttachmentPreviewKind(attachment);
+
+  if (!url || kind === 'none') return null;
+
+  if (kind === 'image') {
+    if (imgError) {
+      return (
+        <div className='flex items-center gap-2 rounded-[var(--radius-card)] border border-border bg-background/30 p-3 text-sm text-muted-foreground'>
+          <Paperclip className='h-4 w-4' />
+          Preview unavailable — open the file to view it.
+        </div>
+      );
+    }
+
+    return (
+      <div className='overflow-hidden rounded-[var(--radius-card)] border border-border bg-black/10'>
+        <img
+          src={url}
+          alt={attachmentLabel(attachment)}
+          className='max-h-[420px] w-full object-contain'
+          onError={() => {
+            setImgError(true);
+          }}
+        />
+      </div>
+    );
+  }
+
+  if (kind === 'pdf') {
+    return (
+      <div className='overflow-hidden rounded-[var(--radius-card)] border border-border bg-background'>
+        <iframe
+          title={attachmentLabel(attachment)}
+          src={url}
+          className='h-[480px] w-full'
+        />
+      </div>
+    );
+  }
+
+  if (kind === 'audio') {
+    return (
+      <div className='rounded-[var(--radius-card)] border border-border bg-background p-4'>
+        <audio controls className='w-full' src={url}>
+          Your browser does not support audio preview.
+        </audio>
+      </div>
+    );
+  }
+
+  if (kind === 'video') {
+    return (
+      <div className='overflow-hidden rounded-[var(--radius-card)] border border-border bg-black'>
+        <video controls className='max-h-[480px] w-full' src={url}>
+          Your browser does not support video preview.
+        </video>
+      </div>
+    );
+  }
+
+  if (kind === 'markdown' || kind === 'text') {
+    return <TextAttachmentPreview url={url} kind={kind} />;
+  }
+
+  return null;
+}
+
 /**
  * IssueAttachments component.
  * @param props - component props.
@@ -142,197 +289,15 @@ export function IssueAttachments({
   initialAttachments,
 }: IssueAttachmentsProps) {
   const [attachments, setAttachments] = useState(initialAttachments);
-  const [previewAttachmentId, setPreviewAttachmentId] = useState<number | null>(
-    null,
-  );
-  const [textPreviewCache, setTextPreviewCache] = useState<
-    Record<number, string>
-  >({});
-  const [textPreviewErrors, setTextPreviewErrors] = useState<
-    Record<number, string>
-  >({});
-  const [loadingPreviewId, setLoadingPreviewId] = useState<number | null>(null);
   const [isPending, startTransition] = useTransition();
-  const previewAttachment = useMemo(() => {
-    return attachments.find((attachment) => {
-      return attachment.id === previewAttachmentId;
-    });
-  }, [attachments, previewAttachmentId]);
-
-  useEffect(() => {
-    if (!previewAttachment) return;
-
-    const url = attachmentUrl(previewAttachment);
-    const kind = getAttachmentPreviewKind(previewAttachment);
-
-    if (!url || (kind !== 'markdown' && kind !== 'text')) return;
-
-    if (
-      textPreviewCache[previewAttachment.id] ||
-      textPreviewErrors[previewAttachment.id]
-    ) {
-      return;
-    }
-
-    const controller = new AbortController();
-
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setLoadingPreviewId(previewAttachment.id);
-
-    fetch(url, { signal: controller.signal })
-      .then(async (response) => {
-        if (!response.ok) {
-          throw new Error('Failed to load attachment preview');
-        }
-
-        const text = await response.text();
-
-        setTextPreviewCache((current) => {
-          return { ...current, [previewAttachment.id]: text };
-        });
-      })
-      .catch((error: Error) => {
-        if (error.name === 'AbortError') return;
-
-        setTextPreviewErrors((current) => {
-          return {
-            ...current,
-            [previewAttachment.id]:
-              error.message || 'Failed to load attachment preview',
-          };
-        });
-      })
-      .finally(() => {
-        setLoadingPreviewId((current) => {
-          return current === previewAttachment.id ? null : current;
-        });
-      });
-
-    return () => {
-      controller.abort();
-    };
-  }, [previewAttachment, textPreviewCache, textPreviewErrors]);
 
   /**
-   *
+   * refresh — reloads the attachment list from the server.
    */
   const refresh = async () => {
     const next = await getIssueAttachments(issueId);
 
     setAttachments(next);
-  };
-  /**
-   *
-   * @param attachment
-   */
-  const renderPreview = (attachment: IssueAttachment) => {
-    const url = attachmentUrl(attachment);
-    const previewKind = getAttachmentPreviewKind(attachment);
-    const textPreview = textPreviewCache[attachment.id];
-    const textPreviewError = textPreviewErrors[attachment.id];
-    const isLoadingPreview = loadingPreviewId === attachment.id;
-
-    if (!url || previewAttachmentId !== attachment.id) {
-      return null;
-    }
-
-    if (previewKind === 'image') {
-      return (
-        <div className='overflow-hidden rounded-[var(--radius-card)] border border-border bg-black/10'>
-          <img
-            src={url}
-            alt={attachmentLabel(attachment)}
-            className='max-h-[420px] w-full object-contain'
-          />
-        </div>
-      );
-    }
-
-    if (previewKind === 'pdf') {
-      return (
-        <div className='overflow-hidden rounded-[var(--radius-card)] border border-border bg-background'>
-          <iframe
-            title={attachmentLabel(attachment)}
-            src={url}
-            className='h-[480px] w-full'
-          />
-        </div>
-      );
-    }
-
-    if (previewKind === 'audio') {
-      return (
-        <div className='rounded-[var(--radius-card)] border border-border bg-background p-4'>
-          <audio controls className='w-full' src={url}>
-            Your browser does not support audio preview.
-          </audio>
-        </div>
-      );
-    }
-
-    if (previewKind === 'video') {
-      return (
-        <div className='overflow-hidden rounded-[var(--radius-card)] border border-border bg-black'>
-          <video controls className='max-h-[480px] w-full' src={url}>
-            Your browser does not support video preview.
-          </video>
-        </div>
-      );
-    }
-
-    if (previewKind === 'markdown') {
-      let previewContent: ReactNode = null;
-
-      if (isLoadingPreview) {
-        previewContent = (
-          <p className='text-sm text-muted-foreground'>Loading preview...</p>
-        );
-      } else if (textPreviewError) {
-        previewContent = (
-          <p className='text-sm text-destructive'>{textPreviewError}</p>
-        );
-      } else if (textPreview) {
-        previewContent = (
-          <div className='max-h-[480px] overflow-auto'>
-            <ChatMessageContent content={textPreview} />
-          </div>
-        );
-      }
-
-      return (
-        <div className='rounded-[var(--radius-card)] border border-border bg-background p-4'>
-          {previewContent}
-        </div>
-      );
-    }
-
-    if (previewKind === 'text') {
-      let previewContent: ReactNode = null;
-
-      if (isLoadingPreview) {
-        previewContent = (
-          <p className='text-sm text-muted-foreground'>Loading preview...</p>
-        );
-      } else if (textPreviewError) {
-        previewContent = (
-          <p className='text-sm text-destructive'>{textPreviewError}</p>
-        );
-      } else if (textPreview) {
-        previewContent = (
-          <pre className='max-h-[480px] overflow-auto whitespace-pre-wrap break-words rounded-md bg-muted p-3 text-xs leading-relaxed text-foreground'>
-            {textPreview}
-          </pre>
-        );
-      }
-
-      return (
-        <div className='rounded-[var(--radius-card)] border border-border bg-background p-4'>
-          {previewContent}
-        </div>
-      );
-    }
-
-    return null;
   };
 
   return (
@@ -356,13 +321,9 @@ export function IssueAttachments({
               if (!file) return;
 
               startTransition(async () => {
-                const formData = new FormData();
+                const result = await uploadIssueAttachment(issueId, file);
 
-                formData.append('file', file);
-
-                const result = await uploadIssueAttachment(issueId, formData);
-
-                if ('error' in result) {
+                if (result.error) {
                   toast.error(result.error);
 
                   return;
@@ -383,30 +344,11 @@ export function IssueAttachments({
       ) : (
         attachments.map((attachment) => {
           const url = attachmentUrl(attachment);
-          const isPreviewOpen = previewAttachmentId === attachment.id;
-          const previewKind = getAttachmentPreviewKind(attachment);
-          const canPreview = Boolean(url) && previewKind !== 'none';
           const urlBadge = url ? (
             <Badge variant='primary'>Viewable</Badge>
           ) : (
             <Badge variant='warning'>No file URL</Badge>
           );
-          const previewButton =
-            url && canPreview ? (
-              <Button
-                type='button'
-                variant={BUTTON_VARIANT.secondary}
-                className='w-auto px-3'
-                onClick={() => {
-                  setPreviewAttachmentId((current) => {
-                    return current === attachment.id ? null : attachment.id;
-                  });
-                }}
-              >
-                <Eye className='h-4 w-4' />
-                {isPreviewOpen ? 'Hide preview' : 'Preview'}
-              </Button>
-            ) : null;
           const openButton = url ? (
             <a
               href={url}
@@ -438,7 +380,6 @@ export function IssueAttachments({
                   </div>
                 </div>
                 <div className='flex flex-wrap justify-end gap-2'>
-                  {previewButton}
                   {openButton}
                   <Button
                     type='button'
@@ -447,7 +388,14 @@ export function IssueAttachments({
                     disabled={isPending}
                     onClick={() => {
                       startTransition(async () => {
-                        await deleteAttachment(attachment.id);
+                        const result = await deleteAttachment(attachment.id);
+
+                        if (result.error) {
+                          toast.error(result.error);
+
+                          return;
+                        }
+
                         toast.success('Attachment deleted');
                         await refresh();
                       });
@@ -459,7 +407,7 @@ export function IssueAttachments({
                 </div>
               </div>
 
-              {renderPreview(attachment)}
+              <AttachmentInlinePreview attachment={attachment} />
             </div>
           );
         })

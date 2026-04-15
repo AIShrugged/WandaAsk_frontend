@@ -17,7 +17,7 @@ const getFont = Inter({
 
 export const metadata: Metadata = {
   title: APP_NAME,
-  description: 'Best App',
+  description: 'Tribes App',
 };
 
 /**

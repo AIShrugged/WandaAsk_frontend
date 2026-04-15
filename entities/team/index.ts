@@ -4,4 +4,6 @@ export type {
   TeamAddMemberDTO,
   TeamActionType,
   TeamFollowUpDTO,
+  TeamUserRecord,
+  TeamInvite,
 } from './model/types';

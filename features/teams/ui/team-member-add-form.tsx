@@ -44,17 +44,21 @@ export default function TeamMemberAddForm({ close }: ModalContextValue) {
    * @returns Result.
    */
   const onSubmit = (data: TeamAddMemberDTO) => {
-    startTransition(async () => {
-      try {
-        const result = await sendInvite(Number(currentTeamId), data);
+    if (!currentTeamId) {
+      toast.error('Team not found');
+      return;
+    }
 
-        toast.success(result.message);
-        close();
-      } catch (error) {
-        setError('email', {
-          message: (error as Error).message,
-        });
+    startTransition(async () => {
+      const result = await sendInvite(Number(currentTeamId), data);
+
+      if (result.error) {
+        setError('email', { message: result.error });
+        return;
       }
+
+      toast.success('Invitation sent');
+      close();
     });
   };
 

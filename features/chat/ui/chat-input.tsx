@@ -49,7 +49,7 @@ export function ChatInput({
   };
 
   return (
-    <div className='flex items-end gap-2 border border-border rounded-[var(--radius-card)] bg-background px-4 py-3 shadow-card focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/20 transition-colors'>
+    <div className='flex items-center gap-2 border border-border rounded-[var(--radius-card)] bg-background p-2 shadow-card focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/20 transition-colors'>
       <textarea
         ref={textareaRef}
         value={value}

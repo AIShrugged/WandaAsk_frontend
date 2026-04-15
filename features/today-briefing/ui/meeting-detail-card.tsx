@@ -4,28 +4,20 @@ import { differenceInMinutes, format, parseISO } from 'date-fns';
 import { Clock, Users, Video } from 'lucide-react';
 
 import Card from '@/shared/ui/card/Card';
+import { MarkdownContent } from '@/shared/ui/markdown-content';
 
 import { AgendaList } from './agenda-list';
-import { AiPrepPanel } from './ai-prep-panel';
-import { CarriedTasks } from './carried-tasks';
 
-import type { CarriedTask, TodayEvent } from '../model/types';
+import type { TodayEvent } from '../model/types';
 
 interface MeetingDetailCardProps {
   event: TodayEvent;
-  carriedTasks: CarriedTask[];
 }
 
-export function MeetingDetailCard({
-  event,
-  carriedTasks,
-}: MeetingDetailCardProps) {
+export function MeetingDetailCard({ event }: MeetingDetailCardProps) {
   const start = parseISO(event.starts_at);
   const end = parseISO(event.ends_at);
   const duration = differenceInMinutes(end, start);
-
-  // Show all carried tasks — backend already filters by user's meeting series
-  const relevantCarried = carriedTasks;
 
   return (
     <Card className='flex flex-col gap-0 overflow-hidden'>
@@ -63,18 +55,81 @@ export function MeetingDetailCard({
             </span>
           )}
         </div>
+        {event.summary && event.summary.attendees.length > 0 && (
+          <div className='mt-2'>
+            <div className='flex flex-wrap gap-1.5'>
+              {event.summary.attendees.map((attendee) => {
+                return (
+                  <span
+                    key={attendee.name}
+                    className='text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground'
+                  >
+                    {attendee.name}
+                  </span>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
 
       <div className='flex flex-col gap-4 px-5 py-4'>
         {/* Briefing (from past meeting summary) */}
         {event.summary && (
-          <div>
-            <p className='text-sm text-foreground'>
-              <span className='font-semibold'>Briefing: </span>
-              {event.summary.summary}
+          <div className='flex flex-col gap-3'>
+            <p className='text-xs font-semibold text-muted-foreground'>
+              Briefing
             </p>
+
+            {event.summary.key_points.length > 0 && (
+              <div>
+                <p className='text-xs font-semibold text-foreground mb-1.5'>
+                  Key Points
+                </p>
+                <ul className='flex flex-col gap-1'>
+                  {event.summary.key_points.map((point, i) => {
+                    return (
+                      <li
+                        key={i}
+                        className='flex items-start gap-2 text-sm text-foreground'
+                      >
+                        <span className='w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0' />
+                        <span>{point}</span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            )}
+
+            {event.summary.decisions.length > 0 && (
+              <div>
+                <p className='text-xs font-semibold text-foreground mb-1.5'>
+                  Decisions
+                </p>
+                <ul className='flex flex-col gap-1'>
+                  {event.summary.decisions.map((decision, i) => {
+                    return (
+                      <li
+                        key={i}
+                        className='flex items-start gap-2 text-sm text-foreground'
+                      >
+                        <span className='w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0' />
+                        <span>{decision}</span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            )}
+
+            {event.summary.key_points.length === 0 &&
+              event.summary.decisions.length === 0 && (
+                <MarkdownContent>{event.summary.summary}</MarkdownContent>
+              )}
+
             {event.review?.key_insight && (
-              <p className='mt-2 text-xs text-muted-foreground italic'>
+              <p className='text-md text-foreground'>
                 {event.review.key_insight}
               </p>
             )}
@@ -82,7 +137,7 @@ export function MeetingDetailCard({
         )}
 
         {/* Agenda content (upcoming/general agenda for future meetings) */}
-        {!event.summary && event.agenda_content && (
+        {event.meeting_state !== 'ready' && event.agenda_content && (
           <div>
             <span className='text-xs font-medium uppercase tracking-wide text-muted-foreground'>
               Agenda
@@ -117,16 +172,6 @@ export function MeetingDetailCard({
             </span>
           </div>
         )}
-
-        {/* Carried tasks */}
-        <CarriedTasks count={relevantCarried.length} />
-
-        {/* AI Prep */}
-        <AiPrepPanel
-          event={event}
-          tasks={event.tasks}
-          carriedTasks={relevantCarried}
-        />
       </div>
     </Card>
   );

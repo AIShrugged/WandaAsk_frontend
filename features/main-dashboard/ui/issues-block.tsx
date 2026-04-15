@@ -6,7 +6,6 @@ import { AlertCircle, X } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
-import { IssueOverviewPanel } from '@/features/issues/ui/issue-overview-panel';
 import { ROUTES } from '@/shared/lib/routes';
 import { Badge } from '@/shared/ui/badge';
 import Card from '@/shared/ui/card/Card';
@@ -166,7 +165,6 @@ export function IssuesBlock({ issues }: IssuesBlockProps) {
                 <X className='h-4 w-4' />
               </button>
             </div>
-            <IssueOverviewPanel issue={selectedIssue} />
           </motion.div>
         )}
       </AnimatePresence>

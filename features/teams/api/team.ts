@@ -2,18 +2,23 @@
 
 import { revalidatePath } from 'next/cache';
 
+import { parseApiError } from '@/shared/lib/apiError';
 import { API_URL } from '@/shared/lib/config';
+import { ServerError } from '@/shared/lib/errors';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
-import { httpClient } from '@/shared/lib/httpClient';
+import { httpClient, httpClientList } from '@/shared/lib/httpClient';
 
 import type {
   TeamAddMemberDTO,
   TeamCreateDTO,
   TeamFollowUpDTO,
+  TeamInvite,
   TeamProps,
+  TeamUserRecord,
 } from '@/entities/team';
 import type { FollowUpDetailProps } from '@/features/follow-up/model/types';
 import type { ApiResponse } from '@/shared/types/common';
+import type { ActionResult } from '@/shared/types/server-action';
 
 // ------------------------------
 // Teams API
@@ -96,7 +101,7 @@ export async function deleteTeam(teamId: number) {
   if (!res.ok) {
     return await res.text();
   }
-  revalidatePath('/teams');
+  revalidatePath('/dashboard/teams');
 }
 
 // ------------------------------
@@ -108,7 +113,10 @@ export async function deleteTeam(teamId: number) {
  * @param data - data.
  * @returns Promise.
  */
-export async function createTeam(organizationId: string, data: TeamCreateDTO) {
+export async function createTeam(
+  organizationId: string,
+  data: TeamCreateDTO,
+): Promise<{ error: string; data: null } | { error: null; data: TeamProps }> {
   const authHeaders = await getAuthHeaders();
   const res = await fetch(`${API_URL}/teams`, {
     method: 'POST',
@@ -125,12 +133,14 @@ export async function createTeam(organizationId: string, data: TeamCreateDTO) {
   if (!res.ok) {
     const text = await res.text();
 
-    return { error: text || 'Failed to create team' };
+    return { error: text || 'Failed to create team', data: null };
   }
 
-  revalidatePath('/team');
+  revalidatePath('/dashboard/teams');
 
-  return { error: null };
+  const json: ApiResponse<TeamProps> = await res.json();
+
+  return { error: null, data: json.data ?? ({ id: 0 } as TeamProps) };
 }
 
 /**
@@ -145,7 +155,7 @@ export async function updateTeam(id: number, data: TeamCreateDTO) {
     body: JSON.stringify(data),
   });
 
-  revalidatePath('/team');
+  revalidatePath('/dashboard/teams');
 }
 
 /**
@@ -214,26 +224,141 @@ export const getTeamFollowUp = async (
 };
 
 /**
+ * getTeamUsers — list team members as TeamUser pivot records (includes team_user id needed for kick).
+ * @param teamId - teamId.
+ * @returns Promise.
+ */
+export const getTeamUsers = async (
+  teamId: number | string,
+): Promise<TeamUserRecord[]> => {
+  const { data } = await httpClient<TeamUserRecord[]>(
+    `${API_URL}/teams/${teamId}/users`,
+  );
+
+  return data ?? [];
+};
+
+/**
+ * kickTeamMember — remove a user from a team by their user id.
+ * Resolves the TeamUser pivot record internally.
+ * @param teamId - team id.
+ * @param userId - User.id (from team.members).
+ * @returns Promise with ActionResult.
+ */
+export async function kickTeamMember(
+  teamId: number | string,
+  userId: number | string,
+): Promise<{ error: string | null }> {
+  try {
+    const teamUsers = await getTeamUsers(teamId);
+    const teamUser = teamUsers.find((tu) => {
+      return tu.user.id === Number(userId);
+    });
+
+    if (!teamUser) {
+      return { error: 'Member not found in team' };
+    }
+
+    await httpClient(`${API_URL}/teams/${teamId}/users/${teamUser.id}/kick`, {
+      method: 'POST',
+    });
+    revalidatePath('/dashboard/teams');
+
+    return { error: null };
+  } catch (error) {
+    return {
+      error: (error as Error).message ?? 'Failed to remove member',
+    };
+  }
+}
+
+/**
  * sendInvite.
  * @param teamId - teamId.
  * @param data - data.
  * @returns Promise.
  */
-export const sendInvite = async (teamId: number, data: TeamAddMemberDTO) => {
-  const authHeaders = await getAuthHeaders();
-  const res = await fetch(`${API_URL}/teams/${teamId}/invites`, {
-    method: 'POST',
-    headers: {
-      ...authHeaders,
-    },
-    body: JSON.stringify(data),
-    cache: 'no-store',
-  });
-  const json = await res.json();
+export async function sendInvite(
+  teamId: number,
+  data: TeamAddMemberDTO,
+): Promise<ActionResult<{ id: number; email: string; status: string }>> {
+  try {
+    const { data: invite } = await httpClient<{
+      id: number;
+      email: string;
+      status: string;
+    }>(`${API_URL}/teams/${teamId}/invites`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
 
-  if (!res.ok || !json.success) {
-    throw new Error(json.message ?? 'Failed to send invite');
+    revalidatePath('/dashboard/teams');
+
+    return {
+      data: invite ?? { id: 0, email: data.email, status: 'pending' },
+      error: null,
+    };
+  } catch (error) {
+    if (error instanceof ServerError) {
+      const parsed = parseApiError(
+        error.responseBody ?? '',
+        'Failed to send invite',
+      );
+
+      return {
+        data: null,
+        error: parsed.message,
+        fieldErrors: parsed.fieldErrors,
+      };
+    }
+
+    throw error;
   }
+}
 
-  return { data: json.data, message: json.message as string };
-};
+/**
+ * getTeamInvites — list all invitations for a team (manager-only).
+ * @param teamId - teamId.
+ * @returns Promise with list of TeamInvite.
+ */
+export async function getTeamInvites(
+  teamId: number | string,
+): Promise<TeamInvite[]> {
+  const { data } = await httpClientList<TeamInvite>(
+    `${API_URL}/teams/${teamId}/invites`,
+  );
+
+  return data ?? [];
+}
+
+/**
+ * cancelTeamInvite — cancel a pending invitation.
+ * @param teamId - teamId.
+ * @param inviteId - inviteId.
+ * @returns Promise with ActionResult.
+ */
+export async function cancelTeamInvite(
+  teamId: number | string,
+  inviteId: number,
+): Promise<ActionResult<void>> {
+  try {
+    await httpClient(`${API_URL}/teams/${teamId}/invites/${inviteId}`, {
+      method: 'DELETE',
+    });
+
+    revalidatePath('/dashboard/teams');
+
+    return { data: undefined, error: null };
+  } catch (error) {
+    if (error instanceof ServerError) {
+      const parsed = parseApiError(
+        error.responseBody ?? '',
+        'Failed to cancel invite',
+      );
+
+      return { data: null, error: parsed.message };
+    }
+
+    throw error;
+  }
+}

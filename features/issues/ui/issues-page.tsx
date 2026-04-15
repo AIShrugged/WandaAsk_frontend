@@ -28,7 +28,6 @@ import { SortableHeader } from '@/shared/ui/table/SortableHeader';
 
 import type {
   Issue,
-  IssuePriority,
   IssueSortField,
   IssueStatus,
   PersonOption,
@@ -232,12 +231,7 @@ export function IssuesPage({
     initialHasMore: firstPage.hasMore,
   });
 
-  // Client-side priority filter (backend doesn't support priority filtering)
-  const items = filters.priority
-    ? rawItems.filter((issue) => {
-        return issue.priority === (filters.priority as IssuePriority);
-      })
-    : rawItems;
+  const items = rawItems;
 
   const handleSort = useCallback(
     (field: string) => {
@@ -252,60 +246,64 @@ export function IssuesPage({
   );
 
   const rowStatusOptions = ISSUE_STATUS_OPTIONS;
-  const rowAssigneeOptions = [
-    { value: '', label: 'Unassigned' },
-    ...persons.map((person) => {
-      return {
-        value: String(person.id),
-        label: person.email ? `${person.name} (${person.email})` : person.name,
-      };
-    }),
-  ];
+  const rowAssigneeOptions = useMemo(() => {
+    return [
+      { value: '', label: 'Unassigned' },
+      ...persons.map((person) => {
+        return {
+          value: String(person.id),
+          label: person.email
+            ? `${person.name} (${person.email})`
+            : person.name,
+        };
+      }),
+    ];
+  }, [persons]);
 
   /**
    *
    * @param issue
    * @param patch
    */
-  const updateIssueInline = (
-    issue: Issue,
-    patch: Partial<Pick<Issue, 'status' | 'assignee_id'>>,
-  ) => {
-    const nextStatus = (patch.status ?? issue.status) as IssueStatus;
-    const nextAssigneeId =
-      patch.assignee_id === undefined ? issue.assignee_id : patch.assignee_id;
+  const updateIssueInline = useCallback(
+    (issue: Issue, patch: Partial<Pick<Issue, 'status' | 'assignee_id'>>) => {
+      const nextStatus = (patch.status ?? issue.status) as IssueStatus;
+      const nextAssigneeId =
+        patch.assignee_id === undefined ? issue.assignee_id : patch.assignee_id;
 
-    setUpdatingIssueId(issue.id);
+      setUpdatingIssueId(issue.id);
 
-    startTransition(async () => {
-      try {
-        const result = await updateIssue(issue.id, {
-          name: issue.name,
-          description: issue.description,
-          type: issue.type,
-          status: nextStatus,
-          organization_id: issue.organization_id,
-          team_id: issue.team_id,
-          assignee_id: nextAssigneeId,
-        });
+      startTransition(async () => {
+        try {
+          const result = await updateIssue(issue.id, {
+            name: issue.name,
+            description: issue.description,
+            type: issue.type,
+            status: nextStatus,
+            organization_id: issue.organization_id,
+            team_id: issue.team_id,
+            assignee_id: nextAssigneeId,
+          });
 
-        if ('error' in result) {
+          if ('error' in result) {
+            setUpdatingIssueId(null);
+            toast.error(result.error);
+
+            return;
+          }
+
           setUpdatingIssueId(null);
-          toast.error(result.error);
-
-          return;
+          setEditingStatusIssueId(null);
+          setEditingAssigneeIssueId(null);
+          toast.success('Issue updated');
+        } catch (error) {
+          setUpdatingIssueId(null);
+          toast.error((error as Error).message);
         }
-
-        setUpdatingIssueId(null);
-        setEditingStatusIssueId(null);
-        setEditingAssigneeIssueId(null);
-        toast.success('Issue updated');
-      } catch (error) {
-        setUpdatingIssueId(null);
-        toast.error((error as Error).message);
-      }
-    });
-  };
+      });
+    },
+    [startTransition],
+  );
 
   return (
     <div className='flex flex-col gap-6'>

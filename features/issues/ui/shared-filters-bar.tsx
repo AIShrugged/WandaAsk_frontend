@@ -1,21 +1,15 @@
 'use client';
 
-import { Plus, Search } from 'lucide-react';
-import Link from 'next/link';
+import { Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-import {
-  ISSUE_PRIORITY_LABELS,
-  ISSUE_STATUS_OPTIONS,
-} from '@/features/issues/model/types';
+import { ISSUE_STATUS_OPTIONS } from '@/features/issues/model/types';
 import { getTeams } from '@/features/teams/api/team';
-import { ROUTES } from '@/shared/lib/routes';
 import InputDropdown from '@/shared/ui/input/InputDropdown';
 import { TenantScopeFields } from '@/shared/ui/input/tenant-scope-fields';
 
 import type { OrganizationProps } from '@/entities/organization';
 import type {
-  IssuePriority,
   IssueStatus,
   IssueType,
   PersonOption,
@@ -34,13 +28,6 @@ const TYPE_OPTIONS = [
   { value: '', label: 'Any type' },
   { value: 'development', label: 'Development' },
   { value: 'organization', label: 'Organization' },
-];
-
-const PRIORITY_OPTIONS = [
-  { value: '', label: 'Any priority' },
-  ...Object.entries(ISSUE_PRIORITY_LABELS).map(([value, label]) => {
-    return { value, label };
-  }),
 ];
 
 const STATUS_OPTIONS = [
@@ -79,7 +66,7 @@ export function SharedFiltersBar({
   }, [searchValue]);
 
   const personOptions = [
-    { value: '', label: 'Any assignee' },
+    { value: '', label: 'All' },
     ...persons.map((person) => {
       return {
         value: String(person.id),
@@ -90,17 +77,7 @@ export function SharedFiltersBar({
 
   return (
     <div className='flex flex-col gap-4'>
-      <div className='flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between'>
-        <Link
-          href={`${ROUTES.DASHBOARD.ISSUES}/create`}
-          className='inline-flex h-10 w-auto items-center justify-center gap-2 rounded-[var(--radius-button)] bg-gradient-to-b from-violet-500 to-violet-700 px-4 text-sm font-medium text-primary-foreground shadow-[0_2px_12px_rgba(124,58,237,0.25)] transition-all hover:from-violet-400 hover:to-violet-600'
-        >
-          <Plus className='h-4 w-4' />
-          New issue
-        </Link>
-      </div>
-
-      <div className='grid gap-4 rounded-[var(--radius-card)] border border-border bg-card p-4'>
+      <div className='grid gap-2 sm:grid-cols-2 xl:grid-cols-4'>
         <div className='relative'>
           <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
           <input
@@ -115,59 +92,51 @@ export function SharedFiltersBar({
           />
         </div>
 
-        <TenantScopeFields
-          organizations={organizations}
-          organizationId={filters.organization_id}
-          teamId={filters.team_id}
-          fetchTeams={getTeams}
-          onOrganizationChange={(value) => {
-            onChange({ organization_id: value, team_id: '' });
+        <InputDropdown
+          label='Assignee'
+          options={personOptions}
+          value={filters.assignee_id}
+          onChange={(value) => {
+            onChange({ assignee_id: value as string });
           }}
-          onTeamChange={(value) => {
-            onChange({ team_id: value });
+          searchable
+          disabled={disabled}
+        />
+      </div>
+
+      <TenantScopeFields
+        organizations={organizations}
+        organizationId={filters.organization_id}
+        teamId={filters.team_id}
+        fetchTeams={getTeams}
+        onOrganizationChange={(value) => {
+          onChange({ organization_id: value, team_id: '' });
+        }}
+        onTeamChange={(value) => {
+          onChange({ team_id: value });
+        }}
+        disabled={disabled}
+      />
+
+      <div className='grid gap-2 sm:grid-cols-2 xl:grid-cols-4'>
+        <InputDropdown
+          label='Status'
+          options={STATUS_OPTIONS}
+          value={filters.status}
+          onChange={(value) => {
+            onChange({ status: value as IssueStatus | '' });
           }}
           disabled={disabled}
         />
-
-        <div className='grid gap-4 sm:grid-cols-2 xl:grid-cols-4'>
-          <InputDropdown
-            label='Status'
-            options={STATUS_OPTIONS}
-            value={filters.status}
-            onChange={(value) => {
-              onChange({ status: value as IssueStatus | '' });
-            }}
-            disabled={disabled}
-          />
-          <InputDropdown
-            label='Type'
-            options={TYPE_OPTIONS}
-            value={filters.type}
-            onChange={(value) => {
-              onChange({ type: value as IssueType | '' });
-            }}
-            disabled={disabled}
-          />
-          <InputDropdown
-            label='Assignee'
-            options={personOptions}
-            value={filters.assignee_id}
-            onChange={(value) => {
-              onChange({ assignee_id: value as string });
-            }}
-            searchable
-            disabled={disabled}
-          />
-          <InputDropdown
-            label='Priority'
-            options={PRIORITY_OPTIONS}
-            value={filters.priority}
-            onChange={(value) => {
-              onChange({ priority: value as IssuePriority | '' });
-            }}
-            disabled={disabled}
-          />
-        </div>
+        <InputDropdown
+          label='Type'
+          options={TYPE_OPTIONS}
+          value={filters.type}
+          onChange={(value) => {
+            onChange({ type: value as IssueType | '' });
+          }}
+          disabled={disabled}
+        />
       </div>
     </div>
   );

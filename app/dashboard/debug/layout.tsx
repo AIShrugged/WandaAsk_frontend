@@ -5,15 +5,13 @@ import { isDev } from '@/shared/lib/logger';
 import Card from '@/shared/ui/card/Card';
 import PageHeader from '@/widgets/layout/ui/page-header';
 
+import type { ReactNode } from 'react';
+
 /**
  * DebugLayout — shared layout for all debug sub-routes.
  * Hidden in production. Renders page card with header and route-based tab strip.
  */
-export default function DebugLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function DebugLayout({ children }: { children: ReactNode }) {
   if (!isDev) notFound();
 
   return (

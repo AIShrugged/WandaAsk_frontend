@@ -281,7 +281,7 @@ export default function DemoSeedButton() {
         ) : (
           <Sparkles className='w-3.5 h-3.5 flex-shrink-0' />
         )}
-        <span className='hidden sm:block'>
+        <span className='hidden sm:block text-primary-foreground'>
           {isPending ? 'Demo generating\u2026' : 'Create Demo'}
         </span>
       </button>

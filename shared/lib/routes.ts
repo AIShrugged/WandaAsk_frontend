@@ -7,6 +7,9 @@ export const ROUTES = {
   DASHBOARD: {
     HOME: 'dashboard',
     TODAY: '/dashboard/today',
+    TODAY_MEETINGS: '/dashboard/today/meetings',
+    TODAY_TASKS: '/dashboard/today/tasks',
+    TODAY_ACTIVITY: '/dashboard/today/activity',
     MEETINGS: '/dashboard/meetings',
     TASKS: '/dashboard/tasks',
     CALENDAR: '/dashboard/calendar',
@@ -21,6 +24,7 @@ export const ROUTES = {
     TELEGRAM_CHATS: '/dashboard/chat/telegram',
     MEETING: '/dashboard/meeting',
     TEAMS: '/dashboard/teams',
+    TEAMS_CREATE: '/dashboard/teams/create',
     TEAM: (teamId: number | string) => {
       return `/dashboard/teams/${teamId}`;
     },
@@ -29,6 +33,9 @@ export const ROUTES = {
     FOLLOWUPS: '/dashboard/follow-ups',
     ORGANIZATION: '/dashboard/organization',
     PROFILE: '/dashboard/profile',
+    PROFILE_ACCOUNT: '/dashboard/profile/account',
+    PROFILE_PASSWORD: '/dashboard/profile/password', // eslint-disable-line sonarjs/no-hardcoded-passwords
+    PROFILE_CALENDAR: '/dashboard/profile/calendar',
     SUMMARY: '/dashboard/summary',
     KANBAN: '/dashboard/kanban',
     DEBUG: '/dashboard/debug',
@@ -42,5 +49,20 @@ export const ROUTES = {
     MEETINGS_LIST: '/dashboard/meetings/list',
     MEETINGS_CALENDAR: '/dashboard/meetings/calendar',
     MEETINGS_ORGANIZATION: '/dashboard/meetings/organization',
+    MEETING_DETAIL: (id: string | number) => {
+      return `/dashboard/meetings/${id}`;
+    },
+    MEETING_DETAIL_OVERVIEW: (id: string | number) => {
+      return `/dashboard/meetings/${id}/overview`;
+    },
+    MEETING_DETAIL_AGENDA: (id: string | number) => {
+      return `/dashboard/meetings/${id}/agenda`;
+    },
+    MEETING_DETAIL_TASKS: (id: string | number) => {
+      return `/dashboard/meetings/${id}/tasks`;
+    },
+    MEETING_DETAIL_TRANSCRIPT: (id: string | number) => {
+      return `/dashboard/meetings/${id}/transcript`;
+    },
   },
 } as const;

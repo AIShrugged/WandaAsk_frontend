@@ -7,7 +7,6 @@ import {
   Loader2,
   Mail,
   MessageSquare,
-  Plus,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -182,13 +181,6 @@ export function AiPrepPanel({ event, tasks, carriedTasks }: AiPrepPanelProps) {
           <Bot className='h-4 w-4 text-primary' />
           AI prep
         </button>
-        <Link
-          href='/dashboard/issues/create'
-          className='flex items-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-sm font-medium text-foreground hover:bg-muted transition-colors cursor-pointer'
-        >
-          <Plus className='h-4 w-4 text-primary' />
-          Create task
-        </Link>
       </div>
 
       {expanded && hasItems && (

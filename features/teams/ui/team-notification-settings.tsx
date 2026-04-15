@@ -298,7 +298,7 @@ export default function TeamNotificationSettings({
   };
 
   return (
-    <div className='px-6 pb-10'>
+    <div>
       <div className='flex items-center justify-between mb-4 pt-2'>
         <div className='flex items-center gap-2'>
           <div className='h-px flex-1 bg-border w-4' />

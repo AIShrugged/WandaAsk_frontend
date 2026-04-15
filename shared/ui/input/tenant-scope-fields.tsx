@@ -108,7 +108,7 @@ export function TenantScopeFields({
   }
 
   return (
-    <div className='grid gap-4 md:grid-cols-2'>
+    <div className='grid gap-2 md:grid-cols-2'>
       <InputDropdown
         label='Organization'
         placeholder='Select organization'

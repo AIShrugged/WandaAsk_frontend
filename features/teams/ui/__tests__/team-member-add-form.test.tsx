@@ -89,7 +89,10 @@ describe('TeamMemberAddForm', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockSendInvite.mockResolvedValue({ message: 'Invite sent' });
+    mockSendInvite.mockResolvedValue({
+      data: { id: 1, email: TEST_EMAIL, status: 'pending' },
+      error: null,
+    });
   });
 
   it('renders the email input field', () => {
@@ -128,12 +131,15 @@ describe('TeamMemberAddForm', () => {
     await act(async () => {
       await user.click(screen.getByRole('button', { name: 'Invite' }));
     });
-    expect(toast.success).toHaveBeenCalledWith('Invite sent');
+    expect(toast.success).toHaveBeenCalledWith('Invitation sent');
     expect(close).toHaveBeenCalledTimes(1);
   });
 
-  it('sets field error when sendInvite throws', async () => {
-    mockSendInvite.mockRejectedValue(new Error('Email already invited'));
+  it('sets field error when sendInvite returns an error', async () => {
+    mockSendInvite.mockResolvedValue({
+      data: null,
+      error: 'Email already invited',
+    });
     render(<TeamMemberAddForm close={close} />);
     await user.type(screen.getByTestId(FIELD_EMAIL), TEST_EMAIL);
     await act(async () => {

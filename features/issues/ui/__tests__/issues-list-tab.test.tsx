@@ -39,7 +39,6 @@ const defaultContext: FiltersContextValue = {
     search: '',
     type: '',
     assignee_id: '',
-    priority: '',
     status: '',
   },
   filtersVersion: 3,
@@ -71,7 +70,6 @@ describe('IssuesListTab', () => {
         search: 'auth',
         type: 'development',
         assignee_id: '5',
-        priority: 'high',
         status: 'open',
       },
     };

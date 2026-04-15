@@ -1,7 +1,8 @@
 'use client';
 
+import { SlidersHorizontal } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { FiltersContext } from '@/features/issues/model/filters-context';
 import {
@@ -13,7 +14,6 @@ import { SharedFiltersBar } from '@/features/issues/ui/shared-filters-bar';
 
 import type { OrganizationProps } from '@/entities/organization';
 import type {
-  IssuePriority,
   IssueSortField,
   IssueType,
   PersonOption,
@@ -84,7 +84,6 @@ export function IssuesLayoutClient({
       search: searchParams.get('search') ?? '',
       type: isIssueType(typeRaw) ? typeRaw : '',
       assignee_id: assigneeIdRaw,
-      priority: (searchParams.get('priority') ?? '') as IssuePriority | '',
       status: isIssueStatus(statusRaw) ? statusRaw : '',
     };
   });
@@ -101,6 +100,7 @@ export function IssuesLayoutClient({
     return isSortOrder(raw) ? raw : 'desc';
   });
 
+  const [filtersVisible, setFiltersVisible] = useState(true);
   const [filters, setFilters] = useState<SharedFilters>(initialFilters);
   const [filtersVersion, setFiltersVersion] = useState(0);
   const columnsVersionRef = useRef(0);
@@ -173,34 +173,53 @@ export function IssuesLayoutClient({
       search: filters.search,
       type: filters.type,
       assignee_id: filters.assignee_id,
-      priority: filters.priority,
       status: filters.status,
     });
   }, [filters]);
 
+  const contextValue = useMemo(() => {
+    return {
+      filters,
+      filtersVersion,
+      columnsVersion,
+      initialSort,
+      initialOrder,
+    };
+  }, [filters, filtersVersion, columnsVersion, initialSort, initialOrder]);
+
   return (
-    <FiltersContext.Provider
-      value={{
-        filters,
-        filtersVersion,
-        columnsVersion,
-        initialSort,
-        initialOrder,
-      }}
-    >
-      <div className='flex flex-col h-full overflow-hidden'>
-        <div className='px-4 pt-4 shrink-0'>
-          <SharedFiltersBar
-            filters={filters}
-            organizations={organizations}
-            persons={persons}
-            onChange={handleFiltersChange}
-          />
+    <FiltersContext.Provider value={contextValue}>
+      <div className='flex flex-col'>
+        <div className='px-2 pt-4 shrink-0'>
+          <div className='flex items-center justify-between mb-2'>
+            <button
+              type='button'
+              onClick={() => {
+                return setFiltersVisible((v) => {
+                  return !v;
+                });
+              }}
+              aria-label={filtersVisible ? 'Hide filters' : 'Show filters'}
+              aria-expanded={filtersVisible}
+              className='flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer select-none'
+            >
+              <SlidersHorizontal className='h-3.5 w-3.5' />
+              {filtersVisible ? 'Hide filters' : 'Show filters'}
+            </button>
+          </div>
+          {filtersVisible && (
+            <SharedFiltersBar
+              filters={filters}
+              organizations={organizations}
+              persons={persons}
+              onChange={handleFiltersChange}
+            />
+          )}
         </div>
         <div className='shrink-0 mt-4'>
           <IssuesTabsNav />
         </div>
-        <div className='flex-1 overflow-hidden'>{children}</div>
+        <div>{children}</div>
       </div>
     </FiltersContext.Provider>
   );

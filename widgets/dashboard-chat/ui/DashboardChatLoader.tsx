@@ -1,8 +1,5 @@
-import { getAgentActivity } from '@/features/agents/api/activity';
-import { getAgentTasks } from '@/features/agents/api/agents';
 import { getChats } from '@/features/chat/api/chats';
 import { getMessages } from '@/features/chat/api/messages';
-import { getOrganizations } from '@/features/organization/api/organization';
 import { DashboardChatPanel } from '@/widgets/dashboard-chat/ui/DashboardChatPanel';
 
 import type { Message } from '@/features/chat/types';
@@ -15,17 +12,7 @@ const INITIAL_MESSAGES_LIMIT = 20;
  * @returns JSX element.
  */
 export async function DashboardChatLoader() {
-  const [{ chats }, { data: organizations }, activityResult, tasksResult] =
-    await Promise.all([
-      getChats(0, 20),
-      getOrganizations(),
-      getAgentActivity(0, 20).catch(() => {
-        return { items: [], totalCount: 0, hasMore: false };
-      }),
-      getAgentTasks(0, 20).catch(() => {
-        return { data: [], totalCount: 0, hasMore: false };
-      }),
-    ]);
+  const { chats } = await getChats(0, 20);
 
   const firstChat = chats[0] ?? null;
   let initialMessages: Message[] = [];
@@ -65,11 +52,6 @@ export async function DashboardChatLoader() {
       initialMessages={initialMessages}
       totalMessagesCount={totalMessagesCount}
       startOffset={startOffset}
-      organizations={organizations ?? []}
-      initialActivityItems={activityResult.items}
-      activityTotalCount={activityResult.totalCount}
-      initialTaskItems={tasksResult.data}
-      tasksTotalCount={tasksResult.totalCount}
     />
   );
 }

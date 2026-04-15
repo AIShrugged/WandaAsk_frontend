@@ -1,6 +1,7 @@
 'use client';
 
-import { ChevronUp, ChevronDown, Settings } from 'lucide-react';
+import clsx from 'clsx';
+import { ChevronUp, ChevronDown } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import {
   useState,
@@ -48,19 +49,16 @@ function noop() {}
  * @param root0.organization - Organization to render.
  * @param root0.isActive - Whether this org is currently active.
  * @param root0.pending - Whether a form action is in flight.
- * @param root0.onSettingsClick - Click handler for the settings icon.
  * @returns JSX element.
  */
 function OrgItem({
   organization,
   isActive,
   pending,
-  onSettingsClick,
 }: {
   organization: OrganizationProps;
   isActive: boolean;
   pending: boolean;
-  onSettingsClick: () => void;
 }) {
   if (isActive) {
     return (
@@ -73,12 +71,6 @@ function OrgItem({
             {organization.pivot.role}
           </p>
         </div>
-        <button
-          className='cursor-pointer text-muted-foreground hover:text-foreground transition-colors'
-          onClick={onSettingsClick}
-        >
-          <Settings size={16} />
-        </button>
       </div>
     );
   }
@@ -184,7 +176,7 @@ export default function OrganizationDropdown({
 
       setDropdownPos({
         top: rect.bottom + 4,
-        left: Math.min(rect.left, window.innerWidth - 280 - 8),
+        left: Math.min(rect.left, globalThis.innerWidth - 280 - 8),
         minWidth: rect.width,
       });
     }
@@ -198,14 +190,14 @@ export default function OrganizationDropdown({
     return (
       <div className='max-w-[130px] xs:max-w-[180px] sm:max-w-[260px]'>
         <div
-          className='w-full rounded-[var(--radius-button)] bg-accent px-3 py-2 min-w-0'
+          className='w-full rounded-[var(--radius-button)] border border-primary/40 bg-primary/10 px-3 py-2 min-w-0 shadow-[0_0_10px_rgba(124,58,237,0.2)]'
           suppressHydrationWarning
         >
           <div className='text-left min-w-0 flex-1'>
-            <div className='text-sm font-medium text-accent-foreground truncate'>
+            <div className='text-sm font-medium text-primary truncate'>
               {active?.name ?? 'Select organization'}
             </div>
-            <div className='text-xs text-accent-foreground/70 truncate'>
+            <div className='text-xs text-primary/70 truncate'>
               {active?.pivot?.role}
             </div>
           </div>
@@ -219,15 +211,18 @@ export default function OrganizationDropdown({
       <button
         ref={buttonRef}
         onClick={handleToggle}
-        className='cursor-pointer w-full flex items-center justify-between gap-2
-                   rounded-[var(--radius-button)] bg-accent px-3 py-2
-                   hover:bg-accent/80 transition min-w-0'
+        className={clsx(
+          'cursor-pointer w-full flex items-center justify-between gap-2 rounded-[var(--radius-button)] border border-primary/40 bg-primary/10 px-3 py-2 text-sm font-medium transition-all select-none shadow-[0_0_10px_rgba(124,58,237,0.2)] min-w-0',
+          open
+            ? 'bg-primary/20 border-primary/60 shadow-[0_0_16px_rgba(124,58,237,0.35)]'
+            : 'hover:bg-primary/20 hover:border-primary/60 hover:shadow-[0_0_16px_rgba(124,58,237,0.35)]',
+        )}
       >
         <div className='text-left min-w-0 flex-1'>
-          <div className='text-sm font-medium text-accent-foreground truncate'>
+          <div className='text-sm font-medium text-primary-foreground truncate'>
             {active?.name ?? 'Select organization'}
           </div>
-          <div className='text-xs text-accent-foreground/70 truncate'>
+          <div className='text-xs text-muted-foreground truncate'>
             {active?.pivot?.role}
           </div>
         </div>
@@ -271,12 +266,6 @@ export default function OrganizationDropdown({
                     organization={organization}
                     isActive={organization.id === organizationActiveId}
                     pending={pending}
-                    onSettingsClick={() => {
-                      setOpen(false);
-                      push(
-                        `${ROUTES.DASHBOARD.ORGANIZATION}/${organization.id}`,
-                      );
-                    }}
                   />
                 </form>
               );

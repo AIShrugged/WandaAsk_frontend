@@ -1,6 +1,8 @@
 import { format, parseISO } from 'date-fns';
 import { Calendar, CheckCircle2, Clock, Lightbulb, Users } from 'lucide-react';
 
+import { MarkdownContent } from '@/shared/ui/markdown-content';
+
 import type { MeetingCardArtifact } from '@/entities/artifact/model/types';
 
 /**
@@ -63,11 +65,7 @@ export function MeetingCard({ data }: { data: MeetingCardArtifact['data'] }) {
       </div>
 
       {/* Summary */}
-      {data.summary && (
-        <p className='text-sm text-foreground leading-relaxed'>
-          {data.summary}
-        </p>
-      )}
+      {data.summary && <MarkdownContent>{data.summary}</MarkdownContent>}
 
       {/* Key points */}
       {keyPoints.length > 0 && (

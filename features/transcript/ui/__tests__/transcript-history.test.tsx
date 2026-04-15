@@ -2,10 +2,7 @@ import { render, screen } from '@testing-library/react';
 
 import TranscriptHistory from '@/features/transcript/ui/transcript-history';
 
-import type {
-  TranscriptProps,
-  TranscriptsProps,
-} from '@/features/transcript/model/types';
+import type { TranscriptProps } from '@/features/transcript/model/types';
 
 jest.mock('@/features/transcript/api/transcript', () => {
   return {
@@ -67,26 +64,13 @@ const makeTranscript = (id: number): TranscriptProps => {
     } as TranscriptProps['participant'],
   };
 };
-const makeTranscriptsData = (items: TranscriptProps[]): TranscriptsProps => {
-  return {
-    data: items,
-    message: 'ok',
-    meta: [],
-    status: 200,
-    success: true,
-  };
-};
 
 describe('TranscriptHistory', () => {
   it('renders TranscriptList with initial items', () => {
     const items = [makeTranscript(1), makeTranscript(2)];
 
     render(
-      <TranscriptHistory
-        eventId='1'
-        initialData={makeTranscriptsData(items)}
-        initialTotal={2}
-      />,
+      <TranscriptHistory eventId='1' initialItems={items} initialTotal={2} />,
     );
 
     expect(screen.getByTestId('transcript-list')).toHaveTextContent('items:2');
@@ -96,11 +80,7 @@ describe('TranscriptHistory', () => {
     const items = [makeTranscript(1), makeTranscript(2)];
 
     render(
-      <TranscriptHistory
-        eventId='1'
-        initialData={makeTranscriptsData(items)}
-        initialTotal={2}
-      />,
+      <TranscriptHistory eventId='1' initialItems={items} initialTotal={2} />,
     );
 
     expect(screen.getByTestId('scroll-status')).toHaveTextContent('loaded:2');
@@ -110,23 +90,38 @@ describe('TranscriptHistory', () => {
     const items = [makeTranscript(1)];
 
     render(
-      <TranscriptHistory
-        eventId='1'
-        initialData={makeTranscriptsData(items)}
-        initialTotal={10}
-      />,
+      <TranscriptHistory eventId='1' initialItems={items} initialTotal={10} />,
     );
 
     expect(screen.queryByTestId('scroll-status')).not.toBeInTheDocument();
   });
 
+  it('renders sentinel div when hasMore is true', () => {
+    const items = [makeTranscript(1)];
+
+    const { container } = render(
+      <TranscriptHistory eventId='1' initialItems={items} initialTotal={10} />,
+    );
+
+    // The sentinel is a plain div with class h-10; it replaces the scroll status
+    const sentinel = container.querySelector('.h-10');
+
+    expect(sentinel).toBeInTheDocument();
+  });
+
+  it('does not render sentinel div when all items are loaded', () => {
+    const items = [makeTranscript(1), makeTranscript(2)];
+
+    const { container } = render(
+      <TranscriptHistory eventId='1' initialItems={items} initialTotal={2} />,
+    );
+
+    expect(container.querySelector('.h-10')).not.toBeInTheDocument();
+  });
+
   it('does not show spin loader initially', () => {
     render(
-      <TranscriptHistory
-        eventId='1'
-        initialData={makeTranscriptsData([])}
-        initialTotal={0}
-      />,
+      <TranscriptHistory eventId='1' initialItems={[]} initialTotal={0} />,
     );
 
     expect(screen.queryByTestId('spin-loader')).not.toBeInTheDocument();
@@ -134,11 +129,7 @@ describe('TranscriptHistory', () => {
 
   it('renders with empty initial data', () => {
     render(
-      <TranscriptHistory
-        eventId='1'
-        initialData={makeTranscriptsData([])}
-        initialTotal={0}
-      />,
+      <TranscriptHistory eventId='1' initialItems={[]} initialTotal={0} />,
     );
 
     expect(screen.getByTestId('transcript-list')).toHaveTextContent('items:0');

@@ -1,6 +1,6 @@
 'use client';
 
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import TeamDashboardTabHealth from './team-dashboard-tab-health';
 import TeamDashboardTabPeople from './team-dashboard-tab-people';
@@ -15,6 +15,9 @@ import type {
   TabRisks,
   TabStatus,
 } from '../../model/dashboard-types';
+import type { TeamInvite, TeamProps } from '@/entities/team';
+import type { TelegramChatRegistration } from '@/features/chat/types';
+import type { TeamNotificationSetting } from '@/features/teams/model/types';
 
 const TABS = [
   { key: 'status', label: 'Status' },
@@ -26,15 +29,23 @@ const TABS = [
 
 type TabKey = (typeof TABS)[number]['key'];
 
+interface DashboardTabs {
+  status: TabStatus;
+  meeting_readiness: TabMeetingReadiness;
+  people: TabPeople;
+  health: TabHealth;
+  risks: TabRisks;
+}
+
 interface TeamDashboardTabsProps {
   currentTab: string;
-  tabs: {
-    status: TabStatus;
-    meeting_readiness: TabMeetingReadiness;
-    people: TabPeople;
-    health: TabHealth;
-    risks: TabRisks;
-  };
+  tabs: DashboardTabs | null;
+  teamId: number;
+  members: TeamProps['members'];
+  pendingInvites: TeamInvite[];
+  isManager: boolean;
+  settings: TeamNotificationSetting[];
+  availableChats: TelegramChatRegistration[];
 }
 
 /**
@@ -42,22 +53,41 @@ interface TeamDashboardTabsProps {
  * @param props - Component props.
  * @param props.currentTab
  * @param props.tabs
+ * @param props.teamId
+ * @param props.members
+ * @param props.pendingInvites
+ * @param props.isManager
+ * @param props.settings
+ * @param props.availableChats
  */
 export default function TeamDashboardTabs({
   currentTab,
   tabs,
+  teamId,
+  members,
+  pendingInvites,
+  isManager,
+  settings,
+  availableChats,
 }: TeamDashboardTabsProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  // Redirect legacy ?tab=settings to ?tab=people
+  const resolvedTab = currentTab === 'settings' ? 'people' : currentTab;
 
   const activeTab: TabKey = TABS.some((t) => {
-    return t.key === currentTab;
+    return t.key === resolvedTab;
   })
-    ? (currentTab as TabKey)
+    ? (resolvedTab as TabKey)
     : 'status';
 
   const handleTabChange = (key: TabKey) => {
-    router.push(`${pathname}?tab=${key}`, { scroll: false });
+    const params = new URLSearchParams(searchParams.toString());
+
+    params.set('tab', key);
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
   return (
@@ -66,6 +96,7 @@ export default function TeamDashboardTabs({
       <div className='flex gap-1 border-b border-border px-6 flex-shrink-0'>
         {TABS.map((tab) => {
           const isActive = tab.key === activeTab;
+
           return (
             <button
               key={tab.key}
@@ -88,19 +119,38 @@ export default function TeamDashboardTabs({
 
       {/* Tab content */}
       <div className='flex-1 overflow-y-auto px-6 py-4'>
-        {activeTab === 'status' && (
-          <TeamDashboardTabStatus data={tabs.status} />
-        )}
-        {activeTab === 'readiness' && (
-          <TeamDashboardTabReadiness data={tabs.meeting_readiness} />
-        )}
         {activeTab === 'people' && (
-          <TeamDashboardTabPeople data={tabs.people} />
+          <TeamDashboardTabPeople
+            analyticsData={tabs?.people ?? null}
+            members={members}
+            pendingInvites={pendingInvites}
+            teamId={teamId}
+            isManager={isManager}
+            settings={settings}
+            availableChats={availableChats}
+          />
         )}
-        {activeTab === 'health' && (
-          <TeamDashboardTabHealth data={tabs.health} />
+        {activeTab !== 'people' && tabs && (
+          <>
+            {activeTab === 'status' && (
+              <TeamDashboardTabStatus data={tabs.status} />
+            )}
+            {activeTab === 'readiness' && (
+              <TeamDashboardTabReadiness data={tabs.meeting_readiness} />
+            )}
+            {activeTab === 'health' && (
+              <TeamDashboardTabHealth data={tabs.health} />
+            )}
+            {activeTab === 'risks' && (
+              <TeamDashboardTabRisks data={tabs.risks} />
+            )}
+          </>
         )}
-        {activeTab === 'risks' && <TeamDashboardTabRisks data={tabs.risks} />}
+        {activeTab !== 'people' && !tabs && (
+          <p className='text-sm text-muted-foreground text-center py-10'>
+            No dashboard data available.
+          </p>
+        )}
       </div>
     </div>
   );

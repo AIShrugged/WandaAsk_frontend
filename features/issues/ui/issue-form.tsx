@@ -36,7 +36,6 @@ interface IssueFormProps {
   persons: PersonOption[];
   issue?: Issue;
   defaultOrganizationId?: string;
-  hideStatusField?: boolean;
 }
 
 interface IssueFormValues {
@@ -56,7 +55,6 @@ interface IssueFormValues {
  * @param props.persons
  * @param props.issue
  * @param props.defaultOrganizationId
- * @param props.hideStatusField
  * @returns JSX element.
  */
 export function IssueForm({
@@ -64,7 +62,6 @@ export function IssueForm({
   persons,
   issue,
   defaultOrganizationId = '',
-  hideStatusField = false,
 }: IssueFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -185,9 +182,6 @@ export function IssueForm({
       />
       <InputTextarea
         {...register('description', {
-          /**
-           *
-           */
           onChange: () => {
             clearErrors('description');
             setRootError('');
@@ -197,7 +191,7 @@ export function IssueForm({
         value={watch('description')}
         error={errors.description?.message}
       />
-      <div className='grid gap-4 md:grid-cols-2'>
+      <div className='grid gap-2 md:grid-cols-2'>
         <InputDropdown
           label='Type'
           options={[{ value: '', label: 'Select type' }, ...ISSUE_TYPE_OPTIONS]}
@@ -209,19 +203,18 @@ export function IssueForm({
           }}
           error={errors.type?.message}
         />
-        {hideStatusField ? null : (
-          <InputDropdown
-            label='Status'
-            options={statusOptions}
-            value={watch('status')}
-            onChange={(value) => {
-              setValue('status', value as IssueStatus, { shouldDirty: true });
-              clearErrors('status');
-              setRootError('');
-            }}
-            error={errors.status?.message}
-          />
-        )}
+
+        <InputDropdown
+          label='Status'
+          options={statusOptions}
+          value={watch('status')}
+          onChange={(value) => {
+            setValue('status', value as IssueStatus, { shouldDirty: true });
+            clearErrors('status');
+            setRootError('');
+          }}
+          error={errors.status?.message}
+        />
       </div>
 
       <TenantScopeFields
@@ -243,29 +236,31 @@ export function IssueForm({
         disabled={isPending}
       />
 
-      <InputDropdown
-        label='Assignee'
-        options={assigneeOptions}
-        value={watch('assignee_id')}
-        onChange={(value) => {
-          setValue('assignee_id', value as string, { shouldDirty: true });
-          clearErrors('assignee_id');
-        }}
-        searchable
-        error={errors.assignee_id?.message}
-      />
+      <div className='grid gap-2 md:grid-cols-2'>
+        <InputDropdown
+          label='Assignee'
+          options={assigneeOptions}
+          value={watch('assignee_id')}
+          onChange={(value) => {
+            setValue('assignee_id', value as string, { shouldDirty: true });
+            clearErrors('assignee_id');
+          }}
+          searchable
+          error={errors.assignee_id?.message}
+        />
+      </div>
 
       {rootError ? (
         <p className='text-sm text-destructive'>{rootError}</p>
       ) : null}
 
-      <div className='flex flex-wrap gap-3 pt-2'>
+      <div className='grid gap-2 md:grid-cols-2'>
         <Button
           type='submit'
           loading={isPending}
           disabled={isPending || !isDirty}
         >
-          {issue ? 'Save changes' : 'Create issue'}
+          {issue ? 'Save changes' : 'Create task'}
         </Button>
         {issue ? (
           <Button
@@ -275,7 +270,7 @@ export function IssueForm({
             onClick={() => {
               startTransition(async () => {
                 await deleteIssue(issue.id);
-                toast.success('Issue deleted');
+                toast.success('Task deleted');
                 router.push(ROUTES.DASHBOARD.ISSUES);
               });
             }}

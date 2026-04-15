@@ -1,15 +1,12 @@
 import { getMenuItems, ICONS_MAP } from '@/features/menu/lib/options';
-import { ROUTES } from '@/shared/lib/routes';
 
 describe('getMenuItems', () => {
-  it('contains at least 4 items without agent management', () => {
-    expect(
-      getMenuItems({ canManageAgents: false }).length,
-    ).toBeGreaterThanOrEqual(4);
+  it('contains at least 3 items', () => {
+    expect(getMenuItems().length).toBeGreaterThanOrEqual(3);
   });
 
   it('each item has id, label, icon and href', () => {
-    for (const item of getMenuItems({ canManageAgents: false })) {
+    for (const item of getMenuItems()) {
       expect(item.id).toBeTruthy();
       expect(item.label).toBeTruthy();
       expect(item.icon).toBeTruthy();
@@ -18,7 +15,7 @@ describe('getMenuItems', () => {
   });
 
   it('all ids are unique', () => {
-    const items = getMenuItems({ canManageAgents: true });
+    const items = getMenuItems();
     const ids = items.map((item) => {
       return item.id;
     });
@@ -26,18 +23,8 @@ describe('getMenuItems', () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it('includes an AI Chat item pointing to the chat route', () => {
-    const chatItem = getMenuItems({ canManageAgents: false }).find((item) => {
-      return item.id === 'chat';
-    });
-
-    expect(chatItem).toBeDefined();
-    expect(chatItem?.label).toBe('AI Chat');
-    expect(chatItem?.href).toBe(ROUTES.DASHBOARD.CHAT);
-  });
-
   it('includes a Teams item', () => {
-    const teamsItem = getMenuItems({ canManageAgents: false }).find((item) => {
+    const teamsItem = getMenuItems().find((item) => {
       return item.id === 'teams';
     });
 
@@ -45,37 +32,17 @@ describe('getMenuItems', () => {
     expect(teamsItem?.label).toBe('Teams');
   });
 
-  it('includes a Methodologies item', () => {
-    const item = getMenuItems({ canManageAgents: false }).find((menuItem) => {
-      return menuItem.id === 'methodology';
+  it('includes a Tasks item', () => {
+    const item = getMenuItems().find((menuItem) => {
+      return menuItem.id === 'issues';
     });
 
     expect(item).toBeDefined();
-    expect(item?.label).toBe('Methodologies');
-  });
-
-  it('adds agents item when agent management is enabled', () => {
-    const items = getMenuItems({ canManageAgents: true });
-
-    expect(
-      items.find((item) => {
-        return item.id === 'agents';
-      }),
-    ).toBeDefined();
-  });
-
-  it('omits agents item when agent management is disabled', () => {
-    const items = getMenuItems({ canManageAgents: false });
-
-    expect(
-      items.find((item) => {
-        return item.id === 'agents';
-      }),
-    ).toBeUndefined();
+    expect(item?.label).toBe('Tasks');
   });
 
   it('items are sorted by position ascending', () => {
-    const items = getMenuItems({ canManageAgents: true });
+    const items = getMenuItems();
     const positions = items.map((item) => {
       return item.position;
     });
@@ -88,7 +55,7 @@ describe('getMenuItems', () => {
   });
 
   it('all hrefs are non-empty strings', () => {
-    for (const item of getMenuItems({ canManageAgents: true })) {
+    for (const item of getMenuItems()) {
       expect(typeof item.href).toBe('string');
       expect(item.href?.length ?? 0).toBeGreaterThan(0);
     }
@@ -121,7 +88,7 @@ describe('ICONS_MAP', () => {
   });
 
   it('all menu icon keys exist in ICONS_MAP', () => {
-    for (const item of getMenuItems({ canManageAgents: true })) {
+    for (const item of getMenuItems()) {
       expect(ICONS_MAP[item.icon as keyof typeof ICONS_MAP]).toBeDefined();
     }
   });

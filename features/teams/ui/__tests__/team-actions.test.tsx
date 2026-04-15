@@ -136,7 +136,7 @@ describe('TeamActions', () => {
       await user.click(screen.getByTestId(TRASH_ICON).closest('button')!);
     });
     expect(mockDeleteTeam).toHaveBeenCalledWith(5);
-    expect(toast.success).toHaveBeenCalledWith('Команда успешно удалена');
+    expect(toast.success).toHaveBeenCalledWith('Team deleted');
   });
 
   it('shows error toast when deleteTeam returns an error', async () => {
@@ -145,7 +145,7 @@ describe('TeamActions', () => {
     await act(async () => {
       await user.click(screen.getByTestId(TRASH_ICON).closest('button')!);
     });
-    expect(toast.error).toHaveBeenCalledWith('Не удалось удалить команду');
+    expect(toast.error).toHaveBeenCalledWith('Failed to delete team');
   });
 
   it('shows error toast when deleteTeam throws', async () => {
@@ -155,7 +155,7 @@ describe('TeamActions', () => {
       await user.click(screen.getByTestId(TRASH_ICON).closest('button')!);
     });
     expect(toast.error).toHaveBeenCalledWith(
-      'Произошла ошибка при удалении команды',
+      'An error occurred while deleting the team',
     );
   });
 

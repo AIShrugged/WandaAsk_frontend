@@ -21,6 +21,13 @@ export async function httpClient<T>(
   options: RequestInit = {},
 ): Promise<ApiResponse<T>> {
   const authHeaders = await getAuthHeaders();
+
+  // When the body is FormData, let fetch set Content-Type automatically
+  // (it must include the multipart boundary). Overriding it breaks uploads.
+  if (options.body instanceof FormData) {
+    delete (authHeaders as Record<string, string>)['Content-Type'];
+  }
+
   const res = await fetch(url, {
     ...options,
     headers: {
