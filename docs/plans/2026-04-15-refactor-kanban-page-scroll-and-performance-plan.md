@@ -2,7 +2,7 @@
 title:
   'refactor: Kanban page-level scroll and issues page performance optimization'
 type: refactor
-status: active
+status: completed
 date: 2026-04-15
 ---
 
