@@ -5,10 +5,13 @@ import {
   getIssueAttachments,
   getPersons,
   IssueAttachments,
+  IssueComments,
+  getIssueComments,
 } from '@/features/issues';
 import { IssueForm } from '@/features/issues/ui/issue-form';
 import { IssueLinkedTask } from '@/features/issues/ui/issue-linked-task';
 import { getOrganizations } from '@/features/organization/api/organization';
+import { getUser } from '@/features/user/api/user';
 import Card from '@/shared/ui/card/Card';
 import CardBody from '@/shared/ui/card/CardBody';
 import PageHeader from '@/widgets/layout/ui/page-header';
@@ -29,7 +32,7 @@ export default async function IssueDetailPage({
 
   if (!Number.isFinite(issueId) || issueId <= 0) notFound();
 
-  const [issue, attachments, organizationsResponse, persons] =
+  const [issue, attachments, organizationsResponse, persons, comments, userResponse] =
     await Promise.all([
       getIssue(issueId).catch((error: Error) => {
         if (
@@ -41,12 +44,14 @@ export default async function IssueDetailPage({
         }
         throw error;
       }),
-      getIssueAttachments(issueId).catch(() => {
-        return [];
-      }),
+      getIssueAttachments(issueId).catch(() => []),
       getOrganizations(),
       getPersons(),
+      getIssueComments(issueId).catch(() => []),
+      getUser(),
     ]);
+
+  const currentUserId = userResponse.data?.data?.id ?? 0;
 
   return (
     <div className='h-full overflow-y-auto'>
@@ -65,6 +70,17 @@ export default async function IssueDetailPage({
             </div>
           </Card>
           <IssueLinkedTask issue={issue} />
+
+          <Card className='flex flex-col'>
+            <PageHeader title='Comments' />
+            <CardBody>
+              <IssueComments
+                issueId={issueId}
+                initialComments={comments}
+                currentUserId={currentUserId}
+              />
+            </CardBody>
+          </Card>
         </div>
 
         <div className='flex h-full flex-col gap-6'>

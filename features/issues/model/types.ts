@@ -162,6 +162,22 @@ export interface IssueFilters {
   search?: string;
 }
 
+export interface IssueCommentUser {
+  id: number;
+  name: string;
+}
+
+export interface IssueComment {
+  id: number;
+  issue_id: number;
+  parent_id: number | null;
+  content: string;
+  user: IssueCommentUser;
+  replies: IssueComment[];
+  created_at: string;
+  updated_at: string;
+}
+
 export interface IssueUpsertDTO {
   name: string;
   description: string | null;
