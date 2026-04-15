@@ -24,7 +24,6 @@ import {
   KANBAN_COLUMNS,
   type IssueStatus,
   type KanbanCard,
-  type KanbanPriority,
 } from '@/features/kanban/model/types';
 import { ROUTES } from '@/shared/lib/routes';
 import Avatar from '@/shared/ui/common/avatar';
@@ -73,15 +72,6 @@ const TaskPreviewModal = memo(function TaskPreviewModal({
   card: KanbanCard | null;
   onClose: () => void;
 }) {
-  const priorityConfig: Record<
-    KanbanPriority,
-    { label: string; color: string }
-  > = {
-    critical: { label: 'Critical', color: 'text-red-400' },
-    high: { label: 'High', color: 'text-orange-400' },
-    medium: { label: 'Medium', color: 'text-yellow-400' },
-    low: { label: 'Low', color: 'text-muted-foreground' },
-  };
   const typeColors: Record<string, string> = {
     development: 'bg-blue-500/20 text-blue-300',
     organization: 'bg-purple-500/20 text-purple-300',
@@ -168,16 +158,6 @@ const TaskPreviewModal = memo(function TaskPreviewModal({
 
                 {/* Meta grid */}
                 <div className='flex flex-col gap-2 pt-1'>
-                  {/* Priority */}
-                  <div className='flex items-center justify-between text-xs'>
-                    <span className='text-muted-foreground'>Priority</span>
-                    <span
-                      className={`font-medium ${priorityConfig[card.priority ?? 'low'].color}`}
-                    >
-                      {priorityConfig[card.priority ?? 'low'].label}
-                    </span>
-                  </div>
-
                   {/* Story points */}
                   {card.story_points !== null &&
                   card.story_points !== undefined ? (

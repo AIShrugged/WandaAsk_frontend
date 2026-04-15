@@ -9,5 +9,6 @@ export { EmptyState } from './ui/empty-state';
 export { MeetingDetailCard } from './ui/meeting-detail-card';
 export { StaleItems } from './ui/stale-items';
 export { TodayTabsNav } from './ui/today-tabs-nav';
+export { TaskStatsBlock } from './ui/task-stats-block';
 export { WaitingOnYou } from './ui/waiting-on-you';
 export { WaitingState } from './ui/waiting-state';

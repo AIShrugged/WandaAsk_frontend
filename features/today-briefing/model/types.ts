@@ -44,7 +44,7 @@ export interface MeetingSummaryBrief {
   summary: string;
   key_points: string[];
   decisions: string[];
-  attendees?: MeetingAttendee[];
+  attendees: MeetingAttendee[];
 }
 
 export interface MeetingReviewBrief {

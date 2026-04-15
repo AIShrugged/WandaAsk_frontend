@@ -18,6 +18,7 @@ export function MeetingDetailCard({ event }: MeetingDetailCardProps) {
   const start = parseISO(event.starts_at);
   const end = parseISO(event.ends_at);
   const duration = differenceInMinutes(end, start);
+
   return (
     <Card className='flex flex-col gap-0 overflow-hidden'>
       {/* Header */}
@@ -54,13 +55,13 @@ export function MeetingDetailCard({ event }: MeetingDetailCardProps) {
             </span>
           )}
         </div>
-        {event.summary?.attendees && event.summary.attendees.length > 0 && (
-          <div className={'mt-2'}>
+        {event.summary && event.summary.attendees.length > 0 && (
+          <div className='mt-2'>
             <div className='flex flex-wrap gap-1.5'>
-              {event.summary.attendees.map((attendee, i) => {
+              {event.summary.attendees.map((attendee) => {
                 return (
                   <span
-                    key={i}
+                    key={attendee.name}
                     className='text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground'
                   >
                     {attendee.name}

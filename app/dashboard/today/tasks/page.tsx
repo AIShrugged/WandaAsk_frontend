@@ -3,6 +3,7 @@ import {
   AiPrepPanel,
   CarriedTasks,
   StaleItems,
+  TaskStatsBlock,
   getTodayBriefing,
   WaitingOnYou,
 } from '@/features/today-briefing';
@@ -23,6 +24,9 @@ export default async function TodayTasksPage({
   return (
     <Card className='h-full flex flex-col'>
       <PageHeader title='Tasks' />
+      <div className='px-6 pt-4'>
+        <TaskStatsBlock data={data} />
+      </div>
       <CardBody>
         <div className='flex flex-col gap-6'>
           {data.events.map((event) => {
