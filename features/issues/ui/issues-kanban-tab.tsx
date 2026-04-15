@@ -69,7 +69,7 @@ export function IssuesKanbanTab({
   }, [columnsVersion]);
 
   return (
-    <div className='flex-1 overflow-hidden p-3 h-full'>
+    <div className='p-3'>
       <KanbanBoard
         columns={columns}
         organizations={organizations}

@@ -2,7 +2,7 @@
 
 import { SlidersHorizontal } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { FiltersContext } from '@/features/issues/model/filters-context';
 import {
@@ -177,17 +177,19 @@ export function IssuesLayoutClient({
     });
   }, [filters]);
 
+  const contextValue = useMemo(() => {
+    return {
+      filters,
+      filtersVersion,
+      columnsVersion,
+      initialSort,
+      initialOrder,
+    };
+  }, [filters, filtersVersion, columnsVersion, initialSort, initialOrder]);
+
   return (
-    <FiltersContext.Provider
-      value={{
-        filters,
-        filtersVersion,
-        columnsVersion,
-        initialSort,
-        initialOrder,
-      }}
-    >
-      <div className='flex flex-col h-full overflow-hidden'>
+    <FiltersContext.Provider value={contextValue}>
+      <div className='flex flex-col'>
         <div className='px-2 pt-4 shrink-0'>
           <div className='flex items-center justify-between mb-2'>
             <button
@@ -217,7 +219,7 @@ export function IssuesLayoutClient({
         <div className='shrink-0 mt-4'>
           <IssuesTabsNav />
         </div>
-        <div className='flex-1 overflow-hidden'>{children}</div>
+        <div>{children}</div>
       </div>
     </FiltersContext.Provider>
   );
