@@ -45,10 +45,7 @@ export default async function IssuesKanbanPage({
     team_id: params.team_id ? Number(params.team_id) : null,
     type: typeParam || undefined,
     assignee_id: assigneeIdParam ? Number(assigneeIdParam) : null,
-    priority:
-      typeof params.priority === 'string'
-        ? (params.priority as KanbanFilters['priority'])
-        : undefined,
+    search: typeof params.search === 'string' ? params.search : undefined,
   };
 
   const [organizationsResponse, persons, groupedCards] = await Promise.all([

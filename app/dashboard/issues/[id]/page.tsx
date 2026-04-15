@@ -61,7 +61,7 @@ export default async function IssueDetailPage({
     getUser(),
   ]);
 
-  const currentUserId = userResponse.data?.data?.id ?? 0;
+  const currentUserId = userResponse.data?.id ?? 0;
 
   return (
     <div className='h-full overflow-y-auto'>

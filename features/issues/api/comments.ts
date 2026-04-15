@@ -24,7 +24,7 @@ export async function createIssueComment(
   payload: { content: string; parent_id?: number | null },
 ): Promise<ActionResult<IssueComment>> {
   try {
-    const { data } = await httpClient<IssueComment>(
+    const response = await httpClient<IssueComment>(
       `${API_URL}/issues/${issueId}/comments`,
       {
         method: 'POST',
@@ -33,7 +33,7 @@ export async function createIssueComment(
       },
     );
     revalidatePath(`/dashboard/issues/${issueId}`);
-    return { data, error: null };
+    return { data: response.data as IssueComment, error: null };
   } catch (error) {
     if (error instanceof ServerError) {
       const parsed = parseApiError(
@@ -56,7 +56,7 @@ export async function updateIssueComment(
   content: string,
 ): Promise<ActionResult<IssueComment>> {
   try {
-    const { data } = await httpClient<IssueComment>(
+    const response = await httpClient<IssueComment>(
       `${API_URL}/comments/${commentId}`,
       {
         method: 'PATCH',
@@ -65,7 +65,7 @@ export async function updateIssueComment(
       },
     );
     revalidatePath(`/dashboard/issues/${issueId}`);
-    return { data, error: null };
+    return { data: response.data as IssueComment, error: null };
   } catch (error) {
     if (error instanceof ServerError) {
       const parsed = parseApiError(
