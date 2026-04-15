@@ -25,17 +25,15 @@ export default async function IssuesLayout({
   ]);
 
   return (
-    <Card className='h-full flex flex-col'>
+    <Card>
       <PageHeader title='Tasks' extraContent={<IssueCreateButton />} />
-      <div className='flex-1 overflow-hidden'>
-        <IssuesLayoutClient
-          organizations={organizationsResponse.data ?? []}
-          persons={persons}
-          currentUserId={currentUserId ?? null}
-        >
-          {children}
-        </IssuesLayoutClient>
-      </div>
+      <IssuesLayoutClient
+        organizations={organizationsResponse.data ?? []}
+        persons={persons}
+        currentUserId={currentUserId ?? null}
+      >
+        {children}
+      </IssuesLayoutClient>
     </Card>
   );
 }

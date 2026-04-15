@@ -9,7 +9,14 @@ import {
   X,
 } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useState, useTransition } from 'react';
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useTransition,
+} from 'react';
 import { toast } from 'sonner';
 
 import { moveKanbanCard } from '@/features/kanban/api/kanban';
@@ -59,7 +66,7 @@ function getInitials(name: string): string {
  * @param props.card - card to preview, or null when none is selected.
  * @param props.onClose - called to close the modal.
  */
-function TaskPreviewModal({
+const TaskPreviewModal = memo(function TaskPreviewModal({
   card,
   onClose,
 }: {
@@ -243,7 +250,7 @@ function TaskPreviewModal({
       )}
     </AnimatePresence>
   );
-}
+});
 
 /**
  * KanbanCardItem renders a single card in a column.
@@ -254,7 +261,7 @@ function TaskPreviewModal({
  * @param props.isMoving - whether card is being moved.
  * @param props.onCardClick - called with card when clicked to show preview.
  */
-function KanbanCardItem({
+const KanbanCardItem = memo(function KanbanCardItem({
   card,
   onMoveToColumn,
   columns,
@@ -367,7 +374,7 @@ function KanbanCardItem({
       ) : null}
     </div>
   );
-}
+});
 
 /**
  * KanbanColumn renders a single status column with drop support.
@@ -381,7 +388,7 @@ function KanbanCardItem({
  * @param props.movingCardId - id of card being moved.
  * @param props.onCardClick
  */
-function KanbanColumnComponent({
+const KanbanColumnComponent = memo(function KanbanColumnComponent({
   id,
   label,
   color,
@@ -409,7 +416,7 @@ function KanbanColumnComponent({
   return (
     <div
       className={[
-        'flex flex-col w-[calc(25%-9px)] min-w-[200px] shrink-0 rounded-xl border transition-colors',
+        'flex flex-col w-[calc(25%-9px)] min-w-[200px] shrink-0 rounded-xl border transition-colors self-start',
         isDragOver
           ? 'border-primary/40 bg-primary/5'
           : 'border-border bg-card/50',
@@ -452,8 +459,8 @@ function KanbanColumnComponent({
         </div>
       </div>
 
-      {/* Cards */}
-      <div className='flex flex-col gap-2 p-2 overflow-y-auto min-h-[120px]'>
+      {/* Cards — no overflow constraint; column grows with content */}
+      <div className='flex flex-col gap-2 p-2 min-h-[120px]'>
         {cards.map((card) => {
           return (
             <KanbanCardItem
@@ -474,7 +481,7 @@ function KanbanColumnComponent({
       </div>
     </div>
   );
-}
+});
 
 /**
  * KanbanBoard is the main kanban board client component.
@@ -511,174 +518,172 @@ export function KanbanBoard({
   // The active column data: optimistic (mid-drag) or latest server data.
   const activeColumns = optimisticColumns ?? columns;
 
-  /**
-   *
-   * @param prev
-   * @param cardId
-   * @param card
-   * @param sourceStatus
-   * @param targetStatus
-   */
-  const applyOptimisticMove = (
-    prev: Record<IssueStatus, KanbanCard[]>,
-    cardId: number,
-    card: KanbanCard,
-    sourceStatus: IssueStatus,
-    targetStatus: IssueStatus,
-  ): Record<IssueStatus, KanbanCard[]> => {
-    const next = { ...prev };
+  const applyOptimisticMove = useCallback(
+    (
+      prev: Record<IssueStatus, KanbanCard[]>,
+      cardId: number,
+      card: KanbanCard,
+      sourceStatus: IssueStatus,
+      targetStatus: IssueStatus,
+    ): Record<IssueStatus, KanbanCard[]> => {
+      const next = { ...prev };
 
-    next[sourceStatus] = next[sourceStatus].filter((c) => {
-      return c.id !== cardId;
+      next[sourceStatus] = next[sourceStatus].filter((c) => {
+        return c.id !== cardId;
+      });
+      next[targetStatus] = [
+        { ...card, status: targetStatus },
+        ...next[targetStatus],
+      ];
+
+      return next;
+    },
+    [],
+  );
+
+  const revertOptimisticMove = useCallback(
+    (
+      prev: Record<IssueStatus, KanbanCard[]>,
+      cardId: number,
+      card: KanbanCard,
+      sourceStatus: IssueStatus,
+      targetStatus: IssueStatus,
+    ): Record<IssueStatus, KanbanCard[]> => {
+      const next = { ...prev };
+
+      next[targetStatus] = next[targetStatus].filter((c) => {
+        return c.id !== cardId;
+      });
+      next[sourceStatus] = [card, ...next[sourceStatus]];
+
+      return next;
+    },
+    [],
+  );
+
+  const handleDrop = useCallback(
+    (cardId: number, sourceStatus: IssueStatus, targetStatus: IssueStatus) => {
+      const sourceCards = activeColumns[sourceStatus];
+      const card = sourceCards.find((c) => {
+        return c.id === cardId;
+      });
+
+      if (!card) return;
+
+      const frozenCard = card;
+
+      setOptimisticColumns((prev) => {
+        return applyOptimisticMove(
+          prev ?? activeColumns,
+          cardId,
+          frozenCard,
+          sourceStatus,
+          targetStatus,
+        );
+      });
+      setMovingCardId(cardId);
+
+      startTransition(async () => {
+        try {
+          await moveKanbanCard(cardId, targetStatus, frozenCard);
+          const colLabel =
+            KANBAN_COLUMNS.find((col) => {
+              return col.id === targetStatus;
+            })?.label ?? targetStatus;
+
+          toast.success(`Moved to ${colLabel}`);
+        } catch (error) {
+          setOptimisticColumns((prev) => {
+            return revertOptimisticMove(
+              prev ?? activeColumns,
+              cardId,
+              frozenCard,
+              sourceStatus,
+              targetStatus,
+            );
+          });
+          toast.error((error as Error).message);
+        } finally {
+          setMovingCardId(null);
+        }
+      });
+    },
+    [activeColumns, applyOptimisticMove, revertOptimisticMove],
+  );
+
+  const handleMoveToColumn = useCallback(
+    (card: KanbanCard, status: IssueStatus) => {
+      if (card.status === status) return;
+
+      handleDrop(card.id, card.status, status);
+    },
+    [handleDrop],
+  );
+
+  const handleCardClick = useCallback((card: KanbanCard) => {
+    setHoveredCard((prev) => {
+      return prev?.id === card.id ? null : card;
     });
-    next[targetStatus] = [
-      { ...card, status: targetStatus },
-      ...next[targetStatus],
-    ];
+  }, []);
 
-    return next;
-  };
-  /**
-   *
-   * @param prev
-   * @param cardId
-   * @param card
-   * @param sourceStatus
-   * @param targetStatus
-   */
-  const revertOptimisticMove = (
-    prev: Record<IssueStatus, KanbanCard[]>,
-    cardId: number,
-    card: KanbanCard,
-    sourceStatus: IssueStatus,
-    targetStatus: IssueStatus,
-  ): Record<IssueStatus, KanbanCard[]> => {
-    const next = { ...prev };
-
-    next[targetStatus] = next[targetStatus].filter((c) => {
-      return c.id !== cardId;
-    });
-    next[sourceStatus] = [card, ...next[sourceStatus]];
-
-    return next;
-  };
-  /**
-   *
-   * @param cardId
-   * @param sourceStatus
-   * @param targetStatus
-   */
-  const handleDrop = (
-    cardId: number,
-    sourceStatus: IssueStatus,
-    targetStatus: IssueStatus,
-  ) => {
-    const sourceCards = activeColumns[sourceStatus];
-    const card = sourceCards.find((c) => {
-      return c.id === cardId;
-    });
-
-    if (!card) return;
-
-    const frozenCard = card;
-
-    setOptimisticColumns((prev) => {
-      return applyOptimisticMove(
-        prev ?? activeColumns,
-        cardId,
-        frozenCard,
-        sourceStatus,
-        targetStatus,
-      );
-    });
-    setMovingCardId(cardId);
-
-    startTransition(async () => {
-      try {
-        await moveKanbanCard(cardId, targetStatus, frozenCard);
-        const colLabel =
-          KANBAN_COLUMNS.find((col) => {
-            return col.id === targetStatus;
-          })?.label ?? targetStatus;
-
-        toast.success(`Moved to ${colLabel}`);
-      } catch (error) {
-        setOptimisticColumns((prev) => {
-          return revertOptimisticMove(
-            prev ?? activeColumns,
-            cardId,
-            frozenCard,
-            sourceStatus,
-            targetStatus,
-          );
-        });
-        toast.error((error as Error).message);
-      } finally {
-        setMovingCardId(null);
-      }
-    });
-  };
-  /**
-   *
-   * @param card
-   * @param status
-   */
-  const handleMoveToColumn = (card: KanbanCard, status: IssueStatus) => {
-    if (card.status === status) return;
-
-    handleDrop(card.id, card.status, status);
-  };
+  const handleCloseModal = useCallback(() => {
+    setHoveredCard(null);
+  }, []);
 
   // Client-side filtering: search, priority, assignee, type, status
-  const lowerSearch = filters.search.toLowerCase();
-  const filteredColumns: Record<IssueStatus, KanbanCard[]> = {
-    open: [],
-    in_progress: [],
-    paused: [],
-    done: [],
-  };
+  const filteredColumns = useMemo(() => {
+    const lowerSearch = filters.search.toLowerCase();
+    const result: Record<IssueStatus, KanbanCard[]> = {
+      open: [],
+      in_progress: [],
+      paused: [],
+      done: [],
+    };
 
-  for (const col of KANBAN_COLUMNS) {
-    const sourceCards = activeColumns[col.id] ?? [];
+    for (const col of KANBAN_COLUMNS) {
+      const sourceCards = activeColumns[col.id] ?? [];
 
-    // If status filter is set and doesn't match this column, skip entirely
-    if (filters.status && col.id !== filters.status) {
-      continue;
-    }
+      // If status filter is set and doesn't match this column, skip entirely
+      if (filters.status && col.id !== filters.status) {
+        continue;
+      }
 
-    // When status filter is active, put all matching cards into the target column
-    const targetColId = filters.status || col.id;
+      // When status filter is active, put all matching cards into the target column
+      const targetColId = filters.status || col.id;
 
-    for (const card of sourceCards) {
-      // Assignee filter
-      if (filters.assignee_id) {
-        const assigneeId = Number(filters.assignee_id);
+      for (const card of sourceCards) {
+        // Assignee filter
+        if (filters.assignee_id) {
+          const assigneeId = Number(filters.assignee_id);
 
-        if (card.assignee_id !== assigneeId) {
+          if (card.assignee_id !== assigneeId) {
+            continue;
+          }
+        }
+
+        // Type filter
+        if (filters.type && card.type !== filters.type) {
           continue;
         }
-      }
 
-      // Type filter
-      if (filters.type && card.type !== filters.type) {
-        continue;
-      }
+        // Search filter
+        if (
+          lowerSearch.length > 0 &&
+          !card.name.toLowerCase().includes(lowerSearch) &&
+          !(card.description?.toLowerCase().includes(lowerSearch) ?? false)
+        ) {
+          continue;
+        }
 
-      // Search filter
-      if (
-        lowerSearch.length > 0 &&
-        !card.name.toLowerCase().includes(lowerSearch) &&
-        !(card.description?.toLowerCase().includes(lowerSearch) ?? false)
-      ) {
-        continue;
+        result[targetColId].push(card);
       }
-
-      filteredColumns[targetColId].push(card);
     }
-  }
+
+    return result;
+  }, [activeColumns, filters]);
 
   return (
-    <div className='flex flex-col h-full gap-3 relative'>
+    <div className='flex flex-col gap-3 relative'>
       {/* Loading overlay */}
       {isFetching && (
         <div className='absolute inset-0 bg-background/50 backdrop-blur-sm z-10 flex items-center justify-center rounded-lg'>
@@ -687,8 +692,8 @@ export function KanbanBoard({
       )}
 
       {/* Board: columns */}
-      <div className='flex gap-3 flex-1 min-h-0'>
-        <div className='flex gap-3 overflow-x-auto pb-4 flex-1 min-h-0'>
+      <div className='flex gap-3'>
+        <div className='flex gap-3 overflow-x-auto pb-4 flex-1'>
           {KANBAN_COLUMNS.map((col) => {
             return (
               <KanbanColumnComponent
@@ -700,11 +705,7 @@ export function KanbanBoard({
                 onDrop={handleDrop}
                 onMoveToColumn={handleMoveToColumn}
                 movingCardId={movingCardId}
-                onCardClick={(card) => {
-                  setHoveredCard((prev) => {
-                    return prev?.id === card.id ? null : card;
-                  });
-                }}
+                onCardClick={handleCardClick}
               />
             );
           })}
@@ -712,12 +713,7 @@ export function KanbanBoard({
       </div>
 
       {/* Task preview modal */}
-      <TaskPreviewModal
-        card={hoveredCard}
-        onClose={() => {
-          setHoveredCard(null);
-        }}
-      />
+      <TaskPreviewModal card={hoveredCard} onClose={handleCloseModal} />
     </div>
   );
 }
