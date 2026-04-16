@@ -52,6 +52,8 @@ export function AgendaList({
     ? 'No tasks from this meeting'
     : 'No tasks from previous meeting';
 
+  console.log(tasks);
+
   if (totalCount === 0) {
     return <p className='text-xs text-muted-foreground italic'>{emptyText}</p>;
   }
