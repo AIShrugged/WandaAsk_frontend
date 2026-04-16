@@ -80,38 +80,57 @@ function StatCard({
 export async function TaskStatsBlock() {
   const stats = await getIssueStats();
 
+  const items = [
+    {
+      label: 'Total',
+      value: stats.total,
+      icon: ListChecks,
+      iconClassName: 'bg-primary/10 text-primary',
+      deltaLabel: 'active tasks',
+    },
+    {
+      label: 'In Progress',
+      value: stats.in_progress,
+      icon: Loader2,
+      iconClassName: 'bg-yellow-500/15 text-yellow-300',
+      delta: stats.delta.in_progress,
+      deltaLabel: 'vs yesterday',
+    },
+    {
+      label: 'Completed',
+      value: stats.completed,
+      icon: CheckCircle2,
+      iconClassName: 'bg-accent/15 text-emerald-400',
+      delta: stats.delta.completed,
+      deltaLabel: 'vs yesterday',
+    },
+    {
+      label: 'Overdue',
+      value: stats.overdue,
+      icon: AlertCircle,
+      iconClassName: 'bg-destructive/10 text-red-400',
+      delta: stats.delta.overdue,
+      deltaLabel: 'vs yesterday',
+    },
+  ];
+
   return (
     <div className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
-      <StatCard
-        label='Total'
-        value={stats.total}
-        icon={<ListChecks className='h-4 w-4' />}
-        iconClassName='bg-primary/10 text-primary'
-      />
-      <StatCard
-        label='In Progress'
-        value={stats.in_progress}
-        icon={<Loader2 className='h-4 w-4' />}
-        iconClassName='bg-yellow-500/15 text-yellow-300'
-        delta={stats.delta.in_progress}
-        deltaLabel='vs yesterday'
-      />
-      <StatCard
-        label='Completed'
-        value={stats.completed}
-        icon={<CheckCircle2 className='h-4 w-4' />}
-        iconClassName='bg-accent/15 text-emerald-400'
-        delta={stats.delta.completed}
-        deltaLabel='vs yesterday'
-      />
-      <StatCard
-        label='Overdue'
-        value={stats.overdue}
-        icon={<AlertCircle className='h-4 w-4' />}
-        iconClassName='bg-destructive/10 text-red-400'
-        delta={stats.delta.overdue}
-        deltaLabel='vs yesterday'
-      />
+      {items.map((item) => {
+        const Icon = item.icon;
+
+        return (
+          <StatCard
+            key={item.label}
+            label={item.label}
+            value={item.value}
+            icon={<Icon className='h-4 w-4' />}
+            iconClassName={item.iconClassName}
+            delta={item.delta}
+            deltaLabel={item.deltaLabel}
+          />
+        );
+      })}
     </div>
   );
 }
