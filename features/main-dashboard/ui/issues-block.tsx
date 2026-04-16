@@ -6,28 +6,11 @@ import { AlertCircle, X } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
+import { IssueStatusBadge } from '@/features/issues/ui/issue-status-badge';
 import { ROUTES } from '@/shared/lib/routes';
-import { Badge } from '@/shared/ui/badge';
 import Card from '@/shared/ui/card/Card';
 
 import type { Issue } from '@/features/issues/model/types';
-
-const STATUS_VARIANT: Record<
-  string,
-  'default' | 'success' | 'warning' | 'destructive'
-> = {
-  open: 'default',
-  in_progress: 'warning',
-  paused: 'destructive',
-  done: 'success',
-};
-
-const STATUS_LABEL: Record<string, string> = {
-  open: 'Open',
-  in_progress: 'In Progress',
-  paused: 'Paused',
-  done: 'Done',
-};
 
 const ISSUES_CAP = 10;
 
@@ -77,8 +60,6 @@ export function IssuesBlock({ issues }: IssuesBlockProps) {
             </p>
           ) : (
             displayed.map((issue) => {
-              const statusVariant = STATUS_VARIANT[issue.status] ?? 'default';
-              const statusLabel = STATUS_LABEL[issue.status] ?? issue.status;
               const relativeTime = formatDistanceToNow(
                 parseISO(issue.created_at),
                 { addSuffix: true },
@@ -121,9 +102,7 @@ export function IssuesBlock({ issues }: IssuesBlockProps) {
                     </p>
                   </div>
                   <div className='flex items-center gap-2 shrink-0'>
-                    <Badge variant={statusVariant} className='capitalize'>
-                      {statusLabel}
-                    </Badge>
+                    <IssueStatusBadge status={issue.status} />
                   </div>
                 </div>
               );

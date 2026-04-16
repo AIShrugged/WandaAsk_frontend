@@ -1,34 +1,10 @@
 import { format, parseISO } from 'date-fns';
 import Link from 'next/link';
 
+import { IssueStatusBadge } from '@/features/issues/ui/issue-status-badge';
 import { ROUTES } from '@/shared/lib/routes';
-import { Badge } from '@/shared/ui/badge/Badge';
 
-import type {
-  DashboardTaskCard,
-  IssueStatus,
-} from '../../model/dashboard-types';
-
-const STATUS_VARIANT: Record<
-  IssueStatus,
-  'default' | 'success' | 'warning' | 'destructive' | 'primary'
-> = {
-  done: 'success',
-  open: 'default',
-  in_progress: 'warning',
-  paused: 'destructive',
-  review: 'primary',
-  reopen: 'destructive',
-};
-
-const STATUS_LABEL: Record<IssueStatus, string> = {
-  done: 'Done',
-  open: 'Open',
-  in_progress: 'In Progress',
-  paused: 'Paused',
-  review: 'Review',
-  reopen: 'Reopen',
-};
+import type { DashboardTaskCard } from '../../model/dashboard-types';
 
 const PRIORITY_DOT: Record<string, string> = {
   high: 'bg-red-400',
@@ -67,9 +43,7 @@ export default function TeamDashboardTaskRow({
           >
             {task.title}
           </Link>
-          <Badge variant={STATUS_VARIANT[task.status]}>
-            {STATUS_LABEL[task.status]}
-          </Badge>
+          <IssueStatusBadge status={task.status} />
         </div>
 
         <div className='flex items-center gap-3 mt-1 text-xs text-muted-foreground flex-wrap'>

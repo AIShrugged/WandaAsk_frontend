@@ -96,7 +96,7 @@ describe('MeetingTasks', () => {
 
   it('renders status badge for "in_progress"', () => {
     render(<MeetingTasks tasks={[makeTask({ status: 'in_progress' })]} />);
-    expect(screen.getByText('In progress')).toBeInTheDocument();
+    expect(screen.getByText('In Progress')).toBeInTheDocument();
   });
 
   it('renders status badge for "cancelled"', () => {

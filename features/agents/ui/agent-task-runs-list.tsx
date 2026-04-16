@@ -1,23 +1,9 @@
 import Link from 'next/link';
 
 import { formatDateTime, formatDuration } from '@/features/agents/lib/format';
-import { Badge } from '@/shared/ui/badge';
+import { AgentRunStatusBadge } from '@/features/agents/ui/agent-run-status-badge';
 
 import type { AgentTaskRun } from '@/features/agents/model/types';
-
-/**
- *
- * @param status
- */
-function getStatusVariant(status: string) {
-  const normalized = status.toLowerCase();
-
-  if (normalized === 'completed' || normalized === 'success') return 'success';
-
-  if (normalized === 'failed' || normalized === 'error') return 'destructive';
-
-  return 'warning';
-}
 
 /**
  *
@@ -53,9 +39,7 @@ export function AgentTaskRunsList({
               ].join(' ')}
             >
               <div className='flex items-center justify-between gap-2'>
-                <Badge variant={getStatusVariant(run.status)}>
-                  {run.status}
-                </Badge>
+                <AgentRunStatusBadge status={run.status} />
                 <span className='text-xs text-muted-foreground'>
                   Run #{run.id}
                   {run.attempt == null ? '' : ` · attempt ${run.attempt}`}
@@ -97,9 +81,7 @@ export function AgentTaskRunsList({
                   }`}
                 >
                   <td className='px-4 py-3'>
-                    <Badge variant={getStatusVariant(run.status)}>
-                      {run.status}
-                    </Badge>
+                    <AgentRunStatusBadge status={run.status} />
                   </td>
                   <td className='px-4 py-3'>{run.attempt ?? '—'}</td>
                   <td className='px-4 py-3 text-muted-foreground'>

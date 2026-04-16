@@ -15,10 +15,10 @@ import { toast } from 'sonner';
 
 import { loadIssuesChunk, updateIssue } from '@/features/issues/api/issues';
 import { ISSUE_STATUS_OPTIONS } from '@/features/issues/model/types';
+import { IssueStatusBadge } from '@/features/issues/ui/issue-status-badge';
 import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
 import { ROUTES } from '@/shared/lib/routes';
 import { BUTTON_VARIANT } from '@/shared/types/button';
-import { Badge } from '@/shared/ui/badge';
 import { Button } from '@/shared/ui/button/Button';
 import { EmptyState } from '@/shared/ui/feedback/empty-state';
 import InputDropdown from '@/shared/ui/input/InputDropdown';
@@ -54,44 +54,6 @@ interface IssuesPageProps {
  */
 function formatIssueDate(value: string) {
   return format(new Date(value), 'dd.MM.yyyy HH:mm');
-}
-
-/**
- * statusVariant.
- * @param status - issue status.
- * @returns badge variant.
- */
-function statusVariant(status: string) {
-  switch (status) {
-    case 'open': {
-      return 'warning';
-    }
-    case 'in_progress': {
-      return 'primary';
-    }
-    case 'paused': {
-      return 'default';
-    }
-    case 'done': {
-      return 'success';
-    }
-    default: {
-      return 'default';
-    }
-  }
-}
-
-/**
- * formatIssueStatus.
- * @param status - issue status.
- * @returns label.
- */
-function formatIssueStatus(status: IssueStatus) {
-  const match = ISSUE_STATUS_OPTIONS.find((option) => {
-    return option.value === status;
-  });
-
-  return match?.label ?? status;
 }
 
 /**
@@ -389,10 +351,10 @@ export function IssuesPage({
                       <td className='px-4 py-3 align-top font-mono text-muted-foreground whitespace-nowrap'>
                         #{issue.id}
                       </td>
-                      <td className='px-4 py-3 align-top'>
+                      <td className='max-w-0 overflow-hidden px-4 py-3 align-top'>
                         <Link
                           href={`${ROUTES.DASHBOARD.ISSUES}/${issue.id}`}
-                          className='font-medium text-foreground hover:text-primary'
+                          className='block truncate font-medium text-foreground hover:text-primary'
                         >
                           {issue.name}
                         </Link>
@@ -402,15 +364,15 @@ export function IssuesPage({
                           </p>
                         ) : null}
                       </td>
-                      <td className='px-4 py-3 align-top'>{issue.type}</td>
+                      <td className='max-w-0 truncate px-4 py-3 align-top'>
+                        {issue.type}
+                      </td>
                       <td className='px-4 py-3 align-top'>
                         <div className='group/status flex flex-col gap-2'>
-                          <Badge
-                            variant={statusVariant(issue.status)}
+                          <IssueStatusBadge
+                            status={issue.status}
                             className='w-fit'
-                          >
-                            {formatIssueStatus(issue.status)}
-                          </Badge>
+                          />
                           {editingStatusIssueId === issue.id ? (
                             <div className='flex items-center gap-2'>
                               <InputDropdown
