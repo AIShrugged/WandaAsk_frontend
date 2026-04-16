@@ -11,8 +11,6 @@ import Card from '@/shared/ui/card/Card';
 import CardBody from '@/shared/ui/card/CardBody';
 import PageHeader from '@/widgets/layout/ui/page-header';
 
-export const dynamic = 'force-dynamic';
-
 export default async function TodayTasksPage({
   searchParams,
 }: {

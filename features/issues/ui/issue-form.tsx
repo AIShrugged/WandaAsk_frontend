@@ -168,9 +168,6 @@ export function IssueForm({
     <form className='flex flex-col gap-4' onSubmit={handleSubmit(onSubmit)}>
       <Input
         {...register('name', {
-          /**
-           *
-           */
           onChange: () => {
             clearErrors('name');
             setRootError('');

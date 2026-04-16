@@ -7,6 +7,7 @@ import Card from '@/shared/ui/card/Card';
 import { MarkdownContent } from '@/shared/ui/markdown-content';
 
 import { AgendaList } from './agenda-list';
+import { CollapsibleSection } from './collapsible-section';
 
 import type { TodayEvent } from '../model/types';
 
@@ -76,76 +77,71 @@ export function MeetingDetailCard({ event }: MeetingDetailCardProps) {
       <div className='flex flex-col gap-4 px-5 py-4'>
         {/* Briefing (from past meeting summary) */}
         {event.summary && (
-          <div className='flex flex-col gap-3'>
-            <p className='text-xs font-semibold text-muted-foreground'>
-              Briefing
-            </p>
-
-            {event.summary.key_points.length > 0 && (
-              <div>
-                <p className='text-xs font-semibold text-foreground mb-1.5'>
-                  Key Points
-                </p>
-                <ul className='flex flex-col gap-1'>
-                  {event.summary.key_points.map((point, i) => {
-                    return (
-                      <li
-                        key={i}
-                        className='flex items-start gap-2 text-sm text-foreground'
-                      >
-                        <span className='w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0' />
-                        <span>{point}</span>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            )}
-
-            {event.summary.decisions.length > 0 && (
-              <div>
-                <p className='text-xs font-semibold text-foreground mb-1.5'>
-                  Decisions
-                </p>
-                <ul className='flex flex-col gap-1'>
-                  {event.summary.decisions.map((decision, i) => {
-                    return (
-                      <li
-                        key={i}
-                        className='flex items-start gap-2 text-sm text-foreground'
-                      >
-                        <span className='w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0' />
-                        <span>{decision}</span>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            )}
-
-            {event.summary.key_points.length === 0 &&
-              event.summary.decisions.length === 0 && (
-                <MarkdownContent>{event.summary.summary}</MarkdownContent>
+          <CollapsibleSection label='Briefing'>
+            <div className='flex flex-col gap-3'>
+              {event.summary.key_points.length > 0 && (
+                <div>
+                  <p className='text-xs font-semibold text-foreground mb-1.5'>
+                    Key Points
+                  </p>
+                  <ul className='flex flex-col gap-1'>
+                    {event.summary.key_points.map((point, i) => {
+                      return (
+                        <li
+                          key={i}
+                          className='flex items-start gap-2 text-sm text-foreground'
+                        >
+                          <span className='w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0' />
+                          <span>{point}</span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
               )}
 
-            {event.review?.key_insight && (
-              <p className='text-md text-foreground'>
-                {event.review.key_insight}
-              </p>
-            )}
-          </div>
+              {event.summary.decisions.length > 0 && (
+                <div>
+                  <p className='text-xs font-semibold text-foreground mb-1.5'>
+                    Decisions
+                  </p>
+                  <ul className='flex flex-col gap-1'>
+                    {event.summary.decisions.map((decision, i) => {
+                      return (
+                        <li
+                          key={i}
+                          className='flex items-start gap-2 text-sm text-foreground'
+                        >
+                          <span className='w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0' />
+                          <span>{decision}</span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              )}
+
+              {event.summary.key_points.length === 0 &&
+                event.summary.decisions.length === 0 && (
+                  <MarkdownContent>{event.summary.summary}</MarkdownContent>
+                )}
+
+              {event.review?.key_insight && (
+                <p className='text-md text-foreground'>
+                  {event.review.key_insight}
+                </p>
+              )}
+            </div>
+          </CollapsibleSection>
         )}
 
         {/* Agenda content (upcoming/general agenda for future meetings) */}
         {event.meeting_state !== 'ready' && event.agenda_content && (
-          <div>
-            <span className='text-xs font-medium uppercase tracking-wide text-muted-foreground'>
-              Agenda
-            </span>
-            <p className='mt-1 text-sm text-foreground whitespace-pre-wrap'>
+          <CollapsibleSection label='Agenda'>
+            <p className='text-sm text-foreground whitespace-pre-wrap'>
               {event.agenda_content}
             </p>
-          </div>
+          </CollapsibleSection>
         )}
 
         {/* Agenda (tasks) */}

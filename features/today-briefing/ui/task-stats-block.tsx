@@ -3,11 +3,12 @@ import { AlertCircle, CheckCircle2, ListChecks, Loader2 } from 'lucide-react';
 import { computeTaskStats } from '../model/task-stats';
 
 import type { TodayBriefing } from '../model/types';
+import type { ReactNode } from 'react';
 
 interface StatCardProps {
   label: string;
   value: number;
-  icon: React.ReactNode;
+  icon: ReactNode;
   iconClassName: string;
 }
 
@@ -29,6 +30,40 @@ function StatCard({ label, value, icon, iconClassName }: StatCardProps) {
   );
 }
 
+interface StatCardConfig {
+  label: string;
+  key: keyof ReturnType<typeof computeTaskStats>;
+  icon: ReactNode;
+  iconClassName: string;
+}
+
+const STAT_CARDS: StatCardConfig[] = [
+  {
+    label: 'Total Active',
+    key: 'totalActive',
+    icon: <ListChecks className='h-4 w-4' />,
+    iconClassName: 'bg-primary/10 text-primary',
+  },
+  {
+    label: 'In Progress',
+    key: 'inProgress',
+    icon: <Loader2 className='h-4 w-4' />,
+    iconClassName: 'bg-yellow-500/15 text-yellow-300',
+  },
+  {
+    label: 'Completed',
+    key: 'completed',
+    icon: <CheckCircle2 className='h-4 w-4' />,
+    iconClassName: 'bg-accent/15 text-emerald-400',
+  },
+  {
+    label: 'Overdue',
+    key: 'overdue',
+    icon: <AlertCircle className='h-4 w-4' />,
+    iconClassName: 'bg-destructive/10 text-red-400',
+  },
+];
+
 interface TaskStatsBlockProps {
   data: TodayBriefing;
 }
@@ -38,30 +73,17 @@ export function TaskStatsBlock({ data }: TaskStatsBlockProps) {
 
   return (
     <div className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
-      <StatCard
-        label='Total Active'
-        value={stats.totalActive}
-        icon={<ListChecks className='h-4 w-4' />}
-        iconClassName='bg-primary/10 text-primary'
-      />
-      <StatCard
-        label='In Progress'
-        value={stats.inProgress}
-        icon={<Loader2 className='h-4 w-4' />}
-        iconClassName='bg-yellow-500/15 text-yellow-300'
-      />
-      <StatCard
-        label='Completed'
-        value={stats.completed}
-        icon={<CheckCircle2 className='h-4 w-4' />}
-        iconClassName='bg-accent/15 text-emerald-400'
-      />
-      <StatCard
-        label='Overdue'
-        value={stats.overdue}
-        icon={<AlertCircle className='h-4 w-4' />}
-        iconClassName='bg-destructive/10 text-red-400'
-      />
+      {STAT_CARDS.map(({ label, key, icon, iconClassName }) => {
+        return (
+          <StatCard
+            key={key}
+            label={label}
+            value={stats[key]}
+            icon={icon}
+            iconClassName={iconClassName}
+          />
+        );
+      })}
     </div>
   );
 }
