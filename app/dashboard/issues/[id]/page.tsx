@@ -63,8 +63,6 @@ export default async function IssueDetailPage({
 
   const currentUserId = userResponse.data?.id ?? 0;
 
-  console.log('issue', issue);
-
   return (
     <div className='h-full overflow-y-auto'>
       <div className='grid min-h-full gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]'>
