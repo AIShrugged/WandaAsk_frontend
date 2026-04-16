@@ -1,5 +1,13 @@
-import { getMeetingsForThreeDays } from '@/features/meetings/api/meetings';
+import { getMeetingsForDate } from '@/features/meetings/api/meetings';
 import { MeetingsColumnView } from '@/features/meetings/ui/meetings-column-view';
+
+function toDateParam(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+
+  return `${y}-${m}-${d}`;
+}
 
 function formatColumnDate(date: Date): string {
   return new Intl.DateTimeFormat('en-US', {
@@ -9,19 +17,38 @@ function formatColumnDate(date: Date): string {
 }
 
 /**
- * Meetings list tab — shows bot meetings for yesterday, today, and tomorrow.
+ * Meetings list tab — shows meetings for yesterday, today, and tomorrow
+ * relative to a selected center date. Navigates via ?date=YYYY-MM-DD.
+ * Defaults to actual today when no param is provided.
  */
-export default async function MeetingsListPage() {
-  const { yesterday, today, tomorrow } = await getMeetingsForThreeDays();
+export default async function MeetingsListPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const params = await searchParams;
+  const raw = typeof params.date === 'string' ? params.date : '';
+  const isValid =
+    /^\d{4}-\d{2}-\d{2}$/.test(raw) &&
+    !Number.isNaN(new Date(raw + 'T00:00:00').getTime());
 
-  const now = new Date();
-  const yesterdayDate = new Date(now);
+  const centerDate = isValid
+    ? new Date(raw + 'T00:00:00')
+    : new Date(new Date().toDateString()); // local midnight today
 
-  yesterdayDate.setDate(now.getDate() - 1);
+  const yesterdayDate = new Date(centerDate);
 
-  const tomorrowDate = new Date(now);
+  yesterdayDate.setDate(centerDate.getDate() - 1);
 
-  tomorrowDate.setDate(now.getDate() + 1);
+  const tomorrowDate = new Date(centerDate);
+
+  tomorrowDate.setDate(centerDate.getDate() + 1);
+
+  const [yesterday, today, tomorrow] = await Promise.all([
+    getMeetingsForDate(yesterdayDate),
+    getMeetingsForDate(centerDate),
+    getMeetingsForDate(tomorrowDate),
+  ]);
 
   return (
     <MeetingsColumnView
@@ -29,8 +56,9 @@ export default async function MeetingsListPage() {
       today={today}
       tomorrow={tomorrow}
       yesterdayDate={formatColumnDate(yesterdayDate)}
-      todayDate={formatColumnDate(now)}
+      todayDate={formatColumnDate(centerDate)}
       tomorrowDate={formatColumnDate(tomorrowDate)}
+      centerDate={toDateParam(centerDate)}
     />
   );
 }

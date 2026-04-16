@@ -3,8 +3,7 @@ import { Skeleton } from '@/shared/ui/layout/skeleton';
 function ColumnSkeleton() {
   return (
     <div className='flex flex-1 flex-col gap-3'>
-      <div className='flex flex-col gap-1 border-b border-border pb-3'>
-        <Skeleton className='h-3 w-16' />
+      <div className='border-b border-border pb-3'>
         <Skeleton className='h-4 w-20' />
       </div>
       <div className='flex flex-col gap-3'>
@@ -22,11 +21,18 @@ function ColumnSkeleton() {
 }
 
 /**
- * Loading state for Meetings list tab — 3-column skeleton.
+ * Loading state for Meetings list tab — date switcher + 3-column skeleton.
  */
 export default function Loading() {
   return (
     <div className='px-6 py-6'>
+      {/* DateSwitcher skeleton */}
+      <div className='mb-5 flex items-center justify-between gap-4'>
+        <Skeleton className='h-8 w-8 rounded-md' />
+        <Skeleton className='h-4 w-20' />
+        <Skeleton className='h-8 w-8 rounded-md' />
+      </div>
+
       <div className='hidden gap-6 md:grid md:grid-cols-3'>
         <ColumnSkeleton />
         <ColumnSkeleton />

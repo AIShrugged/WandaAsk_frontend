@@ -1,6 +1,8 @@
 // Public API for the meetings feature
 
 export { MeetingsColumnView } from './ui/meetings-column-view';
+export { MeetingsDayView } from './ui/meetings-day-view';
+export { DateSwitcher } from './ui/date-switcher';
 export { MeetingCard } from './ui/meeting-card';
 export { MeetingDetailTabsNav } from './ui/meeting-detail-tabs-nav';
 export { MeetingsTabsNav } from './ui/meetings-tabs-nav';

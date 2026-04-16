@@ -2,12 +2,12 @@
 
 import { CalendarOff } from 'lucide-react';
 
+import { DateSwitcher } from './date-switcher';
 import { MeetingCard } from './meeting-card';
 
 import type { CalendarEventListItem } from '@/features/meetings/model/types';
 
 interface ColumnData {
-  label: string;
   date: string;
   meetings: CalendarEventListItem[];
 }
@@ -15,11 +15,8 @@ interface ColumnData {
 function MeetingsColumn({ column }: { column: ColumnData }) {
   return (
     <div className='flex min-w-0 flex-1 flex-col gap-3'>
-      {/* Column header */}
-      <div className='flex flex-col gap-0.5 border-b border-border pb-3'>
-        <span className='text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground'>
-          {column.label}
-        </span>
+      {/* Column header — date only */}
+      <div className='border-b border-border pb-3'>
         <span className='text-sm font-semibold text-foreground'>
           {column.date}
         </span>
@@ -38,7 +35,7 @@ function MeetingsColumn({ column }: { column: ColumnData }) {
             className='h-7 w-7 text-muted-foreground/40'
             aria-hidden='true'
           />
-          <p className='text-xs text-muted-foreground'>No bot meetings</p>
+          <p className='text-xs text-muted-foreground'>No meetings</p>
         </div>
       )}
     </div>
@@ -52,11 +49,13 @@ interface MeetingsColumnViewProps {
   yesterdayDate: string;
   todayDate: string;
   tomorrowDate: string;
+  /** YYYY-MM-DD of the center (today) column — used by DateSwitcher */
+  centerDate: string;
 }
 
 /**
- * MeetingsColumnView — three-column layout showing bot meetings for
- * yesterday, today, and tomorrow.
+ * MeetingsColumnView — three-column layout (yesterday / today / tomorrow)
+ * with date headers and prev/next day navigation.
  */
 export function MeetingsColumnView({
   yesterday,
@@ -65,26 +64,31 @@ export function MeetingsColumnView({
   yesterdayDate,
   todayDate,
   tomorrowDate,
+  centerDate,
 }: MeetingsColumnViewProps) {
   const columns: ColumnData[] = [
-    { label: 'Yesterday', date: yesterdayDate, meetings: yesterday },
-    { label: 'Today', date: todayDate, meetings: today },
-    { label: 'Tomorrow', date: tomorrowDate, meetings: tomorrow },
+    { date: yesterdayDate, meetings: yesterday },
+    { date: todayDate, meetings: today },
+    { date: tomorrowDate, meetings: tomorrow },
   ];
 
   return (
     <div className='px-6 py-6'>
+      <div className='mb-5'>
+        <DateSwitcher selectedDate={centerDate} />
+      </div>
+
       {/* Desktop: 3 equal columns */}
       <div className='hidden gap-6 md:grid md:grid-cols-3'>
         {columns.map((col) => {
-          return <MeetingsColumn key={col.label} column={col} />;
+          return <MeetingsColumn key={col.date} column={col} />;
         })}
       </div>
 
       {/* Mobile: stacked sections */}
       <div className='flex flex-col gap-8 md:hidden'>
         {columns.map((col) => {
-          return <MeetingsColumn key={col.label} column={col} />;
+          return <MeetingsColumn key={col.date} column={col} />;
         })}
       </div>
     </div>
