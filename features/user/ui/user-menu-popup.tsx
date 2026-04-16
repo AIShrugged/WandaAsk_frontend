@@ -60,8 +60,8 @@ export function UserMenuPopup({
     <div className='bg-popover shadow-card rounded-[var(--radius-card)] border border-border overflow-hidden'>
       <div className='py-1'>
         <div className='px-4 py-2 hidden lg:flex flex-col text-left border-b border-border'>
-          <p className='text-foreground font-medium'>{user.name}</p>
-          <p className='text-muted-foreground text-sm'>{user.email}</p>
+          <p className='text-foreground font-medium'>{user?.name}</p>
+          <p className='text-muted-foreground text-sm'>{user?.email}</p>
         </div>
         {USER_MENU.map((menu) => {
           return (
