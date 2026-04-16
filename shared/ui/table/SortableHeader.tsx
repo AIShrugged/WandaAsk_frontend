@@ -45,7 +45,9 @@ export function SortableHeader({
       className='flex items-center gap-1 hover:text-foreground'
     >
       {label}
-      {renderSortIcon()}
+      <span className='inline-flex h-3.5 w-3.5 items-center justify-center'>
+        {renderSortIcon()}
+      </span>
     </button>
   );
 }

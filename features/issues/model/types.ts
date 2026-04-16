@@ -1,10 +1,12 @@
 export type IssueStatus = 'open' | 'in_progress' | 'paused' | 'done';
 
-export type IssueType = 'development' | 'organization';
+export type IssueType = 'development' | 'organization' | 'frontend' | 'backend';
 
 export const ISSUE_TYPE_OPTIONS: { value: IssueType; label: string }[] = [
   { value: 'development', label: 'Development' },
   { value: 'organization', label: 'Organization' },
+  { value: 'frontend', label: 'Frontend' },
+  { value: 'backend', label: 'Backend' },
 ];
 
 export const ISSUE_STATUS_OPTIONS: { value: IssueStatus; label: string }[] = [

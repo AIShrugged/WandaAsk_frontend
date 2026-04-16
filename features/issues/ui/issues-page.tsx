@@ -318,7 +318,16 @@ export function IssuesPage({
       ) : (
         <div className='overflow-hidden rounded-[var(--radius-card)] border border-border bg-card'>
           <div className='overflow-x-auto'>
-            <table className='w-full min-w-[980px] text-sm'>
+            <table className='w-full min-w-[980px] table-fixed text-sm'>
+              <colgroup>
+                <col className='w-[80px]' />
+                <col />
+                <col className='w-[110px]' />
+                <col className='w-[220px]' />
+                <col className='w-[180px]' />
+                <col className='w-[240px]' />
+                <col className='w-[150px]' />
+              </colgroup>
               <thead className='bg-accent/30 text-left text-muted-foreground'>
                 <tr>
                   <th className='px-4 py-3'>
@@ -395,7 +404,7 @@ export function IssuesPage({
                       </td>
                       <td className='px-4 py-3 align-top'>{issue.type}</td>
                       <td className='px-4 py-3 align-top'>
-                        <div className='group/status flex min-w-[180px] flex-col gap-2'>
+                        <div className='group/status flex flex-col gap-2'>
                           <Badge
                             variant={statusVariant(issue.status)}
                             className='w-fit'
@@ -451,7 +460,7 @@ export function IssuesPage({
                         {formatIssueScope(issue)}
                       </td>
                       <td className='px-4 py-3 align-top text-muted-foreground'>
-                        <div className='group/assignee min-w-[220px]'>
+                        <div className='group/assignee'>
                           {editingAssigneeIssueId === issue.id ? (
                             <div className='flex items-center gap-2'>
                               <InputDropdown
@@ -507,7 +516,9 @@ export function IssuesPage({
                         </div>
                       </td>
                       <td className='px-4 py-3 align-top text-muted-foreground'>
-                        {formatIssueDate(issue.created_at)}
+                        <span className='whitespace-nowrap'>
+                          {formatIssueDate(issue.created_at)}
+                        </span>
                       </td>
                     </tr>
                   );

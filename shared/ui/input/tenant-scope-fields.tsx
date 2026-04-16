@@ -48,6 +48,7 @@ export function TenantScopeFields({
 }: TenantScopeFieldsProps) {
   const [teams, setTeams] = useState<TeamProps[]>([]);
   const [isTeamsLoading, setIsTeamsLoading] = useState(false);
+  const [teamsLoaded, setTeamsLoaded] = useState(false);
 
   useEffect(() => {
     if (!organizationId) {
@@ -68,11 +69,12 @@ export function TenantScopeFields({
       })
       .finally(() => {
         setIsTeamsLoading(false);
+        setTeamsLoaded(true);
       });
   }, [organizationId]);
 
   useEffect(() => {
-    if (!teamId) return;
+    if (!teamsLoaded || !teamId) return;
 
     const teamExists = teams.some((team) => {
       return String(team.id) === teamId;
@@ -81,7 +83,7 @@ export function TenantScopeFields({
     if (!teamExists) {
       onTeamChange('');
     }
-  }, [teams, teamId]);
+  }, [teams, teamId, teamsLoaded]);
 
   const organizationOptions = [
     { value: '', label: 'No organization' },
