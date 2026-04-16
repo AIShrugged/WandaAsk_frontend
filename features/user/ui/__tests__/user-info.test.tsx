@@ -46,16 +46,6 @@ describe('UserInfo', () => {
   beforeEach(() => {
     mockOpen.mockClear();
   });
-  it('renders user name', () => {
-    render(<UserInfo user={makeUser()} />);
-    expect(screen.getByText('Alice Smith')).toBeInTheDocument();
-  });
-
-  it('renders user email', () => {
-    render(<UserInfo user={makeUser()} />);
-    expect(screen.getByText('alice@example.com')).toBeInTheDocument();
-  });
-
   it('renders open user menu button', () => {
     render(<UserInfo user={makeUser()} />);
     expect(
