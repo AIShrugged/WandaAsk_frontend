@@ -36,17 +36,12 @@ export default function UserInfo({ user }: UserInfoProps) {
       width: 220,
       preferredPosition: 'bottom',
       offset: 8,
-      content: <UserMenuPopup close={close} />,
+      content: <UserMenuPopup user={user} close={close} />,
     });
   };
 
   return (
     <div className='flex gap-2 items-center justify-end'>
-      <div className='hidden lg:flex flex-col text-right'>
-        <p className='text-foreground font-medium'>{user.name}</p>
-        <p className='text-muted-foreground text-sm'>{user.email}</p>
-      </div>
-
       <button
         ref={anchorRef}
         onClick={handleOpen}

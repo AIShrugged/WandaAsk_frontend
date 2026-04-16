@@ -1,9 +1,11 @@
 import { useRouter } from 'next/navigation';
-import { type ReactNode, useTransition } from 'react';
+import React, { type ReactNode, useTransition } from 'react';
 
 import { USER_MENU } from '@/features/user/lib/options';
 import { logout } from '@/shared/api/session';
 import { ROUTES } from '@/shared/lib/routes';
+
+import type { UserProps } from '@/entities/user';
 
 interface MenuItem {
   id: string;
@@ -14,9 +16,16 @@ interface MenuItem {
 /**
  * UserMenuPopup component.
  * @param props - Component props.
+ * @param props.user
  * @param props.close
  */
-export function UserMenuPopup({ close }: { close: () => void }) {
+export function UserMenuPopup({
+  user,
+  close,
+}: {
+  close: () => void;
+  user: UserProps;
+}) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   /**
@@ -50,6 +59,10 @@ export function UserMenuPopup({ close }: { close: () => void }) {
   return (
     <div className='bg-popover shadow-card rounded-[var(--radius-card)] border border-border overflow-hidden'>
       <div className='py-1'>
+        <div className='px-4 py-2 hidden lg:flex flex-col text-left border-b border-border'>
+          <p className='text-foreground font-medium'>{user.name}</p>
+          <p className='text-muted-foreground text-sm'>{user.email}</p>
+        </div>
         {USER_MENU.map((menu) => {
           return (
             <button
