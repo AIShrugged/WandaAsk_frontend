@@ -2,7 +2,6 @@ import { ListOrdered } from 'lucide-react';
 
 import { getCalendarEventDetail } from '@/features/event/api/calendar-events';
 import { Badge } from '@/shared/ui/badge';
-import { MarkdownContent } from '@/shared/ui/markdown-content';
 
 import type { CalendarEventAgendaItem } from '@/features/meetings/model/types';
 

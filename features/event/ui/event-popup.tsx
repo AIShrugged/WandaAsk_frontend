@@ -51,7 +51,7 @@ export function EventPopup({
     startTransition(async () => {
       const result = await switchBot(event.id, next);
       if (result.error) {
-        setIsBotAdded(isBotAdded);
+        setIsBotAdded(!next);
         toast.error(result.error);
         return;
       }
