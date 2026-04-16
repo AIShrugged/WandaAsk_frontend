@@ -6,9 +6,9 @@ import { useCallback } from 'react';
 
 import { getAgentTasks } from '@/features/agents/api/agents';
 import { formatDateTime } from '@/features/agents/lib/format';
+import { AgentRunStatusBadge } from '@/features/agents/ui/agent-run-status-badge';
 import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
 import { ROUTES } from '@/shared/lib/routes';
-import { Badge } from '@/shared/ui/badge';
 import { EmptyState } from '@/shared/ui/feedback/empty-state';
 import { InfiniteScrollStatus } from '@/shared/ui/layout/infinite-scroll-status';
 import SpinLoader from '@/shared/ui/layout/spin-loader';
@@ -16,17 +16,6 @@ import SpinLoader from '@/shared/ui/layout/spin-loader';
 import type { AgentTask } from '@/features/agents/model/types';
 
 const PAGE_SIZE = 20;
-
-/**
- * @param status
- */
-function getTaskStatusVariant(status: string | null | undefined) {
-  if (!status) return 'default' as const;
-  if (status === 'completed' || status === 'success') return 'success' as const;
-  if (status === 'failed' || status === 'error') return 'destructive' as const;
-  if (status === 'running') return 'primary' as const;
-  return 'default' as const;
-}
 
 type Props = {
   initialItems: AgentTask[];
@@ -73,11 +62,13 @@ export function AgentTasksFeed({ initialItems, totalCount }: Props) {
               <div className='flex flex-wrap items-start justify-between gap-3'>
                 <div className='min-w-0 flex-1'>
                   <div className='flex flex-wrap items-center gap-2'>
-                    <Badge
-                      variant={getTaskStatusVariant(item.latest_run_status)}
-                    >
-                      {item.latest_run_status ?? 'No runs'}
-                    </Badge>
+                    {item.latest_run_status ? (
+                      <AgentRunStatusBadge status={item.latest_run_status} />
+                    ) : (
+                      <span className='text-xs text-muted-foreground'>
+                        No runs
+                      </span>
+                    )}
                     <span className='text-xs uppercase tracking-wide text-muted-foreground'>
                       {item.schedule_type ?? 'Manual'}
                     </span>

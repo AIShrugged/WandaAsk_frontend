@@ -6,23 +6,9 @@ import {
   getToolCalls,
 } from '@/features/agents/lib/format';
 import { AgentJsonPreview } from '@/features/agents/ui/agent-json-preview';
-import { Badge } from '@/shared/ui/badge';
+import { AgentRunStatusBadge } from '@/features/agents/ui/agent-run-status-badge';
 
 import type { AgentTaskRun } from '@/features/agents/model/types';
-
-/**
- *
- * @param status
- */
-function getStatusVariant(status: string) {
-  const normalized = status.toLowerCase();
-
-  if (normalized === 'completed' || normalized === 'success') return 'success';
-
-  if (normalized === 'failed' || normalized === 'error') return 'destructive';
-
-  return 'warning';
-}
 
 /**
  *
@@ -44,7 +30,7 @@ export function AgentTaskRunDetail({ run }: { run: AgentTaskRun }) {
           <div className='mt-3 flex flex-col gap-2 text-sm'>
             <div className='flex items-center gap-2'>
               <span>Status</span>
-              <Badge variant={getStatusVariant(run.status)}>{run.status}</Badge>
+              <AgentRunStatusBadge status={run.status} />
             </div>
             <p>Attempt: {run.attempt ?? '—'}</p>
             <p>Scheduled: {formatDateTime(run.scheduled_for)}</p>

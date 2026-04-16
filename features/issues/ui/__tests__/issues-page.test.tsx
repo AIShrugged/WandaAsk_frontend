@@ -184,7 +184,7 @@ describe('IssuesPage', () => {
 
   it('renders the status badge with label', () => {
     renderPage([makeIssue({ status: 'in_progress' })]);
-    expect(screen.getByText('In progress')).toBeInTheDocument();
+    expect(screen.getByText('In Progress')).toBeInTheDocument();
   });
 
   it('renders description excerpt when present', () => {

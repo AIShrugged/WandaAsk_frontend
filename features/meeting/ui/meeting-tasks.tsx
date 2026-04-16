@@ -1,51 +1,9 @@
 import { format } from 'date-fns';
-import { CircleCheck, CircleDot, Clock, XCircle } from 'lucide-react';
 
-import type { MeetingTask, MeetingTaskStatus } from '@/features/meeting/types';
+import { MeetingTaskStatusBadge } from '@/features/meeting/ui/meeting-task-status-badge';
+import { MarkdownContent } from '@/shared/ui/markdown-content';
 
-const STATUS_CONFIG: Record<
-  MeetingTaskStatus,
-  { label: string; icon: React.ReactNode; className: string }
-> = {
-  open: {
-    label: 'Open',
-    icon: <Clock className='w-3.5 h-3.5' />,
-    className: 'text-muted-foreground bg-muted',
-  },
-  in_progress: {
-    label: 'In progress',
-    icon: <CircleDot className='w-3.5 h-3.5' />,
-    className: 'text-blue-300 bg-blue-500/15',
-  },
-  done: {
-    label: 'Done',
-    icon: <CircleCheck className='w-3.5 h-3.5' />,
-    className: 'text-emerald-400 bg-emerald-500/15',
-  },
-  cancelled: {
-    label: 'Cancelled',
-    icon: <XCircle className='w-3.5 h-3.5' />,
-    className: 'text-destructive bg-destructive/10',
-  },
-};
-
-/**
- *
- * @param root0
- * @param root0.status
- */
-function StatusBadge({ status }: { status: MeetingTaskStatus }) {
-  const config = STATUS_CONFIG[status];
-
-  return (
-    <span
-      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${config.className}`}
-    >
-      {config.icon}
-      {config.label}
-    </span>
-  );
-}
+import type { MeetingTask } from '@/features/meeting/types';
 
 /**
  *
@@ -59,12 +17,12 @@ function TaskRow({ task }: { task: MeetingTask }) {
         <p className='text-sm font-medium text-foreground leading-snug'>
           {task.title}
         </p>
-        <StatusBadge status={task.status} />
+        <MeetingTaskStatusBadge status={task.status} />
       </div>
 
       {task.description && (
         <p className='text-xs text-muted-foreground leading-relaxed'>
-          {task.description}
+          <MarkdownContent>{task.description}</MarkdownContent>
         </p>
       )}
 

@@ -4,31 +4,13 @@ import { ChevronDown, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
+import { TaskStatusBadge } from '@/features/today-briefing/ui/task-status-badge';
 import { ROUTES } from '@/shared/lib/routes';
-import { Badge } from '@/shared/ui/badge';
 import { MarkdownContent } from '@/shared/ui/markdown-content';
 
 import { CollapsibleSection } from './collapsible-section';
 
 import type { MeetingTask } from '../model/types';
-
-const STATUS_VARIANT: Record<string, 'default' | 'primary' | 'destructive'> = {
-  open: 'default',
-  in_progress: 'primary',
-  paused: 'default',
-  review: 'primary',
-  reopen: 'destructive',
-  done: 'default',
-};
-
-const STATUS_LABEL: Record<string, string> = {
-  open: 'Open',
-  in_progress: 'In progress',
-  paused: 'Paused',
-  review: 'Review',
-  reopen: 'Reopened',
-  done: 'Done',
-};
 
 interface AgendaListProps {
   tasks: MeetingTask[];
@@ -93,18 +75,11 @@ export function AgendaList({
                       </span>
                     )}
                   </span>
-                  <Badge
-                    variant={
-                      task.is_overdue
-                        ? 'destructive'
-                        : (STATUS_VARIANT[task.status] ?? 'default')
-                    }
+                  <TaskStatusBadge
+                    status={task.status}
+                    isOverdue={task.is_overdue}
                     className='shrink-0 text-[10px]'
-                  >
-                    {task.is_overdue
-                      ? 'Overdue'
-                      : (STATUS_LABEL[task.status] ?? task.status)}
-                  </Badge>
+                  />
                 </div>
                 {isExpanded && task.description && (
                   <div className='mt-1.5'>

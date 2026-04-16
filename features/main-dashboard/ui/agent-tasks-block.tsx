@@ -6,6 +6,7 @@ import { Bot, ChevronRight, Clock, X, Zap } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
+import { AgentRunStatusBadge } from '@/features/agents/ui/agent-run-status-badge';
 import { ROUTES } from '@/shared/lib/routes';
 import { Badge } from '@/shared/ui/badge';
 import Card from '@/shared/ui/card/Card';
@@ -13,17 +14,6 @@ import Card from '@/shared/ui/card/Card';
 import { AgentTaskDetailPanel } from './agent-task-detail-panel';
 
 import type { AgentTask } from '@/features/agents/model/types';
-
-const RUN_STATUS_VARIANT: Record<
-  string,
-  'default' | 'success' | 'warning' | 'destructive'
-> = {
-  completed: 'success',
-  success: 'success',
-  running: 'warning',
-  failed: 'destructive',
-  error: 'destructive',
-};
 
 const TASKS_CAP = 6;
 
@@ -92,9 +82,6 @@ export function AgentTasksBlock({
           ) : (
             displayed.map((task) => {
               const runStatus = task.latest_run_status ?? null;
-              const statusVariant =
-                (runStatus && RUN_STATUS_VARIANT[runStatus.toLowerCase()]) ||
-                'default';
               const isSelected = selectedTaskId === task.id;
 
               return (
@@ -138,11 +125,7 @@ export function AgentTasksBlock({
                     </div>
                   </div>
                   <div className='flex items-center gap-2 shrink-0'>
-                    {runStatus && (
-                      <Badge variant={statusVariant} className='capitalize'>
-                        {runStatus}
-                      </Badge>
-                    )}
+                    <AgentRunStatusBadge status={runStatus} />
                     {!task.enabled && <Badge variant='warning'>Disabled</Badge>}
                     <ChevronRight className='h-3.5 w-3.5 text-muted-foreground' />
                   </div>

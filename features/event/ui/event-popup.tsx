@@ -1,6 +1,6 @@
 import { ExternalLink, Minus, Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import React, { type JSX, useTransition } from 'react';
+import React, { type JSX, useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
 import { switchBot } from '@/features/event/api/calendar-events';
@@ -38,17 +38,20 @@ export function EventPopup({
   guests: GuestProps[];
 }): JSX.Element {
   const [isPending, startTransition] = useTransition();
+  const [isBotAdded, setIsBotAdded] = useState(event.required_bot);
   const router = useRouter();
-  const isBotAdded = event.required_bot;
   const Icon = isBotAdded ? Minus : Plus;
   const actionText = isBotAdded ? 'remove bot' : 'add bot';
   /**
    * handleSwitchBot.
    */
   const handleSwitchBot = () => {
+    const next = !isBotAdded;
+    setIsBotAdded(next);
     startTransition(async () => {
-      const result = await switchBot(event.id, !event.required_bot);
+      const result = await switchBot(event.id, next);
       if (result.error) {
+        setIsBotAdded(!next);
         toast.error(result.error);
         return;
       }
