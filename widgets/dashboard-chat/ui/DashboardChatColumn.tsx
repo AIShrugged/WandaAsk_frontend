@@ -1,35 +1,63 @@
 'use client';
 
+import { ChevronLeft } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { type PropsWithChildren, Suspense } from 'react';
 
+import { CollapsedSidePanel } from '@/shared/ui/layout/collapsed-side-panel';
 import { Skeleton } from '@/shared/ui/layout/skeleton';
+import { useDashboardChatColumnStore } from '@/widgets/dashboard-chat/model/dashboard-chat-column-store';
 
 const HIDDEN_ON_PATHS = ['/dashboard/chat'];
 
 /**
  * DashboardChatColumn — wraps the chat panel in the dashboard layout.
  * Hides on /dashboard/chat/** routes to avoid duplication.
+ * Supports collapse/expand with persisted state.
  * @param root0 - Component props.
  * @param root0.children - The chat panel to render.
  * @returns JSX element or null.
  */
 export function DashboardChatColumn({ children }: PropsWithChildren) {
   const pathname = usePathname();
+  const { isCollapsed, setCollapsed } = useDashboardChatColumnStore();
+
   const isHidden = HIDDEN_ON_PATHS.some((p) => {
     return pathname.startsWith(p);
   });
-
   if (isHidden) return null;
 
   return (
     <div
-      className='hidden xl:flex flex-col flex-shrink-0 border-l border-border/50 overflow-hidden'
-      style={{ width: 480 }}
+      className={`hidden xl:flex flex-col flex-shrink-0 border-l border-border/50 overflow-hidden transition-all duration-300 ${isCollapsed ? 'w-10' : 'w-[480px]'}`}
     >
-      <Suspense fallback={<Skeleton className='h-full w-full' />}>
-        {children}
-      </Suspense>
+      {isCollapsed ? (
+        <CollapsedSidePanel
+          label='Chat'
+          icon='right'
+          className='border-none'
+          onExpand={() => {
+            return setCollapsed(false);
+          }}
+        />
+      ) : (
+        <>
+          <div className='flex items-center h-8 px-2 flex-shrink-0 border-b border-border/30'>
+            <button
+              onClick={() => {
+                return setCollapsed(true);
+              }}
+              className='flex items-center p-1 text-muted-foreground hover:text-foreground transition-colors cursor-pointer'
+              aria-label='Collapse chat panel'
+            >
+              <ChevronLeft className='w-4 h-4' />
+            </button>
+          </div>
+          <Suspense fallback={<Skeleton className='h-full w-full' />}>
+            {children}
+          </Suspense>
+        </>
+      )}
     </div>
   );
 }
