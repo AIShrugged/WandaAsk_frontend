@@ -23,7 +23,7 @@ export default async function TodayTasksPage({
     <Card className='h-full flex flex-col'>
       <PageHeader title='Tasks' />
       <div className='px-6 pt-4'>
-        <TaskStatsBlock data={data} />
+        <TaskStatsBlock />
       </div>
       <CardBody>
         <div className='flex flex-col gap-6'>
