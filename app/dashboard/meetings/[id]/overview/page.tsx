@@ -379,6 +379,8 @@ export default async function MeetingOverviewPage({
   const startsAt = parseDate(event.starts_at);
   const endsAt = parseDate(event.ends_at);
 
+  console.log(event);
+
   return (
     <div className='mx-auto w-full max-w-4xl px-6 py-6'>
       <div className='flex flex-col gap-6'>
