@@ -27,6 +27,8 @@ import {
   KANBAN_COLUMNS,
   type IssueStatus,
   type KanbanCard,
+  PersonOption,
+  SharedFilters,
 } from '@/features/kanban/model/types';
 import { ArchivedDoneSection } from '@/features/kanban/ui/archived-done-section';
 import { ArchivedDoneToggle } from '@/features/kanban/ui/archived-done-toggle';
@@ -35,10 +37,6 @@ import Avatar from '@/shared/ui/common/avatar';
 import SpinLoader from '@/shared/ui/layout/spin-loader';
 
 import type { OrganizationProps } from '@/entities/organization';
-import type {
-  PersonOption,
-  SharedFilters,
-} from '@/features/issues/model/types';
 
 interface KanbanBoardProps {
   columns: Record<IssueStatus, KanbanCard[]>;

@@ -42,4 +42,8 @@ export const KANBAN_COLUMNS: Pick<KanbanColumn, 'id' | 'label' | 'color'>[] = [
   { id: 'done', label: 'Done', color: '#34d399' },
 ];
 
-export { type IssueStatus } from '@/features/issues/model/types';
+export {
+  type IssueStatus,
+  type SharedFilters,
+  type PersonOption,
+} from '@/features/issues/model/types';
