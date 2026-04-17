@@ -106,6 +106,7 @@ export function TasksKanbanClient({
       type: isIssueType(typeRaw) ? typeRaw : '',
       assignee_id: assigneeIdRaw,
       status: isIssueStatus(statusRaw) ? statusRaw : '',
+      show_archived: searchParams.get('show_archived') === '1',
     };
   });
 
@@ -183,13 +184,19 @@ export function TasksKanbanClient({
 
   const handleFiltersChange = useCallback((patch: Partial<SharedFilters>) => {
     setFilters((prev) => {
-      return { ...prev, ...patch };
+      return { ...prev, ...patch, show_archived: false };
     });
     setFiltersVersion((v) => {
       return v + 1;
     });
     columnsVersionRef.current += 1;
     setColumnsVersion(columnsVersionRef.current);
+  }, []);
+
+  const setShowArchived = useCallback((value: boolean) => {
+    setFilters((prev) => {
+      return { ...prev, show_archived: value };
+    });
   }, []);
 
   useEffect(() => {
@@ -267,6 +274,7 @@ export function TasksKanbanClient({
         columnsVersion,
         initialSort,
         initialOrder,
+        setShowArchived,
       }}
     >
       <div className='flex flex-col h-full overflow-hidden'>
@@ -339,6 +347,7 @@ export function TasksKanbanClient({
             organizations={organizations}
             persons={persons}
             filters={filters}
+            onShowArchivedChange={setShowArchived}
           />
         </div>
       </div>

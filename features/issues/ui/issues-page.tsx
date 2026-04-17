@@ -13,8 +13,15 @@ import {
 } from 'react';
 import { toast } from 'sonner';
 
-import { loadIssuesChunk, updateIssue } from '@/features/issues/api/issues';
+import {
+  getArchivedCount,
+  loadArchivedChunk,
+  loadIssuesChunk,
+  updateIssue,
+} from '@/features/issues/api/issues';
 import { ISSUE_STATUS_OPTIONS } from '@/features/issues/model/types';
+import { ArchivedSection } from '@/features/issues/ui/archived-section';
+import { ArchivedSectionToggle } from '@/features/issues/ui/archived-section-toggle';
 import { IssueStatusBadge } from '@/features/issues/ui/issue-status-badge';
 import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
 import { ROUTES } from '@/shared/lib/routes';
@@ -28,6 +35,7 @@ import { SortableHeader } from '@/shared/ui/table/SortableHeader';
 
 import type {
   Issue,
+  IssueFilters,
   IssueSortField,
   IssueStatus,
   PersonOption,
@@ -45,6 +53,7 @@ interface IssuesPageProps {
   filtersVersion: number;
   initialSort: IssueSortField;
   initialOrder: SortOrder;
+  onShowArchivedChange: (value: boolean) => void;
 }
 
 /**
@@ -92,6 +101,7 @@ export function IssuesPage({
   filtersVersion,
   initialSort,
   initialOrder,
+  onShowArchivedChange,
 }: IssuesPageProps) {
   const [isPending, startTransition] = useTransition();
   const [sortField, setSortField] = useState<IssueSortField>(initialSort);
@@ -112,12 +122,38 @@ export function IssuesPage({
     number | null
   >(null);
 
+  // Archived section state
+  const [archivedCount, setArchivedCount] = useState<number | null>(null);
+  const [archivedItems, setArchivedItems] = useState<Issue[]>([]);
+  const [archivedOffset, setArchivedOffset] = useState(0);
+  const [archivedHasMore, setArchivedHasMore] = useState(false);
+  const [archivedLoading, setArchivedLoading] = useState(false);
+  const showArchived = filters.show_archived;
+
   // filtersRef used inside fetchMore without triggering re-renders
   const filtersRef = useRef({
     ...filters,
     sort: sortField,
     order: sortOrder,
   });
+
+  const archivedBaseFilters = useMemo((): IssueFilters => {
+    return {
+      organization_id: filters.organization_id
+        ? Number(filters.organization_id)
+        : null,
+      team_id: filters.team_id ? Number(filters.team_id) : null,
+      type: filters.type || undefined,
+      assignee: filters.assignee_id ? Number(filters.assignee_id) : null,
+      search: filters.search || undefined,
+    };
+  }, [
+    filters.organization_id,
+    filters.team_id,
+    filters.type,
+    filters.assignee_id,
+    filters.search,
+  ]);
 
   // Keep filtersRef in sync with latest props/state (useEffect avoids updating during render)
   useEffect(() => {
@@ -157,6 +193,88 @@ export function IssuesPage({
         // silently fail — existing items remain visible
       });
   }, [filtersVersion, sortField, sortOrder]);
+
+  // Fetch archived count whenever filters change (non-blocking)
+  useEffect(() => {
+    let cancelled = false;
+
+    const run = async () => {
+      setArchivedCount(null);
+      setArchivedItems([]);
+      setArchivedOffset(0);
+      setArchivedHasMore(false);
+
+      try {
+        const count = await getArchivedCount(archivedBaseFilters);
+
+        if (!cancelled) setArchivedCount(count);
+      } catch {
+        if (!cancelled) setArchivedCount(0);
+      }
+    };
+
+    void run();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [filtersVersion, archivedBaseFilters]);
+
+  // Load first page of archived items when show_archived becomes true
+  useEffect(() => {
+    if (!showArchived) return;
+
+    const run = async () => {
+      setArchivedLoading(true);
+      setArchivedItems([]);
+      setArchivedOffset(0);
+
+      try {
+        const { items, hasMore } = await loadArchivedChunk({
+          ...archivedBaseFilters,
+          offset: 0,
+          limit: PAGE_SIZE,
+        });
+
+        setArchivedItems(items);
+        setArchivedOffset(PAGE_SIZE);
+        setArchivedHasMore(hasMore);
+      } catch {
+        // silently fail
+      } finally {
+        setArchivedLoading(false);
+      }
+    };
+
+    void run();
+  }, [showArchived, filtersVersion]);
+
+  const handleLoadMoreArchived = useCallback(() => {
+    if (archivedLoading) return;
+
+    setArchivedLoading(true);
+
+    loadArchivedChunk({
+      ...archivedBaseFilters,
+      offset: archivedOffset,
+      limit: PAGE_SIZE,
+    })
+      .then(({ items, hasMore }) => {
+        setArchivedItems((prev) => {
+          return [...prev, ...items];
+        });
+        setArchivedOffset((prev) => {
+          return prev + PAGE_SIZE;
+        });
+        setArchivedHasMore(hasMore);
+      })
+      .catch(() => {
+        // silently fail
+      })
+      .finally(() => {
+        setArchivedLoading(false);
+      });
+  }, [archivedLoading, archivedBaseFilters, archivedOffset]);
 
   const scrollInitialItems = useMemo(() => {
     return firstPage.items;
@@ -503,6 +621,27 @@ export function IssuesPage({
             <div ref={sentinelRef} className='h-10' />
           )}
         </div>
+      )}
+
+      {/* Archived section toggle — shown when count is known and > 0 */}
+      {archivedCount !== null && archivedCount > 0 && (
+        <ArchivedSectionToggle
+          count={archivedCount}
+          expanded={showArchived}
+          onToggle={() => {
+            onShowArchivedChange(!showArchived);
+          }}
+        />
+      )}
+
+      {/* Archived items section */}
+      {showArchived && (
+        <ArchivedSection
+          items={archivedItems}
+          loading={archivedLoading}
+          hasMore={archivedHasMore}
+          onLoadMore={handleLoadMoreArchived}
+        />
       )}
     </div>
   );

@@ -36,6 +36,12 @@ function buildKanbanQuery(filters: KanbanFilters = {}): string {
     params.set('assignee', String(filters.assignee_id));
   }
 
+  if (filters.archived) {
+    params.set('archived', '1');
+  } else if (filters.exclude_archived) {
+    params.set('exclude_archived', '1');
+  }
+
   params.set('limit', '100');
   params.set('sort', 'updated_at');
   params.set('order', 'desc');
@@ -53,7 +59,7 @@ export async function getKanbanIssues(
   filters: KanbanFilters = {},
 ): Promise<Record<IssueStatus, KanbanCard[]>> {
   const authHeaders = await getAuthHeaders();
-  const query = buildKanbanQuery(filters);
+  const query = buildKanbanQuery({ exclude_archived: true, ...filters });
   const res = await fetch(`${API_URL}/issues?${query}`, {
     headers: { ...authHeaders },
     cache: 'no-store',
@@ -85,6 +91,8 @@ export async function getKanbanIssues(
     open: [],
     in_progress: [],
     paused: [],
+    review: [],
+    reopen: [],
     done: [],
   };
 
@@ -162,4 +170,46 @@ export async function fetchKanbanIssues(
   } catch (error) {
     return { data: null, error: (error as Error).message };
   }
+}
+
+/**
+ * fetchArchivedKanbanCards fetches archived done cards for the kanban Done column.
+ * Returns a flat list sorted by close_date descending.
+ * @param filters - kanban filters (org, team, type, assignee, search).
+ * @returns ActionResult with flat list of archived KanbanCards.
+ */
+export async function fetchArchivedKanbanCards(
+  filters: KanbanFilters,
+): Promise<ActionResult<KanbanCard[]>> {
+  const authHeaders = await getAuthHeaders();
+  const query = buildKanbanQuery({ ...filters, archived: true });
+  const res = await fetch(
+    `${API_URL}/issues?${query}&sort=close_date&order=desc`,
+    {
+      headers: { ...authHeaders },
+      cache: 'no-store',
+    },
+  );
+
+  if (!res.ok) {
+    if (res.status === 401) redirect('/api/auth/clear-session');
+    const text = await res.text();
+
+    logApiError({
+      method: 'GET',
+      url: res.url,
+      status: res.status,
+      statusText: res.statusText,
+      body: text,
+    });
+
+    return {
+      data: null,
+      error: parseApiError(text, 'Failed to load archived cards').message,
+    };
+  }
+
+  const json: ApiResponse<KanbanCard[]> = await res.json();
+
+  return { data: json.data ?? [], error: null };
 }

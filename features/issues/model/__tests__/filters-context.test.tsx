@@ -15,11 +15,13 @@ const defaultValue: FiltersContextValue = {
     type: '',
     assignee_id: '',
     status: '',
+    show_archived: false,
   },
   filtersVersion: 0,
   columnsVersion: 0,
   initialSort: 'created_at',
   initialOrder: 'desc',
+  setShowArchived: () => {},
 };
 
 describe('useFiltersContext', () => {

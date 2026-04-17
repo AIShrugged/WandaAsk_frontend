@@ -103,6 +103,8 @@ function buildIssuesQuery(filters: IssueFilters = {}) {
   if (filters.sort) params.set('sort', filters.sort);
   if (filters.order) params.set('order', filters.order);
   if (filters.search) params.set('search', filters.search);
+  if (filters.archived) params.set('archived', '1');
+  if (filters.exclude_archived) params.set('exclude_archived', '1');
 
   return params.toString();
 }
@@ -114,7 +116,7 @@ function buildIssuesQuery(filters: IssueFilters = {}) {
  */
 export async function getIssues(filters: IssueFilters = {}) {
   const authHeaders = await getAuthHeaders();
-  const query = buildIssuesQuery(filters);
+  const query = buildIssuesQuery({ exclude_archived: true, ...filters });
   const res = await fetch(`${API_URL}/issues?${query}`, {
     headers: { ...authHeaders },
     cache: 'no-store',
@@ -156,7 +158,7 @@ export async function getIssues(filters: IssueFilters = {}) {
  */
 export async function loadIssuesChunk(filters: IssueFilters = {}) {
   const authHeaders = await getAuthHeaders();
-  const query = buildIssuesQuery(filters);
+  const query = buildIssuesQuery({ exclude_archived: true, ...filters });
   const res = await fetch(`${API_URL}/issues?${query}`, {
     headers: { ...authHeaders },
     cache: 'no-store',
@@ -185,6 +187,88 @@ export async function loadIssuesChunk(filters: IssueFilters = {}) {
   const totalCount = Number(res.headers.get('Items-Count') || '0');
   const limit = filters.limit ?? 20;
   const offset = filters.offset ?? 0;
+
+  return {
+    items: json.data,
+    hasMore: offset + limit < totalCount,
+  };
+}
+
+/**
+ * getArchivedCount returns the total count of archived issues matching filters.
+ * Archived = status done AND close_date 14+ days ago.
+ * @param filters - shared filters (org, team, assignee, type, search).
+ * @returns count.
+ */
+export async function getArchivedCount(
+  filters: IssueFilters = {},
+): Promise<number> {
+  const authHeaders = await getAuthHeaders();
+  const query = buildIssuesQuery({
+    ...filters,
+    archived: true,
+    limit: 1,
+    offset: 0,
+  });
+  const res = await fetch(`${API_URL}/issues?${query}`, {
+    headers: { ...authHeaders },
+    cache: 'no-store',
+  });
+
+  if (!res.ok) {
+    if (res.status === 401) redirect('/api/auth/clear-session');
+
+    return 0;
+  }
+
+  return Number(res.headers.get('Items-Count') || '0');
+}
+
+/**
+ * loadArchivedChunk loads a page of archived issues.
+ * @param filters - list filters including offset and limit.
+ * @returns paginated chunk.
+ */
+export async function loadArchivedChunk(
+  filters: IssueFilters = {},
+): Promise<{ items: Issue[]; hasMore: boolean }> {
+  const authHeaders = await getAuthHeaders();
+  const limit = filters.limit ?? 20;
+  const offset = filters.offset ?? 0;
+  const query = buildIssuesQuery({
+    ...filters,
+    archived: true,
+    limit,
+    offset,
+  });
+  const res = await fetch(`${API_URL}/issues?${query}`, {
+    headers: { ...authHeaders },
+    cache: 'no-store',
+  });
+
+  if (!res.ok) {
+    if (res.status === 401) redirect('/api/auth/clear-session');
+    const text = await res.text();
+
+    logApiError({
+      method: 'GET',
+      url: res.url,
+      status: res.status,
+      statusText: res.statusText,
+      body: text,
+    });
+    throw new Error(
+      parseApiError(text, 'Failed to load archived issues').message,
+    );
+  }
+
+  const json: ApiResponse<Issue[]> = await res.json();
+
+  if (!json.success || !json.data) {
+    throw new Error(json.error ?? 'Invalid API response');
+  }
+
+  const totalCount = Number(res.headers.get('Items-Count') || '0');
 
   return {
     items: json.data,

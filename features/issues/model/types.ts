@@ -1,4 +1,10 @@
-export type IssueStatus = 'open' | 'in_progress' | 'paused' | 'done';
+export type IssueStatus =
+  | 'open'
+  | 'in_progress'
+  | 'paused'
+  | 'review'
+  | 'reopen'
+  | 'done';
 
 export type IssueType = 'development' | 'organization' | 'frontend' | 'backend';
 
@@ -13,6 +19,8 @@ export const ISSUE_STATUS_OPTIONS: { value: IssueStatus; label: string }[] = [
   { value: 'open', label: 'Open' },
   { value: 'in_progress', label: 'In progress' },
   { value: 'paused', label: 'Paused' },
+  { value: 'review', label: 'Review' },
+  { value: 'reopen', label: 'Reopen' },
   { value: 'done', label: 'Done' },
 ];
 
@@ -77,6 +85,7 @@ export interface Issue {
   agent_flow?: IssueAgentFlow | null;
   assignee_id: number | null;
   assignee?: PersonOption | null;
+  close_date: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -149,6 +158,7 @@ export interface SharedFilters {
   type: IssueType | '';
   assignee_id: string;
   status: IssueStatus | '';
+  show_archived: boolean;
 }
 
 export interface IssueFilters {
@@ -162,6 +172,8 @@ export interface IssueFilters {
   sort?: IssueSortField;
   order?: SortOrder;
   search?: string;
+  archived?: boolean;
+  exclude_archived?: boolean;
 }
 
 export interface IssueCommentUser {

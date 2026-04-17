@@ -85,6 +85,7 @@ export function IssuesLayoutClient({
       type: isIssueType(typeRaw) ? typeRaw : '',
       assignee_id: assigneeIdRaw,
       status: isIssueStatus(statusRaw) ? statusRaw : '',
+      show_archived: searchParams.get('show_archived') === '1',
     };
   });
 
@@ -152,13 +153,19 @@ export function IssuesLayoutClient({
 
   const handleFiltersChange = useCallback((patch: Partial<SharedFilters>) => {
     setFilters((prev) => {
-      return { ...prev, ...patch };
+      return { ...prev, ...patch, show_archived: false };
     });
     setFiltersVersion((v) => {
       return v + 1;
     });
     columnsVersionRef.current += 1;
     setColumnsVersion(columnsVersionRef.current);
+  }, []);
+
+  const setShowArchived = useCallback((value: boolean) => {
+    setFilters((prev) => {
+      return { ...prev, show_archived: value };
+    });
   }, []);
 
   useEffect(() => {
@@ -174,6 +181,7 @@ export function IssuesLayoutClient({
       type: filters.type,
       assignee_id: filters.assignee_id,
       status: filters.status,
+      show_archived: filters.show_archived ? '1' : '',
     });
   }, [filters]);
 
@@ -184,8 +192,16 @@ export function IssuesLayoutClient({
       columnsVersion,
       initialSort,
       initialOrder,
+      setShowArchived,
     };
-  }, [filters, filtersVersion, columnsVersion, initialSort, initialOrder]);
+  }, [
+    filters,
+    filtersVersion,
+    columnsVersion,
+    initialSort,
+    initialOrder,
+    setShowArchived,
+  ]);
 
   return (
     <FiltersContext.Provider value={contextValue}>

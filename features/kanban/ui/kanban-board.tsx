@@ -19,12 +19,17 @@ import {
 } from 'react';
 import { toast } from 'sonner';
 
-import { moveKanbanCard } from '@/features/kanban/api/kanban';
+import {
+  fetchArchivedKanbanCards,
+  moveKanbanCard,
+} from '@/features/kanban/api/kanban';
 import {
   KANBAN_COLUMNS,
   type IssueStatus,
   type KanbanCard,
 } from '@/features/kanban/model/types';
+import { ArchivedDoneSection } from '@/features/kanban/ui/archived-done-section';
+import { ArchivedDoneToggle } from '@/features/kanban/ui/archived-done-toggle';
 import { ROUTES } from '@/shared/lib/routes';
 import Avatar from '@/shared/ui/common/avatar';
 import SpinLoader from '@/shared/ui/layout/spin-loader';
@@ -41,6 +46,7 @@ interface KanbanBoardProps {
   persons: PersonOption[];
   filters: SharedFilters;
   isFetching?: boolean;
+  onShowArchivedChange: (value: boolean) => void;
 }
 
 /**
@@ -377,6 +383,7 @@ const KanbanColumnComponent = memo(function KanbanColumnComponent({
   onMoveToColumn,
   movingCardId,
   onCardClick,
+  footer,
 }: {
   id: IssueStatus;
   label: string;
@@ -390,6 +397,7 @@ const KanbanColumnComponent = memo(function KanbanColumnComponent({
   onMoveToColumn: (card: KanbanCard, status: IssueStatus) => void;
   movingCardId: number | null;
   onCardClick: (card: KanbanCard) => void;
+  footer?: React.ReactNode;
 }) {
   const [isDragOver, setIsDragOver] = useState(false);
 
@@ -459,6 +467,8 @@ const KanbanColumnComponent = memo(function KanbanColumnComponent({
           </div>
         ) : null}
       </div>
+
+      {footer}
     </div>
   );
 });
@@ -480,6 +490,7 @@ export function KanbanBoard({
   persons: _persons,
   filters,
   isFetching = false,
+  onShowArchivedChange,
 }: KanbanBoardProps) {
   // Optimistic override for drag-and-drop. Reset whenever server columns change.
   const [optimisticColumns, setOptimisticColumns] = useState<Record<
@@ -490,10 +501,90 @@ export function KanbanBoard({
   const [hoveredCard, setHoveredCard] = useState<KanbanCard | null>(null);
   const [, startTransition] = useTransition();
 
+  // Archived done cards state
+  const [archivedDoneCards, setArchivedDoneCards] = useState<KanbanCard[]>([]);
+  const [archivedDoneCount, setArchivedDoneCount] = useState<number | null>(
+    null,
+  );
+  const [archivedDoneLoading, setArchivedDoneLoading] = useState(false);
+  const showArchived = filters.show_archived;
+
   // When server data changes (new fetch result), clear any optimistic override.
   useEffect(() => {
     setOptimisticColumns(null);
   }, [columns]);
+
+  // Fetch archived done cards count on filter change (for the toggle badge)
+  useEffect(() => {
+    setArchivedDoneCount(null);
+
+    const kanbanFilters = {
+      organization_id: filters.organization_id
+        ? Number(filters.organization_id)
+        : null,
+      team_id: filters.team_id ? Number(filters.team_id) : null,
+      type: filters.type || undefined,
+      assignee_id: filters.assignee_id ? Number(filters.assignee_id) : null,
+      search: filters.search || undefined,
+    };
+
+    let cancelled = false;
+
+    fetchArchivedKanbanCards(kanbanFilters)
+      .then((result) => {
+        if (cancelled) return;
+
+        if (!result.error && result.data) {
+          setArchivedDoneCount(result.data.length);
+          if (showArchived) {
+            setArchivedDoneCards(result.data);
+          }
+        } else {
+          setArchivedDoneCount(0);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setArchivedDoneCount(0);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [columns]);
+
+  // Load archived cards when show_archived toggled on
+  useEffect(() => {
+    if (!showArchived) {
+      setArchivedDoneCards([]);
+      return;
+    }
+
+    setArchivedDoneLoading(true);
+
+    const kanbanFilters = {
+      organization_id: filters.organization_id
+        ? Number(filters.organization_id)
+        : null,
+      team_id: filters.team_id ? Number(filters.team_id) : null,
+      type: filters.type || undefined,
+      assignee_id: filters.assignee_id ? Number(filters.assignee_id) : null,
+      search: filters.search || undefined,
+    };
+
+    fetchArchivedKanbanCards(kanbanFilters)
+      .then((result) => {
+        if (!result.error && result.data) {
+          setArchivedDoneCards(result.data);
+          setArchivedDoneCount(result.data.length);
+        }
+      })
+      .catch(() => {
+        // silently fail
+      })
+      .finally(() => {
+        setArchivedDoneLoading(false);
+      });
+  }, [showArchived]);
 
   // The active column data: optimistic (mid-drag) or latest server data.
   const activeColumns = optimisticColumns ?? columns;
@@ -543,24 +634,45 @@ export function KanbanBoard({
 
   const handleDrop = useCallback(
     (cardId: number, sourceStatus: IssueStatus, targetStatus: IssueStatus) => {
-      const sourceCards = activeColumns[sourceStatus];
-      const card = sourceCards.find((c) => {
+      // Check if dragging from archived section
+      const archivedCard = archivedDoneCards.find((c) => {
         return c.id === cardId;
       });
+      const sourceCards = activeColumns[sourceStatus];
+      const regularCard = sourceCards.find((c) => {
+        return c.id === cardId;
+      });
+      const card = archivedCard ?? regularCard;
 
       if (!card) return;
 
       const frozenCard = card;
+      const isFromArchived = Boolean(archivedCard);
 
-      setOptimisticColumns((prev) => {
-        return applyOptimisticMove(
-          prev ?? activeColumns,
-          cardId,
-          frozenCard,
-          sourceStatus,
-          targetStatus,
-        );
-      });
+      // Optimistic update: remove from archived section if applicable
+      if (isFromArchived) {
+        setArchivedDoneCards((prev) => {
+          return prev.filter((c) => {
+            return c.id !== cardId;
+          });
+        });
+        setArchivedDoneCount((prev) => {
+          return prev === null ? null : Math.max(0, prev - 1);
+        });
+      }
+
+      if (!isFromArchived) {
+        setOptimisticColumns((prev) => {
+          return applyOptimisticMove(
+            prev ?? activeColumns,
+            cardId,
+            frozenCard,
+            sourceStatus,
+            targetStatus,
+          );
+        });
+      }
+
       setMovingCardId(cardId);
 
       startTransition(async () => {
@@ -573,22 +685,38 @@ export function KanbanBoard({
 
           toast.success(`Moved to ${colLabel}`);
         } catch (error) {
-          setOptimisticColumns((prev) => {
-            return revertOptimisticMove(
-              prev ?? activeColumns,
-              cardId,
-              frozenCard,
-              sourceStatus,
-              targetStatus,
-            );
-          });
+          // Revert archived optimistic update on failure
+          if (isFromArchived) {
+            setArchivedDoneCards((prev) => {
+              return [frozenCard, ...prev];
+            });
+            setArchivedDoneCount((prev) => {
+              return prev === null ? null : prev + 1;
+            });
+          } else {
+            setOptimisticColumns((prev) => {
+              return revertOptimisticMove(
+                prev ?? activeColumns,
+                cardId,
+                frozenCard,
+                sourceStatus,
+                targetStatus,
+              );
+            });
+          }
+
           toast.error((error as Error).message);
         } finally {
           setMovingCardId(null);
         }
       });
     },
-    [activeColumns, applyOptimisticMove, revertOptimisticMove],
+    [
+      activeColumns,
+      archivedDoneCards,
+      applyOptimisticMove,
+      revertOptimisticMove,
+    ],
   );
 
   const handleMoveToColumn = useCallback(
@@ -617,6 +745,8 @@ export function KanbanBoard({
       open: [],
       in_progress: [],
       paused: [],
+      review: [],
+      reopen: [],
       done: [],
     };
 
@@ -675,6 +805,8 @@ export function KanbanBoard({
       <div className='flex gap-3'>
         <div className='flex gap-3 overflow-x-auto pb-4 flex-1'>
           {KANBAN_COLUMNS.map((col) => {
+            const isDoneColumn = col.id === 'done';
+
             return (
               <KanbanColumnComponent
                 key={col.id}
@@ -686,6 +818,27 @@ export function KanbanBoard({
                 onMoveToColumn={handleMoveToColumn}
                 movingCardId={movingCardId}
                 onCardClick={handleCardClick}
+                footer={
+                  isDoneColumn ? (
+                    <>
+                      <ArchivedDoneToggle
+                        count={archivedDoneCount}
+                        expanded={showArchived}
+                        loading={archivedDoneLoading}
+                        onToggle={() => {
+                          onShowArchivedChange(!showArchived);
+                        }}
+                      />
+                      {showArchived && (
+                        <ArchivedDoneSection
+                          cards={archivedDoneCards}
+                          loading={archivedDoneLoading}
+                          onCardClick={handleCardClick}
+                        />
+                      )}
+                    </>
+                  ) : undefined
+                }
               />
             );
           })}
