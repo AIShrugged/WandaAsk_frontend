@@ -26,7 +26,7 @@ export default async function TodayTasksPage({
         <TaskStatsBlock />
       </div>
       <CardBody>
-        <div className='flex flex-col gap-6'>
+        <div className='flex flex-col gap-8'>
           {data.events.map((event) => {
             return (
               <div key={event.id} className='flex flex-col gap-2'>

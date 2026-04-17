@@ -64,7 +64,7 @@
     --popover-foreground: 220 20% 93%;
 
     /* --- Violet as primary action color --- */
-    --primary: 263 79% 57%; /* #7c3aed — cosmic violet */
+    --primary: 263 79% 70%; /* #a87ff0 — cosmic violet, lighter for readability */
     --primary-foreground: 0 0% 100%;
 
     /* --- Neutral secondary --- */
@@ -86,7 +86,7 @@
     /* --- Borders & inputs --- */
     --border: 240 15% 16%; /* dark border with blue tint */
     --input: 240 15% 16%;
-    --ring: 263 79% 57%; /* violet focus ring */
+    --ring: 263 79% 70%; /* violet focus ring */
 
     /* --- Sidebar --- */
     --sidebar: 240 40% 3%; /* near-black space */

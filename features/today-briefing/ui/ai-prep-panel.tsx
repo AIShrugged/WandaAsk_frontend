@@ -19,6 +19,8 @@ import { executeAiAction } from '../api/ai-action';
 import { dispatchTaskToAgent } from '../api/dispatch';
 import { sendDirectMessage } from '../api/send-message';
 
+import { CollapsibleSection } from './collapsible-section';
+
 import type { CarriedTask, MeetingTask, TodayEvent } from '../model/types';
 
 interface AiAction {
@@ -101,7 +103,6 @@ function buildSuggestions(
 }
 
 export function AiPrepPanel({ event, tasks, carriedTasks }: AiPrepPanelProps) {
-  const [expanded, setExpanded] = useState(false);
   const [loadingKey, setLoadingKey] = useState<string | null>(null);
   const [doneKeys, setDoneKeys] = useState<Set<string>>(new Set());
   const router = useRouter();
@@ -169,21 +170,8 @@ export function AiPrepPanel({ event, tasks, carriedTasks }: AiPrepPanelProps) {
   const hasItems = suggestions.length > 0 || dispatchable.length > 0;
 
   return (
-    <div className='flex flex-col gap-2'>
-      <div className='flex items-center gap-2'>
-        <button
-          type='button'
-          onClick={() => {
-            return setExpanded(!expanded);
-          }}
-          className='flex items-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-sm font-medium text-foreground hover:bg-muted transition-colors cursor-pointer'
-        >
-          <Bot className='h-4 w-4 text-primary' />
-          AI prep
-        </button>
-      </div>
-
-      {expanded && hasItems && (
+    <CollapsibleSection label='AI prep' defaultExpanded={false}>
+      {hasItems && (
         <div className='rounded-lg border border-border bg-card/50 p-3'>
           <p className='text-xs font-medium text-muted-foreground mb-3'>
             AI can do for this meeting
@@ -291,6 +279,6 @@ export function AiPrepPanel({ event, tasks, carriedTasks }: AiPrepPanelProps) {
           </div>
         </div>
       )}
-    </div>
+    </CollapsibleSection>
   );
 }
