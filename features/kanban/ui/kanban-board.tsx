@@ -27,8 +27,8 @@ import {
   KANBAN_COLUMNS,
   type IssueStatus,
   type KanbanCard,
-  PersonOption,
-  SharedFilters,
+  type PersonOption,
+  type SharedFilters,
 } from '@/features/kanban/model/types';
 import { ArchivedDoneSection } from '@/features/kanban/ui/archived-done-section';
 import { ArchivedDoneToggle } from '@/features/kanban/ui/archived-done-toggle';
