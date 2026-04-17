@@ -1,6 +1,10 @@
 import { format, isSameMonth, parseISO } from 'date-fns';
 
-import { isEventPast } from '@/shared/lib/isEventPast';
+import {
+  BotPillIcon,
+  getBotPillIndicator,
+  getMeetingDisplayState,
+} from '@/features/meetings';
 
 import type { EventProps } from '@/entities/event';
 
@@ -68,7 +72,8 @@ export default function CalendarAgenda({
             </p>
             <div className='flex flex-col gap-1'>
               {dayEvents.map((ev) => {
-                const noSummary = isEventPast(ev.ends_at) && !ev.has_summary;
+                const displayState = getMeetingDisplayState(ev);
+                const botIndicator = getBotPillIndicator(displayState);
 
                 return (
                   <div
@@ -76,11 +81,7 @@ export default function CalendarAgenda({
                     className='px-3 py-2 rounded-md bg-muted text-sm text-foreground flex items-center gap-2'
                   >
                     <span className='truncate flex-1'>{ev.title}</span>
-                    {noSummary && (
-                      <span className='text-xs text-muted-foreground whitespace-nowrap flex-shrink-0'>
-                        No summary
-                      </span>
-                    )}
+                    <BotPillIcon indicator={botIndicator} size={12} />
                   </div>
                 );
               })}

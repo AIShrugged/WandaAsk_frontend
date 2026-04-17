@@ -7,6 +7,11 @@ import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useMemo } from 'react';
 
+import {
+  BotPillIcon,
+  getBotPillIndicator,
+  getMeetingDisplayState,
+} from '@/features/meetings';
 import { ROUTES } from '@/shared/lib/routes';
 import { Badge } from '@/shared/ui/badge';
 import Card from '@/shared/ui/card/Card';
@@ -33,6 +38,8 @@ interface MeetingRowProps {
  */
 function MeetingRow({ event, now, onSelect, isSelected }: MeetingRowProps) {
   const state = getMeetingState(event, now);
+  const displayState = getMeetingDisplayState(event, now);
+  const botIndicator = getBotPillIndicator(displayState);
   const start = parseISO(event.starts_at);
   const end = parseISO(event.ends_at);
   const timeLabel = `${format(start, 'HH:mm')} — ${format(end, 'HH:mm')}`;
@@ -95,6 +102,7 @@ function MeetingRow({ event, now, onSelect, isSelected }: MeetingRowProps) {
                 Summary
               </span>
             )}
+            <BotPillIcon indicator={botIndicator} size={12} />
           </div>
           <div className='flex items-center gap-1 mt-0.5'>
             <Clock className='h-3 w-3 text-muted-foreground' />

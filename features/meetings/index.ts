@@ -20,3 +20,8 @@ export {
   getMeetingDisplayState,
   type MeetingDisplayState,
 } from './model/meeting-state';
+export {
+  getBotPillIndicator,
+  type BotPillIndicator,
+} from './model/bot-pill-indicator';
+export { BotPillIcon } from './ui/bot-pill-icon';
