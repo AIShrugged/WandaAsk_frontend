@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronLeft } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { type PropsWithChildren, Suspense } from 'react';
 
@@ -34,7 +34,7 @@ export function DashboardChatColumn({ children }: PropsWithChildren) {
       {isCollapsed ? (
         <CollapsedSidePanel
           label='Chat'
-          icon='right'
+          icon='left'
           className='border-none'
           onExpand={() => {
             return setCollapsed(false);
@@ -50,7 +50,8 @@ export function DashboardChatColumn({ children }: PropsWithChildren) {
               className='flex items-center p-1 text-muted-foreground hover:text-foreground transition-colors cursor-pointer'
               aria-label='Collapse chat panel'
             >
-              <ChevronLeft className='w-4 h-4' />
+              <ChevronRight className='w-4 h-4' />{' '}
+              <p className={'text-muted-foreground  text-xs'}>Hide</p>
             </button>
           </div>
           <Suspense fallback={<Skeleton className='h-full w-full' />}>

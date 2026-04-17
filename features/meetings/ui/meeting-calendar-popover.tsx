@@ -1,12 +1,15 @@
 'use client';
 
-import { Bot, Calendar, Clock4, Video, X } from 'lucide-react';
+import { Calendar, Clock4, Video, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 
 import { getMeetingDisplayState } from '@/features/meetings/model/meeting-state';
 import { ROUTES } from '@/shared/lib/routes';
 
+import { getBotPillIndicator } from '../model/bot-pill-indicator';
+
+import { BotPillIcon } from './bot-pill-icon';
 import { BotToggleButton } from './bot-toggle-button';
 import { MeetingJoinButton } from './meeting-join-button';
 
@@ -38,6 +41,7 @@ export function MeetingCalendarPopover({
   const router = useRouter();
   const ref = useRef<HTMLDivElement>(null);
   const displayState = getMeetingDisplayState(event);
+  const botIndicator = getBotPillIndicator(displayState);
   const isPast =
     displayState === 'past_with_summary' ||
     displayState === 'past_missed_bot' ||
@@ -114,14 +118,8 @@ export function MeetingCalendarPopover({
           </div>
         )}
         <div className='flex items-center gap-1.5 text-xs'>
-          <Bot className='h-3 w-3 flex-shrink-0 text-muted-foreground' />
-          <span
-            className={
-              event.required_bot ? 'text-primary' : 'text-muted-foreground'
-            }
-          >
-            {event.required_bot ? 'Bot scheduled' : 'No bot'}
-          </span>
+          <BotPillIcon indicator={botIndicator} size={11} />
+          <span className={botIndicator.colorClass}>{botIndicator.label}</span>
         </div>
       </div>
 

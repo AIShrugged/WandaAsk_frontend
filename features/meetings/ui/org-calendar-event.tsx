@@ -8,6 +8,10 @@ import { useState } from 'react';
 import { isEventPast } from '@/shared/lib/isEventPast';
 import { ROUTES } from '@/shared/lib/routes';
 
+import { getBotPillIndicator } from '../model/bot-pill-indicator';
+import { getMeetingDisplayState } from '../model/meeting-state';
+
+import { BotPillIcon } from './bot-pill-icon';
 import { MeetingCalendarPopover } from './meeting-calendar-popover';
 
 import type { CalendarEventListItem } from '@/features/meetings/model/types';
@@ -30,6 +34,8 @@ interface OrgCalendarEventProps {
 export function OrgCalendarEvent({ event }: OrgCalendarEventProps) {
   const isPast = isEventPast(event.ends_at);
   const hasSummary = event.has_summary;
+  const displayState = getMeetingDisplayState(event);
+  const botIndicator = getBotPillIndicator(displayState);
   const [popoverOpen, setPopoverOpen] = useState(false);
   const { push } = useRouter();
 
@@ -73,6 +79,7 @@ export function OrgCalendarEvent({ event }: OrgCalendarEventProps) {
           {/* eslint-enable no-nested-ternary, sonarjs/no-nested-conditional */}
         </div>
         <p className='text-xs font-bold truncate min-w-0'>{event.title}</p>
+        <BotPillIcon indicator={botIndicator} size={12} />
       </div>
 
       {/* Hover tooltip (past events only — future opens popover) */}
@@ -88,6 +95,12 @@ export function OrgCalendarEvent({ event }: OrgCalendarEventProps) {
             <p className='text-xs font-semibold text-foreground leading-snug'>
               {event.title}
             </p>
+          </div>
+          <div className='px-3 py-2 flex items-center gap-1.5'>
+            <BotPillIcon indicator={botIndicator} size={11} />
+            <span className='text-xs text-muted-foreground'>
+              {botIndicator.label}
+            </span>
           </div>
         </div>
       )}

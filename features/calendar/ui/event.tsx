@@ -12,6 +12,11 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
+import {
+  BotPillIcon,
+  getBotPillIndicator,
+  getMeetingDisplayState,
+} from '@/features/meetings';
 import { formatDate, parseEventDate } from '@/shared/lib/dateFormatter';
 import { isEventPast } from '@/shared/lib/isEventPast';
 import { ROUTES } from '@/shared/lib/routes';
@@ -57,6 +62,8 @@ interface EventComponentProps {
 const Event = ({ event, onFutureEventClick }: EventComponentProps) => {
   const isPast = isEventPast(event.ends_at);
   const noSummary = isPast && !event.has_summary;
+  const displayState = getMeetingDisplayState(event);
+  const botIndicator = getBotPillIndicator(displayState);
   const { push } = useRouter();
   /**
    * navigateToMeeting navigates to the meeting summary page.
@@ -113,6 +120,7 @@ const Event = ({ event, onFutureEventClick }: EventComponentProps) => {
           )}
         </div>
         <p className='text-xs font-bold truncate min-w-0'>{event.title}</p>
+        <BotPillIcon indicator={botIndicator} size={12} />
       </div>
 
       {/* Tooltip */}

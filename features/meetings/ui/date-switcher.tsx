@@ -1,12 +1,18 @@
 'use client';
 
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
 
-import { ButtonIcon } from '@/shared/ui/button/button-icon';
+import { H2 } from '@/shared/ui/typography/H2';
 
 interface DateSwitcherProps {
   selectedDate: string; // YYYY-MM-DD
 }
+
+const NAV_BUTTONS = [
+  { id: 'prev', icon: ChevronLeft, offset: -1 },
+  { id: 'next', icon: ChevronRight, offset: +1 },
+] as const;
 
 function toDateParam(date: Date): string {
   const y = date.getFullYear();
@@ -40,31 +46,42 @@ function formatDateLabel(date: Date): string {
 }
 
 export function DateSwitcher({ selectedDate }: DateSwitcherProps) {
+  const { push } = useRouter();
+  const params = useSearchParams();
+
   const current = new Date(selectedDate + 'T00:00:00');
 
-  const prev = new Date(current);
+  const setDate = (date: Date) => {
+    const next = new URLSearchParams(params);
 
-  prev.setDate(current.getDate() - 1);
-
-  const next = new Date(current);
-
-  next.setDate(current.getDate() + 1);
+    next.set('date', toDateParam(date));
+    push(`?${next.toString()}`);
+  };
 
   const label = formatDateLabel(current);
-  const prevParam = toDateParam(prev);
-  const nextParam = toDateParam(next);
 
   return (
-    <div className='flex items-center justify-between gap-4'>
-      <ButtonIcon
-        icon={<ChevronLeft className='h-5 w-5' />}
-        href={`?date=${prevParam}`}
-      />
-      <span className='text-sm font-semibold text-foreground'>{label}</span>
-      <ButtonIcon
-        icon={<ChevronRight className='h-5 w-5' />}
-        href={`?date=${nextParam}`}
-      />
+    <div className='flex flex-row justify-between'>
+      <div className='flex items-center gap-[11px]'>
+        {NAV_BUTTONS.map(({ id, icon: Icon, offset }) => {
+          const target = new Date(current);
+
+          target.setDate(current.getDate() + offset);
+
+          return (
+            <button
+              key={id}
+              className='cursor-pointer'
+              onClick={() => {
+                return setDate(target);
+              }}
+            >
+              <Icon />
+            </button>
+          );
+        })}
+        <H2>{label}</H2>
+      </div>
     </div>
   );
 }
