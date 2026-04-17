@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { useFiltersContext } from '@/features/issues/model/filters-context';
-import { fetchKanbanIssues, KanbanBoard } from '@/features/kanban';
+import { KanbanBoard, fetchKanbanIssues } from '@/features/kanban';
 
 import type { OrganizationProps } from '@/entities/organization';
 import type { PersonOption } from '@/features/issues/model/types';
@@ -24,7 +24,7 @@ export function IssuesKanbanTab({
   organizations,
   persons,
 }: IssuesKanbanTabProps) {
-  const { filters, columnsVersion } = useFiltersContext();
+  const { filters, columnsVersion, setShowArchived } = useFiltersContext();
   const [columns, setColumns] =
     useState<Record<IssueStatus, KanbanCard[]>>(initialColumns);
   const [isFetching, setIsFetching] = useState(false);
@@ -76,6 +76,7 @@ export function IssuesKanbanTab({
         persons={persons}
         filters={filters}
         isFetching={isFetching}
+        onShowArchivedChange={setShowArchived}
       />
     </div>
   );

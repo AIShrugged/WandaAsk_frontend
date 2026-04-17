@@ -19,8 +19,13 @@ export function IssuesListTab({
   initialTotalCount,
   persons,
 }: IssuesListTabProps) {
-  const { filters, filtersVersion, initialSort, initialOrder } =
-    useFiltersContext();
+  const {
+    filters,
+    filtersVersion,
+    initialSort,
+    initialOrder,
+    setShowArchived,
+  } = useFiltersContext();
 
   return (
     <div className='h-full overflow-y-auto px-4 py-4'>
@@ -32,6 +37,7 @@ export function IssuesListTab({
         filtersVersion={filtersVersion}
         initialSort={initialSort}
         initialOrder={initialOrder}
+        onShowArchivedChange={setShowArchived}
       />
     </div>
   );

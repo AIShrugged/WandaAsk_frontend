@@ -13,6 +13,7 @@ export interface KanbanCard {
   attachments_count: number;
   comments_count: number;
   story_points: number | null;
+  close_date: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -30,6 +31,8 @@ export interface KanbanFilters {
   type?: string;
   assignee_id?: number | null;
   search?: string;
+  archived?: boolean;
+  exclude_archived?: boolean;
 }
 
 export const KANBAN_COLUMNS: Pick<KanbanColumn, 'id' | 'label' | 'color'>[] = [
@@ -39,4 +42,8 @@ export const KANBAN_COLUMNS: Pick<KanbanColumn, 'id' | 'label' | 'color'>[] = [
   { id: 'done', label: 'Done', color: '#34d399' },
 ];
 
-export { type IssueStatus } from '@/features/issues/model/types';
+export {
+  type IssueStatus,
+  type SharedFilters,
+  type PersonOption,
+} from '@/features/issues/model/types';

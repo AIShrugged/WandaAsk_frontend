@@ -14,6 +14,7 @@ export interface FiltersContextValue {
   columnsVersion: number;
   initialSort: IssueSortField;
   initialOrder: SortOrder;
+  setShowArchived: (value: boolean) => void;
 }
 
 export const FiltersContext = createContext<FiltersContextValue | null>(null);

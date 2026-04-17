@@ -1,3 +1,4 @@
+import { differenceInDays } from 'date-fns';
 import { notFound } from 'next/navigation';
 
 import {
@@ -62,13 +63,27 @@ export default async function IssueDetailPage({
   ]);
 
   const currentUserId = userResponse.data?.id ?? 0;
+  const isArchived =
+    issue.status === 'done' &&
+    issue.close_date !== null &&
+    differenceInDays(new Date(), new Date(issue.close_date)) >= 14;
 
   return (
     <div className='h-full overflow-y-auto'>
       <div className='grid min-h-full gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]'>
         <div className='flex flex-col gap-6'>
           <Card className='flex flex-col'>
-            <PageHeader hasButtonBack title='Task' />
+            <PageHeader
+              hasButtonBack
+              title='Task'
+              extraContent={
+                isArchived ? (
+                  <span className='inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-secondary text-muted-foreground border border-border/60'>
+                    Archived
+                  </span>
+                ) : undefined
+              }
+            />
             <div className='overflow-y-auto'>
               <CardBody>
                 <IssueForm
