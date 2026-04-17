@@ -29,7 +29,7 @@ export default async function TodayTasksPage({
         <div className='flex flex-col gap-8'>
           {data.events.map((event) => {
             return (
-              <div key={event.id} className='flex flex-col gap-2'>
+              <div key={event.id} className='flex flex-col gap-8'>
                 <CarriedTasks count={data.carried_tasks.length} />
                 <AiPrepPanel
                   event={event}

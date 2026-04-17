@@ -26,7 +26,7 @@ export function CollapsibleSection({
         }}
         className='cursor-pointer flex items-center text-xs font-medium uppercase tracking-wide text-muted-foreground hover:text-foreground transition-colors'
       >
-        <span className={'text-md text-primary'}>{label}</span>
+        <span className={'text-md text-primary mr-2'}>{label}</span>
         {isExpanded ? (
           <ChevronUp className='h-5 w-5' />
         ) : (
