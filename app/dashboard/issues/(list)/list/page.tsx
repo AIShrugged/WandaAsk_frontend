@@ -81,10 +81,11 @@ export default async function IssuesListPage({
     getCurrentUserId(),
   ]);
 
+  const isUnassigned = assigneeIdParam === 'unassigned';
   let resolvedAssignee: number | null;
   if (assigneeIdParam === null) {
     resolvedAssignee = currentUserId ?? null;
-  } else if (assigneeIdParam.length > 0) {
+  } else if (assigneeIdParam.length > 0 && !isUnassigned) {
     resolvedAssignee = Number(assigneeIdParam);
   } else {
     resolvedAssignee = null;
@@ -96,6 +97,7 @@ export default async function IssuesListPage({
     status: statusParam,
     type: typeParam,
     assignee: resolvedAssignee,
+    unassigned: isUnassigned,
     offset: 0,
     limit: 20,
     sort: sortParam,

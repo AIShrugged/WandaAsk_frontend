@@ -94,6 +94,8 @@ function buildIssuesQuery(filters: IssueFilters = {}) {
 
   if (filters.assignee) params.set('assignee', String(filters.assignee));
 
+  if (filters.unassigned) params.set('unassigned', '1');
+
   if (filters.organization_id)
     params.set('organization_id', String(filters.organization_id));
 

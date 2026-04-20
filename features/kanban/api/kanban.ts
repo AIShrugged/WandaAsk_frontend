@@ -36,15 +36,19 @@ function buildKanbanQuery(filters: KanbanFilters = {}): string {
     params.set('assignee', String(filters.assignee_id));
   }
 
+  if (filters.unassigned) {
+    params.set('unassigned', '1');
+  }
+
   if (filters.archived) {
     params.set('archived', '1');
   } else if (filters.exclude_archived) {
     params.set('exclude_archived', '1');
   }
 
-  params.set('limit', '100');
-  params.set('sort', 'updated_at');
-  params.set('order', 'desc');
+  params.set('limit', String(filters.limit ?? 100));
+  params.set('sort', filters.sort ?? 'updated_at');
+  params.set('order', filters.order ?? 'desc');
 
   return params.toString();
 }
@@ -182,14 +186,16 @@ export async function fetchArchivedKanbanCards(
   filters: KanbanFilters,
 ): Promise<ActionResult<KanbanCard[]>> {
   const authHeaders = await getAuthHeaders();
-  const query = buildKanbanQuery({ ...filters, archived: true });
-  const res = await fetch(
-    `${API_URL}/issues?${query}&sort=close_date&order=desc`,
-    {
-      headers: { ...authHeaders },
-      cache: 'no-store',
-    },
-  );
+  const query = buildKanbanQuery({
+    ...filters,
+    archived: true,
+    sort: 'updated_at',
+    order: 'desc',
+  });
+  const res = await fetch(`${API_URL}/issues?${query}`, {
+    headers: { ...authHeaders },
+    cache: 'no-store',
+  });
 
   if (!res.ok) {
     if (res.status === 401) redirect('/api/auth/clear-session');

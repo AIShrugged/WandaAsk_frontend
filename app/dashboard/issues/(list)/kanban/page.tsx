@@ -39,12 +39,15 @@ export default async function IssuesKanbanPage({
       : '';
   const assigneeIdParam =
     typeof params.assignee_id === 'string' ? params.assignee_id : null;
+  const isUnassigned = assigneeIdParam === 'unassigned';
 
   const kanbanFilters: KanbanFilters = {
     organization_id: orgId ? Number(orgId) : null,
     team_id: params.team_id ? Number(params.team_id) : null,
     type: typeParam || undefined,
-    assignee_id: assigneeIdParam ? Number(assigneeIdParam) : null,
+    assignee_id:
+      assigneeIdParam && !isUnassigned ? Number(assigneeIdParam) : null,
+    unassigned: isUnassigned,
     search: typeof params.search === 'string' ? params.search : undefined,
   };
 

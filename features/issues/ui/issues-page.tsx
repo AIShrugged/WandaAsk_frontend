@@ -144,7 +144,11 @@ export function IssuesPage({
         : null,
       team_id: filters.team_id ? Number(filters.team_id) : null,
       type: filters.type || undefined,
-      assignee: filters.assignee_id ? Number(filters.assignee_id) : null,
+      assignee:
+        filters.assignee_id && filters.assignee_id !== 'unassigned'
+          ? Number(filters.assignee_id)
+          : null,
+      unassigned: filters.assignee_id === 'unassigned',
       search: filters.search || undefined,
     };
   }, [
@@ -179,7 +183,11 @@ export function IssuesPage({
       team_id: f.team_id ? Number(f.team_id) : null,
       status: f.status || undefined,
       type: f.type || undefined,
-      assignee: f.assignee_id ? Number(f.assignee_id) : null,
+      assignee:
+        f.assignee_id && f.assignee_id !== 'unassigned'
+          ? Number(f.assignee_id)
+          : null,
+      unassigned: f.assignee_id === 'unassigned',
       offset: 0,
       limit: PAGE_SIZE,
       sort: f.sort,
@@ -289,7 +297,11 @@ export function IssuesPage({
         team_id: f.team_id ? Number(f.team_id) : null,
         status: f.status || undefined,
         type: f.type || undefined,
-        assignee: f.assignee_id ? Number(f.assignee_id) : null,
+        assignee:
+          f.assignee_id && f.assignee_id !== 'unassigned'
+            ? Number(f.assignee_id)
+            : null,
+        unassigned: f.assignee_id === 'unassigned',
         offset,
         limit: PAGE_SIZE,
         sort: f.sort,
@@ -400,17 +412,17 @@ export function IssuesPage({
           <div className='overflow-x-auto'>
             <table className='w-full min-w-[980px] table-fixed text-sm'>
               <colgroup>
-                <col className='w-[80px]' />
-                <col />
+                <col className='w-[45px]' />
+                <col className='w-[200px]' />
                 <col className='w-[110px]' />
-                <col className='w-[220px]' />
+                <col className='w-[120px]' />
                 <col className='w-[180px]' />
                 <col className='w-[240px]' />
                 <col className='w-[150px]' />
               </colgroup>
               <thead className='bg-accent/30 text-left text-muted-foreground'>
                 <tr>
-                  <th className='px-4 py-3'>
+                  <th className='p-2'>
                     <SortableHeader
                       field='id'
                       label='ID'
@@ -419,7 +431,7 @@ export function IssuesPage({
                       onSort={handleSort}
                     />
                   </th>
-                  <th className='px-4 py-3'>
+                  <th className='p-2'>
                     <SortableHeader
                       field='name'
                       label='Issue'
@@ -428,7 +440,7 @@ export function IssuesPage({
                       onSort={handleSort}
                     />
                   </th>
-                  <th className='px-4 py-3'>
+                  <th className='p-2'>
                     <SortableHeader
                       field='type'
                       label='Type'
@@ -437,7 +449,7 @@ export function IssuesPage({
                       onSort={handleSort}
                     />
                   </th>
-                  <th className='px-4 py-3'>
+                  <th className='p-2'>
                     <SortableHeader
                       field='status'
                       label='Status'
@@ -446,9 +458,9 @@ export function IssuesPage({
                       onSort={handleSort}
                     />
                   </th>
-                  <th className='px-4 py-3'>Scope</th>
-                  <th className='px-4 py-3'>Assignee</th>
-                  <th className='px-4 py-3'>
+                  <th className='p-2'>Scope</th>
+                  <th className='p-2'>Assignee</th>
+                  <th className='p-2'>
                     <SortableHeader
                       field='created_at'
                       label='Created'
@@ -466,10 +478,10 @@ export function IssuesPage({
                       key={issue.id}
                       className='border-t border-border hover:bg-accent/20'
                     >
-                      <td className='px-4 py-3 align-top font-mono text-muted-foreground whitespace-nowrap'>
+                      <td className='p-2 align-top font-mono text-muted-foreground whitespace-nowrap'>
                         #{issue.id}
                       </td>
-                      <td className='max-w-0 overflow-hidden px-4 py-3 align-top'>
+                      <td className='max-w-0 overflow-hidden p-2 align-top'>
                         <Link
                           href={`${ROUTES.DASHBOARD.ISSUES}/${issue.id}`}
                           className='block truncate font-medium text-foreground hover:text-primary'
@@ -482,10 +494,10 @@ export function IssuesPage({
                           </p>
                         ) : null}
                       </td>
-                      <td className='max-w-0 truncate px-4 py-3 align-top'>
+                      <td className='max-w-0 truncate p-2 align-top'>
                         {issue.type}
                       </td>
-                      <td className='px-4 py-3 align-top'>
+                      <td className='p-2 align-top'>
                         <div className='group/status flex flex-col gap-2'>
                           <IssueStatusBadge
                             status={issue.status}
@@ -536,10 +548,10 @@ export function IssuesPage({
                           )}
                         </div>
                       </td>
-                      <td className='px-4 py-3 align-top text-muted-foreground'>
+                      <td className='p-2 align-top text-muted-foreground'>
                         {formatIssueScope(issue)}
                       </td>
-                      <td className='px-4 py-3 align-top text-muted-foreground'>
+                      <td className='p-2 align-top text-muted-foreground'>
                         <div className='group/assignee'>
                           {editingAssigneeIssueId === issue.id ? (
                             <div className='flex items-center gap-2'>
@@ -595,7 +607,7 @@ export function IssuesPage({
                           )}
                         </div>
                       </td>
-                      <td className='px-4 py-3 align-top text-muted-foreground'>
+                      <td className='p-2 align-top text-muted-foreground'>
                         <span className='whitespace-nowrap'>
                           {formatIssueDate(issue.created_at)}
                         </span>

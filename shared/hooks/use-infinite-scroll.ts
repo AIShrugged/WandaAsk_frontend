@@ -26,21 +26,29 @@ export function useInfiniteScroll<T>({
   const [items, setItems] = useState<T[]>(initialItems);
   const [offset, setOffset] = useState(initialItems.length);
   const [hasMore, setHasMore] = useState(initialHasMore);
+  const [isLoading, setIsLoading] = useState(false);
+  // Incremented on every reset so in-flight loadMore calls from a prior
+  // generation are discarded and cannot append stale data.
+  const generationRef = useRef(0);
 
   useEffect(() => {
+    generationRef.current += 1;
     setItems(initialItems);
     setOffset(initialItems.length);
     setHasMore(initialHasMore);
+    setIsLoading(false);
   }, [initialItems]);
 
-  const [isLoading, setIsLoading] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
   const loadMore = useCallback(async () => {
     if (isLoading || !hasMore) return;
     setIsLoading(true);
+    const generation = generationRef.current;
 
     try {
       const { items: newItems, hasMore: more } = await fetchMore(offset);
+
+      if (generationRef.current !== generation) return;
 
       setItems((prev) => {
         const combined = [...prev, ...newItems];
@@ -58,7 +66,9 @@ export function useInfiniteScroll<T>({
     } catch {
       // silently fail
     } finally {
-      setIsLoading(false);
+      if (generationRef.current === generation) {
+        setIsLoading(false);
+      }
     }
   }, [fetchMore, offset, isLoading, hasMore, maxItems]);
 

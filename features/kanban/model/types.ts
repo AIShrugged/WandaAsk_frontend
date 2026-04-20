@@ -33,6 +33,10 @@ export interface KanbanFilters {
   search?: string;
   archived?: boolean;
   exclude_archived?: boolean;
+  unassigned?: boolean;
+  sort?: string;
+  order?: string;
+  limit?: number;
 }
 
 export const KANBAN_COLUMNS: Pick<KanbanColumn, 'id' | 'label' | 'color'>[] = [

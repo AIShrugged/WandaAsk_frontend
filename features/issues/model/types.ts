@@ -174,6 +174,7 @@ export interface IssueFilters {
   search?: string;
   archived?: boolean;
   exclude_archived?: boolean;
+  unassigned?: boolean;
 }
 
 export interface IssueCommentUser {

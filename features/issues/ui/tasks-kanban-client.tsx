@@ -231,7 +231,11 @@ export function TasksKanbanClient({
           : null,
         team_id: filters.team_id ? Number(filters.team_id) : null,
         type: filters.type || undefined,
-        assignee_id: filters.assignee_id ? Number(filters.assignee_id) : null,
+        assignee_id:
+          filters.assignee_id && filters.assignee_id !== 'unassigned'
+            ? Number(filters.assignee_id)
+            : null,
+        unassigned: filters.assignee_id === 'unassigned',
       };
 
       const result = await fetchKanbanIssues(kanbanFilters);

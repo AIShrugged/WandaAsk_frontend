@@ -280,7 +280,12 @@ const InputDropdown = forwardRef<
   });
 
   return (
-    <div className={cn('relative flex flex-col items-start w-full', className)}>
+    <div
+      className={cn(
+        'relative flex flex-col items-start w-full overflow-visible',
+        className,
+      )}
+    >
       <div
         ref={triggerRef}
         tabIndex={disabled ? undefined : 0}
@@ -301,6 +306,7 @@ const InputDropdown = forwardRef<
           'px-4 flex items-center rounded-[var(--radius-button)] h-10 w-full',
           'border border-input bg-background transition-colors cursor-pointer',
           'focus:border-ring focus:ring-2 focus:ring-ring/30 focus:ring-offset-0 outline-none',
+          'overflow-visible',
           error ? 'border-destructive' : '',
           disabled && 'opacity-60 cursor-not-allowed',
           'relative',

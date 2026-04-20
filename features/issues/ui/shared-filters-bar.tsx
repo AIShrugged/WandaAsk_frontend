@@ -67,6 +67,7 @@ export function SharedFiltersBar({
 
   const personOptions = [
     { value: '', label: 'All' },
+    { value: 'unassigned', label: 'Unassigned' },
     ...persons.map((person) => {
       return {
         value: String(person.id),
