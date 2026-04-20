@@ -1,6 +1,9 @@
 'use client';
 
-import { ISSUE_STATUS_OPTIONS } from '@/features/issues/model/types';
+import {
+  ISSUE_STATUS_OPTIONS,
+  issueTypeOptionsFromOrgs,
+} from '@/features/issues/model/types';
 import { getTeams } from '@/features/teams/api/team';
 import InputDropdown from '@/shared/ui/input/InputDropdown';
 import { TenantScopeFields } from '@/shared/ui/input/tenant-scope-fields';
@@ -23,12 +26,6 @@ interface FiltersModalProps {
   onChange: (patch: Partial<SharedFilters>) => void;
   disabled?: boolean;
 }
-
-const TYPE_OPTIONS = [
-  { value: '', label: 'Any type' },
-  { value: 'development', label: 'Development' },
-  { value: 'organization', label: 'Organization' },
-];
 
 const STATUS_OPTIONS = [
   { value: '', label: 'Any status' },
@@ -56,6 +53,11 @@ export function FiltersModal({
   onChange,
   disabled,
 }: FiltersModalProps) {
+  const typeOptions = [
+    { value: '', label: 'Any type' },
+    ...issueTypeOptionsFromOrgs(organizations),
+  ];
+
   const personOptions = [
     { value: '', label: 'Any assignee' },
     ...persons.map((person) => {
@@ -95,7 +97,7 @@ export function FiltersModal({
           />
           <InputDropdown
             label='Type'
-            options={TYPE_OPTIONS}
+            options={typeOptions}
             value={filters.type}
             onChange={(value) => {
               onChange({ type: value as IssueType | '' });

@@ -8,8 +8,9 @@ import { toast } from 'sonner';
 import { FiltersContext } from '@/features/issues/model/filters-context';
 import {
   isIssueStatus,
+  isIssueType,
   ISSUE_STATUS_OPTIONS,
-  ISSUE_TYPE_OPTIONS,
+  issueTypeOptionsFromOrgs,
 } from '@/features/issues/model/types';
 import { fetchKanbanIssues, KanbanBoard } from '@/features/kanban';
 import { getTeams } from '@/features/teams/api/team';
@@ -41,12 +42,6 @@ interface TasksKanbanClientProps {
 const KEEP_WHEN_EMPTY = new Set(['assignee_id']);
 const STALE_PARAMS = ['assignee'] as const;
 
-const TYPE_OPTIONS = [
-  { value: '', label: 'Any type' },
-  { value: 'development', label: 'Development' },
-  { value: 'organization', label: 'Organization' },
-];
-
 const STATUS_OPTIONS = [
   { value: '', label: 'Any status' },
   ...ISSUE_STATUS_OPTIONS,
@@ -67,12 +62,6 @@ function isIssueSortField(value: string): value is IssueSortField {
 
 function isSortOrder(value: string): value is SortOrder {
   return value === 'asc' || value === 'desc';
-}
-
-function isIssueType(value: string): value is IssueType {
-  return ISSUE_TYPE_OPTIONS.some((option) => {
-    return option.value === value;
-  });
 }
 
 /**
@@ -260,6 +249,11 @@ export function TasksKanbanClient({
     };
   }, [filters]);
 
+  const typeOptions = [
+    { value: '', label: 'Any type' },
+    ...issueTypeOptionsFromOrgs(organizations),
+  ];
+
   const personOptions = [
     { value: '', label: 'Any assignee' },
     ...persons.map((person) => {
@@ -321,7 +315,7 @@ export function TasksKanbanClient({
               />
               <InputDropdown
                 label='Type'
-                options={TYPE_OPTIONS}
+                options={typeOptions}
                 value={filters.type}
                 onChange={(value) => {
                   handleFiltersChange({ type: value as IssueType | '' });

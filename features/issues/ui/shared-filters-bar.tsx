@@ -3,7 +3,10 @@
 import { Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-import { ISSUE_STATUS_OPTIONS } from '@/features/issues/model/types';
+import {
+  ISSUE_STATUS_OPTIONS,
+  issueTypeOptionsFromOrgs,
+} from '@/features/issues/model/types';
 import { getTeams } from '@/features/teams/api/team';
 import InputDropdown from '@/shared/ui/input/InputDropdown';
 import { TenantScopeFields } from '@/shared/ui/input/tenant-scope-fields';
@@ -23,12 +26,6 @@ interface SharedFiltersBarProps {
   onChange: (patch: Partial<SharedFilters>) => void;
   disabled?: boolean;
 }
-
-const TYPE_OPTIONS = [
-  { value: '', label: 'Any type' },
-  { value: 'development', label: 'Development' },
-  { value: 'organization', label: 'Organization' },
-];
 
 const STATUS_OPTIONS = [
   { value: '', label: 'Any status' },
@@ -52,6 +49,11 @@ export function SharedFiltersBar({
   onChange,
   disabled,
 }: SharedFiltersBarProps) {
+  const typeOptions = [
+    { value: '', label: 'Any type' },
+    ...issueTypeOptionsFromOrgs(organizations),
+  ];
+
   const [searchValue, setSearchValue] = useState(filters.search);
 
   // Debounce search: propagate 300ms after user stops typing
@@ -131,7 +133,7 @@ export function SharedFiltersBar({
         />
         <InputDropdown
           label='Type'
-          options={TYPE_OPTIONS}
+          options={typeOptions}
           value={filters.type}
           onChange={(value) => {
             onChange({ type: value as IssueType | '' });

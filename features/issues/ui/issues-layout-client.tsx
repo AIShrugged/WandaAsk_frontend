@@ -5,10 +5,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { FiltersContext } from '@/features/issues/model/filters-context';
-import {
-  isIssueStatus,
-  ISSUE_TYPE_OPTIONS,
-} from '@/features/issues/model/types';
+import { isIssueStatus, isIssueType } from '@/features/issues/model/types';
 import { IssuesTabsNav } from '@/features/issues/ui/issues-tabs-nav';
 import { SharedFiltersBar } from '@/features/issues/ui/shared-filters-bar';
 import { CollapsibleSection } from '@/shared/ui/layout/collapsible-section';
@@ -16,7 +13,6 @@ import { CollapsibleSection } from '@/shared/ui/layout/collapsible-section';
 import type { OrganizationProps } from '@/entities/organization';
 import type {
   IssueSortField,
-  IssueType,
   PersonOption,
   SharedFilters,
   SortOrder,
@@ -47,12 +43,6 @@ function isIssueSortField(value: string): value is IssueSortField {
 
 function isSortOrder(value: string): value is SortOrder {
   return value === 'asc' || value === 'desc';
-}
-
-function isIssueType(value: string): value is IssueType {
-  return ISSUE_TYPE_OPTIONS.some((option) => {
-    return option.value === value;
-  });
 }
 
 /**

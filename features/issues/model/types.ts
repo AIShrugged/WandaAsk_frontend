@@ -15,6 +15,26 @@ export const ISSUE_TYPE_OPTIONS: { value: IssueType; label: string }[] = [
   { value: 'backend', label: 'Backend' },
 ];
 
+export function issueTypeOptionsFromOrgs(
+  organizations: {
+    issue_types?: { key: string; name: string; is_active: boolean }[];
+  }[],
+): { value: string; label: string }[] {
+  const seen = new Set<string>();
+  const options: { value: string; label: string }[] = [];
+
+  for (const org of organizations) {
+    for (const t of org.issue_types ?? []) {
+      if (t.is_active && !seen.has(t.key)) {
+        seen.add(t.key);
+        options.push({ value: t.key, label: t.name });
+      }
+    }
+  }
+
+  return options.length > 0 ? options : ISSUE_TYPE_OPTIONS;
+}
+
 export const ISSUE_STATUS_OPTIONS: { value: IssueStatus; label: string }[] = [
   { value: 'open', label: 'Open' },
   { value: 'in_progress', label: 'In progress' },
@@ -141,14 +161,12 @@ export function isSortOrder(value: string): value is SortOrder {
 }
 
 /**
- * isIssueType — type guard for IssueType.
+ * isIssueType — accepts any non-empty string since types are org-defined.
  * @param value - raw string.
  * @returns boolean.
  */
 export function isIssueType(value: string): value is IssueType {
-  return ISSUE_TYPE_OPTIONS.some((option) => {
-    return option.value === value;
-  });
+  return value.length > 0;
 }
 
 export interface SharedFilters {
