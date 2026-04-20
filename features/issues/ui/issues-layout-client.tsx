@@ -11,6 +11,7 @@ import {
 } from '@/features/issues/model/types';
 import { IssuesTabsNav } from '@/features/issues/ui/issues-tabs-nav';
 import { SharedFiltersBar } from '@/features/issues/ui/shared-filters-bar';
+import { CollapsibleSection } from '@/shared/ui/layout/collapsible-section';
 
 import type { OrganizationProps } from '@/entities/organization';
 import type {
@@ -101,7 +102,6 @@ export function IssuesLayoutClient({
     return isSortOrder(raw) ? raw : 'desc';
   });
 
-  const [filtersVisible, setFiltersVisible] = useState(true);
   const [filters, setFilters] = useState<SharedFilters>(initialFilters);
   const [filtersVersion, setFiltersVersion] = useState(0);
   const columnsVersionRef = useRef(0);
@@ -207,30 +207,17 @@ export function IssuesLayoutClient({
     <FiltersContext.Provider value={contextValue}>
       <div className='flex flex-col'>
         <div className='px-2 pt-4 shrink-0'>
-          <div className='flex items-center justify-between mb-2'>
-            <button
-              type='button'
-              onClick={() => {
-                return setFiltersVisible((v) => {
-                  return !v;
-                });
-              }}
-              aria-label={filtersVisible ? 'Hide filters' : 'Show filters'}
-              aria-expanded={filtersVisible}
-              className='flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer select-none'
-            >
-              <SlidersHorizontal className='h-3.5 w-3.5' />
-              {filtersVisible ? 'Hide filters' : 'Show filters'}
-            </button>
-          </div>
-          {filtersVisible && (
+          <CollapsibleSection
+            label='Filters'
+            icon={<SlidersHorizontal className='h-3.5 w-3.5' />}
+          >
             <SharedFiltersBar
               filters={filters}
               organizations={organizations}
               persons={persons}
               onChange={handleFiltersChange}
             />
-          )}
+          </CollapsibleSection>
         </div>
         <div className='shrink-0 mt-4'>
           <IssuesTabsNav />
