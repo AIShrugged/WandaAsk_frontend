@@ -149,12 +149,6 @@ export function issueTypeOptionsFromOrg(
   `const typeOptions = issueTypeOptionsFromOrg(issueTypes)`
 - Pass `typeOptions` to `<InputDropdown options={typeOptions} />`
 
-### Step 3 — Update `FiltersModal` props
-
-**File**: `features/issues/ui/filters-modal.tsx`
-
-- Same pattern as Step 2 — remove local `TYPE_OPTIONS`, accept `issueTypes` prop
-
 ### Step 4 — Update `TasksKanbanClient`
 
 **File**: `features/issues/ui/tasks-kanban-client.tsx`
@@ -165,7 +159,7 @@ export function issueTypeOptionsFromOrg(
 
 ### Step 5 — Propagate org `issue_types` to filter components
 
-Trace call sites for `SharedFiltersBar`, `FiltersModal`, and the kanban filter:
+Trace call sites for `SharedFiltersBar`, and the kanban filter:
 
 - **`features/issues/ui/issues-page.tsx`** — likely receives org data, pass
   `issue_types` down
