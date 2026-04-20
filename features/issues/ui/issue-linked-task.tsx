@@ -90,7 +90,8 @@ export function IssueLinkedTask({ issue }: IssueLinkedTaskProps) {
   const [isPending, startTransition] = useTransition();
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const isProcessing = issue.status === 'in_progress';
+  const runStatus = issue.agent_task_run?.status;
+  const isProcessing = runStatus === 'queued' || runStatus === 'processing';
 
   useEffect(() => {
     if (isProcessing && !pollingRef.current) {

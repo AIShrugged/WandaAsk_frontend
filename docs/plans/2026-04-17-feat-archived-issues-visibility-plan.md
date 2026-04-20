@@ -1,7 +1,7 @@
 ---
 title: 'feat: Archived Issues Visibility (done 14+ days)'
 type: feat
-status: active
+status: completed
 date: 2026-04-17
 ---
 
