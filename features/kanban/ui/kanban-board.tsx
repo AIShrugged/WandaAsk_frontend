@@ -761,13 +761,13 @@ export function KanbanBoard({
 
       for (const card of sourceCards) {
         // Assignee filter
-        if (filters.assignee_id) {
-          const assigneeId = Number(filters.assignee_id);
-
-          if (card.assignee_id !== assigneeId) {
-            continue;
-          }
-        }
+        if (filters.assignee_id === 'unassigned') {
+          if (card.assignee_id !== null) continue;
+        } else if (
+          filters.assignee_id &&
+          card.assignee_id !== Number(filters.assignee_id)
+        )
+          continue;
 
         // Type filter
         if (filters.type && card.type !== filters.type) {

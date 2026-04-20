@@ -57,6 +57,8 @@ export default async function IssuesKanbanPage({
     getKanbanIssues(kanbanFilters),
   ]);
 
+  console.log(groupedCards);
+
   return (
     <IssuesKanbanTab
       initialColumns={groupedCards}

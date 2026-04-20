@@ -28,15 +28,18 @@ export function IssuesKanbanTab({
   const [columns, setColumns] =
     useState<Record<IssueStatus, KanbanCard[]>>(initialColumns);
   const [isFetching, setIsFetching] = useState(false);
-  const isFirstRender = useRef(true);
+  // Skip the first render only when SSR already provided data (full-page load).
+  // On tab navigation initialColumns is empty, so we fetch immediately.
+  const hasInitialData = Object.values(initialColumns).some((col) => {
+    return col.length > 0;
+  });
+  const isFirstRender = useRef(hasInitialData);
 
-  // Refetch kanban data when filters change (skip initial render — SSR data is already correct)
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
       return;
     }
-
     let cancelled = false;
 
     const run = async () => {
@@ -70,7 +73,14 @@ export function IssuesKanbanTab({
     return () => {
       cancelled = true;
     };
-  }, [columnsVersion]);
+  }, [
+    filters.organization_id,
+    filters.team_id,
+    filters.type,
+    filters.assignee_id,
+    filters.search,
+    columnsVersion,
+  ]);
 
   return (
     <div className='p-3'>
