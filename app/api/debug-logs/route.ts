@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+import type { DebugLogEntry } from '@/shared/lib/debugLogBuffer';
+
 import { clearLogs, getLogs, pushLog } from '@/shared/lib/debugLogBuffer';
 import { isDev } from '@/shared/lib/logger';
-
-import type { DebugLogEntry } from '@/shared/lib/debugLogBuffer';
 
 /**
  *
