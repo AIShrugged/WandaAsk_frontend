@@ -1,10 +1,11 @@
 import { getUser } from '@/features/user';
 import { ProfileForm } from '@/features/user-profile';
+import { RestartTourSection } from '@/features/virtual-tour';
 
 export const metadata = { title: 'Account Info' };
 
 /**
- * Account Info tab — displays the profile form.
+ * Account Info tab — displays the profile form and tour restart section.
  */
 export default async function ProfileAccountPage() {
   const { data: user } = await getUser();
@@ -17,5 +18,10 @@ export default async function ProfileAccountPage() {
     );
   }
 
-  return <ProfileForm user={user} />;
+  return (
+    <>
+      <ProfileForm user={user} />
+      <RestartTourSection />
+    </>
+  );
 }

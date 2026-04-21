@@ -6,6 +6,8 @@ export interface UserProps {
   readonly created_at: string;
   readonly updated_at: string;
   readonly is_demo: boolean;
+  readonly onboarding_completed?: boolean;
+  readonly onboarding_last_step?: number;
 }
 
 /** Minimal user shape returned by UserResource (id/name/email only) */
