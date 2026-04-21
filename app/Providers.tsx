@@ -16,7 +16,6 @@ import GlobalPopup from '@/shared/ui/layout/global-popup';
 export default function Providers({ children }: PropsWithChildren) {
   return (
     <>
-      {/* <DevDebugProvider /> */}
       <GlobalPopup />
       {/* <TourPortal />*/}
       <Toaster position='top-center' richColors />

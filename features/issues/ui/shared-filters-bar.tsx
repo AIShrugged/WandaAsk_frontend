@@ -14,7 +14,6 @@ import { TenantScopeFields } from '@/shared/ui/input/tenant-scope-fields';
 import type { OrganizationProps } from '@/entities/organization';
 import type {
   IssueStatus,
-  IssueType,
   PersonOption,
   SharedFilters,
 } from '@/features/issues/model/types';
@@ -136,7 +135,7 @@ export function SharedFiltersBar({
           options={typeOptions}
           value={filters.type}
           onChange={(value) => {
-            onChange({ type: value as IssueType | '' });
+            onChange({ type: value as string });
           }}
           disabled={disabled}
         />

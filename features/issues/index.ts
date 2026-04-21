@@ -19,11 +19,9 @@ export type {
   SharedFilters,
   IssueSortField,
   SortOrder,
-  IssueType,
   IssueStatus,
 } from '@/features/issues/model/types';
 export {
-  ISSUE_TYPE_OPTIONS,
   isIssueStatus,
   isIssueType,
   isIssueSortField,

@@ -20,7 +20,6 @@ import { TenantScopeFields } from '@/shared/ui/input/tenant-scope-fields';
 import type { OrganizationProps } from '@/entities/organization';
 import type {
   IssueSortField,
-  IssueType,
   PersonOption,
   SharedFilters,
   SortOrder,
@@ -324,7 +323,7 @@ export function TasksKanbanClient({
                 options={typeOptions}
                 value={filters.type}
                 onChange={(value) => {
-                  handleFiltersChange({ type: value as IssueType | '' });
+                  handleFiltersChange({ type: value as string });
                 }}
                 disabled={isFetching}
               />

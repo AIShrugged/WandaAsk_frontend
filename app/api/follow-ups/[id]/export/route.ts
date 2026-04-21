@@ -1,7 +1,7 @@
-import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 import { API_URL } from '@/shared/lib/config';
+import { getAuthToken } from '@/shared/lib/getAuthToken';
 import { logApiError } from '@/shared/lib/logger';
 
 import type { NextRequest } from 'next/server';
@@ -36,20 +36,18 @@ export async function GET(
     return NextResponse.json({ error: 'Invalid format' }, { status: 422 });
   }
 
-  const cookieStore = await cookies();
-  const token = cookieStore.get('token')?.value;
+  let token: string;
 
-  if (!token) {
+  try {
+    token = await getAuthToken();
+  } catch {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   const backendRes = await fetch(
     `${API_URL}/followups/${id}/export?format=${format}`,
     {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        Accept: '*/*',
-      },
+      headers: { Authorization: `Bearer ${token}`, Accept: '*/*' },
       cache: 'no-store',
     },
   );

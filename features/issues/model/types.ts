@@ -6,15 +6,6 @@ export type IssueStatus =
   | 'reopen'
   | 'done';
 
-export type IssueType = 'development' | 'organization' | 'frontend' | 'backend';
-
-export const ISSUE_TYPE_OPTIONS: { value: IssueType; label: string }[] = [
-  { value: 'development', label: 'Development' },
-  { value: 'organization', label: 'Organization' },
-  { value: 'frontend', label: 'Frontend' },
-  { value: 'backend', label: 'Backend' },
-];
-
 export function issueTypeOptionsFromOrgs(
   organizations: {
     issue_types?: { key: string; name: string; is_active: boolean }[];
@@ -32,7 +23,7 @@ export function issueTypeOptionsFromOrgs(
     }
   }
 
-  return options.length > 0 ? options : ISSUE_TYPE_OPTIONS;
+  return options;
 }
 
 export const ISSUE_STATUS_OPTIONS: { value: IssueStatus; label: string }[] = [
@@ -95,7 +86,7 @@ export interface Issue {
   id: number;
   name: string;
   description: string | null;
-  type: IssueType;
+  type: string;
   status: IssueStatus;
   organization_id: number | null;
   team_id: number | null;
@@ -165,7 +156,7 @@ export function isSortOrder(value: string): value is SortOrder {
  * @param value - raw string.
  * @returns boolean.
  */
-export function isIssueType(value: string): value is IssueType {
+export function isIssueType(value: string): boolean {
   return value.length > 0;
 }
 
@@ -173,7 +164,7 @@ export interface SharedFilters {
   organization_id: string;
   team_id: string;
   search: string;
-  type: IssueType | '';
+  type: string | '';
   assignee_id: string;
   status: IssueStatus | '';
   show_archived: boolean;
@@ -183,7 +174,7 @@ export interface IssueFilters {
   organization_id?: number | null;
   team_id?: number | null;
   status?: IssueStatus | '';
-  type?: IssueType | '';
+  type?: string | '';
   assignee?: number | null;
   offset?: number;
   limit?: number;
@@ -214,7 +205,7 @@ export interface IssueComment {
 export interface IssueUpsertDTO {
   name: string;
   description: string | null;
-  type: IssueType;
+  type: string;
   status: IssueStatus;
   organization_id: number | null;
   team_id: number | null;

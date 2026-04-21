@@ -1,30 +1,23 @@
-import { cookies } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 
 import { API_URL } from '@/shared/lib/config';
-
-async function getAuthToken(): Promise<string | undefined> {
-  const cookieStore = await cookies();
-
-  return cookieStore.get('token')?.value;
-}
-
-function buildHeaders(token: string): Record<string, string> {
-  return { Authorization: `Bearer ${token}`, Accept: '*/*' };
-}
+import { getAuthToken } from '@/shared/lib/getAuthToken';
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   const id = request.nextUrl.searchParams.get('id');
 
   if (!id) return NextResponse.json({ error: 'Missing id' }, { status: 400 });
 
-  const token = await getAuthToken();
+  let token: string;
 
-  if (!token)
+  try {
+    token = await getAuthToken();
+  } catch {
     return NextResponse.json({ error: 'Unauthenticated' }, { status: 401 });
+  }
 
   const upstream = await fetch(`${API_URL}/attachments/${id}/download`, {
-    headers: buildHeaders(token),
+    headers: { Authorization: `Bearer ${token}`, Accept: '*/*' },
     cache: 'no-store',
   });
 

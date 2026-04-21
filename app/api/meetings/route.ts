@@ -1,7 +1,7 @@
-import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { API_URL } from '@/shared/lib/config';
+import { getAuthToken } from '@/shared/lib/getAuthToken';
 import { logApiError } from '@/shared/lib/logger';
 
 import type { CalendarEventListItem } from '@/features/meetings/model/types';
@@ -34,20 +34,18 @@ export async function GET(request: NextRequest) {
   );
   const limit = Math.min(Math.max(requestedLimit, 1), MAX_LIMIT);
 
-  const cookieStore = await cookies();
-  const token = cookieStore.get('token')?.value;
+  let token: string;
 
-  if (!token) {
+  try {
+    token = await getAuthToken();
+  } catch {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   const backendRes = await fetch(
     `${API_URL}/calendar-events?offset=${offset}&limit=${limit}`,
     {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        Accept: 'application/json',
-      },
+      headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' },
       cache: 'no-store',
     },
   );

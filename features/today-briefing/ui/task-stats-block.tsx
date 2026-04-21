@@ -71,7 +71,7 @@ function StatCard({
       </div>
       <p className='text-3xl font-bold text-foreground tabular-nums'>{value}</p>
       {delta !== undefined && (
-        <DeltaBadge delta={delta} label={deltaLabel ?? 'vs yesterday'} />
+        <DeltaBadge delta={delta} label={deltaLabel ?? ''} />
       )}
     </div>
   );
@@ -86,6 +86,7 @@ export async function TaskStatsBlock() {
       value: stats.total,
       icon: ListChecks,
       iconClassName: 'bg-primary/10 text-primary',
+      delta: 0,
       deltaLabel: 'active tasks',
     },
     {

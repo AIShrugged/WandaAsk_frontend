@@ -12,7 +12,7 @@ import {
 } from '@/features/issues/api/issues';
 import {
   ISSUE_STATUS_OPTIONS,
-  ISSUE_TYPE_OPTIONS,
+  issueTypeOptionsFromOrgs,
 } from '@/features/issues/model/types';
 import { getTeams } from '@/features/teams/api/team';
 import { ROUTES } from '@/shared/lib/routes';
@@ -27,7 +27,6 @@ import type { OrganizationProps } from '@/entities/organization';
 import type {
   Issue,
   IssueStatus,
-  IssueType,
   PersonOption,
 } from '@/features/issues/model/types';
 
@@ -41,7 +40,7 @@ interface IssueFormProps {
 interface IssueFormValues {
   name: string;
   description: string;
-  type: IssueType | '';
+  type: string;
   status: IssueStatus | '';
   organization_id: string;
   team_id: string;
@@ -66,6 +65,7 @@ export function IssueForm({
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [rootError, setRootError] = useState('');
+  const typeOptions = issueTypeOptionsFromOrgs(organizations);
   const defaultValues = useMemo<IssueFormValues>(() => {
     return {
       name: issue?.name ?? '',
@@ -127,7 +127,7 @@ export function IssueForm({
       const payload = {
         name: values.name.trim(),
         description: values.description.trim() || null,
-        type: values.type as IssueType,
+        type: values.type,
         status,
         organization_id: Number(values.organization_id),
         team_id: values.team_id ? Number(values.team_id) : null,
@@ -191,10 +191,10 @@ export function IssueForm({
       <div className='grid gap-2 md:grid-cols-2'>
         <InputDropdown
           label='Type'
-          options={[{ value: '', label: 'Select type' }, ...ISSUE_TYPE_OPTIONS]}
+          options={[{ value: '', label: 'Select type' }, ...typeOptions]}
           value={watch('type')}
           onChange={(value) => {
-            setValue('type', value as IssueType | '', { shouldDirty: true });
+            setValue('type', value as string, { shouldDirty: true });
             clearErrors('type');
             setRootError('');
           }}

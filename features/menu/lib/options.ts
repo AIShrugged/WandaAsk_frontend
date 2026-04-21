@@ -89,14 +89,6 @@ export function getMenuItems(): MenuProps[] {
       href: ROUTES.DASHBOARD.FOLLOWUPS,
       position: 60,
     },*/
-    /* {
-      id: 'debug',
-      label: 'Debug',
-      icon: 'terminal',
-      href: ROUTES.DASHBOARD.DEBUG,
-      activeHref: ROUTES.DASHBOARD.DEBUG,
-      position: 10_000,
-    },*/
   ];
 
   return items.toSorted((a, b) => {

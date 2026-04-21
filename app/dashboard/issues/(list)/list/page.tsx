@@ -2,8 +2,7 @@ import {
   getIssues,
   getPersons,
   isIssueStatus,
-  ISSUE_TYPE_OPTIONS,
-  type IssueType,
+  isIssueType,
   type IssueSortField,
   type SortOrder,
 } from '@/features/issues';
@@ -28,12 +27,6 @@ function isIssueSortField(value: string): value is IssueSortField {
 
 function isSortOrder(value: string): value is SortOrder {
   return value === 'asc' || value === 'desc';
-}
-
-function isIssueType(value: string): value is IssueType {
-  return ISSUE_TYPE_OPTIONS.some((option) => {
-    return option.value === value;
-  });
 }
 
 /**
