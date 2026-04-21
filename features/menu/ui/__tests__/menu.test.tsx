@@ -45,6 +45,12 @@ jest.mock('next/navigation', () => {
   };
 });
 
+jest.mock('@/features/user/api/user', () => {
+  return {
+    getUser: jest.fn().mockResolvedValue({ data: null }),
+  };
+});
+
 jest.mock('lucide-react', () => {
   return {
     ChevronRight: () => {

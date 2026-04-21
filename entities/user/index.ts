@@ -1,1 +1,7 @@
-export type { UserBasicProps, UserProps } from './model/types';
+export type {
+  UserBasicProps,
+  UserProps,
+  UserPreferences,
+  UserMenuPreferences,
+  MenuItemPreference,
+} from './model/types';

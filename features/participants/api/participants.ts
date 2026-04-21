@@ -104,7 +104,6 @@ export async function setProfile(
     throw new Error('Failed to save participant mapping');
   }
 
-  revalidatePath(ROUTES.DASHBOARD.MEETING);
   revalidatePath(ROUTES.DASHBOARD.MEETINGS);
 
   return { success: true };
