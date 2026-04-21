@@ -4,7 +4,6 @@ import { redirect } from 'next/navigation';
 
 import { API_URL } from '@/shared/lib/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
-import { logApiError } from '@/shared/lib/logger';
 
 import type { DemoStatusResult } from '@/features/demo/model/types';
 
@@ -40,15 +39,6 @@ export async function getDemoStatus(): Promise<DemoStatusResult | null> {
       redirect('/api/auth/clear-session');
     }
 
-    const text = await res.text();
-
-    logApiError({
-      method: 'GET',
-      url: `${API_URL}/demo/status`,
-      status: res.status,
-      statusText: res.statusText,
-      body: text,
-    });
     throw new Error('Failed to get demo status. Please try again.');
   }
 

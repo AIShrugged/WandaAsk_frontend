@@ -5,7 +5,6 @@ import { redirect } from 'next/navigation';
 import { parseApiError } from '@/shared/lib/apiError';
 import { API_URL } from '@/shared/lib/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
-import { logApiError } from '@/shared/lib/logger';
 
 import type { IssueStatus } from '@/features/issues/model/types';
 import type { KanbanCard, KanbanFilters } from '@/features/kanban/model/types';
@@ -74,14 +73,6 @@ export async function getKanbanIssues(
 
     const text = await res.text();
 
-    logApiError({
-      method: 'GET',
-      url: res.url,
-      status: res.status,
-      statusText: res.statusText,
-      body: text,
-    });
-
     throw new Error(parseApiError(text, 'Failed to load kanban data').message);
   }
 
@@ -143,14 +134,6 @@ export async function moveKanbanCard(
 
     const text = await res.text();
 
-    logApiError({
-      method: 'PATCH',
-      url: res.url,
-      status: res.status,
-      statusText: res.statusText,
-      body: text,
-    });
-
     throw new Error(parseApiError(text, 'Failed to move card').message);
   }
 
@@ -200,14 +183,6 @@ export async function fetchArchivedKanbanCards(
   if (!res.ok) {
     if (res.status === 401) redirect('/api/auth/clear-session');
     const text = await res.text();
-
-    logApiError({
-      method: 'GET',
-      url: res.url,
-      status: res.status,
-      statusText: res.statusText,
-      body: text,
-    });
 
     return {
       data: null,

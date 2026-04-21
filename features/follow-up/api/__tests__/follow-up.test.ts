@@ -17,10 +17,6 @@ jest.mock('@/shared/lib/getAuthToken', () => {
   };
 });
 
-jest.mock('@/shared/lib/logger', () => {
-  return { logApiError: jest.fn() };
-});
-
 import { redirect } from 'next/navigation';
 
 import {
@@ -28,10 +24,8 @@ import {
   pollFollowUp,
   regenerateFollowUp,
 } from '@/features/follow-up/api/follow-up';
-import { logApiError } from '@/shared/lib/logger';
 
 const mockRedirect = redirect as unknown as jest.Mock;
-const mockLogApiError = logApiError as unknown as jest.Mock;
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -131,19 +125,6 @@ describe('getFollowUp', () => {
 
     await expect(getFollowUp(1)).rejects.toThrow();
     expect(mockRedirect).toHaveBeenCalledWith('/api/auth/clear-session');
-  });
-
-  it('logs error and throws on non-ok status', async () => {
-    globalThis.fetch = jest
-      .fn()
-      .mockResolvedValue(makeResponse(500, 'Server Error'));
-
-    await expect(getFollowUp(1)).rejects.toThrow(
-      'Failed to load follow-up. Please try again.',
-    );
-    expect(mockLogApiError).toHaveBeenCalledWith(
-      expect.objectContaining({ method: 'GET', status: 500 }),
-    );
   });
 
   it('throws on 404', async () => {

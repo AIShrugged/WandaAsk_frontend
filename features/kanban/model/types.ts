@@ -1,4 +1,10 @@
-import type { IssueStatus, PersonOption } from '@/features/issues/model/types';
+import type { OrganizationProps } from '@/entities/organization';
+import type {
+  IssueStatus,
+  PersonOption,
+  SharedFilters,
+} from '@/features/issues/model/types';
+import type React from 'react';
 
 export interface KanbanCard {
   id: number;
@@ -45,6 +51,42 @@ export const KANBAN_COLUMNS: Pick<KanbanColumn, 'id' | 'label' | 'color'>[] = [
   { id: 'paused', label: 'Paused', color: '#818cf8' },
   { id: 'done', label: 'Done', color: '#34d399' },
 ];
+
+export const TYPE_COLORS: Record<string, string> = {
+  development: 'bg-blue-500/20 text-blue-300',
+  organization: 'bg-purple-500/20 text-purple-300',
+};
+
+export interface KanbanBoardProps {
+  columns: Record<IssueStatus, KanbanCard[]>;
+  organizations: OrganizationProps[];
+  persons: PersonOption[];
+  filters: SharedFilters;
+  onShowArchivedChange: (value: boolean) => void;
+}
+
+export interface KanbanCardItemProps {
+  card: KanbanCard;
+  onMoveToColumn: (card: KanbanCard, status: IssueStatus) => void;
+  isMoving: boolean;
+  onCardClick: (card: KanbanCard) => void;
+}
+
+export interface KanbanColumnProps {
+  id: IssueStatus;
+  label: string;
+  color: string;
+  cards: KanbanCard[];
+  onDrop: (
+    cardId: number,
+    sourceStatus: IssueStatus,
+    targetStatus: IssueStatus,
+  ) => void;
+  onMoveToColumn: (card: KanbanCard, status: IssueStatus) => void;
+  movingCardId: number | null;
+  onCardClick: (card: KanbanCard) => void;
+  footer?: React.ReactNode;
+}
 
 export {
   type IssueStatus,

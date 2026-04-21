@@ -27,7 +27,6 @@ export function IssuesKanbanTab({
   const { filters, columnsVersion, setShowArchived } = useFiltersContext();
   const [columns, setColumns] =
     useState<Record<IssueStatus, KanbanCard[]>>(initialColumns);
-  const [isFetching, setIsFetching] = useState(false);
   // Skip the first render only when SSR already provided data (full-page load).
   // On tab navigation initialColumns is empty, so we fetch immediately.
   const hasInitialData = Object.values(initialColumns).some((col) => {
@@ -43,8 +42,6 @@ export function IssuesKanbanTab({
     let cancelled = false;
 
     const run = async () => {
-      setIsFetching(true);
-
       const result = await fetchKanbanIssues({
         organization_id: filters.organization_id
           ? Number(filters.organization_id)
@@ -64,8 +61,6 @@ export function IssuesKanbanTab({
       if (!result.error && result.data) {
         setColumns(result.data);
       }
-
-      setIsFetching(false);
     };
 
     void run();
@@ -83,15 +78,12 @@ export function IssuesKanbanTab({
   ]);
 
   return (
-    <div className='p-3'>
-      <KanbanBoard
-        columns={columns}
-        organizations={organizations}
-        persons={persons}
-        filters={filters}
-        isFetching={isFetching}
-        onShowArchivedChange={setShowArchived}
-      />
-    </div>
+    <KanbanBoard
+      columns={columns}
+      organizations={organizations}
+      persons={persons}
+      filters={filters}
+      onShowArchivedChange={setShowArchived}
+    />
   );
 }

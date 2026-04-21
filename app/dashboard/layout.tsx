@@ -1,9 +1,12 @@
+import { Settings } from 'lucide-react';
+import Link from 'next/link';
 import React, { type PropsWithChildren } from 'react';
 
 import { DemoSeedButtonLoader } from '@/features/demo/ui/demo-seed-button-loader';
 import { MenuSidebar } from '@/features/menu';
 import OrganizationSelector from '@/features/organization/ui/organization-selector';
 import User from '@/features/user/ui/user';
+import { ROUTES } from '@/shared/lib/routes';
 import { TribesLogo } from '@/shared/ui/brand';
 import { CosmicBackground } from '@/shared/ui/layout/cosmic-background';
 import {
@@ -42,15 +45,27 @@ export default async function Layout({ children }: PropsWithChildren) {
       >
         {/* Logo slot */}
         <div
-          className='flex items-center h-[var(--topbar-height)] px-6 flex-shrink-0'
+          className='flex justify-between items-center h-[var(--topbar-height)] px-6 flex-shrink-0'
           style={{ borderBottom: '1px solid rgba(124,58,237,0.15)' }}
         >
           <TribesLogo />
+          <Link
+            href={ROUTES.DASHBOARD.PROFILE_MENU}
+            className='flex items-center justify-center w-9 h-9 rounded-md text-muted-foreground hover:text-foreground hover:bg-sidebar-accent/50 transition-colors'
+            aria-label='Settings'
+          >
+            <Settings className='w-4 h-4' />
+          </Link>
         </div>
         {/* Navigation */}
         <div className='flex-1 overflow-y-auto py-3 px-3'>
           <MenuSidebar />
         </div>
+        {/* Sidebar footer */}
+        <div
+          className='flex-shrink-0 px-3 py-3'
+          style={{ borderTop: '1px solid rgba(124,58,237,0.15)' }}
+        ></div>
       </aside>
 
       {/* Main area */}

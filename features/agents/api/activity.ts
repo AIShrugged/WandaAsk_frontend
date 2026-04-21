@@ -6,7 +6,6 @@ import { parseApiError } from '@/shared/lib/apiError';
 import { API_URL } from '@/shared/lib/config';
 import { ServerError } from '@/shared/lib/errors';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
-import { logApiError } from '@/shared/lib/logger';
 
 import type {
   AgentActivityItem,
@@ -50,14 +49,6 @@ export async function getAgentActivity(
     if (response.status === 401) redirect('/api/auth/clear-session');
 
     const text = await response.text();
-
-    logApiError({
-      method: 'GET',
-      url: response.url,
-      status: response.status,
-      statusText: response.statusText,
-      body: text,
-    });
 
     throw new ServerError(
       parseApiError(text, 'Failed to load agent activity').message,

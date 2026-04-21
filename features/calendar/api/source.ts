@@ -5,7 +5,6 @@ import { redirect } from 'next/navigation';
 
 import { API_URL } from '@/shared/lib/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
-import { logApiError } from '@/shared/lib/logger';
 import { ROUTES } from '@/shared/lib/routes';
 
 import type { Source } from '@/entities/source';
@@ -24,15 +23,6 @@ export async function getSources(): Promise<Source[]> {
   });
 
   if (!res.ok) {
-    const text = await res.text();
-
-    logApiError({
-      url: `${API_URL}/sources`,
-      status: res.status,
-      statusText: res.statusText,
-      body: text,
-    });
-
     return [];
   }
 
@@ -57,16 +47,6 @@ export async function detachCalendar(sourceId: number): Promise<ActionResult> {
   });
 
   if (!res.ok) {
-    const text = await res.text();
-
-    logApiError({
-      method: 'DELETE',
-      url,
-      status: res.status,
-      statusText: res.statusText,
-      body: text,
-    });
-
     return {
       data: null,
       error: 'Failed to disconnect Google Calendar. Please try again.',
@@ -96,16 +76,6 @@ export async function detachCalendarFromProfile(
   });
 
   if (!res.ok) {
-    const text = await res.text();
-
-    logApiError({
-      method: 'DELETE',
-      url,
-      status: res.status,
-      statusText: res.statusText,
-      body: text,
-    });
-
     return {
       data: null,
       error: 'Failed to disconnect Google Calendar. Please try again.',

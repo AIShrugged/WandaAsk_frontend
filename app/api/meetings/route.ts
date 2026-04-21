@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { API_URL } from '@/shared/lib/config';
 import { getAuthToken } from '@/shared/lib/getAuthToken';
-import { logApiError } from '@/shared/lib/logger';
 
 import type { CalendarEventListItem } from '@/features/meetings/model/types';
 import type { ApiResponse } from '@/shared/types/common';
@@ -51,16 +50,6 @@ export async function GET(request: NextRequest) {
   );
 
   if (!backendRes.ok) {
-    const body = await backendRes.text();
-
-    logApiError({
-      method: 'GET',
-      url: `${API_URL}/calendar-events?offset=${offset}&limit=${limit}`,
-      status: backendRes.status,
-      statusText: backendRes.statusText,
-      body,
-    });
-
     return NextResponse.json(
       { error: 'Failed to load meetings' },
       { status: backendRes.status },

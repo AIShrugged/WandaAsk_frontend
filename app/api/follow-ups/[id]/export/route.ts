@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 
 import { API_URL } from '@/shared/lib/config';
 import { getAuthToken } from '@/shared/lib/getAuthToken';
-import { logApiError } from '@/shared/lib/logger';
 
 import type { NextRequest } from 'next/server';
 
@@ -53,16 +52,6 @@ export async function GET(
   );
 
   if (!backendRes.ok) {
-    const body = await backendRes.text();
-
-    logApiError({
-      method: 'GET',
-      url: `${API_URL}/followups/${id}/export?format=${format}`,
-      status: backendRes.status,
-      statusText: backendRes.statusText,
-      body,
-    });
-
     return NextResponse.json(
       { error: 'Export failed' },
       { status: backendRes.status },

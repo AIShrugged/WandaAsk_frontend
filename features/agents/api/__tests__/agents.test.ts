@@ -26,12 +26,6 @@ jest.mock('@/shared/lib/getAuthToken', () => {
   };
 });
 
-jest.mock('@/shared/lib/logger', () => {
-  return {
-    logApiError: jest.fn(),
-  };
-});
-
 function makeResponse(
   status: number,
   body: unknown,

@@ -204,7 +204,6 @@ export function DebugTabsNav() {
 
 ```tsx
 import { notFound } from 'next/navigation';
-import { isDev } from '@/shared/lib/logger';
 import { DebugTabsNav } from '@/features/debug';
 import Card from '@/shared/ui/card/Card';
 import PageHeader from '@/widgets/layout/ui/page-header';

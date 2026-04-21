@@ -58,7 +58,9 @@ export function MeetingsContent({ data }: MeetingsContentProps) {
                 selectedId={selectedId}
                 onSelect={setSelectedId}
               />
-              {data.events.length === 0 && <WaitingState events={[]} />}
+              {data.events.length === 0 && (
+                <WaitingState events={data.events} />
+              )}
               {selectedEvent && <MeetingDetailCard event={selectedEvent} />}
             </div>
           </Suspense>

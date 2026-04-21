@@ -22,12 +22,8 @@ export const ROUTES = {
     AGENT_TASKS_NEW: '/dashboard/agents/tasks/new',
     AGENT_ACTIVITY: '/dashboard/agents/activity',
     TELEGRAM_CHATS: '/dashboard/chat/telegram',
-    MEETING: '/dashboard/meeting',
     TEAMS: '/dashboard/teams',
     TEAMS_CREATE: '/dashboard/teams/create',
-    TEAM: (teamId: number | string) => {
-      return `/dashboard/teams/${teamId}`;
-    },
     METHODOLOGY: '/dashboard/methodology',
     STATISTICS: '/dashboard/statistics',
     FOLLOWUPS: '/dashboard/follow-ups',
@@ -36,6 +32,7 @@ export const ROUTES = {
     PROFILE_ACCOUNT: '/dashboard/profile/account',
     PROFILE_PASSWORD: '/dashboard/profile/password', // eslint-disable-line sonarjs/no-hardcoded-passwords
     PROFILE_CALENDAR: '/dashboard/profile/calendar',
+    PROFILE_MENU: '/dashboard/profile/menu',
     SUMMARY: '/dashboard/summary',
     KANBAN: '/dashboard/kanban',
     MAIN: '/dashboard/main',

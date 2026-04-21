@@ -100,7 +100,7 @@ export function ChangePasswordForm() {
         autoComplete='new-password'
       />
 
-      <div className='w-full md:w-[170px]'>
+      <div className='w-full md:w-auto'>
         <Button
           type='submit'
           loading={isPending}

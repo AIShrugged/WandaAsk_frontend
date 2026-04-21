@@ -2,9 +2,6 @@ import { redirect } from 'next/navigation';
 
 import { ROUTES } from '@/shared/lib/routes';
 
-/**
- * Calendar page — redirected to /dashboard/meetings/calendar
- */
 export default async function Page({
   searchParams,
 }: {

@@ -21,16 +21,9 @@ jest.mock('@/shared/lib/getAuthToken', () => {
   };
 });
 
-jest.mock('@/shared/lib/logger', () => {
-  return { logApiError: jest.fn() };
-});
-
 import { redirect } from 'next/navigation';
 
-import { logApiError } from '@/shared/lib/logger';
-
 const mockRedirect = redirect as unknown as jest.Mock;
-const mockLogApiError = logApiError as unknown as jest.Mock;
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -116,19 +109,6 @@ describe('getDemoStatus', () => {
 
     await expect(getDemoStatus()).rejects.toThrow();
     expect(mockRedirect).toHaveBeenCalledWith('/api/auth/clear-session');
-  });
-
-  it('logs error and throws on non-ok status', async () => {
-    globalThis.fetch = jest
-      .fn()
-      .mockResolvedValue(makeResponse(500, 'Internal Server Error'));
-
-    await expect(getDemoStatus()).rejects.toThrow(
-      'Failed to get demo status. Please try again.',
-    );
-    expect(mockLogApiError).toHaveBeenCalledWith(
-      expect.objectContaining({ method: 'GET', status: 500 }),
-    );
   });
 
   it('fetches the correct URL', async () => {
@@ -233,19 +213,6 @@ describe('seedDemo', () => {
       'Failed to generate demo data. Please try again.',
     );
   });
-
-  it('logs error on failure', async () => {
-    globalThis.fetch = jest
-      .fn()
-      .mockResolvedValue(
-        makeResponse(500, { success: false, message: 'Error' }),
-      );
-
-    await expect(seedDemo({})).rejects.toThrow();
-    expect(mockLogApiError).toHaveBeenCalledWith(
-      expect.objectContaining({ method: 'POST', status: 500 }),
-    );
-  });
 });
 
 // ---------------------------------------------------------------------------
@@ -306,17 +273,5 @@ describe('deleteDemo', () => {
       data: null,
       error: 'Failed to delete demo data. Please try again.',
     });
-  });
-
-  it('logs error on non-ok status', async () => {
-    globalThis.fetch = jest
-      .fn()
-      .mockResolvedValue(makeResponse(500, 'Internal Server Error'));
-
-    await deleteDemo();
-
-    expect(mockLogApiError).toHaveBeenCalledWith(
-      expect.objectContaining({ method: 'DELETE', status: 500 }),
-    );
   });
 });

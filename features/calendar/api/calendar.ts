@@ -2,7 +2,6 @@
 
 import { API_URL } from '@/shared/lib/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
-import { logApiError } from '@/shared/lib/logger';
 
 /**
  * attachCalendar — initiates Google OAuth flow.
@@ -20,14 +19,6 @@ export async function attachCalendar(): Promise<string> {
 
   if (!res.ok) {
     const text = await res.text();
-
-    logApiError({
-      method: 'POST',
-      url: `${API_URL}/google/oauth`,
-      status: res.status,
-      statusText: res.statusText,
-      body: text,
-    });
 
     let errorCode: string | undefined;
 

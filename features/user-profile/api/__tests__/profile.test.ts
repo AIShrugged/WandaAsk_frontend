@@ -27,12 +27,6 @@ jest.mock('@/shared/lib/getAuthToken', () => {
   };
 });
 
-jest.mock('@/shared/lib/logger', () => {
-  return {
-    logApiError: jest.fn(),
-  };
-});
-
 // revalidatePath is mapped to __mocks__/next-cache.js automatically
 
 // ---------------------------------------------------------------------------

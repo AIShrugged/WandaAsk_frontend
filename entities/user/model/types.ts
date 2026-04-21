@@ -1,3 +1,17 @@
+export interface MenuItemPreference {
+  id: string;
+  visible: boolean;
+}
+
+export interface UserMenuPreferences {
+  primary: MenuItemPreference[];
+  secondary: MenuItemPreference[];
+}
+
+export interface UserPreferences {
+  menu?: UserMenuPreferences;
+}
+
 export interface UserProps {
   readonly id: number;
   readonly name: string;
@@ -8,6 +22,7 @@ export interface UserProps {
   readonly is_demo: boolean;
   readonly onboarding_completed?: boolean;
   readonly onboarding_last_step?: number;
+  readonly preferences?: UserPreferences | null;
 }
 
 /** Minimal user shape returned by UserResource (id/name/email only) */

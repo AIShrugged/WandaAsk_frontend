@@ -4,7 +4,6 @@ import { redirect } from 'next/navigation';
 
 import { API_URL } from '@/shared/lib/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
-import { logApiError } from '@/shared/lib/logger';
 
 import type { ActionResult } from '@/shared/types/server-action';
 
@@ -22,16 +21,6 @@ export async function deleteDemo(): Promise<ActionResult> {
 
   if (!res.ok) {
     if (res.status === 401) redirect('/api/auth/clear-session');
-
-    const text = await res.text();
-
-    logApiError({
-      method: 'DELETE',
-      url: `${API_URL}/demo`,
-      status: res.status,
-      statusText: res.statusText,
-      body: text,
-    });
 
     if (res.status === 404) {
       return { data: null, error: 'No demo data found.' };

@@ -155,13 +155,13 @@ export default defineConfig([
     },
     settings: {
       'boundaries/elements': [
-        { type: 'app', pattern: 'app/**/*' },
-        { type: 'widgets', pattern: 'widgets/**/*' },
-        { type: 'features', pattern: 'features/**/*' },
-        { type: 'entities', pattern: 'entities/**/*' },
-        { type: 'shared', pattern: 'shared/**/*' },
+        { type: 'app', pattern: 'app/!**!/!*' },
+        { type: 'widgets', pattern: 'widgets/!**!/!*' },
+        { type: 'features', pattern: 'features/!**!/!*' },
+        { type: 'entities', pattern: 'entities/!**!/!*' },
+        { type: 'shared', pattern: 'shared/!**!/!*' },
       ],
-      'boundaries/ignore': ['**/*.test.*', '**/*.spec.*'],
+      'boundaries/ignore': ['**!/!*.test.*', '**!/!*.spec.*'],
     },
     rules: {
       // warn for now — 34 existing cross-feature violations need to be fixed first
