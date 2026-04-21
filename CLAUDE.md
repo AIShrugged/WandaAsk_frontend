@@ -418,8 +418,8 @@ Import them explicitly; never re-export from `api/`.
 ### Rule 7 — No private helper functions duplicating shared/lib
 
 Do not write local helper functions that replicate what `httpClient`,
-`parseApiError`, `logApiError`, or `ServerError` already do. If a new pattern
-appears in multiple api/ files, add it to `shared/lib/httpClient.ts` instead.
+`parseApiError`, or `ServerError` already do. If a new pattern appears in
+multiple api/ files, add it to `shared/lib/httpClient.ts` instead.
 
 ## Agent Workflow — When to Use Specialized Agents
 

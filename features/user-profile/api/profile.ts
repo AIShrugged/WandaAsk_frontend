@@ -4,7 +4,6 @@ import { revalidatePath } from 'next/cache';
 
 import { API_URL } from '@/shared/lib/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
-import { logApiError } from '@/shared/lib/logger';
 import { ROUTES } from '@/shared/lib/routes';
 
 import type { ActionResult } from '@/shared/types/server-action';
@@ -27,16 +26,6 @@ export async function updateProfile(data: {
   });
 
   if (!res.ok) {
-    const text = await res.text();
-
-    logApiError({
-      method: 'PATCH',
-      url: `${API_URL}/users/me`,
-      status: res.status,
-      statusText: res.statusText,
-      body: text,
-    });
-
     return { data: null, error: 'Failed to update profile. Please try again.' };
   }
 
@@ -68,14 +57,6 @@ export async function changePassword(data: {
 
   if (!res.ok) {
     const text = await res.text();
-
-    logApiError({
-      method: 'PATCH',
-      url: `${API_URL}/users/me`,
-      status: res.status,
-      statusText: res.statusText,
-      body: text,
-    });
 
     try {
       const json = JSON.parse(text) as {

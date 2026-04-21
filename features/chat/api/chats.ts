@@ -5,7 +5,6 @@ import { redirect } from 'next/navigation';
 import { parseApiError } from '@/shared/lib/apiError';
 import { API_URL } from '@/shared/lib/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
-import { logApiError } from '@/shared/lib/logger';
 
 import type { Chat, ChatUpsertDTO } from '@/features/chat/types';
 import type { ApiResponse } from '@/shared/types/common';
@@ -36,12 +35,6 @@ export async function getChats(
     if (res.status === 401) redirect('/api/auth/clear-session');
     const text = await res.text();
 
-    logApiError({
-      url: res.url,
-      status: res.status,
-      statusText: res.statusText,
-      body: text,
-    });
     throw new Error(text || 'Failed to load chats');
   }
 
@@ -76,13 +69,6 @@ export async function getChat(id: number): Promise<Chat> {
     if (res.status === 401) redirect('/api/auth/clear-session');
     const text = await res.text();
 
-    logApiError({
-      method: 'GET',
-      url: res.url,
-      status: res.status,
-      statusText: res.statusText,
-      body: text,
-    });
     throw new Error(parseApiError(text, 'Failed to load chat').message);
   }
 
@@ -91,12 +77,6 @@ export async function getChat(id: number): Promise<Chat> {
   return json.data!;
 }
 
-/**
- * createChat.
- * @param payload - title and tenant scope payload.
- * @param payloadOrTitle
- * @returns ActionResult.
- */
 export async function createChat(
   payloadOrTitle: Partial<ChatUpsertDTO> | string | null = {},
 ): Promise<Chat | ChatActionError> {
@@ -129,14 +109,6 @@ export async function createChat(
   if (!res.ok) {
     if (res.status === 401) redirect('/api/auth/clear-session');
     const text = await res.text();
-
-    logApiError({
-      method: 'POST',
-      url: res.url,
-      status: res.status,
-      statusText: res.statusText,
-      body: text,
-    });
 
     const parsed = parseApiError(text, 'Failed to create chat');
 
@@ -192,14 +164,6 @@ export async function updateChat(
     if (res.status === 401) redirect('/api/auth/clear-session');
     const text = await res.text();
 
-    logApiError({
-      method: 'PATCH',
-      url: res.url,
-      status: res.status,
-      statusText: res.statusText,
-      body: text,
-    });
-
     const parsed = parseApiError(text, 'Failed to update chat');
 
     if (res.status === 422) {
@@ -252,13 +216,6 @@ export async function deleteChat(id: number): Promise<void> {
     if (res.status === 401) redirect('/api/auth/clear-session');
     const text = await res.text();
 
-    logApiError({
-      method: 'DELETE',
-      url: res.url,
-      status: res.status,
-      statusText: res.statusText,
-      body: text,
-    });
     throw new Error(parseApiError(text, 'Failed to delete chat').message);
   }
 }

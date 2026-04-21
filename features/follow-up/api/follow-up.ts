@@ -4,7 +4,6 @@ import { redirect } from 'next/navigation';
 
 import { API_URL } from '@/shared/lib/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
-import { logApiError } from '@/shared/lib/logger';
 
 import type {
   FollowUpDetailProps,
@@ -29,16 +28,6 @@ export async function getFollowUp(id: number) {
     if (res.status === 401) {
       redirect('/api/auth/clear-session');
     }
-
-    const text = await res.text();
-
-    logApiError({
-      method: 'GET',
-      url: `${API_URL}/followups/${id}`,
-      status: res.status,
-      statusText: res.statusText,
-      body: text,
-    });
 
     throw new Error('Failed to load follow-up. Please try again.');
   }
@@ -74,16 +63,6 @@ export async function regenerateFollowUp(
       redirect('/api/auth/clear-session');
     }
 
-    const text = await res.text();
-
-    logApiError({
-      method: 'POST',
-      url: `${API_URL}/followups/${followUpId}/regenerate`,
-      status: res.status,
-      statusText: res.statusText,
-      body: text,
-    });
-
     throw new Error('Failed to regenerate follow-up. Please try again.');
   }
 
@@ -116,16 +95,6 @@ export async function pollFollowUp(
     if (res.status === 401) {
       redirect('/api/auth/clear-session');
     }
-
-    const text = await res.text();
-
-    logApiError({
-      method: 'GET',
-      url: `${API_URL}/followups/${id}`,
-      status: res.status,
-      statusText: res.statusText,
-      body: text,
-    });
 
     throw new Error('Failed to fetch follow-up status.');
   }

@@ -5,7 +5,6 @@ import { redirect } from 'next/navigation';
 import { parseApiError } from '@/shared/lib/apiError';
 import { API_URL } from '@/shared/lib/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
-import { logApiError } from '@/shared/lib/logger';
 
 import type { TelegramChatRegistration } from '@/features/chat/types';
 import type { ApiResponse } from '@/shared/types/common';
@@ -29,14 +28,7 @@ export async function getTelegramChats(): Promise<TelegramChatRegistration[]> {
 
   if (!res.ok) {
     if (res.status === 401) redirect('/api/auth/clear-session');
-    const text = await res.text();
 
-    logApiError({
-      url: res.url,
-      status: res.status,
-      statusText: res.statusText,
-      body: text,
-    });
     throw new Error('Failed to load Telegram chats');
   }
 
@@ -75,14 +67,6 @@ export async function issueTelegramAttachCode(
   if (!res.ok) {
     if (res.status === 401) redirect('/api/auth/clear-session');
     const text = await res.text();
-
-    logApiError({
-      method: 'POST',
-      url: res.url,
-      status: res.status,
-      statusText: res.statusText,
-      body: text,
-    });
 
     const parsed = parseApiError(text, 'Failed to generate attach code');
 

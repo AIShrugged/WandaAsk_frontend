@@ -6,7 +6,6 @@ import { parseApiError } from '@/shared/lib/apiError';
 import { API_URL } from '@/shared/lib/config';
 import { ServerError } from '@/shared/lib/errors';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
-import { logApiError } from '@/shared/lib/logger';
 
 import type {
   AgentActionError,
@@ -45,14 +44,6 @@ async function requestAgentApi<T>(
     if (response.status === 401) redirect('/api/auth/clear-session');
 
     const text = await response.text();
-
-    logApiError({
-      method: init.method,
-      url: response.url,
-      status: response.status,
-      statusText: response.statusText,
-      body: text,
-    });
 
     throw new ServerError(parseApiError(text, fallbackMessage).message, {
       status: response.status,
@@ -100,14 +91,6 @@ async function actionAgentApi<T>(
 
     const text = await response.text();
     const parsed = parseApiError(text, fallbackMessage);
-
-    logApiError({
-      method: init.method,
-      url: response.url,
-      status: response.status,
-      statusText: response.statusText,
-      body: text,
-    });
 
     if (response.status === 403 || response.status === 422) {
       return {

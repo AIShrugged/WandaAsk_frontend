@@ -6,7 +6,6 @@ import { redirect } from 'next/navigation';
 import { parseApiError } from '@/shared/lib/apiError';
 import { API_URL } from '@/shared/lib/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
-import { logApiError } from '@/shared/lib/logger';
 
 import type {
   TeamNotificationSetting,
@@ -30,14 +29,6 @@ export async function getTeamNotificationSettings(
   if (!res.ok) {
     if (res.status === 401) redirect('/api/auth/clear-session');
 
-    const text = await res.text();
-
-    logApiError({
-      url: res.url,
-      status: res.status,
-      statusText: res.statusText,
-      body: text,
-    });
     throw new Error('Failed to load notification settings');
   }
 

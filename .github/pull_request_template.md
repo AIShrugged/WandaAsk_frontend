@@ -24,8 +24,8 @@ and explain why.
 - [ ] One file per resource (3+ resources → split into separate files)
 - [ ] `revalidatePath(...)` called after every mutation with a specific path
 - [ ] No types defined inside `api/` files — types are in `model/types.ts`
-- [ ] No local helpers duplicating `httpClient`, `parseApiError`, `logApiError`,
-      or `ServerError`
+- [ ] No local helpers duplicating `httpClient`, `parseApiError`, or
+      `ServerError`
 
 ### FSD boundaries
 

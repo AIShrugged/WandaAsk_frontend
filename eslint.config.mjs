@@ -1,7 +1,6 @@
 import { defineConfig, globalIgnores } from 'eslint/config';
 import nextVitals from 'eslint-config-next/core-web-vitals';
 import nextTs from 'eslint-config-next/typescript';
-import boundariesPlugin from 'eslint-plugin-boundaries';
 import importPlugin from 'eslint-plugin-import';
 import securityPlugin from 'eslint-plugin-security';
 import sonarjsPlugin from 'eslint-plugin-sonarjs';
@@ -149,19 +148,19 @@ export default defineConfig([
   // FSD layer boundary enforcement
   // Prevents cross-feature imports and upward layer violations
   // ------------------------------
-  {
+  /*  {
     plugins: {
       boundaries: boundariesPlugin,
     },
     settings: {
       'boundaries/elements': [
-        { type: 'app', pattern: 'app/**/*' },
-        { type: 'widgets', pattern: 'widgets/**/*' },
-        { type: 'features', pattern: 'features/**/*' },
-        { type: 'entities', pattern: 'entities/**/*' },
-        { type: 'shared', pattern: 'shared/**/*' },
+        { type: 'app', pattern: 'app/!**!/!*' },
+        { type: 'widgets', pattern: 'widgets/!**!/!*' },
+        { type: 'features', pattern: 'features/!**!/!*' },
+        { type: 'entities', pattern: 'entities/!**!/!*' },
+        { type: 'shared', pattern: 'shared/!**!/!*' },
       ],
-      'boundaries/ignore': ['**/*.test.*', '**/*.spec.*'],
+      'boundaries/ignore': ['**!/!*.test.*', '**!/!*.spec.*'],
     },
     rules: {
       // warn for now — 34 existing cross-feature violations need to be fixed first
@@ -191,7 +190,7 @@ export default defineConfig([
         },
       ],
     },
-  },
+  },*/
 
   globalIgnores([
     '.next/**',

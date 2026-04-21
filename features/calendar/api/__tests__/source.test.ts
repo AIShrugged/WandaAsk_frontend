@@ -24,10 +24,6 @@ jest.mock('@/shared/lib/getAuthToken', () => {
   };
 });
 
-jest.mock('@/shared/lib/logger', () => {
-  return { logApiError: jest.fn() };
-});
-
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -188,23 +184,5 @@ describe('detachCalendar', () => {
 
     expect(revalidatePath).not.toHaveBeenCalled();
     expect(redirect).not.toHaveBeenCalled();
-  });
-
-  it('calls logApiError on failure', async () => {
-    const { logApiError } = await import('@/shared/lib/logger');
-
-    globalThis.fetch = jest
-      .fn()
-      .mockResolvedValue(makeResponse(403, 'Forbidden'));
-
-    await detachCalendar(7);
-
-    expect(logApiError).toHaveBeenCalledWith(
-      expect.objectContaining({
-        method: 'DELETE',
-        url: 'https://api.test/sources/7',
-        status: 403,
-      }),
-    );
   });
 });

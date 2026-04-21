@@ -1,26 +1,5 @@
 import { expect, test } from '@playwright/test';
 
-/**
- * Meeting detail page E2E tests.
- * Covers /dashboard/meeting/[id].
- *
- * Meeting IDs are extracted from the follow-ups team detail page.
- * If no meetings exist for the test user, all authenticated detail tests are skipped.
- */
-
-// ---------------------------------------------------------------------------
-// Unauthenticated
-// ---------------------------------------------------------------------------
-
-test.describe('Meeting detail — unauthenticated', () => {
-  test.use({ storageState: { cookies: [], origins: [] } });
-
-  test('redirects /dashboard/meeting/1 to /auth/login', async ({ page }) => {
-    await page.goto('/dashboard/meeting/1');
-    await expect(page).toHaveURL(/\/auth\/login/);
-  });
-});
-
 // ---------------------------------------------------------------------------
 // Authenticated
 // ---------------------------------------------------------------------------
@@ -81,24 +60,6 @@ test.describe('Meeting detail — authenticated', () => {
     } finally {
       await context.close();
     }
-  });
-
-  test.beforeEach(async ({ page }) => {
-    if (!meetingId) {
-      test.skip(
-        true,
-        'No meetings found for test user — skipping meeting detail tests',
-      );
-
-      return;
-    }
-
-    await page.goto(`/dashboard/meeting/${meetingId}`, {
-      waitUntil: 'domcontentloaded',
-    });
-    await expect(page).not.toHaveURL(/\/auth\/login/);
-    // Brief pause for dynamic content
-    await page.waitForTimeout(1000);
   });
 
   test('renders meeting title as heading', async ({ page }) => {

@@ -4,7 +4,6 @@ import { redirect } from 'next/navigation';
 
 import { API_URL } from '@/shared/lib/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
-import { logApiError } from '@/shared/lib/logger';
 
 import type {
   SeedDemoParams,
@@ -53,14 +52,6 @@ export async function seedDemo(
     if (res.status === 401) {
       redirect('/api/auth/clear-session');
     }
-
-    logApiError({
-      method: 'POST',
-      url: `${API_URL}/demo/seed`,
-      status: res.status,
-      statusText: res.statusText,
-      body: text,
-    });
 
     throw new Error(
       json?.message ?? 'Failed to generate demo data. Please try again.',

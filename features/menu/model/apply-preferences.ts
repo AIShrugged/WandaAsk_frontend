@@ -51,6 +51,14 @@ export function applyMenuPreferences(
   const primary = resolve(prefs.primary ?? []);
   const secondary = resolve(prefs.secondary ?? []);
 
+  // Mark hidden items (visible: false in any zone) as placed so they don't
+  // fall through to the visible secondary fallback.
+  for (const pref of [...(prefs.primary ?? []), ...(prefs.secondary ?? [])]) {
+    if (!pref.visible) {
+      placed.add(pref.id);
+    }
+  }
+
   for (const item of allItems) {
     if (!placed.has(item.id)) {
       secondary.push(item);

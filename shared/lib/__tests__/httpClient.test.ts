@@ -11,12 +11,6 @@ jest.mock('@/shared/lib/getAuthToken', () => {
   };
 });
 
-jest.mock('@/shared/lib/logger', () => {
-  return {
-    logApiError: jest.fn(),
-  };
-});
-
 jest.mock('next/navigation', () => {
   return {
     redirect: jest.fn((path: string) => {

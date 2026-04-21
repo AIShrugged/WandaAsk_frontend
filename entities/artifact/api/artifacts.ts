@@ -4,7 +4,6 @@ import { redirect } from 'next/navigation';
 
 import { API_URL } from '@/shared/lib/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
-import { logApiError } from '@/shared/lib/logger';
 
 import type { ArtifactsResponse } from '@/entities/artifact/model/types';
 
@@ -34,14 +33,6 @@ export async function getArtifacts(
 
   if (!res.ok) {
     if (res.status === 401) redirect('/api/auth/clear-session');
-    const text = await res.text();
-
-    logApiError({
-      url: res.url,
-      status: res.status,
-      statusText: res.statusText,
-      body: text,
-    });
 
     return null;
   }

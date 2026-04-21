@@ -5,7 +5,6 @@ import { redirect } from 'next/navigation';
 
 import { ServerError } from '@/shared/lib/errors';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
-import { logApiError } from '@/shared/lib/logger';
 import { ROUTES } from '@/shared/lib/routes';
 
 import type { ApiResponse, PaginatedResult } from '@/shared/types/common';
@@ -44,13 +43,6 @@ export async function httpClient<T>(
 
     const text = await res.text();
 
-    logApiError({
-      method: options.method,
-      url,
-      status: res.status,
-      statusText: res.statusText,
-      body: text,
-    });
     throw new ServerError('A server error occurred. Please try again.', {
       status: res.status,
       url,
@@ -97,13 +89,6 @@ export async function httpClientList<T>(
 
     const text = await res.text();
 
-    logApiError({
-      method: options.method,
-      url,
-      status: res.status,
-      statusText: res.statusText,
-      body: text,
-    });
     throw new ServerError('A server error occurred. Please try again.', {
       status: res.status,
       url,

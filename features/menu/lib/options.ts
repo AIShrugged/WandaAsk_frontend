@@ -19,11 +19,6 @@ import { ROUTES } from '@/shared/lib/routes';
 
 import type { MenuProps } from '@/features/menu/model/types';
 
-/**
- * Builds the sidebar navigation items for the current user.
- * @param root0 - Options object.
- * @returns Array of menu item descriptors to render in the sidebar.
- */
 export function getMenuItems(): MenuProps[] {
   const items: MenuProps[] = [
     {
@@ -34,26 +29,33 @@ export function getMenuItems(): MenuProps[] {
       position: 1,
     },
     {
+      id: 'summary',
+      label: 'Summary',
+      icon: 'clock',
+      href: ROUTES.DASHBOARD.SUMMARY,
+      position: 100,
+    },
+    {
       id: 'meetings',
       label: 'Meetings',
-      icon: 'users',
+      icon: 'calendar',
       href: ROUTES.DASHBOARD.MEETINGS,
       position: 2,
     },
-    /* {
+    {
       id: 'main-dashboard',
-      label: 'Dashboard',
+      label: 'Dashboard (old)',
       icon: 'layoutDashboard',
       href: ROUTES.DASHBOARD.MAIN,
       position: 10,
-    },*/
-    /* {
+    },
+    {
       id: 'chat',
       label: 'AI Chat',
       icon: 'messageSquare',
       href: ROUTES.DASHBOARD.CHAT,
       position: 50,
-    },*/
+    },
     {
       id: 'issues',
       label: 'Tasks',
@@ -68,27 +70,28 @@ export function getMenuItems(): MenuProps[] {
       href: ROUTES.DASHBOARD.TEAMS,
       position: 5,
     },
-    /* {
+    {
       id: 'methodology',
       label: 'Methodologies',
       icon: 'bookOpen',
       href: ROUTES.DASHBOARD.METHODOLOGY,
       position: 70,
-    },*/
-    /* {
-      id: 'calendar',
-      label: 'Calendar',
-      icon: 'calendar',
-      href: ROUTES.DASHBOARD.CALENDAR,
-      position: 20,
-    },*/
-    /* {
+    },
+    {
       id: 'follow-ups',
       label: 'Follow ups (meetings)',
       icon: 'file',
       href: ROUTES.DASHBOARD.FOLLOWUPS,
       position: 60,
-    },*/
+    },
+    {
+      id: 'agents',
+      label: 'Agents',
+      icon: 'bot',
+      href: ROUTES.DASHBOARD.AGENTS,
+      activeHref: ROUTES.DASHBOARD.AGENTS,
+      position: 90,
+    },
   ];
 
   return items.toSorted((a, b) => {

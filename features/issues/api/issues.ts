@@ -8,7 +8,6 @@ import { API_URL, FILES_URL } from '@/shared/lib/config';
 import { ServerError } from '@/shared/lib/errors';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 import { httpClient, httpClientList } from '@/shared/lib/httpClient';
-import { logApiError } from '@/shared/lib/logger';
 
 import type { AgentTaskRun } from '@/features/agents/model/types';
 import type {
@@ -129,13 +128,6 @@ export async function getIssues(filters: IssueFilters = {}) {
     if (res.status === 401) redirect('/api/auth/clear-session');
     const text = await res.text();
 
-    logApiError({
-      method: 'GET',
-      url: res.url,
-      status: res.status,
-      statusText: res.statusText,
-      body: text,
-    });
     throw new Error(parseApiError(text, 'Failed to load issues').message);
   }
 
@@ -171,13 +163,6 @@ export async function loadIssuesChunk(filters: IssueFilters = {}) {
     if (res.status === 401) redirect('/api/auth/clear-session');
     const text = await res.text();
 
-    logApiError({
-      method: 'GET',
-      url: res.url,
-      status: res.status,
-      statusText: res.statusText,
-      body: text,
-    });
     throw new Error(parseApiError(text, 'Failed to load issues').message);
   }
 
@@ -253,13 +238,6 @@ export async function loadArchivedChunk(
     if (res.status === 401) redirect('/api/auth/clear-session');
     const text = await res.text();
 
-    logApiError({
-      method: 'GET',
-      url: res.url,
-      status: res.status,
-      statusText: res.statusText,
-      body: text,
-    });
     throw new Error(
       parseApiError(text, 'Failed to load archived issues').message,
     );
@@ -295,13 +273,6 @@ export async function getIssue(id: number): Promise<Issue> {
     if (res.status === 401) redirect('/api/auth/clear-session');
     const text = await res.text();
 
-    logApiError({
-      method: 'GET',
-      url: res.url,
-      status: res.status,
-      statusText: res.statusText,
-      body: text,
-    });
     throw new Error(parseApiError(text, 'Failed to load issue').message);
   }
 
@@ -330,14 +301,6 @@ export async function createIssue(
     if (res.status === 401) redirect('/api/auth/clear-session');
     const text = await res.text();
     const parsed = parseApiError(text, 'Failed to create issue');
-
-    logApiError({
-      method: 'POST',
-      url: res.url,
-      status: res.status,
-      statusText: res.statusText,
-      body: text,
-    });
 
     if (res.status === 422) {
       return {
@@ -378,14 +341,6 @@ export async function updateIssue(
     const text = await res.text();
     const parsed = parseApiError(text, 'Failed to update issue');
 
-    logApiError({
-      method: 'PATCH',
-      url: res.url,
-      status: res.status,
-      statusText: res.statusText,
-      body: text,
-    });
-
     if (res.status === 422) {
       return {
         data: null,
@@ -422,13 +377,6 @@ export async function deleteIssue(id: number): Promise<void> {
     if (res.status === 401) redirect('/api/auth/clear-session');
     const text = await res.text();
 
-    logApiError({
-      method: 'DELETE',
-      url: res.url,
-      status: res.status,
-      statusText: res.statusText,
-      body: text,
-    });
     throw new Error(parseApiError(text, 'Failed to delete issue').message);
   }
 }
@@ -451,14 +399,6 @@ export async function dispatchIssue(
   if (!res.ok) {
     if (res.status === 401) redirect('/api/auth/clear-session');
     const text = await res.text();
-
-    logApiError({
-      method: 'POST',
-      url: res.url,
-      status: res.status,
-      statusText: res.statusText,
-      body: text,
-    });
 
     return {
       data: null,
@@ -486,13 +426,6 @@ export async function getPersons(): Promise<PersonOption[]> {
     if (res.status === 401) redirect('/api/auth/clear-session');
     const text = await res.text();
 
-    logApiError({
-      method: 'GET',
-      url: res.url,
-      status: res.status,
-      statusText: res.statusText,
-      body: text,
-    });
     throw new Error(parseApiError(text, 'Failed to load persons').message);
   }
 

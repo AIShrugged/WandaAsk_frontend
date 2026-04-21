@@ -11,29 +11,15 @@ import type { ReactNode } from 'react';
 interface MobileSidebarProps {
   children: ReactNode;
 }
-
-/**
- *
- */
 const subscribeToMount = () => {
   return noop;
 };
-/**
- *
- */
 const getMountedSnapshot = () => {
   return true;
 };
-/**
- *
- */
 const getServerMountedSnapshot = () => {
   return false;
 };
-
-/**
- *
- */
 function noop() {}
 
 /**
