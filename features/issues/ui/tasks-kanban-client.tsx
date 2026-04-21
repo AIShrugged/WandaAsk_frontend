@@ -188,6 +188,11 @@ export function TasksKanbanClient({
     });
   }, []);
 
+  const bumpColumnsVersion = useCallback(() => {
+    columnsVersionRef.current += 1;
+    setColumnsVersion(columnsVersionRef.current);
+  }, []);
+
   useEffect(() => {
     if (isFirstFiltersRender.current) {
       isFirstFiltersRender.current = false;
@@ -273,6 +278,7 @@ export function TasksKanbanClient({
         initialSort,
         initialOrder,
         setShowArchived,
+        bumpColumnsVersion,
       }}
     >
       <div className='flex flex-col h-full overflow-hidden'>

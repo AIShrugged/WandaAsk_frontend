@@ -158,6 +158,11 @@ export function IssuesLayoutClient({
     });
   }, []);
 
+  const bumpColumnsVersion = useCallback(() => {
+    columnsVersionRef.current += 1;
+    setColumnsVersion(columnsVersionRef.current);
+  }, []);
+
   useEffect(() => {
     if (isFirstFiltersRender.current) {
       isFirstFiltersRender.current = false;
@@ -183,6 +188,7 @@ export function IssuesLayoutClient({
       initialSort,
       initialOrder,
       setShowArchived,
+      bumpColumnsVersion,
     };
   }, [
     filters,
@@ -191,6 +197,7 @@ export function IssuesLayoutClient({
     initialSort,
     initialOrder,
     setShowArchived,
+    bumpColumnsVersion,
   ]);
 
   return (

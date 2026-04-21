@@ -74,7 +74,9 @@ export function NestedMenuItem({
   return (
     <div>
       {item.href && !hasChildren ? (
-        <Link href={item.href}>{Content}</Link>
+        <Link href={item.href} data-tour={`nav-${item.id}`}>
+          {Content}
+        </Link>
       ) : (
         Content
       )}

@@ -31,6 +31,7 @@ export default async function Layout({ children }: PropsWithChildren) {
 
       {/* Desktop sidebar — hidden below lg */}
       <aside
+        data-tour='sidebar'
         className='hidden lg:flex flex-col sidebar-width flex-shrink-0 border-r relative z-10'
         style={{
           background: 'rgba(8,8,22,0.75)',
@@ -78,7 +79,12 @@ export default async function Layout({ children }: PropsWithChildren) {
         </header>
 
         {/* Scrollable content */}
-        <main className='flex-1 overflow-y-auto p-2 min-h-0'>{children}</main>
+        <main
+          data-tour='main-content'
+          className='flex-1 overflow-y-auto p-2 min-h-0'
+        >
+          {children}
+        </main>
       </div>
 
       {/* Chat panel — third column, hidden on xl- screens and /dashboard/chat */}

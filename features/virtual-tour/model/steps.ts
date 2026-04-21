@@ -2,17 +2,11 @@ import type { TourStep } from './types';
 
 export const TOUR_STEPS: TourStep[] = [
   {
-    id: 'welcome',
-    title: 'Welcome to WandaAsk',
-    description:
-      'WandaAsk is your AI-powered HR assistant. In the next few steps we will walk you through the core features — teams, meetings, tasks, and AI chat. It takes about 2 minutes.',
-  },
-  {
     id: 'create-organization',
     title: 'Create Your Organization',
     description:
-      'Organizations group your people and data together. Everything in WandaAsk — teams, meetings, and insights — belongs to an organization. Make sure yours is set up before inviting colleagues.',
-    route: '/dashboard/today',
+      'Organizations group your people and data together. Everything in TRIBES — teams, meetings, and insights — belongs to an organization. Make sure yours is set up before inviting colleagues.',
+    route: '/auth/organization/create',
   },
   {
     id: 'meet-the-layout',
@@ -20,13 +14,15 @@ export const TOUR_STEPS: TourStep[] = [
     description:
       'The sidebar on the left gives you quick access to all sections. The main area shows the active page. On larger screens a chat panel appears on the right — you can hide it any time.',
     route: '/dashboard/today',
+    spotlightSelector: '[data-tour="sidebar"]',
   },
   {
     id: 'create-team',
     title: 'Create a Team',
     description:
-      'Teams organize people into groups for collaboration and insights. Head to the Teams section and click "Create Team" to get started. You can create as many teams as you need.',
+      'Teams organize people into groups for collaboration and insights. Head to the Teams section and click "New" to get started. You can create as many teams as you need.',
     route: '/dashboard/teams',
+    spotlightSelector: '[data-tour="create-team-btn"]',
   },
   {
     id: 'invite-team-members',
@@ -41,6 +37,7 @@ export const TOUR_STEPS: TourStep[] = [
     description:
       'The chat panel lets you ask Wanda anything in natural language: "Who attended last week\'s standups?", "What tasks are overdue?", or "Show me the DISC profile for Alice". Try it now.',
     route: '/dashboard/today',
+    spotlightSelector: '[data-tour="chat-panel"]',
   },
   {
     id: 'meetings-agenda',
@@ -48,6 +45,7 @@ export const TOUR_STEPS: TourStep[] = [
     description:
       'The Meetings section shows your upcoming and past meetings. Connect Google Calendar in the next step and Wanda will automatically summarize meetings, extract decisions, and create tasks.',
     route: '/dashboard/meetings',
+    spotlightSelector: '[data-tour="nav-meetings"]',
   },
   {
     id: 'issues-kanban',
@@ -55,6 +53,7 @@ export const TOUR_STEPS: TourStep[] = [
     description:
       'Track action items and tasks in the Issues section. Switch to the Kanban view for a visual board. Wanda automatically creates tasks from meeting summaries and follow-up assessments.',
     route: '/dashboard/issues',
+    spotlightSelector: '[data-tour="nav-issues"]',
   },
   {
     id: 'connect-google-calendar',

@@ -1,5 +1,6 @@
 'use server';
 
+import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
 import { parseApiError } from '@/shared/lib/apiError';
@@ -397,6 +398,9 @@ export async function updateIssue(
   }
 
   const json: ApiResponse<Issue> = await res.json();
+
+  revalidatePath('/dashboard/issues');
+  revalidatePath('/dashboard/kanban');
 
   return json.data!;
 }

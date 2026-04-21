@@ -42,6 +42,7 @@ export default function TeamsHeader({
 
       <Link
         href={ROUTES.DASHBOARD.TEAMS_CREATE}
+        data-tour='create-team-btn'
         className='ml-auto inline-flex h-8 items-center justify-center gap-1.5 rounded-[var(--radius-button)] bg-gradient-to-b from-violet-500 to-violet-700 px-3 text-xs font-medium text-primary-foreground shadow-[0_2px_8px_rgba(124,58,237,0.25)] transition-all hover:from-violet-400 hover:to-violet-600'
       >
         <Plus className='size-3.5' />

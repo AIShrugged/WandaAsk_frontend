@@ -22,6 +22,7 @@ const defaultValue: FiltersContextValue = {
   initialSort: 'created_at',
   initialOrder: 'desc',
   setShowArchived: () => {},
+  bumpColumnsVersion: () => {},
 };
 
 describe('useFiltersContext', () => {

@@ -19,6 +19,7 @@ import {
   loadIssuesChunk,
   updateIssue,
 } from '@/features/issues/api/issues';
+import { useFiltersContext } from '@/features/issues/model/filters-context';
 import { ISSUE_STATUS_OPTIONS } from '@/features/issues/model/types';
 import { ArchivedSection } from '@/features/issues/ui/archived-section';
 import { ArchivedSectionToggle } from '@/features/issues/ui/archived-section-toggle';
@@ -103,6 +104,7 @@ export function IssuesPage({
   initialOrder,
   onShowArchivedChange,
 }: IssuesPageProps) {
+  const { bumpColumnsVersion } = useFiltersContext();
   const [isPending, startTransition] = useTransition();
   const [sortField, setSortField] = useState<IssueSortField>(initialSort);
   const [sortOrder, setSortOrder] = useState<SortOrder>(initialOrder);
@@ -388,13 +390,14 @@ export function IssuesPage({
           setEditingStatusIssueId(null);
           setEditingAssigneeIssueId(null);
           toast.success('Issue updated');
+          bumpColumnsVersion();
         } catch (error) {
           setUpdatingIssueId(null);
           toast.error((error as Error).message);
         }
       });
     },
-    [startTransition],
+    [startTransition, bumpColumnsVersion],
   );
 
   return (

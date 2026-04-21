@@ -29,6 +29,7 @@ export function DashboardChatColumn({ children }: PropsWithChildren) {
 
   return (
     <div
+      data-tour='chat-panel'
       className={`hidden xl:flex flex-col flex-shrink-0 border-l border-border/50 overflow-hidden transition-all duration-300 ${isCollapsed ? 'w-10' : 'w-[480px]'}`}
     >
       {isCollapsed ? (
