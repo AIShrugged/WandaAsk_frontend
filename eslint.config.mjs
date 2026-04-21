@@ -148,7 +148,7 @@ export default defineConfig([
   // FSD layer boundary enforcement
   // Prevents cross-feature imports and upward layer violations
   // ------------------------------
-  /*  {
+  {
     plugins: {
       boundaries: boundariesPlugin,
     },
@@ -190,7 +190,7 @@ export default defineConfig([
         },
       ],
     },
-  },*/
+  },
 
   globalIgnores([
     '.next/**',
