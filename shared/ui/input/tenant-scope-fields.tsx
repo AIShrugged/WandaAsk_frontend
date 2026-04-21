@@ -4,9 +4,7 @@ import { useEffect, useState } from 'react';
 
 import InputDropdown from '@/shared/ui/input/InputDropdown';
 
-// eslint-disable-next-line boundaries/element-types
 import type { OrganizationProps } from '@/entities/organization';
-// eslint-disable-next-line boundaries/element-types
 import type { TeamProps } from '@/entities/team';
 
 interface TenantScopeFieldsProps {
