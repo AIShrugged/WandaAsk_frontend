@@ -1,9 +1,11 @@
 'use client';
 
-import { Menu, X } from 'lucide-react';
-import { useEffect, useState, useSyncExternalStore } from 'react';
+import { Menu, Settings, X } from 'lucide-react';
+import Link from 'next/link';
+import React, { useEffect, useState, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
 
+import { ROUTES } from '@/shared/lib/routes';
 import { TribesLogo } from '@/shared/ui/brand';
 
 import type { ReactNode } from 'react';
@@ -103,6 +105,13 @@ export default function MobileSidebar({ children }: MobileSidebarProps) {
               >
                 <div className='flex items-center justify-between h-[var(--topbar-height)] px-6 border-b border-sidebar-border flex-shrink-0'>
                   <TribesLogo />
+                  <Link
+                    href={ROUTES.DASHBOARD.PROFILE_MENU}
+                    className='flex items-center justify-center w-9 h-9 rounded-md text-muted-foreground hover:text-foreground hover:bg-sidebar-accent/50 transition-colors'
+                    aria-label='Settings'
+                  >
+                    <Settings className='w-4 h-4' />
+                  </Link>
                   <button
                     className='cursor-pointer flex items-center justify-center w-8 h-8 rounded-md hover:bg-accent transition-colors'
                     onClick={() => {

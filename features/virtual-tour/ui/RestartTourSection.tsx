@@ -1,36 +1,8 @@
 'use client';
 
-import { Button } from '@/shared/ui/button';
-
-import { resetTour } from '../api/tour';
-import { useTourStore } from '../model/tour-store';
-
-const TOUR_COMPLETED_KEY = 'tour_completed';
-const TOUR_STEP_KEY = 'tour_step';
-
-/**
- * Clears localStorage tour state and opens the tour from step 0.
- */
-function handleRestart() {
-  // Clear localStorage state
-  try {
-    globalThis.localStorage.removeItem(TOUR_COMPLETED_KEY);
-    globalThis.localStorage.removeItem(TOUR_STEP_KEY);
-  } catch {
-    // localStorage not available — ignore
-  }
-
-  // Fire-and-forget backend reset
-  void resetTour();
-
-  // Open tour from the beginning
-  useTourStore.getState().open(0);
-}
-
 /**
  * RestartTourSection component.
- * Renders a card section on the profile page with a button to restart the onboarding tour.
- * Clears localStorage state, fires reset on the backend (fire-and-forget), and opens the tour.
+ * Renders a placeholder card on the profile page for the onboarding tour (currently disabled).
  * @returns JSX element.
  */
 export function RestartTourSection() {
@@ -43,14 +15,6 @@ export function RestartTourSection() {
         Restart the guided tour to revisit all core features of WandaAsk at any
         time.
       </p>
-      <Button
-        variant='secondary'
-        size='sm'
-        onClick={handleRestart}
-        className='w-auto'
-      >
-        Restart Tour
-      </Button>
     </div>
   );
 }
