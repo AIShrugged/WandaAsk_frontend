@@ -13,6 +13,7 @@ import { IssueForm } from '@/features/issues/ui/issue-form';
 import { IssueLinkedTask } from '@/features/issues/ui/issue-linked-task';
 import { getOrganizations } from '@/features/organization/api/organization';
 import { getUser } from '@/features/user/api/user';
+import { ROUTES } from '@/shared/lib/routes';
 import Card from '@/shared/ui/card/Card';
 import CardBody from '@/shared/ui/card/CardBody';
 import PageHeader from '@/widgets/layout/ui/page-header';
@@ -68,8 +69,6 @@ export default async function IssueDetailPage({
     issue.close_date !== null &&
     differenceInDays(new Date(), new Date(issue.close_date)) >= 14;
 
-  console.log(issue);
-
   return (
     <div className='h-full overflow-y-auto'>
       <div className='grid min-h-full gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]'>
@@ -77,6 +76,7 @@ export default async function IssueDetailPage({
           <Card className='flex flex-col'>
             <PageHeader
               hasButtonBack
+              fallbackHref={ROUTES.DASHBOARD.ISSUES_KANBAN}
               title='Task'
               extraContent={
                 isArchived ? (

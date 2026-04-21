@@ -3,16 +3,21 @@
 import { ChevronLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-/**
- * ButtonBack component.
- */
-export default function ButtonBack() {
+export default function ButtonBack({
+  fallbackHref,
+}: {
+  fallbackHref?: string;
+}) {
   const router = useRouter();
 
   return (
     <button
       onClick={() => {
-        return router.back();
+        if (fallbackHref && globalThis.history.length <= 1) {
+          router.push(fallbackHref);
+        } else {
+          router.back();
+        }
       }}
       className='cursor-pointer text-primary'
       aria-label='Back'
