@@ -73,7 +73,7 @@ export function ModalRoot({ open, onClose, children }: ModalRootProps) {
           onClick={onClose}
         >
           <motion.div
-            className='bg-card border border-border rounded-[var(--radius-card)] w-full max-w-[700px] mx-4 shadow-card'
+            className='bg-card border border-border rounded-[var(--radius-card)] w-full max-w-[700px] mx-4'
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.95, opacity: 0 }}

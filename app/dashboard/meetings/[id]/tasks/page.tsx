@@ -26,7 +26,7 @@ export default async function MeetingTasksPage({
 
   return (
     <div className='mx-auto w-full max-w-4xl px-6 py-6'>
-      <section className='rounded-[var(--radius-card)] border border-border bg-card px-5 py-4 shadow-card'>
+      <section className='rounded-[var(--radius-card)] border border-border bg-card px-5 py-4'>
         <div className='flex items-center gap-2 text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground'>
           <CheckCircle2 className='h-3.5 w-3.5' />
           Tasks ({tasks.length})

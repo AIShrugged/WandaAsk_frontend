@@ -22,7 +22,7 @@ export const EventPopupAll = ({
   const { weekday, day } = getWeekdayAndDay(list[0].starts_at);
 
   return (
-    <div className='bg-card rounded-[var(--radius-card)] shadow-card border border-border'>
+    <div className='bg-card rounded-[var(--radius-card)] border border-border'>
       <div className='flex flex-row justify-between items-center px-6 pt-5 pb-4 border-b border-border'>
         <div>
           <H4>{day}</H4>

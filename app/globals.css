@@ -27,10 +27,6 @@
   --color-sidebar-accent: hsl(var(--sidebar-accent));
   --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
 
-  /* Shadow — cosmic glow shadow for dark theme */
-  --shadow-card:
-    0 0 0 1px rgba(124, 58, 237, 0.12), 0 4px 24px rgba(0, 0, 0, 0.5);
-
   /* Radius — non-colliding names (rounded-sm/md are Tailwind built-ins) */
   --radius-button: 0.375rem; /* 6px  — buttons, inputs  */
   --radius-card: 0.5rem; /* 8px  — cards, modals    */
@@ -95,6 +91,11 @@
     --sidebar-accent: 263 35% 18%; /* dark violet for hover */
     --sidebar-accent-foreground: 263 80% 80%; /* bright violet text */
 
+    /* --- Chrome surfaces (sidebar + header glassmorphic shell) --- */
+    --chrome-bg: rgba(8, 8, 22, 0.75);
+    --chrome-bg-header: rgba(8, 8, 22, 0.7);
+    --chrome-border: rgba(124, 58, 237, 0.15);
+
     /* --- Radius base --- */
     --radius: 0.5rem; /* 8px — base value */
   }
@@ -133,6 +134,10 @@
     --sidebar-border: 240 5% 88%;
     --sidebar-accent: 263 35% 92%;
     --sidebar-accent-foreground: 263 79% 45%;
+
+    --chrome-bg: rgba(248, 248, 252, 0.8);
+    --chrome-bg-header: rgba(248, 248, 252, 0.75);
+    --chrome-border: rgba(124, 58, 237, 0.2);
 
     --radius: 0.5rem;
   }

@@ -23,7 +23,7 @@ export default async function SummaryPage() {
     return (
       <div className='flex flex-col gap-6 h-full overflow-y-auto p-2'>
         <SummaryHeader />
-        <div className='flex flex-col items-center justify-center gap-3 rounded-[var(--radius-card)] border border-border bg-card p-12 text-center shadow-card'>
+        <div className='flex flex-col items-center justify-center gap-3 rounded-[var(--radius-card)] border border-border bg-card p-12 text-center'>
           <p className='text-base font-medium text-foreground'>
             Statistics unavailable
           </p>

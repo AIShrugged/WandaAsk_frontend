@@ -63,7 +63,7 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
-            className='bg-card rounded-[var(--radius-card)] border border-border shadow-card w-full max-w-md max-h-[90vh] overflow-hidden'
+            className='bg-card rounded-[var(--radius-card)] border border-border w-full max-w-md max-h-[90vh] overflow-hidden'
           >
             {/* Header */}
             <div className='flex items-center justify-between px-6 py-4 border-b border-border'>

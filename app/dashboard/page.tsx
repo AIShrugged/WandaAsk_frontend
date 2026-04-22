@@ -65,7 +65,7 @@ export default async function DashboardPage() {
             <Link
               key={href}
               href={href}
-              className='flex items-center justify-center rounded-[var(--radius-card)] border border-border bg-card px-4 py-3 text-sm font-medium text-foreground shadow-card hover:bg-accent transition-colors'
+              className='flex items-center justify-center rounded-[var(--radius-card)] border border-border bg-card px-4 py-3 text-sm font-medium text-foreground hover:bg-accent transition-colors'
             >
               {label}
             </Link>

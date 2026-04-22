@@ -359,7 +359,7 @@ const InputDropdown = forwardRef<
             ref={dropdownRef}
             id={listboxId}
             role='listbox'
-            className='fixed z-[100] bg-popover border border-border rounded-[var(--radius-card)] shadow-card max-h-80 overflow-auto'
+            className='fixed z-[100] bg-popover border border-border rounded-[var(--radius-card)] max-h-80 overflow-auto'
             style={{
               top: `${dropdownPosition.top}px`,
               left: `${dropdownPosition.left}px`,

@@ -113,7 +113,7 @@ export function ChatLayout({
   );
 
   return (
-    <div className='flex flex-col h-full rounded-[var(--radius-card)] overflow-hidden border border-border bg-card shadow-card'>
+    <div className='flex flex-col h-full rounded-[var(--radius-card)] overflow-hidden border border-border bg-card'>
       {/* ── Mobile tab bar (< lg): Chats | Artifacts | Chat ── */}
       <div className='flex lg:hidden border-b border-border flex-shrink-0'>
         <button

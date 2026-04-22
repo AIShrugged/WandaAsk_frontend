@@ -14,7 +14,7 @@ export default async function ChatPage() {
   ]);
 
   return (
-    <div className='flex h-full rounded-[var(--radius-card)] overflow-hidden border border-border bg-card shadow-card'>
+    <div className='flex h-full rounded-[var(--radius-card)] overflow-hidden border border-border bg-card '>
       <ChatList
         initialChats={chats}
         totalCount={totalCount}

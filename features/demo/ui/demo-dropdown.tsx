@@ -143,7 +143,7 @@ export function DemoDropdown({
   onDelete,
 }: DemoDropdownProps) {
   return (
-    <div className='w-72 bg-popover border border-border rounded-[var(--radius-card)] shadow-card p-4'>
+    <div className='w-72 bg-popover border border-border rounded-[var(--radius-card)] p-4'>
       {/* Header */}
       <div className='flex items-center gap-2.5 mb-4'>
         <div className='w-7 h-7 rounded-[var(--radius-button)] bg-primary/10 flex items-center justify-center flex-shrink-0'>

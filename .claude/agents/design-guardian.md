@@ -91,8 +91,7 @@ memory: project
 --radius-button:
   0.375rem /* 6px  — кнопки, инпуты */ --radius-card: 0.5rem
     /* 8px  — карточки, модальные окна */ --radius-panel: 0.75rem
-    /* 12px — большие панели */ --shadow-card: 0 0 0 1px
-    rgba(124, 58, 237, 0.12),
+    /* 12px — большие панели */ rgba(124, 58, 237, 0.12),
   0 4px 24px rgba(0, 0, 0, 0.5);
 ```
 
@@ -100,7 +99,6 @@ memory: project
 
 **Glow (violet):** `shadow-[0_0_16px_rgba(124,58,237,0.4)]` **Ambient glow
 (слабый):** `shadow-[0_2px_12px_rgba(124,58,237,0.25)]` **Card shadow:**
-`shadow-card` (CSS var выше) **Icon glow:**
 `drop-shadow-[0_0_6px_rgba(124,58,237,0.7)]`
 
 **Gradients:**

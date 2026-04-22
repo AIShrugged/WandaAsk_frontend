@@ -20,7 +20,7 @@
 - `shared/types/common.ts` — `ApiResponse<T>`, `PaginatedResult<T>`, `PageProps`
 - `shared/types/server-action.ts` — `ActionResult<T>`
 - `shared/ui/card/Card.tsx` — card with
-  `rounded-[var(--radius-card)] bg-card border border-border shadow-card`
+  `rounded-[var(--radius-card)] bg-card border border-border`
 - `shared/ui/layout/skeleton.tsx` — `Skeleton`, `SkeletonList` components
 - `shared/ui/error/ErrorDisplay.tsx` — env-aware error display (dev: details,
   prod: generic)

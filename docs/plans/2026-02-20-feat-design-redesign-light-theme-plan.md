@@ -133,10 +133,6 @@ approach.
   --color-sidebar-accent: hsl(var(--sidebar-accent));
   --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
 
-  /* Shadow — registered here for variant support (hover:shadow-card, dark:shadow-card) */
-  --shadow-card:
-    0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px -1px rgba(0, 0, 0, 0.06);
-
   /* Radius — use non-colliding names to avoid overriding Tailwind's built-in rounded-sm/md */
   --radius-button: 0.375rem; /* 6px  — buttons, inputs  */
   --radius-card: 0.5rem; /* 8px  — cards, modals    */
@@ -357,14 +353,12 @@ Also create `shared/ui/brand/index.ts` exporting `WandaLogo`.
 | `bg-selected`               | `bg-accent`                | Selected/active state    |
 | `bg-error`                  | `bg-destructive`           | Error background         |
 | `text-error`                | `text-destructive`         | Error text               |
-| `shadow-primary`            | `shadow-card`              | Fixed name               |
 | `border-table`              | `border`                   | Simplify                 |
 
 #### 3.2 Shared UI Components — Changes Required
 
 **`shared/ui/card/Card.tsx`**
 
-- Fix `box-shadow-primary` → `shadow-card`
 - Change `bg-white` → `bg-card`
 - Change `border-primary` → `border`
 - `rounded-2xl` on mobile, `md:rounded-[40px]` → standardize to `rounded-md`
