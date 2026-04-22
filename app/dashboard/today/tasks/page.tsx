@@ -1,7 +1,6 @@
 import {
   AiNudge,
   AiPrepPanel,
-  CarriedTasks,
   StaleItems,
   TaskStatsBlock,
   getTodayBriefing,
@@ -30,7 +29,6 @@ export default async function TodayTasksPage({
           {data.events.map((event) => {
             return (
               <div key={event.id} className='flex flex-col gap-8'>
-                <CarriedTasks count={data.carried_tasks.length} />
                 <AiPrepPanel
                   event={event}
                   tasks={event.tasks}

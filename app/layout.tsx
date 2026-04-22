@@ -1,5 +1,8 @@
 import { Inter } from 'next/font/google';
+import { cookies } from 'next/headers';
 import { PublicEnvScript } from 'next-runtime-env';
+
+import type { Theme } from '@/entities/user';
 
 import { APP_NAME } from '@/shared/lib/app-name';
 
@@ -20,18 +23,16 @@ export const metadata: Metadata = {
   description: 'Tribes App',
 };
 
-/**
- * RootLayout component.
- * @param root0
- * @param root0.children
- */
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const theme = (cookieStore.get('wanda-theme')?.value ?? 'dark') as Theme;
+
   return (
-    <html lang='en'>
+    <html lang='en' data-theme={theme}>
       <head>
         <PublicEnvScript />
       </head>

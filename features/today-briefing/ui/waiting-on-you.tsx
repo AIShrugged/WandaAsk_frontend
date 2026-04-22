@@ -1,6 +1,8 @@
 'use client';
 
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import Link from 'next/link';
+import { useState } from 'react';
 
 import { ROUTES } from '@/shared/lib/routes';
 
@@ -12,13 +14,20 @@ interface WaitingOnYouProps {
   tasks: WaitingTask[];
 }
 
+const INITIAL_LIMIT = 3;
+
 export function WaitingOnYou({ tasks }: WaitingOnYouProps) {
+  const [showAll, setShowAll] = useState(false);
+
   if (tasks.length === 0) return null;
+
+  const visible = showAll ? tasks : tasks.slice(0, INITIAL_LIMIT);
+  const hasMore = tasks.length > INITIAL_LIMIT;
 
   return (
     <CollapsibleSection label='Waiting on you'>
       <div className='flex flex-col gap-2'>
-        {tasks.slice(0, 5).map((task) => {
+        {visible.map((task) => {
           const isUrgent = task.age_days > 7;
           return (
             <div
@@ -31,12 +40,12 @@ export function WaitingOnYou({ tasks }: WaitingOnYouProps) {
               <div className='min-w-0 flex-1'>
                 <Link
                   href={`${ROUTES.DASHBOARD.ISSUES}/${task.id}`}
-                  className='text-sm font-medium text-foreground truncate hover:text-primary hover:underline transition-colors block'
+                  className='block truncate text-sm font-medium text-foreground transition-colors hover:text-primary hover:underline'
                 >
                   {task.name}
                 </Link>
                 {(task.source_meeting_title || task.description) && (
-                  <p className='text-xs text-muted-foreground line-clamp-2'>
+                  <p className='line-clamp-2 text-xs text-muted-foreground'>
                     {task.source_meeting_title &&
                       `From ${task.source_meeting_title}`}
                     {task.source_meeting_title && task.description && ' · '}
@@ -52,6 +61,28 @@ export function WaitingOnYou({ tasks }: WaitingOnYouProps) {
             </div>
           );
         })}
+        {hasMore && (
+          <button
+            onClick={() => {
+              return setShowAll((v) => {
+                return !v;
+              });
+            }}
+            className='flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground'
+          >
+            {showAll ? (
+              <>
+                <ChevronUp className='h-3.5 w-3.5' />
+                Show less
+              </>
+            ) : (
+              <>
+                <ChevronDown className='h-3.5 w-3.5' />
+                Show all ({tasks.length})
+              </>
+            )}
+          </button>
+        )}
       </div>
     </CollapsibleSection>
   );
