@@ -28,17 +28,15 @@ export function IssuesListTab({
   } = useFiltersContext();
 
   return (
-    <div className='h-full overflow-y-auto px-4 py-4'>
-      <IssuesPage
-        initialIssues={initialIssues}
-        initialTotalCount={initialTotalCount}
-        persons={persons}
-        filters={filters}
-        filtersVersion={filtersVersion}
-        initialSort={initialSort}
-        initialOrder={initialOrder}
-        onShowArchivedChange={setShowArchived}
-      />
-    </div>
+    <IssuesPage
+      initialIssues={initialIssues}
+      initialTotalCount={initialTotalCount}
+      persons={persons}
+      filters={filters}
+      filtersVersion={filtersVersion}
+      initialSort={initialSort}
+      initialOrder={initialOrder}
+      onShowArchivedChange={setShowArchived}
+    />
   );
 }

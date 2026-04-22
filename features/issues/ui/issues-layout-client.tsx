@@ -4,6 +4,7 @@ import { SlidersHorizontal } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { IssueCreateButton } from '@/features/issues';
 import { FiltersContext } from '@/features/issues/model/filters-context';
 import { isIssueStatus, isIssueType } from '@/features/issues/model/types';
 import { IssuesTabsNav } from '@/features/issues/ui/issues-tabs-nav';
@@ -207,6 +208,7 @@ export function IssuesLayoutClient({
           <CollapsibleSection
             label='Filters'
             icon={<SlidersHorizontal className='h-3.5 w-3.5' />}
+            extraContent={<IssueCreateButton />}
           >
             <SharedFiltersBar
               filters={filters}
@@ -216,9 +218,9 @@ export function IssuesLayoutClient({
             />
           </CollapsibleSection>
         </div>
-        <div className='shrink-0 mt-4'>
-          <IssuesTabsNav />
-        </div>
+
+        <IssuesTabsNav />
+
         <div>{children}</div>
       </div>
     </FiltersContext.Provider>

@@ -100,8 +100,6 @@ export async function getSomeData() {
 - `app/dashboard/summary/page.tsx` — SSR page with 5-KPI grid + all stat
   sections
 - `app/dashboard/summary/loading.tsx` — matching skeleton layout
-- `ROUTES.DASHBOARD.SUMMARY = '/dashboard/summary'` added to
-  `shared/lib/routes.ts`
 
 ## Route Constants Locations
 

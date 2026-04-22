@@ -8,7 +8,6 @@ import {
 import { getOrganizationId } from '@/shared/lib/getOrganizationId';
 import Card from '@/shared/ui/card/Card';
 import CardBody from '@/shared/ui/card/CardBody';
-import PageHeader from '@/widgets/layout/ui/page-header';
 
 /**
  * Page component.
@@ -20,8 +19,6 @@ export default async function Page() {
 
   return (
     <Card className='h-full flex flex-col'>
-      <PageHeader title={'Methodologies'} />
-
       <div className={'h-full overflow-x-hidden overflow-y-scroll'}>
         <CardBody>
           {methodologies.length > 0 ? (

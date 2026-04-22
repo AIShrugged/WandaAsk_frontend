@@ -14,7 +14,6 @@ import {
 import { getOrganizationId } from '@/shared/lib/getOrganizationId';
 import { ROUTES } from '@/shared/lib/routes';
 import Card from '@/shared/ui/card/Card';
-import PageHeader from '@/widgets/layout/ui/page-header';
 
 interface SearchParams {
   team_id?: string;
@@ -39,7 +38,6 @@ export default async function Page({
   if (teams.length === 0) {
     return (
       <Card className='h-full flex flex-col'>
-        <PageHeader title='Teams' />
         <TeamsEmptyState />
       </Card>
     );
@@ -100,8 +98,6 @@ export default async function Page({
 
   return (
     <Card className='min-h-full flex flex-col overflow-y-auto'>
-      <PageHeader title='Teams' />
-
       <TeamsPageClient
         teams={teams}
         team={team}

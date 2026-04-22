@@ -1,12 +1,7 @@
-import {
-  getPersons,
-  IssueCreateButton,
-  IssuesLayoutClient,
-} from '@/features/issues';
+import { getPersons, IssuesLayoutClient } from '@/features/issues';
 import { getOrganizations } from '@/features/organization';
 import { getCurrentUserId } from '@/shared/lib/getCurrentUserId';
 import Card from '@/shared/ui/card/Card';
-import PageHeader from '@/widgets/layout/ui/page-header';
 
 import type { ReactNode } from 'react';
 
@@ -28,7 +23,6 @@ export default async function IssuesLayout({
 
   return (
     <Card>
-      <PageHeader title='Tasks' extraContent={<IssueCreateButton />} />
       <IssuesLayoutClient
         organizations={organizationsResponse.data ?? []}
         persons={persons}

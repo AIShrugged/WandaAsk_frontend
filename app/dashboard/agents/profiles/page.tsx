@@ -13,6 +13,7 @@ import {
 } from '@/features/agents';
 import { ServerError } from '@/shared/lib/errors';
 import { ROUTES } from '@/shared/lib/routes';
+import Card from '@/shared/ui/card/Card';
 import { EmptyState } from '@/shared/ui/feedback/empty-state';
 
 import type { AgentTasksMeta } from '@/features/agents';
@@ -71,7 +72,7 @@ export default async function AgentProfilesPage() {
   const sandboxOptions = normalizeMetaOptions(meta.sandbox_profiles);
 
   return (
-    <div>
+    <Card>
       <div className='mb-6 flex flex-wrap items-center justify-between gap-3'>
         <p className='text-sm text-muted-foreground'>
           Configure reusable agent profiles and backend-constrained tool access.
@@ -118,6 +119,6 @@ export default async function AgentProfilesPage() {
           description='Create the first profile for reusable agent configuration.'
         />
       )}
-    </div>
+    </Card>
   );
 }

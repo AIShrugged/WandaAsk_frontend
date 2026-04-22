@@ -1,5 +1,7 @@
 import { TodayTabsNav } from '@/features/today-briefing';
 
+import type { ReactNode } from 'react';
+
 export const dynamic = 'force-dynamic';
 
 /**
@@ -9,11 +11,11 @@ export const dynamic = 'force-dynamic';
 export default function TodayDashboardLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   return (
     <div className='flex flex-col h-full overflow-hidden p-2'>
-      <div className='shrink-0 mb-5'>
+      <div className='shrink-0 mb-4'>
         <TodayTabsNav />
       </div>
       <div className='flex-1 overflow-y-auto'>{children}</div>

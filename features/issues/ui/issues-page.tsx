@@ -411,7 +411,7 @@ export function IssuesPage({
           />
         </div>
       ) : (
-        <div className='overflow-hidden rounded-[var(--radius-card)] border border-border bg-card'>
+        <div className='overflow-hidden border border-border bg-card'>
           <div className='overflow-x-auto'>
             <table className='w-full min-w-[980px] table-fixed text-sm'>
               <colgroup>

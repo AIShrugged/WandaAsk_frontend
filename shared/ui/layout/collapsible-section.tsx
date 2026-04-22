@@ -10,6 +10,7 @@ interface CollapsibleSectionProps {
   defaultOpen?: boolean;
   className?: string;
   children: React.ReactNode;
+  extraContent: React.ReactNode;
 }
 
 export function CollapsibleSection({
@@ -18,29 +19,33 @@ export function CollapsibleSection({
   defaultOpen = true,
   className,
   children,
+  extraContent,
 }: CollapsibleSectionProps) {
   const [open, setOpen] = useState(defaultOpen);
 
   return (
     <div className={className}>
-      <button
-        type='button'
-        onClick={() => {
-          setOpen((v) => {
-            return !v;
-          });
-        }}
-        aria-label={open ? `Hide ${label}` : `Show ${label}`}
-        aria-expanded={open}
-        className='flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer select-none mb-2'
-      >
-        {icon}
-        {label}
-        <ChevronDown
-          className='h-3.5 w-3.5 transition-transform duration-200'
-          style={{ transform: open ? 'rotate(0deg)' : 'rotate(-90deg)' }}
-        />
-      </button>
+      <div className={'flex flex-row items-center justify-between mb-2'}>
+        <button
+          type='button'
+          onClick={() => {
+            setOpen((v) => {
+              return !v;
+            });
+          }}
+          aria-label={open ? `Hide ${label}` : `Show ${label}`}
+          aria-expanded={open}
+          className='flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer select-none'
+        >
+          {icon}
+          {label}
+          <ChevronDown
+            className='h-3.5 w-3.5 transition-transform duration-200'
+            style={{ transform: open ? 'rotate(0deg)' : 'rotate(-90deg)' }}
+          />
+        </button>
+        {extraContent}
+      </div>
       <AnimatePresence initial={false}>
         {open && (
           <motion.div

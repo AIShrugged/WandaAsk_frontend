@@ -10,7 +10,6 @@ import { OrganizationSelector } from '@/features/organization';
 import { User } from '@/features/user';
 import { ROUTES } from '@/shared/lib/routes';
 import { TribesLogo } from '@/shared/ui/brand';
-import { CosmicBackground } from '@/shared/ui/layout/cosmic-background';
 import {
   DashboardChatColumn,
   DashboardChatLoader,
@@ -26,9 +25,6 @@ export default async function Layout({ children }: PropsWithChildren) {
   return (
     <ThemeProvider initialTheme={theme}>
       <div className='flex h-screen overflow-hidden bg-background'>
-        {/* Cosmic space backdrop */}
-        <CosmicBackground />
-
         {/* Desktop sidebar — hidden below lg */}
         <aside
           data-tour='sidebar'

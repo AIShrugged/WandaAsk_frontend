@@ -29,13 +29,6 @@ export function getMenuItems(): MenuProps[] {
       position: 1,
     },
     {
-      id: 'summary',
-      label: 'Summary',
-      icon: 'clock',
-      href: ROUTES.DASHBOARD.SUMMARY,
-      position: 100,
-    },
-    {
       id: 'meetings',
       label: 'Meetings',
       icon: 'calendar',

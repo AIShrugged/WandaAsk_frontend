@@ -1,4 +1,5 @@
 import { getMeetingsForDate, MeetingsColumnView } from '@/features/meetings';
+import Card from '@/shared/ui/card/Card';
 
 function toDateParam(date: Date): string {
   const y = date.getFullYear();
@@ -50,14 +51,16 @@ export default async function MeetingsListPage({
   ]);
 
   return (
-    <MeetingsColumnView
-      yesterday={yesterday}
-      today={today}
-      tomorrow={tomorrow}
-      yesterdayDate={formatColumnDate(yesterdayDate)}
-      todayDate={formatColumnDate(centerDate)}
-      tomorrowDate={formatColumnDate(tomorrowDate)}
-      centerDate={toDateParam(centerDate)}
-    />
+    <Card className='h-full flex flex-col'>
+      <MeetingsColumnView
+        yesterday={yesterday}
+        today={today}
+        tomorrow={tomorrow}
+        yesterdayDate={formatColumnDate(yesterdayDate)}
+        todayDate={formatColumnDate(centerDate)}
+        tomorrowDate={formatColumnDate(tomorrowDate)}
+        centerDate={toDateParam(centerDate)}
+      />
+    </Card>
   );
 }

@@ -9,6 +9,7 @@ import {
 } from '@/features/agents';
 import { ServerError } from '@/shared/lib/errors';
 import { ROUTES } from '@/shared/lib/routes';
+import Card from '@/shared/ui/card/Card';
 import { EmptyState } from '@/shared/ui/feedback/empty-state';
 
 export const metadata = { title: 'Agent Tasks' };
@@ -49,7 +50,7 @@ export default async function AgentTasksPage() {
   }
 
   return (
-    <div>
+    <Card>
       <div className='mb-6 flex flex-wrap items-center justify-between gap-3'>
         <p className='text-sm text-muted-foreground'>
           Active organization context: {activeOrganization?.name ?? 'Unknown'} ·{' '}
@@ -71,6 +72,6 @@ export default async function AgentTasksPage() {
           description='Create a task to connect a profile, schedule, and input payload.'
         />
       )}
-    </div>
+    </Card>
   );
 }

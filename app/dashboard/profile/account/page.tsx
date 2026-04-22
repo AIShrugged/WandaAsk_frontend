@@ -1,6 +1,5 @@
 import { getUser } from '@/features/user';
 import { ProfileForm } from '@/features/user-profile';
-import { RestartTourSection } from '@/features/virtual-tour';
 
 export const metadata = { title: 'Account Info' };
 
@@ -21,7 +20,6 @@ export default async function ProfileAccountPage() {
   return (
     <>
       <ProfileForm user={user} />
-      <RestartTourSection />
     </>
   );
 }
