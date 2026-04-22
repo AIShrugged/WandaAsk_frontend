@@ -1,8 +1,11 @@
 import { Video, Users, CheckSquare, ListChecks, FileText } from 'lucide-react';
 
-import { KpiCard, SummaryHeader } from '@/features/summary';
-import { getSummaryData } from '@/features/summary/api/summary';
-import { StatsSection } from '@/features/summary/ui/stats-section';
+import {
+  KpiCard,
+  SummaryHeader,
+  getSummaryData,
+  StatsSection,
+} from '@/features/summary';
 
 // ------------------------------
 // Page (SSR — Server Component)

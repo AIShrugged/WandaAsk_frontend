@@ -1,15 +1,17 @@
 import { MousePointerClick } from 'lucide-react';
 
-import { getAgentTask } from '@/features/agents/api/agents';
-import { getAgentAccessContext } from '@/features/agents/lib/access';
-import { AccessDeniedState } from '@/features/agents/ui/access-denied-state';
-import { TodayActivityFeed } from '@/features/agents/ui/today-activity-feed';
+import {
+  getAgentTask,
+  getAgentAccessContext,
+  AccessDeniedState,
+  TodayActivityFeed,
+} from '@/features/agents';
 import Card from '@/shared/ui/card/Card';
 import CardBody from '@/shared/ui/card/CardBody';
 import { EmptyState } from '@/shared/ui/feedback/empty-state';
 import PageHeader from '@/widgets/layout/ui/page-header';
 
-import type { AgentTaskLatestRun } from '@/features/agents/model/types';
+import type { AgentTaskLatestRun } from '@/features/agents';
 
 export const dynamic = 'force-dynamic';
 

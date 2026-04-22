@@ -9,3 +9,4 @@ export {
 export { default as MethodologyForm } from './ui/methodology-form';
 export { default as MethodologyCreate } from './ui/methodology-create';
 export { default as MethodologyList } from './ui/methodology-list';
+export { getMethodologyChat } from './api/methodology-chat';

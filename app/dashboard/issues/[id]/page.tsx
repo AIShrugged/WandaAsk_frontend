@@ -8,11 +8,11 @@ import {
   IssueAttachments,
   IssueComments,
   getIssueComments,
+  IssueForm,
+  IssueLinkedTask,
 } from '@/features/issues';
-import { IssueForm } from '@/features/issues/ui/issue-form';
-import { IssueLinkedTask } from '@/features/issues/ui/issue-linked-task';
-import { getOrganizations } from '@/features/organization/api/organization';
-import { getUser } from '@/features/user/api/user';
+import { getOrganizations } from '@/features/organization';
+import { getUser } from '@/features/user';
 import { ROUTES } from '@/shared/lib/routes';
 import Card from '@/shared/ui/card/Card';
 import CardBody from '@/shared/ui/card/CardBody';

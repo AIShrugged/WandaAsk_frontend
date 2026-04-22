@@ -5,13 +5,11 @@ import {
   getAgentTask,
   getAgentTasksMeta,
   getAgentTools,
-} from '@/features/agents/api/agents';
-import { getAgentAccessContext } from '@/features/agents/lib/access';
-import {
+  getAgentAccessContext,
   normalizeMetaOptions,
   normalizeToolOptions,
-} from '@/features/agents/lib/format';
-import { AgentTaskForm } from '@/features/agents/ui/agent-task-form';
+  AgentTaskForm,
+} from '@/features/agents';
 
 /**
  * Agent task detail — Configuration tab.

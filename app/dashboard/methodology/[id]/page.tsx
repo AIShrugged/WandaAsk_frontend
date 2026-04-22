@@ -1,8 +1,7 @@
 import React from 'react';
 
-import { getMethodology } from '@/features/methodology/api/methodology';
-import MethodologyForm from '@/features/methodology/ui/methodology-form';
-import { getTeams } from '@/features/teams/api/team';
+import { getMethodology, MethodologyForm } from '@/features/methodology';
+import { getTeams } from '@/features/teams';
 import { getOrganizationId } from '@/shared/lib/getOrganizationId';
 import Card from '@/shared/ui/card/Card';
 import CardBody from '@/shared/ui/card/CardBody';

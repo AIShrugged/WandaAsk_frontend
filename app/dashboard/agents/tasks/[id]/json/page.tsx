@@ -1,7 +1,6 @@
 import { notFound } from 'next/navigation';
 
-import { getAgentTask } from '@/features/agents/api/agents';
-import { AgentJsonPreview } from '@/features/agents/ui/agent-json-preview';
+import { getAgentTask, AgentJsonPreview } from '@/features/agents';
 
 /**
  * Agent task detail — Raw JSON tab.

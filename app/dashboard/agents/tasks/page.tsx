@@ -1,10 +1,12 @@
 import { Bot } from 'lucide-react';
 import Link from 'next/link';
 
-import { getAgentTasks } from '@/features/agents/api/agents';
-import { getAgentAccessContext } from '@/features/agents/lib/access';
-import { AccessDeniedState } from '@/features/agents/ui/access-denied-state';
-import { AgentTasksList } from '@/features/agents/ui/agent-tasks-list';
+import {
+  getAgentTasks,
+  getAgentAccessContext,
+  AccessDeniedState,
+  AgentTasksList,
+} from '@/features/agents';
 import { ServerError } from '@/shared/lib/errors';
 import { ROUTES } from '@/shared/lib/routes';
 import { EmptyState } from '@/shared/ui/feedback/empty-state';

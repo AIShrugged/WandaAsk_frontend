@@ -1,7 +1,6 @@
 import { notFound } from 'next/navigation';
 
-import { getAgentTask } from '@/features/agents/api/agents';
-import { AgentTaskOverview } from '@/features/agents/ui/agent-task-overview';
+import { getAgentTask, AgentTaskOverview } from '@/features/agents';
 
 /**
  * Agent task detail — Overview tab.

@@ -14,7 +14,6 @@ export const DEFAULT_PRIMARY_IDS: ReadonlySet<string> = new Set([
   'meetings',
   'issues',
   'teams',
-  'main-dashboard',
 ]);
 
 export function buildInitialZones(

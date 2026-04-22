@@ -1,6 +1,5 @@
-import { AUTH_TITLE_VARIANT } from '@/features/auth/lib/options';
-import AuthTitle from '@/features/auth/ui/auth-title';
-import OrganizationForm from '@/features/organization/ui/organization-form';
+import { AUTH_TITLE_VARIANT, AuthTitle } from '@/features/auth';
+import { OrganizationForm } from '@/features/organization';
 import Card from '@/shared/ui/card/Card';
 
 /**

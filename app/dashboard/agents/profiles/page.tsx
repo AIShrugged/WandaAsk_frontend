@@ -5,19 +5,17 @@ import {
   getAgentProfiles,
   getAgentTasksMeta,
   getAgentTools,
-} from '@/features/agents/api/agents';
-import { getAgentAccessContext } from '@/features/agents/lib/access';
-import {
+  getAgentAccessContext,
   normalizeMetaOptions,
   normalizeToolOptions,
-} from '@/features/agents/lib/format';
-import { AccessDeniedState } from '@/features/agents/ui/access-denied-state';
-import { AgentProfilesList } from '@/features/agents/ui/agent-profiles-list';
+  AccessDeniedState,
+  AgentProfilesList,
+} from '@/features/agents';
 import { ServerError } from '@/shared/lib/errors';
 import { ROUTES } from '@/shared/lib/routes';
 import { EmptyState } from '@/shared/ui/feedback/empty-state';
 
-import type { AgentTasksMeta } from '@/features/agents/model/types';
+import type { AgentTasksMeta } from '@/features/agents';
 
 export const metadata = { title: 'Agent Profiles' };
 

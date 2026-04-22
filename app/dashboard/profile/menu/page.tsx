@@ -1,4 +1,4 @@
-import { getMenuItems } from '@/features/menu/lib/options';
+import { getMenuItems } from '@/features/menu';
 import { getUser } from '@/features/user';
 import { MenuSettingsForm } from '@/features/user-profile';
 

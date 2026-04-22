@@ -1,4 +1,4 @@
-import Transcript from '@/features/transcript/ui/transcript';
+import { Transcript } from '@/features/transcript';
 
 /**
  * Meeting transcript tab — shows timestamped speech segments with infinite scroll.

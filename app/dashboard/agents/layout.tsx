@@ -1,4 +1,4 @@
-import { AgentsTabsNav } from '@/features/agents/ui/agents-tabs-nav';
+import { AgentsTabsNav } from '@/features/agents';
 import Card from '@/shared/ui/card/Card';
 import PageHeader from '@/widgets/layout/ui/page-header';
 

@@ -7,7 +7,7 @@ import {
   getChats,
   getMessages,
 } from '@/features/chat';
-import { getOrganizations } from '@/features/organization/api/organization';
+import { getOrganizations } from '@/features/organization';
 
 import type { PageProps } from '@/shared/types/common';
 

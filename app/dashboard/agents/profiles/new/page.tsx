@@ -1,20 +1,21 @@
 import { Bot } from 'lucide-react';
 
-import { getAgentTasksMeta, getAgentTools } from '@/features/agents/api/agents';
-import { getAgentAccessContext } from '@/features/agents/lib/access';
 import {
+  getAgentTasksMeta,
+  getAgentTools,
+  getAgentAccessContext,
   normalizeMetaOptions,
   normalizeToolOptions,
-} from '@/features/agents/lib/format';
-import { AccessDeniedState } from '@/features/agents/ui/access-denied-state';
-import { AgentProfileForm } from '@/features/agents/ui/agent-profile-form';
+  AccessDeniedState,
+  AgentProfileForm,
+} from '@/features/agents';
 import { ServerError } from '@/shared/lib/errors';
 import Card from '@/shared/ui/card/Card';
 import CardBody from '@/shared/ui/card/CardBody';
 import { EmptyState } from '@/shared/ui/feedback/empty-state';
 import PageHeader from '@/widgets/layout/ui/page-header';
 
-import type { AgentTasksMeta } from '@/features/agents/model/types';
+import type { AgentTasksMeta } from '@/features/agents';
 
 /**
  *

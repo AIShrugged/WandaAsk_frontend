@@ -6,7 +6,7 @@ import {
   type IssueSortField,
   type SortOrder,
 } from '@/features/issues';
-import { IssuesListTab } from '@/features/issues/ui/issues-list-tab';
+import { IssuesListTab } from '@/features/issues';
 import { getCurrentUserId } from '@/shared/lib/getCurrentUserId';
 import { getOrganizationId } from '@/shared/lib/getOrganizationId';
 

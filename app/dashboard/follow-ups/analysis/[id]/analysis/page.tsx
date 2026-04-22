@@ -1,8 +1,8 @@
 import { redirect } from 'next/navigation';
 
 import { FollowUpAnalysis } from '@/features/follow-up';
-import { getMethodologyChat } from '@/features/methodology/api/methodology-chat';
-import { getTeamFollowUp } from '@/features/teams/api/team';
+import { getMethodologyChat } from '@/features/methodology';
+import { getTeamFollowUp } from '@/features/teams';
 import { ROUTES } from '@/shared/lib/routes';
 
 /**

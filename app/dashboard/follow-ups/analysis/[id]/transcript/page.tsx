@@ -1,4 +1,4 @@
-import Transcript from '@/features/transcript/ui/transcript';
+import { Transcript } from '@/features/transcript';
 
 /**
  * Follow-up analysis — Transcript tab.

@@ -1,9 +1,9 @@
 import { ListOrdered } from 'lucide-react';
 
-import { getCalendarEventDetail } from '@/features/event/api/calendar-events';
+import { getCalendarEventDetail } from '@/features/event';
 import { Badge } from '@/shared/ui/badge';
 
-import type { CalendarEventAgendaItem } from '@/features/meetings/model/types';
+import type { CalendarEventAgendaItem } from '@/features/meetings';
 
 function formatKey(key: string) {
   return key

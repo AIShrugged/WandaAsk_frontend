@@ -2,10 +2,10 @@ import { Settings } from 'lucide-react';
 import Link from 'next/link';
 import React, { type PropsWithChildren } from 'react';
 
-import { DemoSeedButtonLoader } from '@/features/demo/ui/demo-seed-button-loader';
+import { DemoSeedButtonLoader } from '@/features/demo';
 import { MenuSidebar } from '@/features/menu';
-import OrganizationSelector from '@/features/organization/ui/organization-selector';
-import User from '@/features/user/ui/user';
+import { OrganizationSelector } from '@/features/organization';
+import { User } from '@/features/user';
 import { ROUTES } from '@/shared/lib/routes';
 import { TribesLogo } from '@/shared/ui/brand';
 import { CosmicBackground } from '@/shared/ui/layout/cosmic-background';

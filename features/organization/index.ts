@@ -13,3 +13,4 @@ export { OrganizationIssueTypesSettings } from './ui/organization-issue-types-se
 export { default as OrganizationCreateLink } from './ui/organization-create-link';
 export { default as OrganizationList } from './ui/organization-list';
 export { default as OrganizationListEmpty } from './ui/organization-list-empty';
+export { OrganizationDangerZone } from './ui/organization-danger-zone';

@@ -15,6 +15,11 @@ export { OrgCalendarView } from './ui/org-calendar-view';
 export type {
   CalendarEventListItem,
   CalendarEventDetailResponse,
+  CalendarEventAgendaItem,
+  CalendarEventParticipant,
+  CalendarEventSectionValue,
+  CalendarEventReadMore,
+  CalendarEventTakeaway,
 } from './model/types';
 export {
   getMeetingDisplayState,
@@ -25,3 +30,9 @@ export {
   type BotPillIndicator,
 } from './model/bot-pill-indicator';
 export { BotPillIcon } from './ui/bot-pill-icon';
+export {
+  getMeetingsForDate,
+  getMeetingsForThreeDays,
+  getCalendarEventsForMonth,
+} from './api/meetings';
+export { getOrgCalendarEvents } from './api/org-calendar';

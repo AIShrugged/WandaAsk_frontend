@@ -1,6 +1,5 @@
-import { getTelegramChats } from '@/features/chat';
-import { TelegramChatsManagement } from '@/features/chat/ui/telegram-chats-management';
-import { getOrganizations } from '@/features/organization/api/organization';
+import { getTelegramChats, TelegramChatsManagement } from '@/features/chat';
+import { getOrganizations } from '@/features/organization';
 
 /**
  * TelegramChatsPage component.

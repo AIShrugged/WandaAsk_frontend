@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 
-import RegisterForm from '@/features/auth/ui/register-form';
+import { RegisterForm } from '@/features/auth';
 import { TribesLogo } from '@/shared/ui/brand';
 import Card from '@/shared/ui/card/Card';
 
