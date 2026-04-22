@@ -16,6 +16,11 @@ export function DayNavigator({ date, meetingsCount }: DayNavigatorProps) {
     ) : null;
 
   return (
-    <DateNavigator date={date} variant='compact' showBackToday badge={badge} />
+    <DateNavigator
+      date={date}
+      variant='prominent'
+      showBackToday
+      badge={badge}
+    />
   );
 }
