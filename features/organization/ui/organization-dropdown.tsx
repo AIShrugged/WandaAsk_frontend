@@ -219,7 +219,7 @@ export default function OrganizationDropdown({
         )}
       >
         <div className='text-left min-w-0 flex-1'>
-          <div className='text-sm font-medium text-primary-foreground truncate'>
+          <div className='text-sm font-medium text-foreground truncate'>
             {active?.name ?? 'Select organization'}
           </div>
           <div className='text-xs text-muted-foreground truncate'>
@@ -239,7 +239,7 @@ export default function OrganizationDropdown({
         createPortal(
           <div
             data-org-dropdown=''
-            className='fixed z-[9999] rounded-[var(--radius-card)] bg-popover border border-border shadow-card overflow-hidden'
+            className='fixed z-[9999] rounded-[var(--radius-card)] bg-popover border border-border overflow-hidden'
             style={{
               top: dropdownPos.top,
               left: dropdownPos.left,

@@ -16,12 +16,7 @@ describe('Card', () => {
     const { container } = render(<Card>Content</Card>);
     const div = container.firstChild as HTMLElement;
 
-    expect(div).toHaveClass(
-      'bg-card',
-      'border',
-      'border-border',
-      'shadow-card',
-    );
+    expect(div).toHaveClass('bg-card', 'border', 'border-border');
   });
 
   it('merges custom className', () => {

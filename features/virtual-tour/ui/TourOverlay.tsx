@@ -47,7 +47,7 @@ function TourCard({
       aria-labelledby='tour-step-title'
       aria-describedby='tour-step-description'
       tabIndex={-1}
-      className='bg-card border border-border rounded-[var(--radius-card)] shadow-card p-6 w-full max-w-[480px] mx-4 outline-none'
+      className='bg-card border border-border rounded-[var(--radius-card)] p-6 w-full max-w-[480px] mx-4 outline-none'
       {...CARD_ANIMATION}
     >
       <div className='flex items-center justify-between mb-4'>

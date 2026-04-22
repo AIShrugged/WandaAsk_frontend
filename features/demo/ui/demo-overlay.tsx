@@ -19,7 +19,7 @@ interface DemoOverlayProps {
 export function DemoOverlay({ progressPercent, stepLabel }: DemoOverlayProps) {
   return createPortal(
     <div className='fixed inset-0 bg-background/70 backdrop-blur-sm z-[9999] flex items-center justify-center'>
-      <div className='bg-card border border-border rounded-[var(--radius-card)] shadow-card p-6 flex flex-col gap-3 w-72'>
+      <div className='bg-card border border-border rounded-[var(--radius-card)] p-6 flex flex-col gap-3 w-72'>
         {/* Title + percent */}
         <div className='flex items-center justify-between'>
           <p className='text-sm font-semibold text-foreground'>

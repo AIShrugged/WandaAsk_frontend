@@ -93,7 +93,7 @@ export function ExportButton({ followUpId }: ExportButtonProps) {
         createPortal(
           <div
             data-export-dropdown=''
-            className='fixed z-[9999] bg-popover border border-border rounded-[var(--radius-card)] shadow-card py-1 w-36'
+            className='fixed z-[9999] bg-popover border border-border rounded-[var(--radius-card)] py-1 w-36'
             style={{ top: dropdownPos.top, right: dropdownPos.right }}
           >
             {FORMATS.map(({ label, value }) => {

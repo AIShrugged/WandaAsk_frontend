@@ -60,7 +60,7 @@ export function DashboardChatPanel({
   };
 
   return (
-    <div className='flex h-full overflow-hidden rounded-[var(--radius-card)] border border-border bg-card shadow-card'>
+    <div className='flex h-full overflow-hidden rounded-[var(--radius-card)] border border-border bg-card'>
       <div className='flex flex-1 min-w-0 flex-col min-h-0'>
         {activeChat ? (
           <ChatWindow

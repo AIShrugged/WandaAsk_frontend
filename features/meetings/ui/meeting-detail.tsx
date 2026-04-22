@@ -195,7 +195,7 @@ function SectionCard({
   return (
     <section
       id={id}
-      className='rounded-[var(--radius-card)] border border-border bg-card px-5 py-4 shadow-card'
+      className='rounded-[var(--radius-card)] border border-border bg-card px-5 py-4'
     >
       <div className='flex items-center gap-2 text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground'>
         {Icon && <Icon className='h-3.5 w-3.5' />}
@@ -595,7 +595,7 @@ export async function MeetingDetail({ id }: { id: string }) {
         </Link>
       </div>
 
-      <section className='flex flex-col gap-4 rounded-[var(--radius-card)] border border-border bg-card px-5 py-5 shadow-card'>
+      <section className='flex flex-col gap-4 rounded-[var(--radius-card)] border border-border bg-card px-5 py-5'>
         <div className='flex flex-col gap-3'>
           <div className='flex flex-wrap items-center gap-2 text-xs uppercase tracking-[0.18em] text-muted-foreground'>
             <FileText className='h-3.5 w-3.5' />

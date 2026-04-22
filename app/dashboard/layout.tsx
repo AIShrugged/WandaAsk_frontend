@@ -19,9 +19,6 @@ import MobileSidebar from '@/widgets/layout/ui/mobile-sidebar';
 
 import type { Theme } from '@/entities/user';
 
-const BACKDROP_BLUR = 'blur(20px)';
-const VIOLET_BORDER = 'rgba(124,58,237,0.15)';
-
 export default async function Layout({ children }: PropsWithChildren) {
   const cookieStore = await cookies();
   const theme = (cookieStore.get('wanda-theme')?.value ?? 'dark') as Theme;
@@ -37,16 +34,16 @@ export default async function Layout({ children }: PropsWithChildren) {
           data-tour='sidebar'
           className='hidden lg:flex flex-col sidebar-width flex-shrink-0 border-r relative z-10'
           style={{
-            background: 'rgba(8,8,22,0.75)',
-            borderColor: VIOLET_BORDER,
-            backdropFilter: BACKDROP_BLUR,
-            WebkitBackdropFilter: BACKDROP_BLUR,
+            background: 'var(--chrome-bg)',
+            borderColor: 'var(--chrome-border)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
           }}
         >
           {/* Logo slot */}
           <div
             className='flex justify-between items-center h-[var(--topbar-height)] px-6 flex-shrink-0'
-            style={{ borderBottom: `1px solid ${VIOLET_BORDER}` }}
+            style={{ borderBottom: '1px solid var(--chrome-border)' }}
           >
             <TribesLogo />
             <Link
@@ -64,7 +61,7 @@ export default async function Layout({ children }: PropsWithChildren) {
           {/* Sidebar footer */}
           <div
             className='flex-shrink-0 px-3 py-3'
-            style={{ borderTop: `1px solid ${VIOLET_BORDER}` }}
+            style={{ borderTop: '1px solid var(--chrome-border)' }}
           ></div>
         </aside>
 
@@ -74,10 +71,10 @@ export default async function Layout({ children }: PropsWithChildren) {
           <header
             className='flex items-center justify-between h-[var(--topbar-height)] px-4 flex-shrink-0 relative z-20'
             style={{
-              background: 'rgba(8,8,22,0.7)',
-              borderBottom: `1px solid ${VIOLET_BORDER}`,
-              backdropFilter: BACKDROP_BLUR,
-              WebkitBackdropFilter: BACKDROP_BLUR,
+              background: 'var(--chrome-bg-header)',
+              borderBottom: '1px solid var(--chrome-border)',
+              backdropFilter: 'blur(20px)',
+              WebkitBackdropFilter: 'blur(20px)',
             }}
           >
             <div className='flex items-center gap-2 min-w-0 flex-1'>

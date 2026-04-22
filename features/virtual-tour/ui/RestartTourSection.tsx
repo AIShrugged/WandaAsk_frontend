@@ -7,7 +7,7 @@
  */
 export function RestartTourSection() {
   return (
-    <div className='bg-card border border-border rounded-[var(--radius-card)] shadow-card p-6 mt-6'>
+    <div className='bg-card border border-border rounded-[var(--radius-card)] p-6 mt-6'>
       <h3 className='text-base font-semibold text-foreground'>
         Onboarding Tour
       </h3>

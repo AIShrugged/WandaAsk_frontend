@@ -116,7 +116,7 @@ export function MeetingCard({ meeting }: MeetingCardProps) {
     <article
       role='button'
       tabIndex={0}
-      className={`relative cursor-pointer overflow-hidden rounded-[var(--radius-card)] border ${borderClass} bg-card px-5 py-4 shadow-card transition-all hover:-translate-y-0.5 hover:shadow-lg`}
+      className={`relative cursor-pointer overflow-hidden rounded-[var(--radius-card)] border ${borderClass} bg-card px-5 py-4 transition-all hover:-translate-y-0.5 hover:shadow-lg`}
       onClick={() => {
         router.push(ROUTES.DASHBOARD.MEETING_DETAIL(meeting.id));
       }}

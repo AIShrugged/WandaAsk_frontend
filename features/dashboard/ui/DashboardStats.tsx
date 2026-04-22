@@ -22,7 +22,7 @@ interface StatCardProps {
  */
 function StatCard({ label, value, icon }: StatCardProps) {
   return (
-    <div className='flex flex-col gap-3 rounded-[var(--radius-card)] border border-border bg-card p-5 shadow-card'>
+    <div className='flex flex-col gap-3 rounded-[var(--radius-card)] border border-border bg-card p-5'>
       <div className='flex items-center justify-between'>
         <span className='text-sm font-medium text-muted-foreground'>
           {label}
