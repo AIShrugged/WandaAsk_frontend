@@ -6,25 +6,10 @@ import { useRouter, useSearchParams } from 'next/navigation';
 
 import { H2 } from '@/shared/ui/typography/H2';
 
-// Defined outside component — no recreation on every render
-const NAV_BUTTONS = [
-  { id: 'prev', icon: ChevronLeft, offset: -1 },
-  { id: 'next', icon: ChevronRight, offset: +1 },
-] as const;
-
-/**
- * MonthSwitcher component.
- * @param props - Component props.
- * @param props.currentMonth
- */
 export const MonthSwitcher = ({ currentMonth }: { currentMonth: string }) => {
   const { push } = useRouter();
   const params = useSearchParams();
-  /**
-   * setMonth.
-   * @param date - date.
-   * @returns Result.
-   */
+
   const setMonth = (date: Date) => {
     const next = new URLSearchParams(params);
 
@@ -32,24 +17,33 @@ export const MonthSwitcher = ({ currentMonth }: { currentMonth: string }) => {
     push(`?${next.toString()}`);
   };
 
+  const current = new Date(currentMonth);
+
   return (
-    <div className='flex flex-row justify-between'>
-      <div className='flex items-center gap-[11px]'>
-        {NAV_BUTTONS.map(({ id, icon: Icon, offset }) => {
-          return (
-            <button
-              key={id}
-              className='cursor-pointer'
-              onClick={() => {
-                return setMonth(addMonths(currentMonth, offset));
-              }}
-            >
-              <Icon />
-            </button>
-          );
-        })}
-        <H2>{format(currentMonth, 'MMMM, yyyy')}</H2>
-      </div>
+    <div className='flex items-center gap-[11px]'>
+      <button
+        type='button'
+        aria-label='Previous month'
+        className='cursor-pointer'
+        onClick={() => {
+          setMonth(addMonths(current, -1));
+        }}
+      >
+        <ChevronLeft />
+      </button>
+
+      <H2>{format(current, 'MMMM, yyyy')}</H2>
+
+      <button
+        type='button'
+        aria-label='Next month'
+        className='cursor-pointer'
+        onClick={() => {
+          setMonth(addMonths(current, 1));
+        }}
+      >
+        <ChevronRight />
+      </button>
     </div>
   );
 };
