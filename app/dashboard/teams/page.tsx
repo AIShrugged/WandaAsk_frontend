@@ -1,12 +1,16 @@
 import { redirect } from 'next/navigation';
 import React from 'react';
 
-import { getTelegramChats } from '@/features/chat/api/telegram';
-import { getTeamNotificationSettings } from '@/features/teams/api/notification-settings';
-import { getTeam, getTeamInvites, getTeams } from '@/features/teams/api/team';
-import { getTeamDashboard } from '@/features/teams/api/team-dashboard';
-import TeamsEmptyState from '@/features/teams/ui/teams-empty-state';
-import TeamsPageClient from '@/features/teams/ui/teams-page-client';
+import { getTelegramChats } from '@/features/chat';
+import {
+  getTeamNotificationSettings,
+  getTeam,
+  getTeamInvites,
+  getTeams,
+  getTeamDashboard,
+  TeamsEmptyState,
+  TeamsPageClient,
+} from '@/features/teams';
 import { getOrganizationId } from '@/shared/lib/getOrganizationId';
 import { ROUTES } from '@/shared/lib/routes';
 import Card from '@/shared/ui/card/Card';

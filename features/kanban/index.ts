@@ -1,6 +1,7 @@
-export { KanbanBoard } from '@/features/kanban/ui/kanban-board';
+export { KanbanBoard } from './ui/kanban-board';
 export {
   fetchArchivedKanbanCards,
   fetchKanbanIssues,
   getKanbanIssues,
-} from '@/features/kanban/api/kanban';
+} from './api/kanban';
+export type { KanbanFilters } from './model/types';

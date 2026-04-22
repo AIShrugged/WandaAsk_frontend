@@ -4,9 +4,9 @@ import { notFound } from 'next/navigation';
 import {
   getAgentTaskRun,
   getAgentTaskRuns,
-} from '@/features/agents/api/agents';
-import { AgentTaskRunDetail } from '@/features/agents/ui/agent-task-run-detail';
-import { AgentTaskRunsList } from '@/features/agents/ui/agent-task-runs-list';
+  AgentTaskRunDetail,
+  AgentTaskRunsList,
+} from '@/features/agents';
 import { EmptyState } from '@/shared/ui/feedback/empty-state';
 
 /**

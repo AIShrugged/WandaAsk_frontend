@@ -1,8 +1,8 @@
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
-import { getCalendarEventDetail } from '@/features/event/api/calendar-events';
-import { MeetingDetailTabsNav } from '@/features/meetings/ui/meeting-detail-tabs-nav';
+import { getCalendarEventDetail } from '@/features/event';
+import { MeetingDetailTabsNav } from '@/features/meetings';
 import { ROUTES } from '@/shared/lib/routes';
 import Card from '@/shared/ui/card/Card';
 

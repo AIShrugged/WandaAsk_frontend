@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { API_URL } from '@/shared/lib/config';
 import { getAuthToken } from '@/shared/lib/getAuthToken';
 
-import type { CalendarEventListItem } from '@/features/meetings/model/types';
+import type { CalendarEventListItem } from '@/features/meetings';
 import type { ApiResponse } from '@/shared/types/common';
 
 const DEFAULT_LIMIT = 20;

@@ -1,17 +1,19 @@
 import React from 'react';
 
-import { getAgentProfiles } from '@/features/agents/api/agents';
-import { getOrganization } from '@/features/organization/api/organization';
-import { OrganizationDangerZone } from '@/features/organization/ui/organization-danger-zone';
-import OrganizationForm from '@/features/organization/ui/organization-form';
-import { OrganizationIssueTypesSettings } from '@/features/organization/ui/organization-issue-types-settings';
-import { OrganizationSettingsTabs } from '@/features/organization/ui/organization-settings-tabs';
+import { getAgentProfiles } from '@/features/agents';
+import {
+  getOrganization,
+  OrganizationDangerZone,
+  OrganizationForm,
+  OrganizationIssueTypesSettings,
+  OrganizationSettingsTabs,
+} from '@/features/organization';
 import { ServerError } from '@/shared/lib/errors';
 import Card from '@/shared/ui/card/Card';
 import CardBody from '@/shared/ui/card/CardBody';
 import PageHeader from '@/widgets/layout/ui/page-header';
 
-import type { AgentProfile } from '@/features/agents/model/types';
+import type { AgentProfile } from '@/features/agents';
 import type { PageProps } from '@/shared/types/common';
 
 /**

@@ -43,13 +43,6 @@ export function getMenuItems(): MenuProps[] {
       position: 2,
     },
     {
-      id: 'main-dashboard',
-      label: 'Dashboard (old)',
-      icon: 'layoutDashboard',
-      href: ROUTES.DASHBOARD.MAIN,
-      position: 10,
-    },
-    {
       id: 'chat',
       label: 'AI Chat',
       icon: 'messageSquare',

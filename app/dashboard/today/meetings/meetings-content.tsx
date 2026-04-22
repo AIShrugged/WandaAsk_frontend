@@ -15,15 +15,7 @@ import PageHeader from '@/widgets/layout/ui/page-header';
 
 import type { TodayBriefing } from '@/features/today-briefing';
 
-interface MeetingsContentProps {
-  data: TodayBriefing;
-}
-
-/**
- * Client component. Receives server-fetched briefing data as props.
- * Keyed on data.date by the parent so selectedId resets on every day change.
- */
-export function MeetingsContent({ data }: MeetingsContentProps) {
+export function MeetingsContent({ data }: { data: TodayBriefing }) {
   const [selectedId, setSelectedId] = useState<number | null>(
     data.events[0]?.id ?? null,
   );

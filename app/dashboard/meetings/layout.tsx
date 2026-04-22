@@ -1,4 +1,4 @@
-import { MeetingsTabsNav } from '@/features/meetings/ui/meetings-tabs-nav';
+import { MeetingsTabsNav } from '@/features/meetings';
 import Card from '@/shared/ui/card/Card';
 
 /**

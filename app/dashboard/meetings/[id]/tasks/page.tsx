@@ -1,10 +1,7 @@
 import { CheckCircle2 } from 'lucide-react';
 
-import {
-  getCalendarEventDetail,
-  getMeetingTasks,
-} from '@/features/event/api/calendar-events';
-import MeetingTasks from '@/features/meeting/ui/meeting-tasks';
+import { getCalendarEventDetail, getMeetingTasks } from '@/features/event';
+import { MeetingTasks } from '@/features/meeting';
 
 /**
  * Meeting tasks tab — shows AI-extracted meeting tasks.

@@ -1,10 +1,12 @@
 import { notFound } from 'next/navigation';
 
-import { getAgentTask } from '@/features/agents/api/agents';
-import { getAgentAccessContext } from '@/features/agents/lib/access';
-import { formatDateTime } from '@/features/agents/lib/format';
-import { AccessDeniedState } from '@/features/agents/ui/access-denied-state';
-import { AgentTaskActions } from '@/features/agents/ui/agent-task-actions';
+import {
+  getAgentTask,
+  getAgentAccessContext,
+  formatDateTime,
+  AccessDeniedState,
+  AgentTaskActions,
+} from '@/features/agents';
 import { ServerError } from '@/shared/lib/errors';
 import { ROUTES } from '@/shared/lib/routes';
 import { Badge } from '@/shared/ui/badge';

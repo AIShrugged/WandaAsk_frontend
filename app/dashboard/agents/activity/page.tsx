@@ -1,7 +1,9 @@
-import { getAgentActivity } from '@/features/agents/api/activity';
-import { getAgentAccessContext } from '@/features/agents/lib/access';
-import { AccessDeniedState } from '@/features/agents/ui/access-denied-state';
-import { AgentActivityFeed } from '@/features/agents/ui/agent-activity-feed';
+import {
+  getAgentActivity,
+  getAgentAccessContext,
+  AccessDeniedState,
+  AgentActivityFeed,
+} from '@/features/agents';
 import { ServerError } from '@/shared/lib/errors';
 
 export const metadata = { title: 'Agent Activity' };

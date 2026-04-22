@@ -1,6 +1,5 @@
-import { getPersons } from '@/features/issues';
-import { IssueForm } from '@/features/issues/ui/issue-form';
-import { getOrganizations } from '@/features/organization/api/organization';
+import { getPersons, IssueForm } from '@/features/issues';
+import { getOrganizations } from '@/features/organization';
 import { getOrganizationId } from '@/shared/lib/getOrganizationId';
 import Card from '@/shared/ui/card/Card';
 import CardBody from '@/shared/ui/card/CardBody';

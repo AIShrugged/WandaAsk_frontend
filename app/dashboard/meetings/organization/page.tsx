@@ -1,10 +1,11 @@
 import { endOfMonth, format, startOfMonth } from 'date-fns';
 import { redirect } from 'next/navigation';
 
-import { getOrgCalendarEvents } from '@/features/meetings/api/org-calendar';
-import { OrgCalendarView } from '@/features/meetings/ui/org-calendar-view';
-
-import type { CalendarEventListItem } from '@/features/meetings/model/types';
+import {
+  getOrgCalendarEvents,
+  OrgCalendarView,
+  type CalendarEventListItem,
+} from '@/features/meetings';
 
 const PAGE_SIZE = 100;
 

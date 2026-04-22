@@ -1,4 +1,4 @@
-import { getSources } from '@/features/calendar/api/source';
+import { getSources } from '@/features/calendar';
 import { CalendarSection } from '@/features/user-profile';
 
 export const metadata = { title: 'Calendar' };

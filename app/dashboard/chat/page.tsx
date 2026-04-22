@@ -1,7 +1,7 @@
 import { MessageSquare } from 'lucide-react';
 
 import { getChats, ChatList } from '@/features/chat';
-import { getOrganizations } from '@/features/organization/api/organization';
+import { getOrganizations } from '@/features/organization';
 
 /**
  * ChatPage component.

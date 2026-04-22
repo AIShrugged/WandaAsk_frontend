@@ -4,21 +4,19 @@ import {
   getAgentProfiles,
   getAgentTasksMeta,
   getAgentTools,
-} from '@/features/agents/api/agents';
-import { getAgentAccessContext } from '@/features/agents/lib/access';
-import {
+  getAgentAccessContext,
   normalizeMetaOptions,
   normalizeToolOptions,
-} from '@/features/agents/lib/format';
-import { AccessDeniedState } from '@/features/agents/ui/access-denied-state';
-import { AgentTaskForm } from '@/features/agents/ui/agent-task-form';
+  AccessDeniedState,
+  AgentTaskForm,
+} from '@/features/agents';
 import { ServerError } from '@/shared/lib/errors';
 import Card from '@/shared/ui/card/Card';
 import CardBody from '@/shared/ui/card/CardBody';
 import { EmptyState } from '@/shared/ui/feedback/empty-state';
 import PageHeader from '@/widgets/layout/ui/page-header';
 
-import type { AgentProfile } from '@/features/agents/model/types';
+import type { AgentProfile } from '@/features/agents';
 
 /**
  *

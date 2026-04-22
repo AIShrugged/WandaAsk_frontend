@@ -1,5 +1,4 @@
-import { getMeetingsForDate } from '@/features/meetings/api/meetings';
-import { MeetingsColumnView } from '@/features/meetings/ui/meetings-column-view';
+import { getMeetingsForDate, MeetingsColumnView } from '@/features/meetings';
 
 function toDateParam(date: Date): string {
   const y = date.getFullYear();

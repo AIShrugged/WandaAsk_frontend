@@ -11,7 +11,7 @@ import {
   ArrowLeft,
 } from 'lucide-react';
 
-import { getCalendarEventDetail } from '@/features/event/api/calendar-events';
+import { getCalendarEventDetail } from '@/features/event';
 import { Badge } from '@/shared/ui/badge';
 import { MarkdownContent } from '@/shared/ui/markdown-content';
 
@@ -19,7 +19,7 @@ import type {
   CalendarEventParticipant,
   CalendarEventSectionValue,
   CalendarEventTakeaway,
-} from '@/features/meetings/model/types';
+} from '@/features/meetings';
 import type { LucideIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
 

@@ -25,3 +25,4 @@ export type {
   ArtifactsResponse,
   TelegramChatRegistration,
 } from '@/features/chat/types';
+export { TelegramChatsManagement } from './ui/telegram-chats-management';

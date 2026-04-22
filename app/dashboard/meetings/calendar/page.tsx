@@ -1,10 +1,12 @@
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 
-import { getSources } from '@/features/calendar/api/source';
-import CalendarAttachedToast from '@/features/calendar/ui/calendar-attached-toast';
-import OnboardingTrigger from '@/features/calendar/ui/onboarding-trigger';
-import { getCalendarEventsForMonth } from '@/features/meetings/api/meetings';
+import {
+  getSources,
+  CalendarAttachedToast,
+  OnboardingTrigger,
+} from '@/features/calendar';
+import { getCalendarEventsForMonth } from '@/features/meetings';
 import SpinLoader from '@/shared/ui/layout/spin-loader';
 import { CalendarPage } from '@/widgets/calendar-view';
 

@@ -1,7 +1,6 @@
 import React from 'react';
 
-import { getTeams } from '@/features/teams/api/team';
-import { TeamList } from '@/features/teams/ui/team-list';
+import { getTeams, TeamList } from '@/features/teams';
 import { getOrganizationId } from '@/shared/lib/getOrganizationId';
 import { ROUTES } from '@/shared/lib/routes';
 import Card from '@/shared/ui/card/Card';

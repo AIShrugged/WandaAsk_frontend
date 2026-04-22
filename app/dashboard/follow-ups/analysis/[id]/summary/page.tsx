@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 
-import { getTeamFollowUp } from '@/features/teams/api/team';
+import { getTeamFollowUp } from '@/features/teams';
 import { ROUTES } from '@/shared/lib/routes';
 import EventOverview from '@/widgets/meeting/ui/event-overview';
 

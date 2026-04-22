@@ -1,10 +1,9 @@
-import { getPersons, isIssueType } from '@/features/issues';
-import { IssuesKanbanTab } from '@/features/issues/ui/issues-kanban-tab';
+import { getPersons, isIssueType, IssuesKanbanTab } from '@/features/issues';
 import { getKanbanIssues } from '@/features/kanban';
-import { getOrganizations } from '@/features/organization/api/organization';
+import { getOrganizations } from '@/features/organization';
 import { getOrganizationId } from '@/shared/lib/getOrganizationId';
 
-import type { KanbanFilters } from '@/features/kanban/model/types';
+import type { KanbanFilters } from '@/features/kanban';
 
 export const metadata = { title: 'Kanban' };
 

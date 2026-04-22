@@ -1,8 +1,8 @@
 import { redirect } from 'next/navigation';
 
 import { DeprecatedFollowUpModal, ExportButton } from '@/features/follow-up';
-import { FollowUpTabsNav } from '@/features/meeting/ui/follow-up-tabs-nav';
-import { getTeamFollowUp } from '@/features/teams/api/team';
+import { FollowUpTabsNav } from '@/features/meeting';
+import { getTeamFollowUp } from '@/features/teams';
 import { ROUTES } from '@/shared/lib/routes';
 import Card from '@/shared/ui/card/Card';
 import CardBody from '@/shared/ui/card/CardBody';

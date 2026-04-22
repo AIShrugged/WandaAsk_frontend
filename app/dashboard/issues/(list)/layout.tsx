@@ -1,7 +1,9 @@
-import { getPersons } from '@/features/issues';
-import IssueCreateButton from '@/features/issues/ui/issue-create-button';
-import { IssuesLayoutClient } from '@/features/issues/ui/issues-layout-client';
-import { getOrganizations } from '@/features/organization/api/organization';
+import {
+  getPersons,
+  IssueCreateButton,
+  IssuesLayoutClient,
+} from '@/features/issues';
+import { getOrganizations } from '@/features/organization';
 import { getCurrentUserId } from '@/shared/lib/getCurrentUserId';
 import Card from '@/shared/ui/card/Card';
 import PageHeader from '@/widgets/layout/ui/page-header';

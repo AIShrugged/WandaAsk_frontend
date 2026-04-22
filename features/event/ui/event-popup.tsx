@@ -1,3 +1,5 @@
+'use client';
+
 import { ExternalLink, Minus, Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { type JSX, useState, useTransition } from 'react';

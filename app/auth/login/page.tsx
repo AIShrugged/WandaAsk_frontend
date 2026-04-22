@@ -1,4 +1,4 @@
-import LoginForm from '@/features/auth/ui/login-form';
+import { LoginForm } from '@/features/auth';
 import { TribesLogo } from '@/shared/ui/brand';
 import Card from '@/shared/ui/card/Card';
 
