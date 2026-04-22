@@ -99,6 +99,44 @@
     --radius: 0.5rem; /* 8px — base value */
   }
 
+  /* ── Light theme override ──────────────────────────────────────────── */
+  html[data-theme='light'] {
+    --background: 0 0% 98%;
+    --foreground: 240 10% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 10%;
+
+    --primary: 263 79% 55%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 240 5% 90%;
+    --secondary-foreground: 240 10% 25%;
+
+    --muted: 240 5% 94%;
+    --muted-foreground: 240 5% 40%;
+
+    --accent: 142 76% 36%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 70% 49%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 5% 82%;
+    --input: 240 5% 82%;
+    --ring: 263 79% 55%;
+
+    --sidebar: 240 5% 96%;
+    --sidebar-foreground: 240 10% 20%;
+    --sidebar-border: 240 5% 88%;
+    --sidebar-accent: 263 35% 92%;
+    --sidebar-accent-foreground: 263 79% 45%;
+
+    --radius: 0.5rem;
+  }
+
   * {
     border-color: hsl(var(--border));
   }

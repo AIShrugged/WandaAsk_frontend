@@ -20,6 +20,7 @@ export default async function ProfileMenuPage() {
     <MenuSettingsForm
       allItems={allItems}
       initialPrefs={user.preferences?.menu}
+      currentPreferences={user.preferences ?? {}}
     />
   );
 }

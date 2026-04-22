@@ -8,6 +8,7 @@ const TABS = [
   { href: ROUTES.DASHBOARD.PROFILE_PASSWORD, label: 'Password' },
   { href: ROUTES.DASHBOARD.PROFILE_CALENDAR, label: 'Calendar' },
   { href: ROUTES.DASHBOARD.PROFILE_MENU, label: 'Menu' },
+  { href: ROUTES.DASHBOARD.PROFILE_APPEARANCE, label: 'Appearance' },
 ] as const;
 
 /**

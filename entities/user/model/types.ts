@@ -8,8 +8,11 @@ export interface UserMenuPreferences {
   secondary: MenuItemPreference[];
 }
 
+export type Theme = 'light' | 'dark';
+
 export interface UserPreferences {
   menu?: UserMenuPreferences;
+  theme?: Theme;
 }
 
 export interface UserProps {
