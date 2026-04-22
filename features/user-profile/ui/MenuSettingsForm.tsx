@@ -28,17 +28,19 @@ import {
 import { DragOverlayItem } from './menu-settings/drag-overlay-item';
 import { ZoneDropArea } from './menu-settings/zone-drop-area';
 
-import type { UserMenuPreferences } from '@/entities/user';
+import type { UserMenuPreferences, UserPreferences } from '@/entities/user';
 import type { MenuProps } from '@/features/menu/model/types';
 
 export interface MenuSettingsFormProps {
   allItems: MenuProps[];
   initialPrefs?: UserMenuPreferences | null;
+  currentPreferences?: UserPreferences | null;
 }
 
 export function MenuSettingsForm({
   allItems,
   initialPrefs,
+  currentPreferences,
 }: MenuSettingsFormProps) {
   const [zones, setZones] = useState<Zones>(() => {
     return buildInitialZones(allItems, initialPrefs);
@@ -61,7 +63,7 @@ export function MenuSettingsForm({
 
   const saveZones = (currentZones: Zones) => {
     startTransition(async () => {
-      const result = await updateUserPreferences({
+      const result = await updateUserPreferences(currentPreferences ?? {}, {
         menu: zonesToPreferences(currentZones),
       });
       if (result.error) toast.error(result.error);

@@ -33,6 +33,7 @@ export const ROUTES = {
     PROFILE_PASSWORD: '/dashboard/profile/password', // eslint-disable-line sonarjs/no-hardcoded-passwords
     PROFILE_CALENDAR: '/dashboard/profile/calendar',
     PROFILE_MENU: '/dashboard/profile/menu',
+    PROFILE_APPEARANCE: '/dashboard/profile/appearance',
     SUMMARY: '/dashboard/summary',
     KANBAN: '/dashboard/kanban',
     ISSUES_LIST: '/dashboard/issues/list',
