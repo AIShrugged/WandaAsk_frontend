@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext } from 'react';
+import { createContext, type PropsWithChildren, useContext } from 'react';
 
 import type { TodayBriefing } from '../model/types';
 
@@ -17,11 +17,7 @@ export function TodayBriefingProvider({
   children,
   data,
   date,
-}: {
-  children: React.ReactNode;
-  data: TodayBriefing;
-  date: string | undefined;
-}) {
+}: PropsWithChildren<{ data: TodayBriefing; date: string | undefined }>) {
   return (
     <TodayBriefingContext.Provider value={{ data, date }}>
       {children}

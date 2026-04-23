@@ -23,7 +23,7 @@ jest.mock('@/shared/ui/modal/modal-header', () => {
 jest.mock('@/shared/ui/modal/modal-body', () => {
   return {
     __esModule: true,
-    default: ({ children }: { children: React.ReactNode }) => {
+    default: ({ children }: React.PropsWithChildren) => {
       return <div>{children}</div>;
     },
   };

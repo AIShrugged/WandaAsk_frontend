@@ -7,7 +7,7 @@ import type { AttendeeProps, GuestProps } from '@/entities/participant';
 jest.mock('@/shared/ui/common/avatar', () => {
   return {
     __esModule: true,
-    default: ({ children }: { children: React.ReactNode }) => {
+    default: ({ children }: React.PropsWithChildren) => {
       return <div role='img'>{children}</div>;
     },
   };

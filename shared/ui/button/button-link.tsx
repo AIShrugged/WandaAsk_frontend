@@ -8,18 +8,17 @@ import {
   type ButtonVariant,
 } from '@/shared/types/button';
 
-import type { ReactNode } from 'react';
+import type { PropsWithChildren } from 'react';
 
-interface ButtonLinkProps {
+type ButtonLinkProps = PropsWithChildren<{
   href: string;
-  children: ReactNode;
   variant?: ButtonVariant;
   size?: ButtonSize;
   className?: string;
   target?: string;
   rel?: string;
   external?: boolean;
-}
+}>;
 
 export function ButtonLink({
   href,

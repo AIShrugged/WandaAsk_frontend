@@ -66,11 +66,7 @@ jest.mock('@/shared/ui/button/Button', () => {
       children,
       onClick,
       type,
-    }: {
-      children: React.ReactNode;
-      onClick?: () => void;
-      type?: string;
-    }) => {
+    }: React.PropsWithChildren<{ onClick?: () => void; type?: string }>) => {
       return (
         <button
           type={(type as 'button' | 'submit' | 'reset') ?? 'button'}

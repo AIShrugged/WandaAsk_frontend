@@ -10,7 +10,7 @@ import type { AttendeeProps, GuestProps } from '@/entities/participant';
 jest.mock('@/shared/ui/participant/participants-title', () => {
   return {
     __esModule: true,
-    default: ({ children }: { children: React.ReactNode }) => {
+    default: ({ children }: React.PropsWithChildren) => {
       return <h3 data-testid='participants-title'>{children}</h3>;
     },
   };

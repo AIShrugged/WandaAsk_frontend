@@ -11,7 +11,7 @@ jest.mock('recharts', () => {
      * @param root0
      * @param root0.children
      */
-    ResponsiveContainer: ({ children }: { children: React.ReactNode }) => {
+    ResponsiveContainer: ({ children }: React.PropsWithChildren) => {
       return <div>{children}</div>;
     },
     /**
@@ -19,7 +19,7 @@ jest.mock('recharts', () => {
      * @param root0
      * @param root0.children
      */
-    PieChart: ({ children }: { children: React.ReactNode }) => {
+    PieChart: ({ children }: React.PropsWithChildren) => {
       return <div>{children}</div>;
     },
     /**

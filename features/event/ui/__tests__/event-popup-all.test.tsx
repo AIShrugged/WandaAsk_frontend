@@ -25,7 +25,7 @@ jest.mock('@/shared/ui/button/button-close', () => {
 
 jest.mock('@/shared/ui/typography/H4', () => {
   return {
-    H4: ({ children }: { children: React.ReactNode }) => {
+    H4: ({ children }: React.PropsWithChildren) => {
       return <h4>{children}</h4>;
     },
   };

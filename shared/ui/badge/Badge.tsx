@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 
-import type { ReactNode } from 'react';
+import type { PropsWithChildren } from 'react';
 
 const variants = {
   default: 'bg-secondary text-secondary-foreground',
@@ -15,11 +15,10 @@ const variants = {
   destructive: 'bg-destructive/10 text-red-400',
 };
 
-interface BadgeProps {
+type BadgeProps = PropsWithChildren<{
   variant?: keyof typeof variants;
-  children: ReactNode;
   className?: string;
-}
+}>;
 
 /**
  * Badge component.

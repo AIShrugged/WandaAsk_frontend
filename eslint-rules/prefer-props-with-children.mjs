@@ -7,6 +7,45 @@
  * `Readonly<{ children: ReactNode }>`.
  */
 
+/**
+ * Checks if an AST node is `ReactNode` or `React.ReactNode`.
+ */
+function isReactNode(node) {
+  if (!node) return false;
+  if (node.type === 'TSTypeReference') {
+    if (
+      node.typeName?.type === 'Identifier' &&
+      node.typeName.name === 'ReactNode'
+    ) {
+      return true;
+    }
+    if (
+      node.typeName?.type === 'TSQualifiedName' &&
+      node.typeName.left?.name === 'React' &&
+      node.typeName.right?.name === 'ReactNode'
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Checks if an inline TSTypeLiteral or TSInterfaceBody contains `children: ReactNode`.
+ * Returns the property node if found, null otherwise.
+ */
+function findChildrenProp(members) {
+  return (
+    members.find((member) => {
+      return (
+        member.type === 'TSPropertySignature' &&
+        member.key?.name === 'children' &&
+        isReactNode(member.typeAnnotation?.typeAnnotation)
+      );
+    }) ?? null
+  );
+}
+
 /** @type {import('eslint').Rule.RuleModule} */
 export const preferPropsWithChildren = {
   meta: {
@@ -34,54 +73,11 @@ export const preferPropsWithChildren = {
       return {};
     }
 
-    const sourceCode = context.sourceCode ?? context.getSourceCode?.();
-
-    /**
-     * Checks if an AST node is `ReactNode` or `React.ReactNode`.
-     */
-    function isReactNode(node) {
-      if (!node) return false;
-      // ReactNode (identifier)
-      if (node.type === 'TSTypeReference') {
-        if (
-          node.typeName?.type === 'Identifier' &&
-          node.typeName.name === 'ReactNode'
-        ) {
-          return true;
-        }
-        // React.ReactNode (member expression)
-        if (
-          node.typeName?.type === 'TSQualifiedName' &&
-          node.typeName.left?.name === 'React' &&
-          node.typeName.right?.name === 'ReactNode'
-        ) {
-          return true;
-        }
-      }
-      return false;
-    }
-
-    /**
-     * Checks if an inline TSTypeLiteral or TSInterfaceBody contains `children: ReactNode`.
-     * Returns the property node if found, null otherwise.
-     */
-    function findChildrenProp(members) {
-      return (
-        members.find((member) => {
-          return (
-            member.type === 'TSPropertySignature' &&
-            member.key?.name === 'children' &&
-            isReactNode(member.typeAnnotation?.typeAnnotation)
-          );
-        }) ?? null
-      );
-    }
-
     /**
      * Reports a `children: ReactNode` property in an inline type literal.
      * The fix removes the `children` property; caller must ensure PropsWithChildren is used.
      */
-    function reportInlineChildrenProp(childrenProp, typeLiteralNode) {
+    function reportInlineChildrenProp(childrenProp) {
       context.report({
         node: childrenProp,
         messageId: 'usePropsWithChildren',
@@ -110,7 +106,7 @@ export const preferPropsWithChildren = {
           return;
         }
 
-        reportInlineChildrenProp(childrenProp, node);
+        reportInlineChildrenProp(childrenProp);
       },
 
       // Pattern: interface Props { children: ReactNode } — interface declaration

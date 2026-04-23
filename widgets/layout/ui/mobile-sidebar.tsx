@@ -8,11 +8,7 @@ import { createPortal } from 'react-dom';
 import { ROUTES } from '@/shared/lib/routes';
 import { TribesLogo } from '@/shared/ui/brand';
 
-import type { ReactNode } from 'react';
-
-interface MobileSidebarProps {
-  children: ReactNode;
-}
+import type { PropsWithChildren } from 'react';
 const subscribeToMount = () => {
   return noop;
 };
@@ -33,7 +29,7 @@ function noop() {}
  * @param props.children
  * @returns JSX element.
  */
-export default function MobileSidebar({ children }: MobileSidebarProps) {
+export default function MobileSidebar({ children }: PropsWithChildren) {
   const [isOpen, setIsOpen] = useState(false);
   const isMounted = useSyncExternalStore(
     subscribeToMount,

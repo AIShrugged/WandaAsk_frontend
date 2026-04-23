@@ -15,6 +15,8 @@ import CardBody from '@/shared/ui/card/CardBody';
 import { PageTabsNav } from '@/shared/ui/navigation/page-tabs-nav';
 import PageHeader from '@/widgets/layout/ui/page-header';
 
+import type { PropsWithChildren } from 'react';
+
 /**
  * Agent task detail layout.
  * Renders the shared header, metadata badges, actions, and route-based tab strip.
@@ -22,10 +24,7 @@ import PageHeader from '@/widgets/layout/ui/page-header';
 export default async function AgentTaskDetailLayout({
   children,
   params,
-}: {
-  children: React.ReactNode;
-  params: Promise<{ id: string }>;
-}) {
+}: PropsWithChildren<{ params: Promise<{ id: string }> }>) {
   const { id } = await params;
   const profileId = Number(id);
 

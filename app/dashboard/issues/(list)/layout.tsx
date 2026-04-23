@@ -3,18 +3,14 @@ import { getOrganizations } from '@/features/organization';
 import { getCurrentUserId } from '@/shared/lib/getCurrentUserId';
 import Card from '@/shared/ui/card/Card';
 
-import type { ReactNode } from 'react';
+import type { PropsWithChildren } from 'react';
 
 /**
  * IssuesLayout — shared layout for the issues/kanban sub-routes.
  * Fetches organizations and persons once server-side.
  * Filter state is initialized client-side from URL search params.
  */
-export default async function IssuesLayout({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export default async function IssuesLayout({ children }: PropsWithChildren) {
   const [organizationsResponse, persons, currentUserId] = await Promise.all([
     getOrganizations(),
     getPersons(),

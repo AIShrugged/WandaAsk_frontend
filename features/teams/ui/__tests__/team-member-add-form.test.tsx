@@ -60,11 +60,7 @@ jest.mock('@/shared/ui/button/Button', () => {
       children,
       disabled,
       loading,
-    }: {
-      children: React.ReactNode;
-      disabled?: boolean;
-      loading?: boolean;
-    }) => {
+    }: React.PropsWithChildren<{ disabled?: boolean; loading?: boolean }>) => {
       return (
         <button type='submit' disabled={disabled || loading}>
           {children}

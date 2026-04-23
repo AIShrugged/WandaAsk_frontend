@@ -27,10 +27,7 @@ jest.mock('@/shared/ui/button/Button', () => {
     Button: ({
       children,
       ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => {
+    }: React.PropsWithChildren<Record<string, unknown>>) => {
       return <button {...props}>{children}</button>;
     },
   };

@@ -1,9 +1,6 @@
-import type { ReactNode } from 'react';
+import type { PropsWithChildren } from 'react';
 
-interface Props {
-  children: ReactNode;
-  className?: string;
-}
+type Props = PropsWithChildren<{ className?: string }>;
 
 /**
  * H3 component.

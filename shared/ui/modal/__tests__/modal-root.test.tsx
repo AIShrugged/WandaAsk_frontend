@@ -19,7 +19,7 @@ jest.mock('framer-motion', () => {
         );
       },
     },
-    AnimatePresence: ({ children }: { children: React.ReactNode }) => {
+    AnimatePresence: ({ children }: React.PropsWithChildren) => {
       return <>{children}</>;
     },
   };

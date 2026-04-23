@@ -11,10 +11,7 @@ jest.mock('next/link', () => {
     default: ({
       href,
       children,
-    }: {
-      href: string;
-      children: React.ReactNode;
-    }) => {
+    }: React.PropsWithChildren<{ href: string }>) => {
       return <a href={href}>{children}</a>;
     },
   };
@@ -78,14 +75,13 @@ jest.mock('@/shared/ui/button/Button', () => {
       variant,
       form,
       type: btnType = 'submit',
-    }: {
-      children: React.ReactNode;
+    }: React.PropsWithChildren<{
       disabled?: boolean;
       loading?: boolean;
       variant?: string;
       form?: string;
       type?: string;
-    }) => {
+    }>) => {
       return (
         <button
           type={btnType as 'submit' | 'button' | 'reset'}

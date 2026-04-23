@@ -13,7 +13,7 @@ jest.mock('framer-motion', () => {
         return <div {...rest}>{children}</div>;
       },
     },
-    AnimatePresence: ({ children }: { children: React.ReactNode }) => {
+    AnimatePresence: ({ children }: React.PropsWithChildren) => {
       return <>{children}</>;
     },
   };
@@ -25,10 +25,7 @@ jest.mock('next/link', () => {
     default: ({
       children,
       href,
-    }: {
-      children: React.ReactNode;
-      href: string;
-    }) => {
+    }: React.PropsWithChildren<{ href: string }>) => {
       return <a href={href}>{children}</a>;
     },
   };

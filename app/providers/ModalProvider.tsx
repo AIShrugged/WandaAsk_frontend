@@ -1,6 +1,6 @@
 'use client';
 
-import { type ReactNode, useState } from 'react';
+import { type PropsWithChildren, type ReactNode, useState } from 'react';
 
 import { ModalContext } from '@/shared/ui/modal/modal-context';
 import { ModalRoot } from '@/shared/ui/modal/modal-root';
@@ -10,7 +10,7 @@ import { ModalRoot } from '@/shared/ui/modal/modal-root';
  * @param props - Component props.
  * @param props.children
  */
-export function ModalProvider({ children }: { children: ReactNode }) {
+export function ModalProvider({ children }: PropsWithChildren) {
   const [content, setContent] = useState<ReactNode | null>(null);
 
   return (

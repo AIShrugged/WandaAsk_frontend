@@ -62,7 +62,7 @@ jest.mock('@/features/calendar/ui/month-switcher', () => {
 jest.mock('@/shared/ui/layout/component-header', () => {
   return {
     __esModule: true,
-    default: ({ children }: { children: React.ReactNode }) => {
+    default: ({ children }: React.PropsWithChildren) => {
       return <header>{children}</header>;
     },
   };

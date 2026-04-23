@@ -3,11 +3,10 @@
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useState } from 'react';
 
-interface CollapsibleSectionProps {
+type CollapsibleSectionProps = React.PropsWithChildren<{
   label: string;
   defaultExpanded?: boolean;
-  children: React.ReactNode;
-}
+}>;
 
 export function CollapsibleSection({
   label,

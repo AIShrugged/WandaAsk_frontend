@@ -1,6 +1,11 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {
+  type PropsWithChildren,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import { createPortal } from 'react-dom';
 
 import {
@@ -18,7 +23,7 @@ interface PopupPosition {
  * @param props - Component props.
  * @param props.children
  */
-export function PopupProvider({ children }: { children: React.ReactNode }) {
+export function PopupProvider({ children }: PropsWithChildren) {
   const [isOpen, setIsOpen] = useState(false);
   const [config, setConfig] = useState<PopupConfig | null>(null);
   const [position, setPosition] = useState<PopupPosition>({ top: 0, left: 0 });

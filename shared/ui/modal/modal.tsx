@@ -2,14 +2,13 @@
 
 import { motion } from 'framer-motion';
 import { X } from 'lucide-react';
-import { type ReactNode, useEffect } from 'react';
+import { type PropsWithChildren, useEffect } from 'react';
 
-export interface ModalProps {
+export type ModalProps = PropsWithChildren<{
   isOpen: boolean;
   onClose: () => void;
   title: string;
-  children: ReactNode;
-}
+}>;
 
 /**
  * Modal component.

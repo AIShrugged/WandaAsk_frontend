@@ -20,7 +20,7 @@ jest.mock('@/features/calendar/ui/onboarding-image', () => {
 
 jest.mock('@/shared/ui/typography/H1', () => {
   return {
-    H1: ({ children }: { children: React.ReactNode }) => {
+    H1: ({ children }: React.PropsWithChildren) => {
       return <h1>{children}</h1>;
     },
   };

@@ -29,7 +29,7 @@ import type {
   CalendarEventTakeaway,
 } from '@/features/meetings/model/types';
 import type { LucideIcon } from 'lucide-react';
-import type { ReactNode } from 'react';
+import type { PropsWithChildren, ReactNode } from 'react';
 
 function parseDate(value: string) {
   const date = new Date(value);
@@ -186,12 +186,7 @@ function SectionCard({
   icon: Icon,
   children,
   id,
-}: {
-  title: string;
-  icon?: LucideIcon;
-  children: ReactNode;
-  id?: string;
-}) {
+}: PropsWithChildren<{ title: string; icon?: LucideIcon; id?: string }>) {
   return (
     <section
       id={id}

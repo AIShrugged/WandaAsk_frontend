@@ -7,10 +7,10 @@ import {
   type ButtonVariant,
 } from '@/shared/types/button';
 
-import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import type { ButtonHTMLAttributes, PropsWithChildren } from 'react';
 
-interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
-  children: ReactNode;
+interface Props
+  extends PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement>> {
   variant?: ButtonVariant;
   size?: ButtonSize;
   className?: string;

@@ -8,6 +8,8 @@ import Card from '@/shared/ui/card/Card';
 import CardBody from '@/shared/ui/card/CardBody';
 import PageHeader from '@/widgets/layout/ui/page-header';
 
+import type { PropsWithChildren } from 'react';
+
 /**
  * Follow-up analysis detail layout.
  * Renders the shared header, export button, deprecated modal, and tab strip.
@@ -15,10 +17,7 @@ import PageHeader from '@/widgets/layout/ui/page-header';
 export default async function FollowUpAnalysisLayout({
   children,
   params,
-}: {
-  children: React.ReactNode;
-  params: Promise<{ id: string }>;
-}) {
+}: PropsWithChildren<{ params: Promise<{ id: string }> }>) {
   const { id } = await params;
   const { data: followUp } = await getTeamFollowUp(id);
 

@@ -11,7 +11,7 @@ import './globals.css';
 import Providers from './Providers';
 
 import type { Metadata } from 'next';
-import type { ReactNode } from 'react';
+import type { PropsWithChildren } from 'react';
 
 const getFont = Inter({
   variable: '--font-inter-sans',
@@ -23,11 +23,7 @@ export const metadata: Metadata = {
   description: 'Tribes App',
 };
 
-export default async function RootLayout({
-  children,
-}: Readonly<{
-  children: ReactNode;
-}>) {
+export default async function RootLayout({ children }: PropsWithChildren) {
   const cookieStore = await cookies();
   const theme = (cookieStore.get('wanda-theme')?.value ?? 'dark') as Theme;
 

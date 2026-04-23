@@ -1,6 +1,12 @@
 'use client';
 
-import { createContext, useContext, useMemo, useState } from 'react';
+import {
+  createContext,
+  type PropsWithChildren,
+  useContext,
+  useMemo,
+  useState,
+} from 'react';
 
 import type { Theme } from '@/entities/user';
 
@@ -34,10 +40,7 @@ async function persistThemeCookie(value: Theme) {
 export function ThemeProvider({
   children,
   initialTheme,
-}: {
-  children: React.ReactNode;
-  initialTheme?: Theme;
-}) {
+}: PropsWithChildren<{ initialTheme?: Theme }>) {
   const [theme, setThemeState] = useState<Theme>(initialTheme ?? DEFAULT_THEME);
 
   const setTheme = (next: Theme) => {

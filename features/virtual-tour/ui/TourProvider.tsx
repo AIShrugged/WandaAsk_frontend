@@ -1,9 +1,7 @@
 'use client';
 
-interface TourProviderProps {
-  children: React.ReactNode;
-}
+import type { PropsWithChildren } from 'react';
 
-export function TourProvider({ children }: TourProviderProps) {
+export function TourProvider({ children }: PropsWithChildren) {
   return <>{children}</>;
 }

@@ -21,7 +21,7 @@ import type {
   CalendarEventTakeaway,
 } from '@/features/meetings';
 import type { LucideIcon } from 'lucide-react';
-import type { ReactNode } from 'react';
+import type { PropsWithChildren, ReactNode } from 'react';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -124,11 +124,7 @@ function SectionCard({
   title,
   icon: Icon,
   children,
-}: {
-  title: string;
-  icon?: LucideIcon;
-  children: ReactNode;
-}) {
+}: PropsWithChildren<{ title: string; icon?: LucideIcon }>) {
   return (
     <section className='rounded-[var(--radius-card)] border border-border bg-card px-5 py-4'>
       <div className='flex items-center gap-2 text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground'>

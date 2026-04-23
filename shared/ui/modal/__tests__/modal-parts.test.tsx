@@ -7,7 +7,7 @@ import ModalHeader from '@/shared/ui/modal/modal-header';
 jest.mock('@/shared/ui/animation/Hover', () => {
   return {
     __esModule: true,
-    default: ({ children }: { children: React.ReactNode }) => {
+    default: ({ children }: React.PropsWithChildren) => {
       return <>{children}</>;
     },
   };

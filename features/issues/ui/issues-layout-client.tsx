@@ -19,12 +19,11 @@ import type {
   SortOrder,
 } from '@/features/issues/model/types';
 
-interface IssuesLayoutClientProps {
+type IssuesLayoutClientProps = React.PropsWithChildren<{
   organizations: OrganizationProps[];
   persons: PersonOption[];
   currentUserId: number | null;
-  children: React.ReactNode;
-}
+}>;
 
 const KEEP_WHEN_EMPTY = new Set(['assignee_id']);
 const STALE_PARAMS = ['assignee'] as const;

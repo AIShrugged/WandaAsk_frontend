@@ -6,7 +6,7 @@ import { MeetingDetailTabsNav } from '@/features/meetings';
 import { ROUTES } from '@/shared/lib/routes';
 import Card from '@/shared/ui/card/Card';
 
-import type { ReactNode } from 'react';
+import type { PropsWithChildren } from 'react';
 
 /**
  * Meeting detail layout — wraps all sub-tab pages.
@@ -15,10 +15,7 @@ import type { ReactNode } from 'react';
 export default async function MeetingDetailLayout({
   params,
   children,
-}: {
-  params: Promise<{ id: string }>;
-  children: ReactNode;
-}) {
+}: PropsWithChildren<{ params: Promise<{ id: string }> }>) {
   const { id } = await params;
 
   let hasProtocol = false;

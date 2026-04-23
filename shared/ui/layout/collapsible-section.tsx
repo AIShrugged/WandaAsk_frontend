@@ -4,14 +4,13 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 
-interface CollapsibleSectionProps {
+type CollapsibleSectionProps = React.PropsWithChildren<{
   label: string;
   icon?: React.ReactNode;
   defaultOpen?: boolean;
   className?: string;
-  children: React.ReactNode;
   extraContent: React.ReactNode;
-}
+}>;
 
 export function CollapsibleSection({
   label,
