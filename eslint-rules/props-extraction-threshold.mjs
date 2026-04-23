@@ -54,10 +54,11 @@ export const propsExtractionThreshold = {
      */
     function countTypeLiteralMembers(typeLiteral) {
       if (!typeLiteral || typeLiteral.type !== 'TSTypeLiteral') return 0;
-      return typeLiteral.members.filter(
-        (m) =>
-          m.type === 'TSPropertySignature' || m.type === 'TSMethodSignature',
-      ).length;
+      return typeLiteral.members.filter((m) => {
+        return (
+          m.type === 'TSPropertySignature' || m.type === 'TSMethodSignature'
+        );
+      }).length;
     }
 
     /**
@@ -131,11 +132,12 @@ export const propsExtractionThreshold = {
 
             // interface declaration
             if (defNode.type === 'TSInterfaceDeclaration') {
-              return defNode.body.body.filter(
-                (m) =>
+              return defNode.body.body.filter((m) => {
+                return (
                   m.type === 'TSPropertySignature' ||
-                  m.type === 'TSMethodSignature',
-              ).length;
+                  m.type === 'TSMethodSignature'
+                );
+              }).length;
             }
 
             // type alias

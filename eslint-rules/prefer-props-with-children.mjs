@@ -67,12 +67,13 @@ export const preferPropsWithChildren = {
      */
     function findChildrenProp(members) {
       return (
-        members.find(
-          (member) =>
+        members.find((member) => {
+          return (
             member.type === 'TSPropertySignature' &&
             member.key?.name === 'children' &&
-            isReactNode(member.typeAnnotation?.typeAnnotation),
-        ) ?? null
+            isReactNode(member.typeAnnotation?.typeAnnotation)
+          );
+        }) ?? null
       );
     }
 

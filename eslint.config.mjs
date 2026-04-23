@@ -7,9 +7,9 @@ import securityPlugin from 'eslint-plugin-security';
 import sonarjsPlugin from 'eslint-plugin-sonarjs';
 import unicornPlugin from 'eslint-plugin-unicorn';
 
-import { useServerInApi } from './eslint-rules/use-server-in-api.mjs';
 import { preferPropsWithChildren } from './eslint-rules/prefer-props-with-children.mjs';
 import { propsExtractionThreshold } from './eslint-rules/props-extraction-threshold.mjs';
+import { useServerInApi } from './eslint-rules/use-server-in-api.mjs';
 
 export default defineConfig([
   ...nextVitals,
