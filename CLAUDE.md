@@ -460,20 +460,24 @@ Use these agents at the right stages. They are available via the `Agent` tool.
    accent). Check spacing, states, colors.
 10. **`artifact-sync`** — when backend adds/changes an artifact type in
     `CreateArtifactTool`, sync frontend renderers.
+11. **`code-quality-guardian`** — after writing components/pages, or before
+    committing. Audits prop typing, component complexity, dead code, FSD
+    violations. Reports errors/warnings/suggestions; auto-fixes what it can.
 
 ### Quick reference table
 
-| Stage                         | Agent                        |
-| ----------------------------- | ---------------------------- |
-| Before touching any API       | `wanda-backend-navigator`    |
-| After writing TS types        | `backend-contract-validator` |
-| Complex multi-slice feature   | `frontend-architect`         |
-| After adding/moving features  | `fsd-boundary-guard`         |
-| After writing UI components   | `unit-test-booster`          |
-| After adding routes/flows     | `e2e-coverage-agent`         |
-| Before commit / push          | `mr-reviewer`                |
-| After modifying UI            | `design-guardian`            |
-| Backend artifact type changed | `artifact-sync`              |
+| Stage                             | Agent                        |
+| --------------------------------- | ---------------------------- |
+| Before touching any API           | `wanda-backend-navigator`    |
+| After writing TS types            | `backend-contract-validator` |
+| Complex multi-slice feature       | `frontend-architect`         |
+| After adding/moving features      | `fsd-boundary-guard`         |
+| After writing UI components       | `unit-test-booster`          |
+| After adding routes/flows         | `e2e-coverage-agent`         |
+| Before commit / push              | `mr-reviewer`                |
+| After modifying UI                | `design-guardian`            |
+| Backend artifact type changed     | `artifact-sync`              |
+| After writing components or pages | `code-quality-guardian`      |
 
 ## FSD Layer Rules
 

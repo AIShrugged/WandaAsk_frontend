@@ -39,7 +39,7 @@ export function SidebarFooter({
   };
 
   return (
-    <div className='flex items-center justify-between'>
+    <div className='flex items-center justify-end'>
       <button
         type='button'
         onClick={toggleTheme}
@@ -47,7 +47,7 @@ export function SidebarFooter({
         aria-label={
           theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'
         }
-        className='flex items-center justify-center w-9 h-9 rounded-md text-muted-foreground hover:text-foreground hover:bg-sidebar-accent/50 transition-colors disabled:opacity-50'
+        className='cursor-pointer flex items-center justify-center w-9 h-9 rounded-md text-muted-foreground hover:text-foreground hover:bg-sidebar-accent/50 transition-colors disabled:opacity-50'
       >
         {theme === 'dark' ? (
           <Sun className='w-4 h-4' />
@@ -58,7 +58,7 @@ export function SidebarFooter({
 
       <Link
         href={ROUTES.DASHBOARD.PROFILE_MENU}
-        className='flex items-center justify-center w-9 h-9 rounded-md text-muted-foreground hover:text-foreground hover:bg-sidebar-accent/50 transition-colors'
+        className='cursor-pointer flex items-center justify-center w-9 h-9 rounded-md text-muted-foreground hover:text-foreground hover:bg-sidebar-accent/50 transition-colors'
         aria-label='Settings'
       >
         <Settings className='w-4 h-4' />

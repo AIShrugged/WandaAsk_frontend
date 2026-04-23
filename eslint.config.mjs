@@ -8,6 +8,8 @@ import sonarjsPlugin from 'eslint-plugin-sonarjs';
 import unicornPlugin from 'eslint-plugin-unicorn';
 
 import { useServerInApi } from './eslint-rules/use-server-in-api.mjs';
+import { preferPropsWithChildren } from './eslint-rules/prefer-props-with-children.mjs';
+import { propsExtractionThreshold } from './eslint-rules/props-extraction-threshold.mjs';
 
 export default defineConfig([
   ...nextVitals,
@@ -135,13 +137,40 @@ export default defineConfig([
   // ------------------------------
   // Custom local rules
   // ------------------------------
+  // Register all local rules in one plugin block (ESLint flat config forbids re-defining a plugin)
   {
     plugins: {
-      local: { rules: { 'use-server-in-api': useServerInApi } },
+      local: {
+        rules: {
+          'use-server-in-api': useServerInApi,
+          'prefer-props-with-children': preferPropsWithChildren,
+          'props-extraction-threshold': propsExtractionThreshold,
+        },
+      },
     },
+  },
+
+  // Apply use-server-in-api only to api/ files
+  {
     files: ['features/*/api/*.ts', 'features/*/api/*.tsx'],
     rules: {
       'local/use-server-in-api': 'error',
+    },
+  },
+
+  // Apply prefer-props-with-children to all TSX files
+  {
+    files: ['**/*.tsx'],
+    rules: {
+      'local/prefer-props-with-children': 'error',
+    },
+  },
+
+  // Apply props-extraction-threshold to feature/app/widget TSX files
+  {
+    files: ['features/**/*.tsx', 'app/**/*.tsx', 'widgets/**/*.tsx'],
+    rules: {
+      'local/props-extraction-threshold': 'warn',
     },
   },
 
