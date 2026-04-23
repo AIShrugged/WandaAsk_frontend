@@ -187,7 +187,7 @@ export interface IssueFilters {
 }
 
 export interface IssueCommentUser {
-  id: number;
+  id: number | null;
   name: string;
 }
 
