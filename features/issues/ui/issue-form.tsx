@@ -12,6 +12,7 @@ import {
 } from '@/features/issues/api/issues';
 import {
   ISSUE_STATUS_OPTIONS,
+  PRIORITY_OPTIONS,
   issueTypeOptionsFromOrgs,
 } from '@/features/issues/model/types';
 import { getTeams } from '@/features/teams/api/team';
@@ -30,11 +31,18 @@ import type {
   PersonOption,
 } from '@/features/issues/model/types';
 
+interface CurrentUser {
+  id: number;
+  name: string;
+  email: string;
+}
+
 interface IssueFormProps {
   organizations: OrganizationProps[];
   persons: PersonOption[];
   issue?: Issue;
   defaultOrganizationId?: string;
+  currentUser?: CurrentUser | null;
 }
 
 interface IssueFormValues {
@@ -45,27 +53,32 @@ interface IssueFormValues {
   organization_id: string;
   team_id: string;
   assignee_id: string;
+  author_id: string;
+  due_date: string;
+  priority: string;
 }
 
-/**
- * IssueForm renders create/edit issue workflow.
- * @param props - component props.
- * @param props.organizations
- * @param props.persons
- * @param props.issue
- * @param props.defaultOrganizationId
- * @returns JSX element.
- */
+function defaultDueDate(): string {
+  const d = new Date(Date.now() + 24 * 60 * 60 * 1000);
+  return d.toISOString().slice(0, 10);
+}
+
 export function IssueForm({
   organizations,
   persons,
   issue,
   defaultOrganizationId = '',
+  currentUser,
 }: IssueFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [rootError, setRootError] = useState('');
   const typeOptions = issueTypeOptionsFromOrgs(organizations);
+
+  const defaultAuthorId = issue?.user_id
+    ? String(issue.user_id)
+    : String(currentUser?.id ?? '');
+
   const defaultValues = useMemo<IssueFormValues>(() => {
     return {
       name: issue?.name ?? '',
@@ -77,8 +90,12 @@ export function IssueForm({
         : defaultOrganizationId,
       team_id: issue?.team_id ? String(issue.team_id) : '',
       assignee_id: issue?.assignee_id ? String(issue.assignee_id) : '',
+      author_id: defaultAuthorId,
+      due_date: issue?.due_date ?? defaultDueDate(),
+      priority: String(issue?.priority ?? 0),
     };
-  }, [defaultOrganizationId, issue]);
+  }, [defaultOrganizationId, issue, defaultAuthorId]);
+
   const {
     register,
     watch,
@@ -92,7 +109,8 @@ export function IssueForm({
     mode: 'onBlur',
     reValidateMode: 'onChange',
   });
-  const assigneeOptions = [
+
+  const personOptions = [
     { value: '', label: 'Unassigned' },
     ...persons.map((person) => {
       return {
@@ -101,23 +119,19 @@ export function IssueForm({
       };
     }),
   ];
+
   const statusOptions = ISSUE_STATUS_OPTIONS;
-  /**
-   *
-   * @param values
-   */
+
   const onSubmit = (values: IssueFormValues) => {
     setRootError('');
 
     if (!values.organization_id) {
       setError('organization_id', { message: 'Organization is required' });
-
       return;
     }
 
     if (!values.status) {
       setError('status', { message: 'Status is required' });
-
       return;
     }
 
@@ -132,6 +146,9 @@ export function IssueForm({
         organization_id: Number(values.organization_id),
         team_id: values.team_id ? Number(values.team_id) : null,
         assignee_id: values.assignee_id ? Number(values.assignee_id) : null,
+        author_id: values.author_id ? Number(values.author_id) : null,
+        due_date: values.due_date || null,
+        priority: Number(values.priority) || 0,
       };
       const result = issue
         ? await updateIssue(issue.id, payload)
@@ -151,7 +168,6 @@ export function IssueForm({
         }
 
         setRootError(result.error);
-
         return;
       }
 
@@ -236,7 +252,7 @@ export function IssueForm({
       <div className='grid gap-2 md:grid-cols-2'>
         <InputDropdown
           label='Assignee'
-          options={assigneeOptions}
+          options={personOptions}
           value={watch('assignee_id')}
           onChange={(value) => {
             setValue('assignee_id', value as string, { shouldDirty: true });
@@ -244,6 +260,44 @@ export function IssueForm({
           }}
           searchable
           error={errors.assignee_id?.message}
+        />
+
+        <InputDropdown
+          label='Author'
+          options={personOptions}
+          value={watch('author_id')}
+          onChange={(value) => {
+            setValue('author_id', value as string, { shouldDirty: true });
+            clearErrors('author_id');
+          }}
+          searchable
+          error={errors.author_id?.message}
+        />
+      </div>
+
+      <div className='grid gap-2 md:grid-cols-2'>
+        <Input
+          {...register('due_date', {
+            onChange: () => {
+              clearErrors('due_date');
+              setRootError('');
+            },
+          })}
+          type='date'
+          label='Deadline'
+          value={watch('due_date')}
+          error={errors.due_date?.message}
+        />
+
+        <InputDropdown
+          label='Priority'
+          options={PRIORITY_OPTIONS}
+          value={watch('priority')}
+          onChange={(value) => {
+            setValue('priority', value as string, { shouldDirty: true });
+            clearErrors('priority');
+          }}
+          error={errors.priority?.message}
         />
       </div>
 

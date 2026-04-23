@@ -598,7 +598,7 @@ reasonably.
 **Acceptance Criteria — Phase 4:**
 
 - [ ] `/dashboard/profile/appearance` renders the Appearance tab
-- [ ] Tab strip on profile shows 5 tabs: Account Info, Password, Calendar, Menu,
+- [ ] Tab strip on profile shows 5 tabs: Info, Password, Calendar, Menu,
       Appearance
 - [ ] Selecting "Light" theme: `data-theme="light"` appears on `<html>`
       immediately

@@ -92,6 +92,7 @@ export default async function IssueDetailPage({
                   issue={issue}
                   organizations={organizationsResponse.data ?? []}
                   persons={persons}
+                  currentUser={userResponse.data ?? null}
                 />
               </CardBody>
             </div>

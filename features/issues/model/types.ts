@@ -96,6 +96,10 @@ export interface Issue {
   agent_flow?: IssueAgentFlow | null;
   assignee_id: number | null;
   assignee?: PersonOption | null;
+  user_id: number | null;
+  author?: PersonOption | null;
+  due_date: string | null;
+  priority: number;
   close_date: string | null;
   created_at: string;
   updated_at: string;
@@ -210,4 +214,30 @@ export interface IssueUpsertDTO {
   organization_id: number | null;
   team_id: number | null;
   assignee_id: number | null;
+  author_id: number | null;
+  due_date: string | null;
+  priority: number;
 }
+
+export const PRIORITY_LEVELS = [
+  { value: 500, label: 'Critical', color: 'text-red-500' },
+  { value: 100, label: 'High', color: 'text-orange-400' },
+  { value: 0, label: 'Normal', color: 'text-foreground' },
+  { value: -100, label: 'Low', color: 'text-blue-400' },
+  { value: -500, label: 'Minimal', color: 'text-muted-foreground' },
+] as const;
+
+export type PriorityLevel = (typeof PRIORITY_LEVELS)[number];
+
+export function getPriorityLevel(priority: number): PriorityLevel {
+  return (
+    [...PRIORITY_LEVELS].find((level) => {
+      return priority >= level.value;
+    }) ?? PRIORITY_LEVELS.at(-1)!
+  );
+}
+
+export const PRIORITY_OPTIONS: { value: string; label: string }[] =
+  PRIORITY_LEVELS.map((level) => {
+    return { value: String(level.value), label: level.label };
+  });

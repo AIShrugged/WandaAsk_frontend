@@ -217,7 +217,7 @@ app/dashboard/profile/menu/
 ```ts
 // features/user-profile/ui/profile-tabs-nav.tsx
 const TABS = [
-  { href: ROUTES.DASHBOARD.PROFILE_ACCOUNT, label: 'Account Info' },
+  { href: ROUTES.DASHBOARD.PROFILE_ACCOUNT, label: 'Info' },
   { href: ROUTES.DASHBOARD.PROFILE_PASSWORD, label: 'Password' },
   { href: ROUTES.DASHBOARD.PROFILE_CALENDAR, label: 'Calendar' },
   { href: ROUTES.DASHBOARD.PROFILE_MENU, label: 'Menu' }, // ← new

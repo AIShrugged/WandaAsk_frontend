@@ -66,9 +66,7 @@ test.describe('Profile page — authenticated', () => {
   // -------------------------------------------------------------------------
 
   test('renders both form sections', async ({ page }) => {
-    await expect(
-      page.getByRole('heading', { name: /account info/i }),
-    ).toBeVisible();
+    await expect(page.getByRole('heading', { name: /info/i })).toBeVisible();
     await expect(
       page.getByRole('heading', { name: /change password/i }),
     ).toBeVisible();

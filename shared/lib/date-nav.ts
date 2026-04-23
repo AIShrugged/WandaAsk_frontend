@@ -1,11 +1,4 @@
-import {
-  addDays,
-  format,
-  isToday,
-  isYesterday,
-  isTomorrow,
-  parseISO,
-} from 'date-fns';
+import { addDays, format, parseISO } from 'date-fns';
 
 /** YYYY-MM-DD string → Date (timezone-safe via date-fns parseISO) */
 export function parseDateParam(dateStr: string): Date {
@@ -24,10 +17,6 @@ export function shiftDate(date: Date, offset: number): string {
 
 /** Relative label: "Today" / "Yesterday" / "Tomorrow" / "Apr 22" */
 export function formatDateLabel(date: Date): string {
-  if (isToday(date)) return 'Today';
-  if (isYesterday(date)) return 'Yesterday';
-  if (isTomorrow(date)) return 'Tomorrow';
-
   return new Intl.DateTimeFormat('en-US', {
     month: 'short',
     day: 'numeric',

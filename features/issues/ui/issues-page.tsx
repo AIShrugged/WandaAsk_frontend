@@ -377,6 +377,9 @@ export function IssuesPage({
             organization_id: issue.organization_id,
             team_id: issue.team_id,
             assignee_id: nextAssigneeId,
+            author_id: issue.user_id ?? null,
+            due_date: issue.due_date,
+            priority: issue.priority,
           });
 
           if ('error' in result) {
