@@ -1,14 +1,12 @@
-import { Settings } from 'lucide-react';
 import { cookies } from 'next/headers';
-import Link from 'next/link';
 import React, { type PropsWithChildren } from 'react';
 
 import { ThemeProvider } from '@/app/providers/ThemeProvider';
 import { DemoSeedButtonLoader } from '@/features/demo';
-import { MenuSidebar } from '@/features/menu';
+import { MenuSidebar, SidebarFooter } from '@/features/menu';
 import { OrganizationSelector } from '@/features/organization';
-import { User } from '@/features/user';
-import { ROUTES } from '@/shared/lib/routes';
+import { User, getUser } from '@/features/user';
+import { updateThemePreference } from '@/features/user-profile/api/preferences';
 import { TribesLogo } from '@/shared/ui/brand';
 import {
   DashboardChatColumn,
@@ -21,6 +19,7 @@ import type { Theme } from '@/entities/user';
 export default async function Layout({ children }: PropsWithChildren) {
   const cookieStore = await cookies();
   const theme = (cookieStore.get('wanda-theme')?.value ?? 'dark') as Theme;
+  const { data: user } = await getUser();
 
   return (
     <ThemeProvider initialTheme={theme}>
@@ -38,17 +37,10 @@ export default async function Layout({ children }: PropsWithChildren) {
         >
           {/* Logo slot */}
           <div
-            className='flex justify-between items-center h-[var(--topbar-height)] px-6 flex-shrink-0'
+            className='flex items-center h-[var(--topbar-height)] px-6 flex-shrink-0'
             style={{ borderBottom: '1px solid var(--chrome-border)' }}
           >
             <TribesLogo />
-            <Link
-              href={ROUTES.DASHBOARD.PROFILE_MENU}
-              className='flex items-center justify-center w-9 h-9 rounded-md text-muted-foreground hover:text-foreground hover:bg-sidebar-accent/50 transition-colors'
-              aria-label='Settings'
-            >
-              <Settings className='w-4 h-4' />
-            </Link>
           </div>
           {/* Navigation */}
           <div className='flex-1 overflow-y-auto py-3 px-3'>
@@ -58,7 +50,12 @@ export default async function Layout({ children }: PropsWithChildren) {
           <div
             className='flex-shrink-0 px-3 py-3'
             style={{ borderTop: '1px solid var(--chrome-border)' }}
-          ></div>
+          >
+            <SidebarFooter
+              currentPreferences={user?.preferences ?? {}}
+              onThemeChange={updateThemePreference}
+            />
+          </div>
         </aside>
 
         {/* Main area */}
