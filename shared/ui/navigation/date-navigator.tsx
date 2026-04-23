@@ -1,6 +1,5 @@
 'use client';
 
-import { isToday } from 'date-fns';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 import { formatDateLabel, formatDateLong } from '@/shared/lib/date-nav';
@@ -78,31 +77,16 @@ function DateLabel({ date, variant }: DateLabelProps) {
   );
 }
 
-function BackTodayButton({ onClick }: { onClick: () => void }) {
-  return (
-    <button
-      type='button'
-      onClick={onClick}
-      className='ml-1 rounded-md border border-primary bg-primary/10 px-3 py-1 text-xs font-medium text-primary transition-colors hover:bg-primary/20'
-    >
-      Back Today
-    </button>
-  );
-}
-
 export function DateNavigator({
   date,
   variant = 'compact',
-  showBackToday = false,
   badge,
   preserveParams = false,
   className,
 }: DateNavigatorProps) {
-  const { current, navigate, goToday } = useDateNavigation(date, {
+  const { current, navigate } = useDateNavigation(date, {
     preserveParams,
   });
-
-  const isTodayDate = isToday(current);
 
   return (
     <div
@@ -131,8 +115,6 @@ export function DateNavigator({
       />
 
       {badge}
-
-      {showBackToday && !isTodayDate && <BackTodayButton onClick={goToday} />}
     </div>
   );
 }

@@ -1,10 +1,10 @@
 import { getUser } from '@/features/user';
 import { ProfileForm } from '@/features/user-profile';
 
-export const metadata = { title: 'Account Info' };
+export const metadata = { title: 'Info' };
 
 /**
- * Account Info tab — displays the profile form and tour restart section.
+ * Info tab — displays the profile form and tour restart section.
  */
 export default async function ProfileAccountPage() {
   const { data: user } = await getUser();
