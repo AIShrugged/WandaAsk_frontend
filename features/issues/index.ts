@@ -42,3 +42,4 @@ export { default as IssueCreateButton } from './ui/issue-create-button';
 export { IssuesLayoutClient } from './ui/issues-layout-client';
 export { IssuesListTab } from './ui/issues-list-tab';
 export { IssueLinkedTask } from './ui/issue-linked-task';
+export { IssuePriorityBadge } from './ui/issue-priority-badge';

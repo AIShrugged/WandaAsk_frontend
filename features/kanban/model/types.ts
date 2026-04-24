@@ -16,6 +16,7 @@ export interface KanbanCard {
   team_id: number | null;
   assignee_id: number | null;
   assignee?: PersonOption | null;
+  priority: number;
   attachments_count: number;
   comments_count: number;
   story_points: number | null;

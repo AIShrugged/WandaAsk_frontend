@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { memo } from 'react';
 
+import { IssuePriorityBadge } from '@/features/issues/ui/issue-priority-badge';
 import {
   type KanbanCardItemProps,
   TYPE_COLORS,
@@ -68,6 +69,7 @@ export const KanbanCardItem = memo(function KanbanCardItem({
             </span>
           </>
         ) : null}
+        <IssuePriorityBadge priority={card.priority} className='shrink-0' />
         <span className='ml-auto text-muted-foreground'>
           {new Date(card.created_at).toLocaleDateString('en-US', {
             month: 'short',

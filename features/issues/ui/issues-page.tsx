@@ -23,6 +23,7 @@ import { useFiltersContext } from '@/features/issues/model/filters-context';
 import { ISSUE_STATUS_OPTIONS } from '@/features/issues/model/types';
 import { ArchivedSection } from '@/features/issues/ui/archived-section';
 import { ArchivedSectionToggle } from '@/features/issues/ui/archived-section-toggle';
+import { IssuePriorityBadge } from '@/features/issues/ui/issue-priority-badge';
 import { IssueStatusBadge } from '@/features/issues/ui/issue-status-badge';
 import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
 import { ROUTES } from '@/shared/lib/routes';
@@ -488,12 +489,18 @@ export function IssuesPage({
                         #{issue.id}
                       </td>
                       <td className='max-w-0 overflow-hidden p-2 align-top'>
-                        <Link
-                          href={`${ROUTES.DASHBOARD.ISSUES}/${issue.id}`}
-                          className='block truncate font-medium text-foreground hover:text-primary'
-                        >
-                          {issue.name}
-                        </Link>
+                        <div className='flex items-center gap-1.5 min-w-0'>
+                          <IssuePriorityBadge
+                            priority={issue.priority}
+                            className='shrink-0'
+                          />
+                          <Link
+                            href={`${ROUTES.DASHBOARD.ISSUES}/${issue.id}`}
+                            className='truncate font-medium text-foreground hover:text-primary'
+                          >
+                            {issue.name}
+                          </Link>
+                        </div>
                         {issue.description ? (
                           <p className='mt-1 line-clamp-2 text-xs text-muted-foreground'>
                             {issue.description}
