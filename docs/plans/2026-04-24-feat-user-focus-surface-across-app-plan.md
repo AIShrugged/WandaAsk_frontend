@@ -1,7 +1,7 @@
 ---
 title: 'feat: Surface User Focus and Task Priority Indicators Across the App'
 type: feat
-status: active
+status: completed
 date: 2026-04-24
 ---
 
