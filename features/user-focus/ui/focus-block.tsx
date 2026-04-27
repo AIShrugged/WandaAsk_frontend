@@ -1,13 +1,20 @@
 'use client';
 
 import { differenceInCalendarDays, parseISO } from 'date-fns';
-import { Pencil, Target, X } from 'lucide-react';
+import { CheckCircle, Pencil, Target, X } from 'lucide-react';
 import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
 import { clearUserFocus, setUserFocus } from '../api/focus';
 
+import { FOCUS_BANNER_DISMISS_KEY } from './focus-reminder-banner';
+
 import type { UserFocus } from '../types';
+
+function isFocusExpired(focus: UserFocus): boolean {
+  if (!focus.expires_at) return false;
+  return new Date(focus.expires_at) < new Date();
+}
 
 function formatDeadline(deadline: string): string {
   const date = parseISO(deadline);
@@ -118,6 +125,37 @@ function ReadonlyFocusBlock({ focus }: { focus: UserFocus }) {
   );
 }
 
+function ExpiredFocusView({
+  focus,
+  onClear,
+  isPending,
+}: {
+  focus: UserFocus;
+  onClear: () => void;
+  isPending: boolean;
+}) {
+  return (
+    <div className='rounded-[var(--radius-card)] border border-emerald-500/30 bg-emerald-500/5 p-4'>
+      <div className='flex items-center gap-2 mb-3'>
+        <CheckCircle className='h-4 w-4 text-emerald-500 shrink-0' />
+        <span className='text-sm font-medium text-emerald-600 dark:text-emerald-400'>
+          Focus completed!
+        </span>
+      </div>
+      <p className='text-sm text-foreground line-through opacity-60'>
+        {focus.focus_text}
+      </p>
+      <button
+        onClick={onClear}
+        disabled={isPending}
+        className='mt-3 self-start rounded-md bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 text-xs font-medium text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 disabled:opacity-50 transition-colors'
+      >
+        {isPending ? 'Clearing…' : 'Clear & set new focus'}
+      </button>
+    </div>
+  );
+}
+
 function useFocusActions(
   focusText: string,
   deadline: string,
@@ -144,6 +182,9 @@ function useFocusActions(
         expires_at: null,
       });
       setEditing(false);
+      if (globalThis.window !== undefined) {
+        globalThis.sessionStorage.removeItem(FOCUS_BANNER_DISMISS_KEY);
+      }
       toast.success('Focus saved');
     });
   }
@@ -232,6 +273,16 @@ function EditableFocusBlock({
     setFocusText(prefill?.focus_text ?? '');
     setDeadline(prefill?.deadline ?? '');
     setEditing(true);
+  }
+
+  if (focus && isFocusExpired(focus)) {
+    return (
+      <ExpiredFocusView
+        focus={focus}
+        onClear={handleClear}
+        isPending={isPending}
+      />
+    );
   }
 
   return (

@@ -69,7 +69,11 @@ export const KanbanCardItem = memo(function KanbanCardItem({
             </span>
           </>
         ) : null}
-        <IssuePriorityBadge priority={card.priority} className='shrink-0' />
+        <IssuePriorityBadge
+          priority={card.priority}
+          status={card.status}
+          className='shrink-0'
+        />
         <span className='ml-auto text-muted-foreground'>
           {new Date(card.created_at).toLocaleDateString('en-US', {
             month: 'short',

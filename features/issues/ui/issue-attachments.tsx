@@ -357,7 +357,6 @@ export function IssueAttachments({
               className='inline-flex h-10 w-auto items-center justify-center gap-2 rounded-[var(--radius-button)] border border-input bg-background px-3 text-sm font-medium text-foreground hover:bg-accent'
             >
               <ExternalLink className='h-4 w-4' />
-              Open
             </a>
           ) : null;
 
@@ -402,7 +401,6 @@ export function IssueAttachments({
                     }}
                   >
                     <Trash2 className='h-4 w-4' />
-                    Delete
                   </Button>
                 </div>
               </div>
