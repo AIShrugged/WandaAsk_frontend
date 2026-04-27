@@ -6,7 +6,7 @@ import { useState } from 'react';
 
 import type { UserFocus } from '../types';
 
-const DISMISS_KEY = 'focus-banner-dismissed';
+export const FOCUS_BANNER_DISMISS_KEY = 'focus-banner-dismissed';
 
 function formatDeadlineBrief(deadline: string): string {
   const date = parseISO(deadline);
@@ -17,6 +17,11 @@ function formatDeadlineBrief(deadline: string): string {
   return `${daysLeft} days left`;
 }
 
+function isFocusExpired(focus: UserFocus): boolean {
+  if (!focus.expires_at) return false;
+  return new Date(focus.expires_at) < new Date();
+}
+
 interface FocusReminderBannerProps {
   focus: UserFocus | null;
 }
@@ -24,13 +29,14 @@ interface FocusReminderBannerProps {
 export function FocusReminderBanner({ focus }: FocusReminderBannerProps) {
   const [dismissed, setDismissed] = useState(() => {
     if (globalThis.window === undefined) return false;
-    return globalThis.localStorage.getItem(DISMISS_KEY) === '1';
+    return globalThis.sessionStorage.getItem(FOCUS_BANNER_DISMISS_KEY) === '1';
   });
 
   if (!focus?.focus_text || dismissed) return null;
+  if (isFocusExpired(focus)) return null;
 
   function handleDismiss() {
-    globalThis.localStorage.setItem(DISMISS_KEY, '1');
+    globalThis.sessionStorage.setItem(FOCUS_BANNER_DISMISS_KEY, '1');
     setDismissed(true);
   }
 

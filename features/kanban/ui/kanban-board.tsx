@@ -9,6 +9,7 @@ import {
 } from 'react';
 import { toast } from 'sonner';
 
+import { getPriorityLevel } from '@/features/issues/model/types';
 import { moveKanbanCard } from '@/features/kanban/api/kanban';
 import { useArchivedCards } from '@/features/kanban/hooks/use-archived-cards';
 import {
@@ -133,7 +134,16 @@ export function KanbanBoard({
             KANBAN_COLUMNS.find((col) => {
               return col.id === targetStatus;
             })?.label ?? targetStatus;
-          toast.success(`Moved to ${colLabel}`);
+
+          if (targetStatus === 'done' && frozenCard.priority !== 0) {
+            const level = getPriorityLevel(frozenCard.priority);
+            toast.success(`Done: ${frozenCard.name}`, {
+              description: `${level.label} priority issue completed`,
+              duration: 5000,
+            });
+          } else {
+            toast.success(`Moved to ${colLabel}`);
+          }
         } catch (error) {
           if (isFromArchived) {
             setArchivedDoneCards((prev) => {
