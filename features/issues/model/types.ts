@@ -241,3 +241,47 @@ export const PRIORITY_OPTIONS: { value: string; label: string }[] =
   PRIORITY_LEVELS.map((level) => {
     return { value: String(level.value), label: level.label };
   });
+
+// ---------------------------------------------------------------------------
+// Issue Stats — snapshot from GET /api/v1/issues/stats
+// ---------------------------------------------------------------------------
+
+export interface IssueStatsDelta {
+  in_progress: number;
+  completed: number;
+  overdue: number;
+}
+
+export interface IssueStats {
+  total: number;
+  in_progress: number;
+  completed: number;
+  overdue: number;
+  open: number;
+  paused: number;
+  closed_today: number;
+  closed_this_week: number;
+  closed_this_month: number;
+  closed_all_time: number;
+  delta_today: number;
+  delta_week: number;
+  delta_month: number;
+  delta: IssueStatsDelta;
+}
+
+// ---------------------------------------------------------------------------
+// Issue Stats History — time-series from GET /api/v1/issues/stats/history
+// ---------------------------------------------------------------------------
+
+export interface IssueStatsHistoryItem {
+  date: string;
+  closed: number;
+}
+
+export type IssueHistoryPeriod = 'day' | 'week' | 'month';
+
+export interface IssueStatsHistory {
+  period: IssueHistoryPeriod;
+  range: number;
+  items: IssueStatsHistoryItem[];
+}

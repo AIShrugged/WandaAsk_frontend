@@ -38,6 +38,7 @@ export const ROUTES = {
     KANBAN: '/dashboard/kanban',
     ISSUES_LIST: '/dashboard/issues/list',
     ISSUES_KANBAN: '/dashboard/issues/kanban',
+    ISSUES_PROGRESS: '/dashboard/issues/progress',
     MEETINGS_LIST: '/dashboard/meetings/list',
     MEETINGS_CALENDAR: '/dashboard/meetings/calendar',
     MEETINGS_ORGANIZATION: '/dashboard/meetings/organization',
