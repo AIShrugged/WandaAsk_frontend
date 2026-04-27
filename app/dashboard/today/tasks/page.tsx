@@ -1,6 +1,7 @@
 import {
   AiNudge,
   AiPrepPanel,
+  ClosedTasksBlock,
   StaleItems,
   TaskStatsBlock,
   getTodayBriefing,
@@ -29,6 +30,7 @@ export default async function TodayTasksPage({
       <div className='px-6 pt-4 flex flex-col gap-4'>
         <FocusBlock initialFocus={focus} readonly />
         <TaskStatsBlock />
+        <ClosedTasksBlock />
       </div>
       <CardBody>
         <div className='flex flex-col gap-8'>
