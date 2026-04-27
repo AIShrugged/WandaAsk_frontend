@@ -1,44 +1,9 @@
-import {
-  AlertCircle,
-  CheckCircle2,
-  ListChecks,
-  Loader2,
-  TrendingDown,
-  TrendingUp,
-} from 'lucide-react';
+import { AlertCircle, CheckCircle2, ListChecks, Loader2 } from 'lucide-react';
 
-import { getIssueStats } from '../api/task-stats';
+import { getIssueStats } from '@/features/issues/api/issue-stats';
+import { DeltaBadge } from '@/shared/ui/stats/delta-badge';
 
 import type { ReactNode } from 'react';
-
-interface DeltaBadgeProps {
-  delta: number;
-  label: string;
-}
-
-function DeltaBadge({ delta, label }: DeltaBadgeProps) {
-  if (delta === 0) {
-    return (
-      <span className='text-xs text-muted-foreground'>No change {label}</span>
-    );
-  }
-
-  const positive = delta > 0;
-
-  return (
-    <span
-      className={`flex items-center gap-1 text-xs font-medium ${positive ? 'text-emerald-400' : 'text-red-400'}`}
-    >
-      {positive ? (
-        <TrendingUp className='h-3 w-3' />
-      ) : (
-        <TrendingDown className='h-3 w-3' />
-      )}
-      {positive ? '+' : ''}
-      {delta} {label}
-    </span>
-  );
-}
 
 interface StatCardProps {
   label: string;

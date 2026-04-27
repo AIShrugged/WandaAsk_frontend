@@ -10,6 +10,8 @@ export {
   uploadIssueAttachment,
   deleteAttachment,
 } from '@/features/issues/api/issues';
+export { getIssueStats } from '@/features/issues/api/issue-stats';
+export { getIssueStatsHistory } from '@/features/issues/api/issue-stats-history';
 export type {
   Issue,
   IssueAttachment,
@@ -20,6 +22,11 @@ export type {
   IssueSortField,
   SortOrder,
   IssueStatus,
+  IssueStats,
+  IssueStatsDelta,
+  IssueStatsHistory,
+  IssueStatsHistoryItem,
+  IssueHistoryPeriod,
 } from '@/features/issues/model/types';
 export {
   isIssueStatus,
