@@ -2,6 +2,7 @@
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
+import TeamDashboardTabDecisions from './team-dashboard-tab-decisions';
 import TeamDashboardTabHealth from './team-dashboard-tab-health';
 import TeamDashboardTabPeople from './team-dashboard-tab-people';
 import TeamDashboardTabReadiness from './team-dashboard-tab-readiness';
@@ -25,6 +26,7 @@ const TABS = [
   { key: 'people', label: 'People' },
   { key: 'health', label: 'Health' },
   { key: 'risks', label: 'Risks' },
+  { key: 'decisions', label: 'Decisions' },
 ] as const;
 
 type TabKey = (typeof TABS)[number]['key'];
@@ -130,7 +132,7 @@ export default function TeamDashboardTabs({
             availableChats={availableChats}
           />
         )}
-        {activeTab !== 'people' && tabs && (
+        {activeTab !== 'people' && activeTab !== 'decisions' && tabs && (
           <>
             {activeTab === 'status' && (
               <TeamDashboardTabStatus data={tabs.status} />
@@ -146,10 +148,13 @@ export default function TeamDashboardTabs({
             )}
           </>
         )}
-        {activeTab !== 'people' && !tabs && (
+        {activeTab !== 'people' && activeTab !== 'decisions' && !tabs && (
           <p className='text-sm text-muted-foreground text-center py-10'>
             No dashboard data available.
           </p>
+        )}
+        {activeTab === 'decisions' && (
+          <TeamDashboardTabDecisions teamId={teamId} />
         )}
       </div>
     </div>

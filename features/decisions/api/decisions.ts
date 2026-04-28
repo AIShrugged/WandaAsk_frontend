@@ -51,7 +51,7 @@ export async function createDecision(
       },
     );
 
-    revalidatePath(`/dashboard/decisions`);
+    revalidatePath(`/dashboard/teams`);
 
     if (!response.data) {
       return { data: null, error: 'Failed to save decision' };

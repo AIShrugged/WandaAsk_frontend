@@ -1,6 +1,5 @@
 import {
   BarChart2,
-  BookMarked,
   Bot,
   Bug,
   Calendar,
@@ -51,13 +50,6 @@ export function getMenuItems(): MenuProps[] {
       position: 3,
     },
     {
-      id: 'decisions',
-      label: 'Decision Log',
-      icon: 'bookMarked',
-      href: ROUTES.DASHBOARD.DECISIONS,
-      position: 4,
-    },
-    {
       id: 'teams',
       label: 'Teams',
       icon: 'teams',
@@ -95,7 +87,6 @@ export function getMenuItems(): MenuProps[] {
 
 export const ICONS_MAP = {
   bot: Bot,
-  bookMarked: BookMarked,
   layoutDashboard: LayoutDashboard,
   teams: UsersRound,
   bookOpen: BookOpen,
