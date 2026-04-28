@@ -72,6 +72,8 @@ export type {
   ArtifactsResponse,
   ChartArtifact,
   ChartType,
+  DecisionEntry,
+  DecisionLogArtifact,
   InsightCardArtifact,
   MeetingCardArtifact,
   MethodologyCriteriaArtifact,

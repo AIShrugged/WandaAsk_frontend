@@ -11,7 +11,8 @@ export type ArtifactType =
   | 'insight_card'
   | 'chart'
   | 'transcript_view'
-  | 'methodology_criteria';
+  | 'methodology_criteria'
+  | 'decision_log';
 
 interface ArtifactBase {
   id: string;
@@ -108,6 +109,36 @@ export interface MethodologyCriteriaArtifact extends ArtifactBase {
   };
 }
 
+export type DecisionEntry =
+  | {
+      source_type: 'meeting';
+      id: number;
+      text: string;
+      topic: string | null;
+      author: { id: number | null; name: string | null };
+      meeting: { id: number; title: string; date: string } | null;
+      created_at: string;
+    }
+  | {
+      source_type: 'manual' | 'chat';
+      id: number;
+      text: string;
+      topic: string | null;
+      author: { id: number | null; name: string | null };
+      meeting: null;
+      created_at: string;
+    };
+
+export interface DecisionLogArtifact extends ArtifactBase {
+  type: 'decision_log';
+  data: {
+    team_id: number;
+    team_name: string;
+    query: string | null;
+    decisions: DecisionEntry[];
+  };
+}
+
 export type Artifact =
   | TaskTableArtifact
   | MeetingCardArtifact
@@ -115,7 +146,8 @@ export type Artifact =
   | InsightCardArtifact
   | ChartArtifact
   | TranscriptArtifact
-  | MethodologyCriteriaArtifact;
+  | MethodologyCriteriaArtifact
+  | DecisionLogArtifact;
 
 export interface ArtifactsResponse {
   artifacts: Record<string, Artifact>;

@@ -2,6 +2,7 @@
 
 import {
   BarChart2,
+  BookMarked,
   ClipboardList,
   FileCheck,
   FileText,
@@ -13,6 +14,7 @@ import {
 import dynamic from 'next/dynamic';
 import React from 'react';
 
+import { DecisionLog } from '@/entities/artifact/ui/decision-log';
 import { InsightCard } from '@/entities/artifact/ui/insight-card';
 import { MeetingCard } from '@/entities/artifact/ui/meeting-card';
 import { MethodologyCriteria } from '@/entities/artifact/ui/methodology-criteria';
@@ -25,6 +27,7 @@ import type {
   Artifact,
   ArtifactType,
   ChartArtifact,
+  DecisionLogArtifact,
   InsightCardArtifact,
   MeetingCardArtifact,
   MethodologyCriteriaArtifact,
@@ -67,6 +70,10 @@ const TYPE_META: Record<
     label: 'Methodology',
     icon: <FileCheck className='w-3.5 h-3.5' />,
   },
+  decision_log: {
+    label: 'Decisions',
+    icon: <BookMarked className='w-3.5 h-3.5' />,
+  },
 };
 
 /**
@@ -101,6 +108,9 @@ function ArtifactContent({ artifact }: { artifact: Artifact }) {
           data={(artifact as MethodologyCriteriaArtifact).data}
         />
       );
+    }
+    case 'decision_log': {
+      return <DecisionLog data={(artifact as DecisionLogArtifact).data} />;
     }
     default: {
       return (
