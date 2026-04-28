@@ -9,11 +9,8 @@ import { AddDecisionModal } from '@/features/decisions/ui/add-decision-modal';
 import { DecisionCard } from '@/features/decisions/ui/decision-card';
 import { BUTTON_VARIANT } from '@/shared/types/button';
 import { Button } from '@/shared/ui/button/Button';
-import Input from '@/shared/ui/input/Input';
-import InputDropdown from '@/shared/ui/input/InputDropdown';
 import { Skeleton } from '@/shared/ui/layout/skeleton';
 
-import type { TeamProps } from '@/entities/team';
 import type {
   Decision,
   DecisionFilters,
@@ -23,14 +20,11 @@ import type {
 const PAGE_SIZE = 20;
 
 interface Props {
-  teams: TeamProps[];
+  teamId: number;
   sourceTypeFilter?: DecisionSourceType | null;
 }
 
-export function DecisionsPage({ teams, sourceTypeFilter }: Props) {
-  const [selectedTeamId, setSelectedTeamId] = useState<string>(
-    teams.length > 0 ? String(teams[0].id) : '',
-  );
+export function DecisionsPage({ teamId, sourceTypeFilter }: Props) {
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -38,10 +32,7 @@ export function DecisionsPage({ teams, sourceTypeFilter }: Props) {
   const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingMore, startLoadingMore] = useTransition();
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
-
-  const teamId = selectedTeamId ? Number(selectedTeamId) : null;
 
   const filters: DecisionFilters = {
     source_type: sourceTypeFilter ?? null,
@@ -49,8 +40,6 @@ export function DecisionsPage({ teams, sourceTypeFilter }: Props) {
   };
 
   const loadInitial = useCallback(async () => {
-    if (!teamId) return;
-
     setIsLoading(true);
     try {
       const result = await getDecisions(teamId, filters, 0, PAGE_SIZE);
@@ -67,22 +56,19 @@ export function DecisionsPage({ teams, sourceTypeFilter }: Props) {
     void loadInitial();
   }, [loadInitial]);
 
-  const handleSearchChange = (value: string) => {
-    setSearch(value);
-
-    if (debounceRef.current) {
-      clearTimeout(debounceRef.current);
-    }
-
-    debounceRef.current = setTimeout(() => {
-      setDebouncedSearch(value);
-    }, 400);
-  };
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 300);
+    return () => {
+      return clearTimeout(timer);
+    };
+  }, [search]);
 
   const hasMore = decisions.length < totalCount;
 
   const loadMore = useCallback(() => {
-    if (!teamId || !hasMore || isLoadingMore) return;
+    if (!hasMore || isLoadingMore) return;
 
     startLoadingMore(async () => {
       try {
@@ -128,58 +114,36 @@ export function DecisionsPage({ teams, sourceTypeFilter }: Props) {
     };
   }, [hasMore, isLoadingMore, loadMore]);
 
-  const teamOptions = teams.map((t) => {
-    return { value: String(t.id), label: t.name };
-  });
-
   return (
     <div className='flex flex-col gap-4'>
       {/* Toolbar */}
       <div className='flex items-center gap-3 flex-wrap'>
-        {teams.length > 1 && (
-          <InputDropdown
-            options={teamOptions}
-            value={selectedTeamId}
-            onChange={(v) => {
-              return setSelectedTeamId(v as string);
-            }}
-            placeholder='Select team'
-            className='w-48'
-          />
-        )}
         <div className='relative flex-1 min-w-48'>
-          <Search className='absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none' />
-          <Input
+          <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground pointer-events-none' />
+          <input
+            type='text'
+            placeholder='Search decisions…'
             value={search}
             onChange={(e) => {
-              return handleSearchChange(e.target.value);
+              return setSearch(e.target.value);
             }}
-            placeholder='Search decisions…'
-            className='pl-9'
+            className='h-10 w-full rounded-[var(--radius-button)] border border-border bg-background pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary'
           />
         </div>
-        {teamId && (
-          <Button
-            variant={BUTTON_VARIANT.primary}
-            onClick={() => {
-              return setIsModalOpen(true);
-            }}
-            className='flex items-center gap-1.5'
-          >
-            <Plus className='w-4 h-4' />
-            Add decision
-          </Button>
-        )}
+        <Button
+          variant={BUTTON_VARIANT.primary}
+          onClick={() => {
+            return setIsModalOpen(true);
+          }}
+          className='flex items-center gap-1.5'
+        >
+          <Plus className='w-4 h-4' />
+          Add decision
+        </Button>
       </div>
 
       {/* Content */}
-      {!teamId && (
-        <p className='text-sm text-muted-foreground text-center py-12'>
-          No teams available. Join or create a team to view decisions.
-        </p>
-      )}
-
-      {teamId && isLoading && (
+      {isLoading && (
         <div className='flex flex-col gap-3'>
           {Array.from({ length: 5 }).map((_, i) => {
             return (
@@ -189,23 +153,12 @@ export function DecisionsPage({ teams, sourceTypeFilter }: Props) {
         </div>
       )}
 
-      {teamId && !isLoading && decisions.length === 0 && (
-        <div className='flex flex-col items-center justify-center py-16 gap-3 text-center'>
-          <p className='text-muted-foreground text-sm'>
-            {debouncedSearch
-              ? `No decisions found for "${debouncedSearch}"`
-              : 'No decisions yet. Add the first one!'}
-          </p>
-          <Button
-            variant={BUTTON_VARIANT.primary}
-            onClick={() => {
-              return setIsModalOpen(true);
-            }}
-          >
-            <Plus className='w-4 h-4' />
-            Add decision
-          </Button>
-        </div>
+      {!isLoading && decisions.length === 0 && (
+        <p className='text-muted-foreground text-sm text-center py-16'>
+          {debouncedSearch
+            ? `No decisions found for "${debouncedSearch}"`
+            : 'No decisions yet. Add the first one!'}
+        </p>
       )}
 
       {!isLoading && decisions.length > 0 && (
@@ -228,18 +181,16 @@ export function DecisionsPage({ teams, sourceTypeFilter }: Props) {
         </div>
       )}
 
-      {teamId && (
-        <AddDecisionModal
-          teamId={teamId}
-          isOpen={isModalOpen}
-          onClose={() => {
-            return setIsModalOpen(false);
-          }}
-          onCreated={() => {
-            return void loadInitial();
-          }}
-        />
-      )}
+      <AddDecisionModal
+        teamId={teamId}
+        isOpen={isModalOpen}
+        onClose={() => {
+          return setIsModalOpen(false);
+        }}
+        onCreated={() => {
+          return void loadInitial();
+        }}
+      />
     </div>
   );
 }
