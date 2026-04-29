@@ -121,6 +121,34 @@ export function MeetingDetailCard({ event }: MeetingDetailCardProps) {
                 </div>
               )}
 
+              {event.summary.repeated_discussions.length > 0 && (
+                <div className='rounded-md border border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/30 px-3 py-2.5 flex flex-col gap-2'>
+                  <p className='text-xs font-semibold text-amber-700 dark:text-amber-400'>
+                    Repeated Discussions
+                  </p>
+                  <ul className='flex flex-col gap-2'>
+                    {event.summary.repeated_discussions.map((item, i) => {
+                      return (
+                        <li key={i} className='text-sm text-foreground'>
+                          <span className='font-medium'>
+                            «{item.new_decision}»
+                          </span>
+                          <span className='text-muted-foreground'>
+                            {' '}
+                            — похожее решение уже принималось{' '}
+                            {format(parseISO(item.previous_date), 'dd.MM.yyyy')}
+                            {item.previous_meeting_title
+                              ? ` на «${item.previous_meeting_title}»`
+                              : ''}
+                            : «{item.previous_decision}»
+                          </span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              )}
+
               {event.summary.key_points.length === 0 &&
                 event.summary.decisions.length === 0 && (
                   <MarkdownContent>{event.summary.summary}</MarkdownContent>

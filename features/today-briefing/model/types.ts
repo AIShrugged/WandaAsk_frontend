@@ -39,12 +39,21 @@ export interface MeetingAttendee {
   name: string;
 }
 
+export interface RepeatedDiscussion {
+  new_decision: string;
+  previous_decision: string;
+  previous_date: string;
+  previous_meeting_title: string;
+  previous_participants: string[];
+}
+
 export interface MeetingSummaryBrief {
   title: string;
   summary: string;
   key_points: string[];
   decisions: string[];
   attendees: MeetingAttendee[];
+  repeated_discussions: RepeatedDiscussion[];
 }
 
 export interface MeetingReviewBrief {
