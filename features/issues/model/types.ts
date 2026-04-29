@@ -289,3 +289,40 @@ export interface IssueStatsHistory {
   range: number;
   items: IssueStatsHistoryItem[];
 }
+
+export type CriticalPathStatus = 'pending' | 'computing' | 'ready' | 'failed';
+export type CriticalPathEdgeType = 'explicit' | 'implicit' | 'sentinel';
+
+export interface CriticalPathNode {
+  node_id: number;
+  node_type: 'issue';
+  issue_id: number;
+  issue_name: string | null;
+  status: string | null;
+  priority: string | null;
+  due_date: string | null;
+  duration_days: number;
+  early_start: number | null;
+  early_finish: number | null;
+  late_start: number | null;
+  late_finish: number | null;
+  slack: number | null;
+  is_critical: boolean;
+}
+
+export interface CriticalPathEdge {
+  from_node_id: number;
+  to_node_id: number;
+  edge_type: CriticalPathEdgeType;
+}
+
+export interface CriticalPathGraph {
+  graph_id: number;
+  team_id: number | null;
+  organization_id: number | null;
+  status: CriticalPathStatus;
+  computed_at: string | null;
+  project_duration_days: number;
+  nodes: CriticalPathNode[];
+  edges: CriticalPathEdge[];
+}

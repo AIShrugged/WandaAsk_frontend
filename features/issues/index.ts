@@ -50,3 +50,14 @@ export { IssuesLayoutClient } from './ui/issues-layout-client';
 export { IssuesListTab } from './ui/issues-list-tab';
 export { IssueLinkedTask } from './ui/issue-linked-task';
 export { IssuePriorityBadge } from './ui/issue-priority-badge';
+export { getCriticalPath, rebuildCriticalPath } from './api/critical-path';
+export { CriticalPathGraph } from './ui/critical-path-graph';
+export { CriticalPathNodeDetail } from './ui/critical-path-node-detail';
+export { CriticalPathPageClient } from './ui/critical-path-page';
+export type {
+  CriticalPathGraph as CriticalPathGraphType,
+  CriticalPathNode,
+  CriticalPathEdge,
+  CriticalPathStatus,
+  CriticalPathEdgeType,
+} from './model/types';
