@@ -1,5 +1,6 @@
 import { IssueProgressChart } from './issue-progress-chart';
 import { IssueProgressKpiCards } from './issue-progress-kpi-cards';
+import { IssueWeeklySummary } from './issue-weekly-summary';
 
 import type {
   IssueHistoryPeriod,
@@ -19,7 +20,10 @@ export function IssueProgressPage({
   return (
     <div className='space-y-6 p-6'>
       <IssueProgressKpiCards stats={stats} />
-      <IssueProgressChart history={history} period={period} />
+      <div className='grid gap-6 lg:grid-cols-2'>
+        <IssueProgressChart history={history} period={period} />
+        <IssueWeeklySummary stats={stats} />
+      </div>
     </div>
   );
 }
