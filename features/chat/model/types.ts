@@ -84,7 +84,7 @@ export type {
 } from '@/entities/artifact/model/types';
 
 export interface PageContext {
-  page_html?: string;
+  page_text?: string;
   page_title?: string;
   page_url?: string;
 }
