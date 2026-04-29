@@ -3,6 +3,8 @@
 import { differenceInCalendarDays, parseISO } from 'date-fns';
 import { Target, X } from 'lucide-react';
 import { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 import type { UserFocus } from '../types';
 
@@ -44,7 +46,9 @@ export function FocusReminderBanner({ focus }: FocusReminderBannerProps) {
     <div className='flex items-center gap-2 border-b border-primary/20 bg-primary/5 px-4 py-2 text-sm'>
       <Target className='h-3.5 w-3.5 text-primary shrink-0' />
       <span className='text-muted-foreground'>Focus:</span>
-      <span className='text-foreground truncate'>{focus.focus_text}</span>
+      <div className='text-sm prose prose-sm dark:prose-invert max-w-none [&>p]:my-0 [&>p]:inline'>
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>{focus.focus_text ?? ''}</ReactMarkdown>
+      </div>
       {focus.deadline !== null && (
         <span className='text-xs text-muted-foreground shrink-0'>
           · {formatDeadlineBrief(focus.deadline)}

@@ -7,6 +7,7 @@ import {
   type SortOrder,
 } from '@/features/issues';
 import { IssuesListTab } from '@/features/issues';
+import { FocusedTasksBlock } from '@/features/user-focus';
 import { getUserFocus } from '@/features/user-focus/api/focus';
 import { getCurrentUserId } from '@/shared/lib/getCurrentUserId';
 import { getOrganizationId } from '@/shared/lib/getOrganizationId';
@@ -18,6 +19,8 @@ const VALID_SORT_FIELDS = new Set<IssueSortField>([
   'name',
   'type',
   'status',
+  'priority',
+  'due_date',
   'updated_at',
   'created_at',
 ]);
@@ -106,11 +109,14 @@ export default async function IssuesListPage({
   });
 
   return (
-    <IssuesListTab
-      initialIssues={issues.data}
-      initialTotalCount={issues.totalCount}
-      persons={persons}
-      focus={focus}
-    />
+    <div className='flex flex-col gap-4'>
+      <FocusedTasksBlock focus={focus} />
+      <IssuesListTab
+        initialIssues={issues.data}
+        initialTotalCount={issues.totalCount}
+        persons={persons}
+        focus={focus}
+      />
+    </div>
   );
 }

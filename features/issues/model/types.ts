@@ -124,6 +124,8 @@ export type IssueSortField =
   | 'name'
   | 'type'
   | 'status'
+  | 'priority'
+  | 'due_date'
   | 'updated_at'
   | 'created_at';
 export type SortOrder = 'asc' | 'desc';
@@ -133,6 +135,8 @@ export const VALID_SORT_FIELDS = new Set<IssueSortField>([
   'name',
   'type',
   'status',
+  'priority',
+  'due_date',
   'updated_at',
   'created_at',
 ]);

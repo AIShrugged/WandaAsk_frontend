@@ -74,6 +74,45 @@ function formatIssueDate(value: string) {
 }
 
 /**
+ * formatIssueDueDate — returns a label and className for a due date cell.
+ * @param dueDate - ISO date string or null.
+ * @returns Object with label and className.
+ */
+function formatIssueDueDate(
+  dueDate: string | null,
+): { label: string; className: string } {
+  if (!dueDate) return { label: '—', className: 'text-muted-foreground' };
+
+  const today = new Date();
+
+  today.setHours(0, 0, 0, 0);
+
+  const due = new Date(dueDate);
+
+  due.setHours(0, 0, 0, 0);
+
+  const diffDays = Math.round(
+    (due.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
+  );
+  const dateLabel = due.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+  });
+
+  if (diffDays < 0)
+    return { label: `${dateLabel} · overdue`, className: 'text-destructive' };
+  if (diffDays === 0)
+    return { label: `${dateLabel} · today`, className: 'text-amber-500' };
+  if (diffDays === 1)
+    return { label: `${dateLabel} · 1 day left`, className: 'text-amber-500' };
+
+  return {
+    label: `${dateLabel} · ${diffDays} days left`,
+    className: 'text-muted-foreground',
+  };
+}
+
+/**
  *
  * @param issue
  */
@@ -447,12 +486,14 @@ export function IssuesPage({
       ) : (
         <div className='overflow-hidden border border-border bg-card'>
           <div className='overflow-x-auto'>
-            <table className='w-full min-w-[980px] table-fixed text-sm'>
+            <table className='w-full min-w-[1180px] table-fixed text-sm'>
               <colgroup>
                 <col className='w-[45px]' />
                 <col className='w-[200px]' />
                 <col className='w-[110px]' />
                 <col className='w-[120px]' />
+                <col className='w-[100px]' />
+                <col className='w-[140px]' />
                 <col className='w-[180px]' />
                 <col className='w-[240px]' />
                 <col className='w-[150px]' />
@@ -490,6 +531,24 @@ export function IssuesPage({
                     <SortableHeader
                       field='status'
                       label='Status'
+                      currentSort={sortField}
+                      currentOrder={sortOrder}
+                      onSort={handleSort}
+                    />
+                  </th>
+                  <th className='p-2'>
+                    <SortableHeader
+                      field='priority'
+                      label='Priority'
+                      currentSort={sortField}
+                      currentOrder={sortOrder}
+                      onSort={handleSort}
+                    />
+                  </th>
+                  <th className='p-2'>
+                    <SortableHeader
+                      field='due_date'
+                      label='Deadline'
                       currentSort={sortField}
                       currentOrder={sortOrder}
                       onSort={handleSort}
@@ -591,6 +650,34 @@ export function IssuesPage({
                             </button>
                           )}
                         </div>
+                      </td>
+                      <td className='p-2 align-top'>
+                        {issue.priority === 0 ? (
+                          <span className='text-xs text-muted-foreground'>
+                            —
+                          </span>
+                        ) : (
+                          <span
+                            className={`text-xs font-medium ${getPriorityLevel(issue.priority).color}`}
+                          >
+                            {getPriorityLevel(issue.priority).label}
+                          </span>
+                        )}
+                      </td>
+                      <td className='p-2 align-top'>
+                        {(() => {
+                          const { label, className } = formatIssueDueDate(
+                            issue.due_date,
+                          );
+
+                          return (
+                            <span
+                              className={`text-xs whitespace-nowrap ${className}`}
+                            >
+                              {label}
+                            </span>
+                          );
+                        })()}
                       </td>
                       <td className='p-2 align-top text-muted-foreground'>
                         {formatIssueScope(issue)}

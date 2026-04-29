@@ -7,12 +7,18 @@ const STATUS_STYLES: Record<string, string> = {
   in_progress: 'bg-blue-100 text-blue-700',
   done: 'bg-green-100 text-green-700',
   closed: 'bg-muted text-muted-foreground',
+  paused: 'bg-yellow-100 text-yellow-700',
+  review: 'bg-purple-100 text-purple-700',
+  reopen: 'bg-orange-100 text-orange-700',
 };
 const STATUS_LABELS: Record<string, string> = {
   open: 'Open',
   in_progress: 'In progress',
   done: 'Done',
   closed: 'Closed',
+  paused: 'Paused',
+  review: 'Review',
+  reopen: 'Reopened',
 };
 
 /**
@@ -69,9 +75,14 @@ export function TaskTable({ data }: { data: TaskTableArtifact['data'] }) {
               </span>
             </div>
             {task.description && (
-              <p className='text-xs text-muted-foreground leading-relaxed line-clamp-2'>
-                {task.description}
-              </p>
+              task.description.trimStart().startsWith('{') || task.description.trimStart().startsWith('[') ? (
+                <details className='text-xs text-muted-foreground'>
+                  <summary className='cursor-pointer'>Raw data</summary>
+                  <pre className='mt-1 text-xs overflow-auto max-h-32 whitespace-pre-wrap'>{task.description}</pre>
+                </details>
+              ) : (
+                <p className='text-xs text-muted-foreground leading-relaxed line-clamp-2'>{task.description}</p>
+              )
             )}
             <div className='flex items-center gap-3 mt-0.5 text-xs text-muted-foreground'>
               {task.assignee_name && <span>{task.assignee_name}</span>}

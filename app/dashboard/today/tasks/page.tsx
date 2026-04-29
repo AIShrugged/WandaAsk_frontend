@@ -7,7 +7,7 @@ import {
   getTodayBriefing,
   WaitingOnYou,
 } from '@/features/today-briefing';
-import { FocusBlock } from '@/features/user-focus';
+import { FocusBlock, FocusedTasksBlock } from '@/features/user-focus';
 import { getUserFocus } from '@/features/user-focus/api/focus';
 import Card from '@/shared/ui/card/Card';
 import CardBody from '@/shared/ui/card/CardBody';
@@ -29,6 +29,7 @@ export default async function TodayTasksPage({
       <PageHeader title='Tasks' />
       <div className='px-6 pt-4 flex flex-col gap-4'>
         <FocusBlock initialFocus={focus} readonly />
+        <FocusedTasksBlock focus={focus} />
         <TaskStatsBlock />
         <ClosedTasksBlock />
       </div>

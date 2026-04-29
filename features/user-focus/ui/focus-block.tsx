@@ -3,6 +3,8 @@
 import { differenceInCalendarDays, parseISO } from 'date-fns';
 import { CheckCircle, Pencil, Target, X } from 'lucide-react';
 import { useState, useTransition } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { toast } from 'sonner';
 
 import { clearUserFocus, setUserFocus } from '../api/focus';
@@ -42,7 +44,9 @@ function FocusHeader() {
 function FocusText({ focus }: { focus: UserFocus }) {
   return (
     <>
-      <p className='text-sm text-foreground'>{focus.focus_text}</p>
+      <div className='text-sm text-foreground prose prose-sm dark:prose-invert max-w-none [&>p]:my-0'>
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>{focus.focus_text ?? ''}</ReactMarkdown>
+      </div>
       {focus.deadline !== null && (
         <p className='text-xs text-muted-foreground mt-1'>
           {formatDeadline(focus.deadline)}
