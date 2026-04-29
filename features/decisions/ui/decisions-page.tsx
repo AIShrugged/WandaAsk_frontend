@@ -19,6 +19,28 @@ import type {
 
 const PAGE_SIZE = 20;
 
+function groupByDate(decisions: Decision[]): [string, Decision[]][] {
+  const map = new Map<string, Decision[]>();
+
+  for (const d of decisions) {
+    const iso = d.calendar_event?.starts_at ?? d.created_at;
+    const key = iso.slice(0, 10); // YYYY-MM-DD
+    const group = map.get(key) ?? [];
+    group.push(d);
+    map.set(key, group);
+  }
+
+  return [...map.entries()].toSorted(([a], [b]) => b.localeCompare(a));
+}
+
+function formatGroupLabel(dateKey: string): string {
+  return new Date(`${dateKey}T12:00:00`).toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
+}
+
 interface Props {
   teamId: number;
   sourceTypeFilter?: DecisionSourceType | null;
@@ -114,6 +136,8 @@ export function DecisionsPage({ teamId, sourceTypeFilter }: Props) {
     };
   }, [hasMore, isLoadingMore, loadMore]);
 
+  const grouped = groupByDate(decisions);
+
   return (
     <div className='flex flex-col gap-4'>
       {/* Toolbar */}
@@ -161,10 +185,21 @@ export function DecisionsPage({ teamId, sourceTypeFilter }: Props) {
         </p>
       )}
 
-      {!isLoading && decisions.length > 0 && (
-        <div className='flex flex-col gap-3'>
-          {decisions.map((d) => {
-            return <DecisionCard key={d.id} decision={d} />;
+      {!isLoading && grouped.length > 0 && (
+        <div className='flex flex-col gap-6'>
+          {grouped.map(([dateKey, items]) => {
+            return (
+              <section key={dateKey}>
+                <h3 className='text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3'>
+                  {formatGroupLabel(dateKey)}
+                </h3>
+                <div className='flex flex-col gap-3'>
+                  {items.map((d) => {
+                    return <DecisionCard key={d.id} decision={d} />;
+                  })}
+                </div>
+              </section>
+            );
           })}
           <div ref={sentinelRef} />
           {isLoadingMore && (
