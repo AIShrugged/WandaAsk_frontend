@@ -16,8 +16,8 @@ import type { CriticalPathGraph as CriticalPathGraphType, CriticalPathNode } fro
 
 const POLL_INTERVAL_MS = 3000;
 
-const BORDER_COLOR = 'hsl(240 15% 16%)';
-const BG_DARK = 'hsl(240 30% 5%)';
+const BORDER_COLOR = 'hsl(var(--border))';
+const BG_DARK = 'hsl(var(--background))';
 
 interface StatChipProps {
   label: string;
@@ -30,12 +30,12 @@ function StatChip({ label, value, highlight }: StatChipProps) {
     <div
       className='flex items-center gap-1.5 px-2.5 py-1 rounded-md border text-xs'
       style={{
-        background: 'hsl(240 25% 8%)',
-        borderColor: highlight === true ? 'rgba(255,112,67,0.25)' : BORDER_COLOR,
+        background: 'hsl(var(--muted))',
+        borderColor: highlight === true ? 'hsl(var(--destructive) / 0.25)' : BORDER_COLOR,
       }}
     >
       <span className='text-muted-foreground'>{label}:</span>
-      <strong style={{ color: highlight === true ? '#ff7043' : 'hsl(240 30% 90%)' }}>
+      <strong style={{ color: highlight === true ? 'hsl(var(--destructive))' : 'hsl(var(--foreground))' }}>
         {value}
       </strong>
     </div>
@@ -43,10 +43,10 @@ function StatChip({ label, value, highlight }: StatChipProps) {
 }
 
 function getNodeDotColor(node: CriticalPathNode): string {
-  if (node.is_critical) return '#ff7043';
-  if (node.status === 'done') return '#34d399';
-  if (node.status === 'in_progress') return '#60a5fa';
-  return '#4d5880';
+  if (node.is_critical) return 'hsl(var(--destructive))';
+  if (node.status === 'done') return 'hsl(var(--accent))';
+  if (node.status === 'in_progress') return 'hsl(var(--primary))';
+  return 'hsl(var(--muted-foreground))';
 }
 
 export function CriticalPathPageClient({
@@ -297,20 +297,20 @@ export function CriticalPathPageClient({
                   onClick={() => setSelectedNodeId(isActive ? null : node.node_id)}
                   className='flex w-full items-center gap-2 px-4 py-1.5 text-left transition-colors border-l-2'
                   style={{
-                    background: isActive ? 'rgba(255,112,67,0.06)' : 'transparent',
-                    borderLeftColor: isActive ? '#ff7043' : 'transparent',
+                    background: isActive ? 'hsl(var(--destructive) / 0.06)' : 'transparent',
+                    borderLeftColor: isActive ? 'hsl(var(--destructive))' : 'transparent',
                   }}
                 >
                   <span
                     className='w-1.5 h-1.5 rounded-full shrink-0'
                     style={{
                       background: dotColor,
-                      boxShadow: node.is_critical ? '0 0 6px rgba(255,112,67,0.6)' : undefined,
+                      boxShadow: node.is_critical ? '0 0 6px hsl(var(--destructive) / 0.6)' : undefined,
                     }}
                   />
                   <span
                     className='flex-1 min-w-0 truncate text-xs'
-                    style={{ color: isActive ? 'hsl(240 30% 90%)' : 'hsl(240 10% 68%)' }}
+                    style={{ color: isActive ? 'hsl(var(--foreground))' : 'hsl(var(--muted-foreground))' }}
                   >
                     {node.issue_name ?? `Issue #${node.issue_id}`}
                   </span>

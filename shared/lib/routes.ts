@@ -10,7 +10,6 @@ export const ROUTES = {
     TODAY_MEETINGS: '/dashboard/today/meetings',
     TODAY_TASKS: '/dashboard/today/tasks',
     TODAY_ACTIVITY: '/dashboard/today/activity',
-    TODAY_CRITICAL_PATH: '/dashboard/today/critical-path',
     MEETINGS: '/dashboard/meetings',
     TASKS: '/dashboard/tasks',
     CALENDAR: '/dashboard/calendar',

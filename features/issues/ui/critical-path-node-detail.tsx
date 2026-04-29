@@ -20,7 +20,7 @@ interface CriticalPathNodeDetailProps {
 }
 
 const VALID_STATUSES = new Set(['open', 'in_progress', 'paused', 'done', 'review', 'reopen']);
-const BORDER_COLOR = 'hsl(240 15% 16%)';
+const BORDER_COLOR = 'hsl(var(--border))';
 
 function isValidStatus(s: string | null): s is ExtendedIssueStatus {
   return VALID_STATUSES.has(s ?? '');
@@ -43,14 +43,14 @@ function CpmCell({
     <div
       className='rounded-lg p-2.5 border'
       style={{
-        background: 'hsl(240 25% 8%)',
-        borderColor: highlight ? 'rgba(255,112,67,0.3)' : BORDER_COLOR,
+        background: 'hsl(var(--muted))',
+        borderColor: highlight ? 'hsl(var(--destructive) / 0.3)' : BORDER_COLOR,
       }}
     >
       <p className='text-[10px] text-muted-foreground mb-0.5'>{label}</p>
       <p
         className='text-lg font-bold leading-none'
-        style={{ color: highlight ? '#ff7043' : 'hsl(240 30% 90%)' }}
+        style={{ color: highlight ? 'hsl(var(--destructive))' : 'hsl(var(--foreground))' }}
       >
         {value ?? '—'}
       </p>
@@ -73,15 +73,15 @@ function DepItem({
       className='flex items-center gap-2 w-full rounded-md px-2.5 py-1.5 text-left text-xs border transition-colors hover:bg-muted/30'
       style={{
         borderColor: node.is_critical
-          ? 'rgba(255,112,67,0.25)'
+          ? 'hsl(var(--destructive) / 0.25)'
           : BORDER_COLOR,
-        background: 'hsl(240 25% 8%)',
-        color: node.is_critical ? '#ff7043' : 'hsl(240 8% 64%)',
+        background: 'hsl(var(--muted))',
+        color: node.is_critical ? 'hsl(var(--destructive))' : 'hsl(var(--muted-foreground))',
       }}
     >
       <span
         className='w-1.5 h-1.5 rounded-full shrink-0'
-        style={{ background: node.is_critical ? '#ff7043' : '#4d5880' }}
+        style={{ background: node.is_critical ? 'hsl(var(--destructive))' : 'hsl(var(--muted-foreground))' }}
       />
       <span className='flex-1 truncate'>
         {node.issue_name ?? `Issue #${node.issue_id}`}
@@ -116,7 +116,7 @@ export function CriticalPathNodeDetail({
       className='flex flex-col border-l overflow-y-auto shrink-0'
       style={{
         width: 280,
-        background: 'hsl(240 30% 5%)',
+        background: 'hsl(var(--background))',
         borderColor: BORDER_COLOR,
       }}
     >
@@ -126,7 +126,7 @@ export function CriticalPathNodeDetail({
         style={{ borderColor: BORDER_COLOR }}
       >
         <div className='flex items-start justify-between gap-2'>
-          <p className='text-sm font-semibold leading-snug' style={{ color: 'hsl(240 30% 95%)' }}>
+          <p className='text-sm font-semibold leading-snug text-card-foreground'>
             {node.issue_name ?? `Issue #${node.issue_id}`}
           </p>
           <button
@@ -194,7 +194,7 @@ export function CriticalPathNodeDetail({
             <p className='text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5'>
               Due Date
             </p>
-            <p className='text-sm' style={{ color: 'hsl(240 30% 80%)' }}>
+            <p className='text-sm text-foreground'>
               {node.due_date}
             </p>
           </div>
