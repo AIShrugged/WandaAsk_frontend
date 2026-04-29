@@ -2,6 +2,14 @@
 // Meeting summary resource types
 // ------------------------------
 
+export interface RepeatedDiscussion {
+  new_decision: string;
+  previous_decision: string;
+  previous_date: string;
+  previous_meeting_title: string;
+  previous_participants: string[];
+}
+
 export interface MeetingSummary {
   id: number;
   calendar_event_id: number;
@@ -10,6 +18,7 @@ export interface MeetingSummary {
   summary: string;
   key_points: string[];
   decisions: string[];
+  repeated_discussions: RepeatedDiscussion[];
   created_at: string;
   updated_at: string;
 }
