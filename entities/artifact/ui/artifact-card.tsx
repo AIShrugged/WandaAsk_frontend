@@ -6,6 +6,7 @@ import {
   ClipboardList,
   FileCheck,
   FileText,
+  LayoutDashboard,
   Loader2,
   Users,
   Video,
@@ -19,6 +20,7 @@ import { InsightCard } from '@/entities/artifact/ui/insight-card';
 import { MeetingCard } from '@/entities/artifact/ui/meeting-card';
 import { MethodologyCriteria } from '@/entities/artifact/ui/methodology-criteria';
 import { PeopleList } from '@/entities/artifact/ui/people-list';
+import { TaskSummaryArtifactView } from '@/entities/artifact/ui/task-summary-artifact';
 import { TaskTable } from '@/entities/artifact/ui/task-table';
 import { TranscriptView } from '@/entities/artifact/ui/transcript-view';
 import { Skeleton } from '@/shared/ui/layout/skeleton';
@@ -32,6 +34,7 @@ import type {
   MeetingCardArtifact,
   MethodologyCriteriaArtifact,
   PeopleListArtifact,
+  TaskSummaryArtifact,
   TaskTableArtifact,
   TranscriptArtifact,
 } from '@/entities/artifact/model/types';
@@ -74,6 +77,24 @@ const TYPE_META: Record<
     label: 'Decisions',
     icon: <BookMarked className='w-3.5 h-3.5' />,
   },
+  task_summary: {
+    label: 'Task Progress',
+    icon: <LayoutDashboard className='w-3.5 h-3.5' />,
+  },
+};
+
+const ARTIFACT_RENDERERS: {
+  [K in ArtifactType]?: (artifact: Extract<Artifact, { type: K }>) => React.ReactNode;
+} = {
+  task_table:           (a: TaskTableArtifact)           => { return <TaskTable data={a.data} />; },
+  meeting_card:         (a: MeetingCardArtifact)         => { return <MeetingCard data={a.data} />; },
+  people_list:          (a: PeopleListArtifact)          => { return <PeopleList data={a.data} />; },
+  insight_card:         (a: InsightCardArtifact)         => { return <InsightCard data={a.data} />; },
+  chart:                (a: ChartArtifact)               => { return <ChartArtifactView data={a.data} />; },
+  transcript_view:      (a: TranscriptArtifact)          => { return <TranscriptView data={a.data} />; },
+  methodology_criteria: (a: MethodologyCriteriaArtifact) => { return <MethodologyCriteria data={a.data} />; },
+  decision_log:         (a: DecisionLogArtifact)         => { return <DecisionLog data={a.data} />; },
+  task_summary:         (a: TaskSummaryArtifact)         => { return <TaskSummaryArtifactView data={a.data} />; },
 };
 
 /**
@@ -83,44 +104,18 @@ const TYPE_META: Record<
  * @returns JSX element.
  */
 function ArtifactContent({ artifact }: { artifact: Artifact }) {
-  switch (artifact.type) {
-    case 'task_table': {
-      return <TaskTable data={(artifact as TaskTableArtifact).data} />;
-    }
-    case 'meeting_card': {
-      return <MeetingCard data={(artifact as MeetingCardArtifact).data} />;
-    }
-    case 'people_list': {
-      return <PeopleList data={(artifact as PeopleListArtifact).data} />;
-    }
-    case 'insight_card': {
-      return <InsightCard data={(artifact as InsightCardArtifact).data} />;
-    }
-    case 'chart': {
-      return <ChartArtifactView data={(artifact as ChartArtifact).data} />;
-    }
-    case 'transcript_view': {
-      return <TranscriptView data={(artifact as TranscriptArtifact).data} />;
-    }
-    case 'methodology_criteria': {
-      return (
-        <MethodologyCriteria
-          data={(artifact as MethodologyCriteriaArtifact).data}
-        />
-      );
-    }
-    case 'decision_log': {
-      return <DecisionLog data={(artifact as DecisionLogArtifact).data} />;
-    }
-    default: {
-      return (
-        <p className='text-xs text-muted-foreground py-4 text-center'>
-          Unknown artifact type:{' '}
-          {(artifact as Artifact & { type: string }).type}
-        </p>
-      );
-    }
+  const renderer = ARTIFACT_RENDERERS[artifact.type] as ((a: Artifact) => React.ReactNode) | undefined;
+
+  if (!renderer) {
+    return (
+      <p className='text-xs text-muted-foreground py-4 text-center'>
+        Unknown artifact type:{' '}
+        {(artifact as Artifact & { type: string }).type}
+      </p>
+    );
   }
+
+  return renderer(artifact);
 }
 
 /**

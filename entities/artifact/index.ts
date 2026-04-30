@@ -7,6 +7,7 @@ export { InsightCard } from '@/entities/artifact/ui/insight-card';
 export { MeetingCard } from '@/entities/artifact/ui/meeting-card';
 export { MethodologyCriteria } from '@/entities/artifact/ui/methodology-criteria';
 export { PeopleList } from '@/entities/artifact/ui/people-list';
+export { TaskSummaryArtifactView } from '@/entities/artifact/ui/task-summary-artifact';
 export { TaskTable } from '@/entities/artifact/ui/task-table';
 export { TranscriptView } from '@/entities/artifact/ui/transcript-view';
 
@@ -17,4 +18,5 @@ export type {
   ArtifactStatus,
   ArtifactType,
   ArtifactsResponse,
+  TaskSummaryArtifact,
 } from '@/entities/artifact/model/types';
