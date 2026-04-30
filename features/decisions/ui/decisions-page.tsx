@@ -5,33 +5,31 @@ import { useCallback, useEffect, useRef, useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
 import { getDecisions } from '@/features/decisions/api/decisions';
-import { getKeyPoints } from '@/features/decisions/api/key-points';
 import { AddDecisionModal } from '@/features/decisions/ui/add-decision-modal';
+import { DecisionDetailModal } from '@/features/decisions/ui/decision-detail-modal';
 import { DecisionsTable } from '@/features/decisions/ui/decisions-table';
-import { KeyPointsTable } from '@/features/decisions/ui/key-points-table';
 import { BUTTON_VARIANT } from '@/shared/types/button';
 import { Button } from '@/shared/ui/button/Button';
 import { Skeleton } from '@/shared/ui/layout/skeleton';
 
-import type { Decision, DecisionFilters, DecisionSourceType, MeetingKeyPoint } from '@/features/decisions/model/types';
+import type { Decision, DecisionFilters, DecisionSourceType } from '@/features/decisions/model/types';
 
 const PAGE_SIZE = 20;
 
-interface Props {
+export function DecisionsPage({
+  teamId,
+  sourceTypeFilter,
+}: {
   teamId: number;
   sourceTypeFilter?: DecisionSourceType | null;
-}
-
-export function DecisionsPage({ teamId, sourceTypeFilter }: Props) {
+}) {
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedDecision, setSelectedDecision] = useState<Decision | null>(null);
 
   const [decisions, setDecisions] = useState<Decision[]>([]);
   const [totalDecisions, setTotalDecisions] = useState(0);
-
-  const [keyPoints, setKeyPoints] = useState<MeetingKeyPoint[]>([]);
-  const [totalKeyPoints, setTotalKeyPoints] = useState(0);
 
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingMore, startLoadingMore] = useTransition();
@@ -45,14 +43,9 @@ export function DecisionsPage({ teamId, sourceTypeFilter }: Props) {
   const loadInitial = useCallback(async () => {
     setIsLoading(true);
     try {
-      const [decisionsResult, keyPointsResult] = await Promise.all([
-        getDecisions(teamId, filters, 0, PAGE_SIZE),
-        getKeyPoints(teamId, debouncedSearch || null, 0, PAGE_SIZE),
-      ]);
-      setDecisions(decisionsResult.data ?? []);
-      setTotalDecisions(decisionsResult.totalCount);
-      setKeyPoints(keyPointsResult.data ?? []);
-      setTotalKeyPoints(keyPointsResult.totalCount);
+      const result = await getDecisions(teamId, filters, 0, PAGE_SIZE);
+      setDecisions(result.data ?? []);
+      setTotalDecisions(result.totalCount);
     } catch {
       toast.error('Failed to load data');
     } finally {
@@ -122,7 +115,7 @@ export function DecisionsPage({ teamId, sourceTypeFilter }: Props) {
     };
   }, [hasMoreDecisions, isLoadingMore, loadMore]);
 
-  const isEmpty = decisions.length === 0 && keyPoints.length === 0;
+  const isEmpty = decisions.length === 0;
 
   return (
     <div className='flex flex-col gap-6'>
@@ -132,7 +125,7 @@ export function DecisionsPage({ teamId, sourceTypeFilter }: Props) {
           <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground pointer-events-none' />
           <input
             type='text'
-            placeholder='Search decisions and key points…'
+            placeholder='Search decisions…'
             value={search}
             onChange={(e) => {
               return setSearch(e.target.value);
@@ -168,19 +161,8 @@ export function DecisionsPage({ teamId, sourceTypeFilter }: Props) {
         <p className='text-muted-foreground text-sm text-center py-16'>
           {debouncedSearch
             ? `Nothing found for "${debouncedSearch}"`
-            : 'No decisions or key points yet.'}
+            : 'No decisions yet.'}
         </p>
-      )}
-
-      {/* Key Points section */}
-      {!isLoading && keyPoints.length > 0 && (
-        <section className='flex flex-col gap-3'>
-          <div className='flex items-center justify-between'>
-            <h3 className='text-sm font-semibold text-foreground'>Key Points</h3>
-            <span className='text-xs text-muted-foreground'>{totalKeyPoints} total</span>
-          </div>
-          <KeyPointsTable keyPoints={keyPoints} />
-        </section>
       )}
 
       {/* Decisions section */}
@@ -190,7 +172,7 @@ export function DecisionsPage({ teamId, sourceTypeFilter }: Props) {
             <h3 className='text-sm font-semibold text-foreground'>Decisions</h3>
             <span className='text-xs text-muted-foreground'>{totalDecisions} total</span>
           </div>
-          <DecisionsTable decisions={decisions} />
+          <DecisionsTable decisions={decisions} onRowClick={setSelectedDecision} />
           <div ref={sentinelRef} />
           {isLoadingMore && (
             <div className='flex justify-center py-4'>
@@ -208,6 +190,13 @@ export function DecisionsPage({ teamId, sourceTypeFilter }: Props) {
         }}
         onCreated={() => {
           return void loadInitial();
+        }}
+      />
+
+      <DecisionDetailModal
+        decision={selectedDecision}
+        onClose={() => {
+          return setSelectedDecision(null);
         }}
       />
     </div>

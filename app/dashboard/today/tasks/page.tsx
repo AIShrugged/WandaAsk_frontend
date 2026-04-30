@@ -25,10 +25,12 @@ export default async function TodayTasksPage({
   ]);
 
   return (
-    <Card className='h-full flex flex-col'>
+    <Card className='flex flex-col'>
       <PageHeader title='Tasks' />
       <div className='px-6 pt-4 flex flex-col gap-4'>
+        {/*
         <FocusBlock initialFocus={focus} readonly />
+*/}
         <FocusedTasksBlock focus={focus} />
         <TaskStatsBlock />
         <ClosedTasksBlock />
