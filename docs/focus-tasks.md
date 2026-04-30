@@ -14,7 +14,7 @@
 | Поле | Значение |
 |------|----------|
 | `context_type` | `user_focus` (enum `InsightContextType::USER_FOCUS`) |
-| `content` | JSON: `{ focus_text: string, deadline: string\|null }` |
+| `content` | JSON: `{ focus_text: string, deadline: string\|null, issue_ids: number[]\|null }` |
 | `expires_at` | Дедлайн + конец дня, или +14 дней если дедлайн не задан |
 | `profile_id` | Профиль пользователя |
 
@@ -37,15 +37,15 @@
 
 ## Как подбираются фокусные задачи
 
-`FocusedIssuesController` (и `GetFocusedIssuesTool` для агента):
+`FocusedIssuesController` (и `GetFocusedIssuesTool` для агента) — три уровня fallback:
 
-1. Загружает активный фокус через `UserFocusService::getFocus($profile)`.
-2. Если фокус есть — ищет задачи через PostgreSQL full-text:
+1. **Explicit ids** — если при сохранении фокуса переданы `issue_ids`, загружаются именно эти задачи в том порядке, что задал пользователь. Фильтр: `status NOT IN ('done', 'closed', 'cancelled')`, только задачи юзера. IDs невалидных/чужих задач отбрасываются (`UserFocusService::validateIssueIds`).
+2. **Full-text search** — если `issue_ids` нет (тематический фокус), ищет через PostgreSQL:
    ```sql
    to_tsvector('russian', name || ' ' || description) @@ plainto_tsquery('russian', $focusText)
    ```
-   Фильтр: `status NOT IN ('done')`, `assignee_id = $userId OR user_id = $userId`, лимит 10.
-3. Если совпадений нет — fallback: задачи с `priority >= 500` (CRITICAL), лимит 5.
+   Фильтр: `status NOT IN ('done', 'closed', 'cancelled')`, `assignee_id = $userId OR user_id = $userId`, лимит 10.
+3. **Critical fallback** — если FTS ничего не нашло: задачи с `priority >= 500` (CRITICAL), лимит 5.
 4. Если фокус не задан — возвращает `meta.has_focus: false`, данные пустые.
 
 ---
@@ -94,12 +94,28 @@
 
 ## Как работает в AI-чате (агент)
 
-### Установка фокуса
+### Подкейс: без даты/спринта/синка
+
+Пользователь просит список задач или рекомендацию без контекста:
+
+- "Покажи мои активные задачи" → агент вызывает `get_open_issues` (`assignee_id` из сессии, `statuses=open,in_progress`). Возвращает `days_since_update` — агент видит залежавшиеся задачи.
+- "На чём мне сфокусироваться?" → `build_daily_plan(scope=personal)` — задачи отсортированы по `priority DESC`, `due_date ASC`, включают `blocked_by`/`blocking`. Агент сам формулирует «Сегодня: … / Остальное: …».
+
+### Подкейс: с датой / спринтом / синком
+
+- "Задачи по итогам планирования в пятницу" → `get_tasks(calendar_event_id=<id>)` — задачи привязаны к конкретной встрече (`sourceable_id`).
+- "Что нужно закрыть на этой неделе" → `get_tasks(due_before="2026-05-04")`.
+- "Задачи команды на спринт" → `build_daily_plan(scope=team, team_id=<id>)`.
+
+### Подкейс: установка и корректировка фокуса
+
 Агент вызывает `set_user_focus` когда пользователь явно говорит о своём приоритете:
 - "Фокусируюсь на v2.0 до 25 апреля" → `set_user_focus(focus_text="v2.0", deadline="2026-04-25")`
-- "Нет, фокус изменился" → `set_user_focus(source="confirmed")` — перезаписывает
+- "Мои приоритеты — задачи #142, #156, #203" → `set_user_focus(focus_text="...", issue_ids=[142, 156, 203])` — сохраняет конкретные задачи в нужном порядке
+- "Нет, фокус изменился" → повторный `set_user_focus` — это **upsert**, поле `action` в ответе `"updated"` vs `"created"`
 - Даты из русского текста конвертируются в `YYYY-MM-DD` перед вызовом
 - Спринт без даты — сохраняется без дедлайна, агент предлагает добавить
+- "Сброси мой фокус" → `clear_user_focus` — удаляет запись и инвалидирует кеш памяти
 
 ### Запрос фокусных задач
 Когда пользователь спрашивает "мои фокусные задачи":
@@ -112,8 +128,11 @@
 ### Инструменты агента
 | Tool | Когда |
 |------|-------|
-| `set_user_focus` | Пользователь явно называет приоритет |
-| `get_focused_issues` | Запрос фокусных задач |
+| `get_open_issues` | Список активных задач без фокуса; фильтры по команде, исполнителю, stale_days |
+| `build_daily_plan` | Рекомендация/дневной план; `scope=personal` или `scope=team` |
+| `get_tasks` | Задачи по встрече (`calendar_event_id`) или диапазону дат (`due_before/after`) |
+| `set_user_focus` | Пользователь явно называет приоритет; upsert, поддерживает `issue_ids[]` |
+| `get_focused_issues` | Запрос фокусных задач (3-уровневый fallback) |
 | `get_user_focus` | Только при вопросе о TTL/дедлайне фокуса |
 | `clear_user_focus` | Явный запрос на удаление фокуса |
 
