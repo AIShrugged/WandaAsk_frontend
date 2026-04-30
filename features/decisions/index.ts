@@ -3,6 +3,7 @@ export type {
   DecisionCreateDTO,
   DecisionFilters,
   DecisionSourceType,
+  MeetingKeyPoint,
 } from './model/types';
 export { decisionCreateSchema } from './model/schemas';
 export type { DecisionCreateFormData } from './model/schemas';

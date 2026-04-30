@@ -5,41 +5,17 @@ import { useCallback, useEffect, useRef, useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
 import { getDecisions } from '@/features/decisions/api/decisions';
+import { getKeyPoints } from '@/features/decisions/api/key-points';
 import { AddDecisionModal } from '@/features/decisions/ui/add-decision-modal';
-import { DecisionCard } from '@/features/decisions/ui/decision-card';
+import { DecisionsTable } from '@/features/decisions/ui/decisions-table';
+import { KeyPointsTable } from '@/features/decisions/ui/key-points-table';
 import { BUTTON_VARIANT } from '@/shared/types/button';
 import { Button } from '@/shared/ui/button/Button';
 import { Skeleton } from '@/shared/ui/layout/skeleton';
 
-import type {
-  Decision,
-  DecisionFilters,
-  DecisionSourceType,
-} from '@/features/decisions/model/types';
+import type { Decision, DecisionFilters, DecisionSourceType, MeetingKeyPoint } from '@/features/decisions/model/types';
 
 const PAGE_SIZE = 20;
-
-function groupByDate(decisions: Decision[]): [string, Decision[]][] {
-  const map = new Map<string, Decision[]>();
-
-  for (const d of decisions) {
-    const iso = d.calendar_event?.starts_at ?? d.created_at;
-    const key = iso.slice(0, 10); // YYYY-MM-DD
-    const group = map.get(key) ?? [];
-    group.push(d);
-    map.set(key, group);
-  }
-
-  return [...map.entries()].toSorted(([a], [b]) => b.localeCompare(a));
-}
-
-function formatGroupLabel(dateKey: string): string {
-  return new Date(`${dateKey}T12:00:00`).toLocaleDateString('en-GB', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  });
-}
 
 interface Props {
   teamId: number;
@@ -50,8 +26,13 @@ export function DecisionsPage({ teamId, sourceTypeFilter }: Props) {
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   const [decisions, setDecisions] = useState<Decision[]>([]);
-  const [totalCount, setTotalCount] = useState(0);
+  const [totalDecisions, setTotalDecisions] = useState(0);
+
+  const [keyPoints, setKeyPoints] = useState<MeetingKeyPoint[]>([]);
+  const [totalKeyPoints, setTotalKeyPoints] = useState(0);
+
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingMore, startLoadingMore] = useTransition();
   const sentinelRef = useRef<HTMLDivElement>(null);
@@ -64,11 +45,16 @@ export function DecisionsPage({ teamId, sourceTypeFilter }: Props) {
   const loadInitial = useCallback(async () => {
     setIsLoading(true);
     try {
-      const result = await getDecisions(teamId, filters, 0, PAGE_SIZE);
-      setDecisions(result.data ?? []);
-      setTotalCount(result.totalCount);
+      const [decisionsResult, keyPointsResult] = await Promise.all([
+        getDecisions(teamId, filters, 0, PAGE_SIZE),
+        getKeyPoints(teamId, debouncedSearch || null, 0, PAGE_SIZE),
+      ]);
+      setDecisions(decisionsResult.data ?? []);
+      setTotalDecisions(decisionsResult.totalCount);
+      setKeyPoints(keyPointsResult.data ?? []);
+      setTotalKeyPoints(keyPointsResult.totalCount);
     } catch {
-      toast.error('Failed to load decisions');
+      toast.error('Failed to load data');
     } finally {
       setIsLoading(false);
     }
@@ -87,10 +73,10 @@ export function DecisionsPage({ teamId, sourceTypeFilter }: Props) {
     };
   }, [search]);
 
-  const hasMore = decisions.length < totalCount;
+  const hasMoreDecisions = decisions.length < totalDecisions;
 
   const loadMore = useCallback(() => {
-    if (!hasMore || isLoadingMore) return;
+    if (!hasMoreDecisions || isLoadingMore) return;
 
     startLoadingMore(async () => {
       try {
@@ -110,7 +96,7 @@ export function DecisionsPage({ teamId, sourceTypeFilter }: Props) {
   }, [
     teamId,
     decisions.length,
-    hasMore,
+    hasMoreDecisions,
     isLoadingMore,
     debouncedSearch,
     sourceTypeFilter,
@@ -122,7 +108,7 @@ export function DecisionsPage({ teamId, sourceTypeFilter }: Props) {
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && hasMore && !isLoadingMore) {
+        if (entry.isIntersecting && hasMoreDecisions && !isLoadingMore) {
           loadMore();
         }
       },
@@ -134,19 +120,19 @@ export function DecisionsPage({ teamId, sourceTypeFilter }: Props) {
     return () => {
       return observer.disconnect();
     };
-  }, [hasMore, isLoadingMore, loadMore]);
+  }, [hasMoreDecisions, isLoadingMore, loadMore]);
 
-  const grouped = groupByDate(decisions);
+  const isEmpty = decisions.length === 0 && keyPoints.length === 0;
 
   return (
-    <div className='flex flex-col gap-4'>
+    <div className='flex flex-col gap-6'>
       {/* Toolbar */}
       <div className='flex items-center gap-3 flex-wrap'>
         <div className='relative flex-1 min-w-48'>
           <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground pointer-events-none' />
           <input
             type='text'
-            placeholder='Search decisions…'
+            placeholder='Search decisions and key points…'
             value={search}
             onChange={(e) => {
               return setSearch(e.target.value);
@@ -166,54 +152,52 @@ export function DecisionsPage({ teamId, sourceTypeFilter }: Props) {
         </Button>
       </div>
 
-      {/* Content */}
+      {/* Loading state */}
       {isLoading && (
         <div className='flex flex-col gap-3'>
-          {Array.from({ length: 5 }).map((_, i) => {
+          {Array.from({ length: 6 }).map((_, i) => {
             return (
-              <Skeleton key={i} className='h-24 rounded-[var(--radius-card)]' />
+              <Skeleton key={i} className='h-10 rounded-[var(--radius-card)]' />
             );
           })}
         </div>
       )}
 
-      {!isLoading && decisions.length === 0 && (
+      {/* Empty state */}
+      {!isLoading && isEmpty && (
         <p className='text-muted-foreground text-sm text-center py-16'>
           {debouncedSearch
-            ? `No decisions found for "${debouncedSearch}"`
-            : 'No decisions yet. Add the first one!'}
+            ? `Nothing found for "${debouncedSearch}"`
+            : 'No decisions or key points yet.'}
         </p>
       )}
 
-      {!isLoading && grouped.length > 0 && (
-        <div className='flex flex-col gap-6'>
-          {grouped.map(([dateKey, items]) => {
-            return (
-              <section key={dateKey}>
-                <h3 className='text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3'>
-                  {formatGroupLabel(dateKey)}
-                </h3>
-                <div className='flex flex-col gap-3'>
-                  {items.map((d) => {
-                    return <DecisionCard key={d.id} decision={d} />;
-                  })}
-                </div>
-              </section>
-            );
-          })}
+      {/* Key Points section */}
+      {!isLoading && keyPoints.length > 0 && (
+        <section className='flex flex-col gap-3'>
+          <div className='flex items-center justify-between'>
+            <h3 className='text-sm font-semibold text-foreground'>Key Points</h3>
+            <span className='text-xs text-muted-foreground'>{totalKeyPoints} total</span>
+          </div>
+          <KeyPointsTable keyPoints={keyPoints} />
+        </section>
+      )}
+
+      {/* Decisions section */}
+      {!isLoading && decisions.length > 0 && (
+        <section className='flex flex-col gap-3'>
+          <div className='flex items-center justify-between'>
+            <h3 className='text-sm font-semibold text-foreground'>Decisions</h3>
+            <span className='text-xs text-muted-foreground'>{totalDecisions} total</span>
+          </div>
+          <DecisionsTable decisions={decisions} />
           <div ref={sentinelRef} />
           {isLoadingMore && (
             <div className='flex justify-center py-4'>
               <Skeleton className='h-8 w-32 rounded' />
             </div>
           )}
-          {!hasMore && decisions.length > 0 && (
-            <p className='text-center text-xs text-muted-foreground py-2'>
-              {decisions.length} decision{decisions.length === 1 ? '' : 's'}{' '}
-              total
-            </p>
-          )}
-        </div>
+        </section>
       )}
 
       <AddDecisionModal

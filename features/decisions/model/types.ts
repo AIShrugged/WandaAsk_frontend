@@ -34,3 +34,18 @@ export interface DecisionFilters {
   source_type?: DecisionSourceType | null;
   search?: string | null;
 }
+
+export interface MeetingKeyPoint {
+  id: number;
+  text: string;
+  position: number;
+  team_id: number | null;
+  organization_id: number | null;
+  calendar_event: {
+    id: number;
+    title: string;
+    starts_at: string;
+  } | null;
+  created_at: string;
+  updated_at: string;
+}
