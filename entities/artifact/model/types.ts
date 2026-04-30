@@ -12,7 +12,8 @@ export type ArtifactType =
   | 'chart'
   | 'transcript_view'
   | 'methodology_criteria'
-  | 'decision_log';
+  | 'decision_log'
+  | 'task_summary';
 
 interface ArtifactBase {
   id: string;
@@ -139,6 +140,19 @@ export interface DecisionLogArtifact extends ArtifactBase {
   };
 }
 
+export interface TaskSummaryArtifact extends ArtifactBase {
+  type: 'task_summary';
+  data: {
+    total: number;
+    in_progress: number;
+    completed: number;
+    overdue: number;
+    delta_week: number;
+    delta_today: number | null;
+    period_label: string | null;
+  };
+}
+
 export type Artifact =
   | TaskTableArtifact
   | MeetingCardArtifact
@@ -147,7 +161,8 @@ export type Artifact =
   | ChartArtifact
   | TranscriptArtifact
   | MethodologyCriteriaArtifact
-  | DecisionLogArtifact;
+  | DecisionLogArtifact
+  | TaskSummaryArtifact;
 
 export interface ArtifactsResponse {
   artifacts: Record<string, Artifact>;
