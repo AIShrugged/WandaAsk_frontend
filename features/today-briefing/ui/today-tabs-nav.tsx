@@ -19,6 +19,11 @@ const TABS = [
     label: 'Activity',
     match: 'exact' as const,
   },
+  {
+    href: ROUTES.DASHBOARD.TODAY_PROGRESS,
+    label: 'Progress',
+    match: 'exact' as const,
+  },
 ] as const;
 
 /**
