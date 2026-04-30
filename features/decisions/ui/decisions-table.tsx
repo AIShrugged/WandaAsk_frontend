@@ -12,19 +12,18 @@ function formatDate(iso: string): string {
   });
 }
 
-interface Props {
+export function DecisionsTable({
+  decisions,
+  onRowClick,
+}: {
   decisions: Decision[];
-}
-
-export function DecisionsTable({ decisions }: Props) {
+  onRowClick: (decision: Decision) => void;
+}) {
   return (
     <div className='overflow-x-auto rounded-[var(--radius-card)] border border-border'>
       <table className='w-full text-sm border-collapse'>
         <thead>
           <tr className='border-b border-border bg-muted/20'>
-            <th className='px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground'>
-              Key Point
-            </th>
             <th className='px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground'>
               Decision
             </th>
@@ -47,7 +46,10 @@ export function DecisionsTable({ decisions }: Props) {
             return (
               <tr
                 key={decision.id}
-                className='border-b border-border/50 hover:bg-muted/30 transition-colors last:border-b-0'
+                onClick={() => {
+                  return onRowClick(decision);
+                }}
+                className='border-b border-border/50 hover:bg-muted/30 transition-colors last:border-b-0 cursor-pointer'
               >
                 <td className='px-4 py-3 align-top'>
                   {decision.topic ? (
@@ -57,12 +59,6 @@ export function DecisionsTable({ decisions }: Props) {
                   ) : (
                     <span className='text-muted-foreground/40'>—</span>
                   )}
-                </td>
-
-                <td className='px-4 py-3 align-top max-w-xs'>
-                  <p className='text-foreground leading-relaxed line-clamp-2'>
-                    {decision.text}
-                  </p>
                 </td>
 
                 <td className='px-4 py-3 align-top'>
