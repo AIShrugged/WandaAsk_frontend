@@ -56,7 +56,9 @@ export function DecisionDetailModal({
         </Section>
 
         <Section label='Date'>
-          <span className='text-sm text-muted-foreground'>{formatDate(dateIso)}</span>
+          <span className='text-sm text-muted-foreground'>
+            {formatDate(dateIso)}
+          </span>
         </Section>
 
         <Section label='Source'>

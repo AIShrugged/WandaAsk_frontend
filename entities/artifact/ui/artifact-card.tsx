@@ -84,17 +84,37 @@ const TYPE_META: Record<
 };
 
 const ARTIFACT_RENDERERS: {
-  [K in ArtifactType]?: (artifact: Extract<Artifact, { type: K }>) => React.ReactNode;
+  [K in ArtifactType]?: (
+    artifact: Extract<Artifact, { type: K }>,
+  ) => React.ReactNode;
 } = {
-  task_table:           (a: TaskTableArtifact)           => { return <TaskTable data={a.data} />; },
-  meeting_card:         (a: MeetingCardArtifact)         => { return <MeetingCard data={a.data} />; },
-  people_list:          (a: PeopleListArtifact)          => { return <PeopleList data={a.data} />; },
-  insight_card:         (a: InsightCardArtifact)         => { return <InsightCard data={a.data} />; },
-  chart:                (a: ChartArtifact)               => { return <ChartArtifactView data={a.data} />; },
-  transcript_view:      (a: TranscriptArtifact)          => { return <TranscriptView data={a.data} />; },
-  methodology_criteria: (a: MethodologyCriteriaArtifact) => { return <MethodologyCriteria data={a.data} />; },
-  decision_log:         (a: DecisionLogArtifact)         => { return <DecisionLog data={a.data} />; },
-  task_summary:         (a: TaskSummaryArtifact)         => { return <TaskSummaryArtifactView data={a.data} />; },
+  task_table: (a: TaskTableArtifact) => {
+    return <TaskTable data={a.data} />;
+  },
+  meeting_card: (a: MeetingCardArtifact) => {
+    return <MeetingCard data={a.data} />;
+  },
+  people_list: (a: PeopleListArtifact) => {
+    return <PeopleList data={a.data} />;
+  },
+  insight_card: (a: InsightCardArtifact) => {
+    return <InsightCard data={a.data} />;
+  },
+  chart: (a: ChartArtifact) => {
+    return <ChartArtifactView data={a.data} />;
+  },
+  transcript_view: (a: TranscriptArtifact) => {
+    return <TranscriptView data={a.data} />;
+  },
+  methodology_criteria: (a: MethodologyCriteriaArtifact) => {
+    return <MethodologyCriteria data={a.data} />;
+  },
+  decision_log: (a: DecisionLogArtifact) => {
+    return <DecisionLog data={a.data} />;
+  },
+  task_summary: (a: TaskSummaryArtifact) => {
+    return <TaskSummaryArtifactView data={a.data} />;
+  },
 };
 
 /**
@@ -104,13 +124,14 @@ const ARTIFACT_RENDERERS: {
  * @returns JSX element.
  */
 function ArtifactContent({ artifact }: { artifact: Artifact }) {
-  const renderer = ARTIFACT_RENDERERS[artifact.type] as ((a: Artifact) => React.ReactNode) | undefined;
+  const renderer = ARTIFACT_RENDERERS[artifact.type] as
+    | ((a: Artifact) => React.ReactNode)
+    | undefined;
 
   if (!renderer) {
     return (
       <p className='text-xs text-muted-foreground py-4 text-center'>
-        Unknown artifact type:{' '}
-        {(artifact as Artifact & { type: string }).type}
+        Unknown artifact type: {(artifact as Artifact & { type: string }).type}
       </p>
     );
   }

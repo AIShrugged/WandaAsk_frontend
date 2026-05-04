@@ -2,9 +2,10 @@
 
 ## Overview
 
-The Issues Progress feature provides users with a live view of their task dynamics —
-closed counts, current status, week-over-week comparison, and deterministic agent
-feedback — all derived from a single backend endpoint with no extra API calls.
+The Issues Progress feature provides users with a live view of their task
+dynamics — closed counts, current status, week-over-week comparison, and
+deterministic agent feedback — all derived from a single backend endpoint with
+no extra API calls.
 
 Available at: `/dashboard/issues/progress`
 
@@ -16,9 +17,9 @@ Available at: `/dashboard/issues/progress`
 
 **File:** `app/dashboard/issues/(progress)/progress/page.tsx`
 
-Server Component. Fetches `getIssueStats()` and `getIssueStatsHistory(period)` in
-parallel on every request. Accepts a `?period=day|week|month` query param (defaults
-to `week`) that controls the time-series chart granularity.
+Server Component. Fetches `getIssueStats()` and `getIssueStatsHistory(period)`
+in parallel on every request. Accepts a `?period=day|week|month` query param
+(defaults to `week`) that controls the time-series chart granularity.
 
 ```
 Layout (IssuesTabsNav + Card)
@@ -39,12 +40,12 @@ Layout (IssuesTabsNav + Card)
 
 Shows four stat cards in a `2-col / 4-col` grid:
 
-| Card | Value | Delta |
-|------|-------|-------|
-| Closed Today | `closed_today` | vs yesterday (`delta_today`) |
-| Closed This Week | `closed_this_week` | vs last week (`delta_week`) |
+| Card              | Value               | Delta                         |
+| ----------------- | ------------------- | ----------------------------- |
+| Closed Today      | `closed_today`      | vs yesterday (`delta_today`)  |
+| Closed This Week  | `closed_this_week`  | vs last week (`delta_week`)   |
 | Closed This Month | `closed_this_month` | vs last month (`delta_month`) |
-| All Time | `closed_all_time` | — |
+| All Time          | `closed_all_time`   | —                             |
 
 Deltas use the shared `DeltaBadge` component (green = positive, red = negative).
 
@@ -63,7 +64,7 @@ Client Component. Recharts `BarChart` rendering closed-issue counts over time.
 
 ---
 
-### `IssueWeeklySummary` *(new)*
+### `IssueWeeklySummary` _(new)_
 
 **File:** `features/issues/ui/issue-weekly-summary.tsx`
 
@@ -73,32 +74,35 @@ Server-compatible (no `'use client'`). Two panels:
 
 Row-based list showing the live snapshot of task counts with yesterday deltas:
 
-| Metric | Polarity |
-|--------|----------|
-| Total | neutral (always 0 delta shown) |
+| Metric      | Polarity                            |
+| ----------- | ----------------------------------- |
+| Total       | neutral (always 0 delta shown)      |
 | In Progress | positive-good (`delta.in_progress`) |
-| Completed | positive-good (`delta.completed`) |
-| Overdue | negative-good (`delta.overdue`) |
+| Completed   | positive-good (`delta.completed`)   |
+| Overdue     | negative-good (`delta.overdue`)     |
 
-Trend arrows (TrendingUp / TrendingDown) are colored green/red based on polarity.
+Trend arrows (TrendingUp / TrendingDown) are colored green/red based on
+polarity.
 
 #### Performance Feedback
 
 Generates 1–3 deterministic feedback bullets from the stats — no LLM call, no
 extra fetch. Three feedback sources, each producing at most one bullet:
 
-1. **Overdue trend** (`overdueFeedback`) — only fires when `overdue > 0`; reports
-   whether overdue count rose, fell, or held since yesterday
-2. **Weekly closed delta** (`weeklyClosedFeedback`) — compares `closed_this_week`
-   with the previous week via `delta_week`; reports momentum or drop
+1. **Overdue trend** (`overdueFeedback`) — only fires when `overdue > 0`;
+   reports whether overdue count rose, fell, or held since yesterday
+2. **Weekly closed delta** (`weeklyClosedFeedback`) — compares
+   `closed_this_week` with the previous week via `delta_week`; reports momentum
+   or drop
 3. **WIP overload** — fires when `in_progress > 8`, recommends limiting
    work-in-progress
 
-Falls back to "All metrics look stable" when none of the above conditions trigger.
+Falls back to "All metrics look stable" when none of the above conditions
+trigger.
 
 ---
 
-### `TaskStatsBlock` *(updated)*
+### `TaskStatsBlock` _(updated)_
 
 **File:** `features/today-briefing/ui/task-stats-block.tsx`
 
@@ -120,10 +124,10 @@ GET /api/v1/issues/stats
 ```
 
 Returns `IssueStats` — a snapshot including counts (`total`, `in_progress`,
-`completed`, `overdue`, `open`, `paused`), closed counts
-(`closed_today`, `closed_this_week`, `closed_this_month`, `closed_all_time`),
-top-level period deltas (`delta_today`, `delta_week`, `delta_month`), and a nested
-`delta` object with yesterday-vs-today deltas per status.
+`completed`, `overdue`, `open`, `paused`), closed counts (`closed_today`,
+`closed_this_week`, `closed_this_month`, `closed_all_time`), top-level period
+deltas (`delta_today`, `delta_week`, `delta_month`), and a nested `delta` object
+with yesterday-vs-today deltas per status.
 
 Scoped to the authenticated user's visible issues via the backend `visibleTo()`
 scope (respects org + team membership).
@@ -137,7 +141,8 @@ GET /api/v1/issues/stats/history?period=week&range=12
 ```
 
 Returns `IssueStatsHistory` — a time-series of `{ date, closed }` items, with
-zero-filled gaps, sorted oldest → newest. Default range: 30 (day), 12 (week/month).
+zero-filled gaps, sorted oldest → newest. Default range: 30 (day), 12
+(week/month).
 
 ---
 
@@ -157,13 +162,13 @@ interface IssueStats {
   closed_this_week: number;
   closed_this_month: number;
   closed_all_time: number;
-  delta_today: number;   // closed today vs yesterday
-  delta_week: number;    // closed this week vs last week
-  delta_month: number;   // closed this month vs last month
+  delta_today: number; // closed today vs yesterday
+  delta_week: number; // closed this week vs last week
+  delta_month: number; // closed this month vs last month
   delta: {
     in_progress: number; // vs yesterday
-    completed: number;   // vs yesterday
-    overdue: number;     // vs yesterday
+    completed: number; // vs yesterday
+    overdue: number; // vs yesterday
   };
 }
 
@@ -180,17 +185,17 @@ All types match the backend `IssueStatsDTO.toArray()` field names exactly.
 
 ## Backend
 
-| Layer | File |
-|-------|------|
-| Routes | `routes/api.php` — `GET issues/stats`, `GET issues/stats/history` |
-| Controller | `app/Http/Controllers/API/v1/IssueStatsController.php` |
-| Service | `app/Services/IssueStatsService.php` |
-| DTO | `app/Domain/DTO/Issue/IssueStatsDTO.php` |
-| DTO | `app/Domain/DTO/Issue/IssueStatsHistoryDTO.php` |
+| Layer      | File                                                              |
+| ---------- | ----------------------------------------------------------------- |
+| Routes     | `routes/api.php` — `GET issues/stats`, `GET issues/stats/history` |
+| Controller | `app/Http/Controllers/API/v1/IssueStatsController.php`            |
+| Service    | `app/Services/IssueStatsService.php`                              |
+| DTO        | `app/Domain/DTO/Issue/IssueStatsDTO.php`                          |
+| DTO        | `app/Domain/DTO/Issue/IssueStatsHistoryDTO.php`                   |
 
-The service uses a single SQL query with conditional aggregations (`FILTER` clause)
-for the snapshot and `DATE_TRUNC` grouping for the time-series.
-History gaps (periods with zero closed tasks) are filled in PHP before returning.
+The service uses a single SQL query with conditional aggregations (`FILTER`
+clause) for the snapshot and `DATE_TRUNC` grouping for the time-series. History
+gaps (periods with zero closed tasks) are filled in PHP before returning.
 
 ---
 
