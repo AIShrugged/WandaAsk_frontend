@@ -77,9 +77,10 @@ export function PopupProvider({ children }: PropsWithChildren) {
         top = offset;
       }
 
-      if (top + 300 > viewportHeight) {
-        // Assume max height 300
-        top = viewportHeight - 300 - offset;
+      const maxH = cfg.maxHeight ?? 300;
+
+      if (top + maxH > viewportHeight) {
+        top = viewportHeight - maxH - offset;
       }
 
       return { top, left };
@@ -117,10 +118,10 @@ export function PopupProvider({ children }: PropsWithChildren) {
       }
     };
 
-    document.addEventListener('click', handleClick);
+    document.addEventListener('pointerdown', handleClick);
 
     return () => {
-      return document.removeEventListener('click', handleClick);
+      return document.removeEventListener('pointerdown', handleClick);
     };
   }, [isOpen, close]);
 
@@ -146,7 +147,7 @@ export function PopupProvider({ children }: PropsWithChildren) {
   }, [isOpen, close]);
 
   return (
-    <PopupContext.Provider value={{ open, close }}>
+    <PopupContext.Provider value={{ isOpen, open, close }}>
       {children}
       {isOpen &&
         config &&
@@ -160,7 +161,7 @@ export function PopupProvider({ children }: PropsWithChildren) {
               width: config.width ? `${config.width}px` : 'auto',
             }}
           >
-            {config.content}
+            {typeof config.content === 'function' ? config.content() : config.content}
           </div>,
           document.body,
         )}
