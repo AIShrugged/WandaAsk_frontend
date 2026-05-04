@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import 'react-day-picker/style.css';
 
 @theme inline {
   /* Color utilities resolved from HSL CSS vars at runtime */
@@ -314,4 +315,14 @@
 
 .chat-html-content canvas {
   max-width: 100%;
+}
+
+/* react-day-picker theme overrides — cosmic dark theme */
+.rdp-root {
+  --rdp-accent-color: hsl(var(--primary));
+  --rdp-accent-background-color: hsl(var(--primary) / 0.15);
+  --rdp-background-color: hsl(var(--secondary));
+  --rdp-selected-color: hsl(var(--primary-foreground));
+  --rdp-outline: 2px solid hsl(var(--primary));
+  --rdp-cell-size: 36px;
 }

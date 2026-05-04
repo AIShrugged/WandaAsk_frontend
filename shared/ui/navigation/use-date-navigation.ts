@@ -1,8 +1,9 @@
 'use client';
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useCallback } from 'react';
 
-import { parseDateParam, shiftDate } from '@/shared/lib/date-nav';
+import { parseDateParam, shiftDate, toDateParam } from '@/shared/lib/date-nav';
 
 interface UseDateNavigationOptions {
   /** When true, preserves all existing search params during navigation */
@@ -18,20 +19,23 @@ export function useDateNavigation(
   const pathname = usePathname();
   const current = parseDateParam(dateStr);
 
-  const navigate = (offset: number) => {
-    const newDateStr = shiftDate(current, offset);
+  const navigate = useCallback(
+    (offset: number) => {
+      const newDateStr = shiftDate(current, offset);
 
-    if (options.preserveParams) {
-      const next = new URLSearchParams(params);
+      if (options.preserveParams) {
+        const next = new URLSearchParams(params);
 
-      next.set('date', newDateStr);
-      router.push(`?${next.toString()}`, { scroll: false });
-    } else {
-      router.push(`${pathname}?date=${newDateStr}`, { scroll: false });
-    }
-  };
+        next.set('date', newDateStr);
+        router.push(`?${next.toString()}`, { scroll: false });
+      } else {
+        router.push(`${pathname}?date=${newDateStr}`, { scroll: false });
+      }
+    },
+    [current, options.preserveParams, params, router, pathname],
+  );
 
-  const goToday = () => {
+  const goToday = useCallback(() => {
     if (options.preserveParams) {
       const next = new URLSearchParams(params);
 
@@ -40,7 +44,7 @@ export function useDateNavigation(
     } else {
       router.push(pathname, { scroll: false });
     }
-  };
+  }, [options.preserveParams, params, router, pathname]);
 
-  return { current, navigate, goToday };
+  return { current, navigate, goToday, toDateParam };
 }
