@@ -100,6 +100,7 @@ function buildIssuesQuery(filters: IssueFilters = {}) {
     params.set('organization_id', String(filters.organization_id));
 
   if (filters.team_id) params.set('team_id', String(filters.team_id));
+  if (filters.epic_id) params.set('epic_id', String(filters.epic_id));
   params.set('offset', String(filters.offset ?? 0));
   params.set('limit', String(filters.limit ?? 10));
   if (filters.sort) params.set('sort', filters.sort);
@@ -409,6 +410,39 @@ export async function dispatchIssue(
   const json: ApiResponse<AgentTaskRun> = await res.json();
 
   return { data: json.data ?? null, error: null };
+}
+
+/**
+ * getEpics fetches open/in-progress issues of type 'epic' for use in dropdowns.
+ * @param organizationId - optional organization scope.
+ * @returns epics list.
+ */
+export async function getEpics(
+  organizationId?: number | null,
+): Promise<Issue[]> {
+  const authHeaders = await getAuthHeaders();
+  const query = buildIssuesQuery({
+    type: 'epic',
+    organization_id: organizationId ?? null,
+    status: 'open',
+    limit: 200,
+    offset: 0,
+    exclude_archived: true,
+  });
+  const res = await fetch(`${API_URL}/issues?${query}`, {
+    headers: { ...authHeaders },
+    cache: 'no-store',
+  });
+
+  if (!res.ok) {
+    if (res.status === 401) redirect('/api/auth/clear-session');
+
+    return [];
+  }
+
+  const json: ApiResponse<Issue[]> = await res.json();
+
+  return json.data ?? [];
 }
 
 /**
