@@ -26,6 +26,7 @@ import { TenantScopeFields } from '@/shared/ui/input/tenant-scope-fields';
 
 import type { OrganizationProps } from '@/entities/organization';
 import type {
+  EpicOption,
   Issue,
   IssueStatus,
   PersonOption,
@@ -40,6 +41,7 @@ interface CurrentUser {
 interface IssueFormProps {
   organizations: OrganizationProps[];
   persons: PersonOption[];
+  epics?: EpicOption[];
   issue?: Issue;
   defaultOrganizationId?: string;
   currentUser?: CurrentUser | null;
@@ -52,6 +54,7 @@ interface IssueFormValues {
   status: IssueStatus | '';
   organization_id: string;
   team_id: string;
+  epic_id: string;
   assignee_id: string;
   author_id: string;
   due_date: string;
@@ -66,6 +69,7 @@ function defaultDueDate(): string {
 export function IssueForm({
   organizations,
   persons,
+  epics = [],
   issue,
   defaultOrganizationId = '',
   currentUser,
@@ -89,6 +93,7 @@ export function IssueForm({
         ? String(issue.organization_id)
         : defaultOrganizationId,
       team_id: issue?.team_id ? String(issue.team_id) : '',
+      epic_id: issue?.epic_id ? String(issue.epic_id) : '',
       assignee_id: issue?.assignee_id ? String(issue.assignee_id) : '',
       author_id: defaultAuthorId,
       due_date: issue?.due_date ?? defaultDueDate(),
@@ -145,6 +150,7 @@ export function IssueForm({
         status,
         organization_id: Number(values.organization_id),
         team_id: values.team_id ? Number(values.team_id) : null,
+        epic_id: values.epic_id ? Number(values.epic_id) : null,
         assignee_id: values.assignee_id ? Number(values.assignee_id) : null,
         author_id: values.author_id ? Number(values.author_id) : null,
         due_date: values.due_date || null,
@@ -248,6 +254,23 @@ export function IssueForm({
         teamError={errors.team_id?.message}
         disabled={isPending}
       />
+
+      {epics.length > 0 ? (
+        <InputDropdown
+          label='Epic'
+          options={[
+            { value: '', label: 'None' },
+            ...epics.map((e) => {
+              return { value: String(e.id), label: e.name };
+            }),
+          ]}
+          value={watch('epic_id')}
+          onChange={(value) => {
+            setValue('epic_id', value as string, { shouldDirty: true });
+          }}
+          searchable
+        />
+      ) : null}
 
       <div className='grid gap-2 md:grid-cols-2'>
         <InputDropdown

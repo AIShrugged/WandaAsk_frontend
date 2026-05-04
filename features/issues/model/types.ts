@@ -82,6 +82,12 @@ export interface IssueAgentTaskRun {
   current_tool_description: string | null;
 }
 
+export interface EpicOption {
+  id: number;
+  name: string;
+  status: IssueStatus;
+}
+
 export interface Issue {
   id: number;
   name: string;
@@ -90,6 +96,9 @@ export interface Issue {
   status: IssueStatus;
   organization_id: number | null;
   team_id: number | null;
+  epic_id: number | null;
+  epic?: EpicOption | null;
+  child_issues?: Issue[] | null;
   agent_task_id?: number | null;
   agent_task_run?: IssueAgentTaskRun | null;
   agent_flow_id?: number | null;
@@ -181,6 +190,7 @@ export interface SharedFilters {
 export interface IssueFilters {
   organization_id?: number | null;
   team_id?: number | null;
+  epic_id?: number | null;
   status?: IssueStatus | '';
   type?: string | '';
   assignee?: number | null;
@@ -217,6 +227,7 @@ export interface IssueUpsertDTO {
   status: IssueStatus;
   organization_id: number | null;
   team_id: number | null;
+  epic_id?: number | null;
   assignee_id: number | null;
   author_id: number | null;
   due_date: string | null;
