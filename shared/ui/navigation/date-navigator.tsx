@@ -1,12 +1,16 @@
 'use client';
 
-import { CalendarDays, ChevronLeft, ChevronRight } from 'lucide-react';
+import { CalendarDays, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useRef } from 'react';
 
 import { usePopup } from '@/shared/hooks/use-popup';
-import { formatDateLabel, formatDateLong, toDateParam } from '@/shared/lib/date-nav';
+import {
+  formatDateLabel,
+  formatDateLong,
+  toDateParam,
+} from '@/shared/lib/date-nav';
 import { H2 } from '@/shared/ui/typography/H2';
 
 import { useDateNavigation } from './use-date-navigation';
@@ -14,11 +18,19 @@ import { useDateNavigation } from './use-date-navigation';
 import type { ReactNode } from 'react';
 
 const DayPicker = dynamic(
-  () =>
-    {return import('react-day-picker').then((m) => {return {
-      default: m.DayPicker,
-    }})},
-  { ssr: false, loading: () => {return null} },
+  () => {
+    return import('react-day-picker').then((m) => {
+      return {
+        default: m.DayPicker,
+      };
+    });
+  },
+  {
+    ssr: false,
+    loading: () => {
+      return null;
+    },
+  },
 );
 
 interface NavigateToDateOptions {
@@ -157,7 +169,10 @@ function DateLabel({
         aria-haspopup='dialog'
         aria-expanded={isPickerOpen}
       >
-        <H2>{formatDateLabel(date)}</H2>
+        <span className='flex items-center gap-2'>
+          <H2>{formatDateLabel(date)}</H2>
+          <CalendarDays className='h-4 w-4 text-muted-foreground' />
+        </span>
       </button>
     );
   }
@@ -172,7 +187,7 @@ function DateLabel({
       aria-haspopup='dialog'
       aria-expanded={isPickerOpen}
     >
-      <CalendarDays className='h-3.5 w-3.5 shrink-0 text-muted-foreground' />
+      <CalendarDays className='h-4 w-4 shrink-0 text-primary/60' />
       {formatDateLong(date)}
     </button>
   );
@@ -224,19 +239,21 @@ export function DateNavigator({
             aria-label='Date picker'
             className='rounded-[var(--radius-card)] border border-border bg-card p-3 shadow-[0_4px_24px_rgba(0,0,0,0.6)] ring-1 ring-primary/10'
           >
-            <DayPicker
-              mode='single'
-              selected={selectedDate}
-              defaultMonth={selectedDate}
-              onSelect={(day) => {
-                if (!day) return;
-                close();
-                navigateToDate(day, navOptions);
-              }}
-              weekStartsOn={1}
-              showOutsideDays
-              classNames={CALENDAR_CLASS_NAMES}
-            />
+            <div className='flex justify-between'>
+              <DayPicker
+                mode='single'
+                selected={selectedDate}
+                defaultMonth={selectedDate}
+                onSelect={(day) => {
+                  if (!day) return;
+                  close();
+                  navigateToDate(day, navOptions);
+                }}
+                weekStartsOn={1}
+                showOutsideDays
+                classNames={CALENDAR_CLASS_NAMES}
+              />
+            </div>
           </div>
         );
       },
