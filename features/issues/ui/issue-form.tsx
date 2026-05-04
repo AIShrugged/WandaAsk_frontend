@@ -255,22 +255,20 @@ export function IssueForm({
         disabled={isPending}
       />
 
-      {epics.length > 0 ? (
-        <InputDropdown
-          label='Epic'
-          options={[
-            { value: '', label: 'None' },
-            ...epics.map((e) => {
-              return { value: String(e.id), label: e.name };
-            }),
-          ]}
-          value={watch('epic_id')}
-          onChange={(value) => {
-            setValue('epic_id', value as string, { shouldDirty: true });
-          }}
-          searchable
-        />
-      ) : null}
+      <InputDropdown
+        label='Epic'
+        options={[
+          { value: '', label: 'None' },
+          ...epics.map((e) => {
+            return { value: String(e.id), label: e.name };
+          }),
+        ]}
+        value={watch('epic_id')}
+        onChange={(value) => {
+          setValue('epic_id', value as string, { shouldDirty: true });
+        }}
+        searchable
+      />
 
       <div className='grid gap-2 md:grid-cols-2'>
         <InputDropdown

@@ -424,8 +424,7 @@ export async function getEpics(
   const query = buildIssuesQuery({
     type: 'epic',
     organization_id: organizationId ?? null,
-    status: 'open',
-    limit: 200,
+    limit: 100,
     offset: 0,
     exclude_archived: true,
   });
