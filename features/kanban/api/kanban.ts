@@ -45,7 +45,8 @@ function buildKanbanQuery(filters: KanbanFilters = {}): string {
     params.set('exclude_archived', '1');
   }
 
-  params.set('limit', String(filters.limit ?? 500));
+  params.set('limit', String(filters.limit ?? 100));
+  params.set('page', String(filters.page ?? 1));
   params.set('sort', filters.sort ?? 'updated_at');
   params.set('order', filters.order ?? 'desc');
 
@@ -64,12 +65,19 @@ export interface KanbanIssuesResult {
   isTruncated: boolean;
 }
 
-export async function getKanbanIssues(
-  filters: KanbanFilters = {},
-): Promise<KanbanIssuesResult> {
-  const limit = filters.limit ?? 500;
-  const authHeaders = await getAuthHeaders();
-  const query = buildKanbanQuery({ exclude_archived: true, ...filters, limit });
+const KANBAN_PAGE_LIMIT = 100;
+const KANBAN_MAX_ITEMS = 500;
+
+async function fetchKanbanPage(
+  authHeaders: Record<string, string>,
+  baseFilters: KanbanFilters,
+  page: number,
+): Promise<{ data: KanbanCard[]; totalCount: number }> {
+  const query = buildKanbanQuery({
+    ...baseFilters,
+    limit: KANBAN_PAGE_LIMIT,
+    page,
+  });
   const res = await fetch(`${API_URL}/issues?${query}`, {
     headers: { ...authHeaders },
     cache: 'no-store',
@@ -77,9 +85,7 @@ export async function getKanbanIssues(
 
   if (!res.ok) {
     if (res.status === 401) redirect('/api/auth/clear-session');
-
     const text = await res.text();
-
     throw new Error(parseApiError(text, 'Failed to load kanban data').message);
   }
 
@@ -90,6 +96,34 @@ export async function getKanbanIssues(
   }
 
   const totalCount = Number(res.headers.get('Items-Count') ?? json.data.length);
+  return { data: json.data, totalCount };
+}
+
+export async function getKanbanIssues(
+  filters: KanbanFilters = {},
+): Promise<KanbanIssuesResult> {
+  const authHeaders = await getAuthHeaders();
+  const baseFilters = { exclude_archived: true, ...filters };
+
+  const first = await fetchKanbanPage(authHeaders, baseFilters, 1);
+  const { totalCount } = first;
+
+  let allCards = first.data;
+
+  if (totalCount > KANBAN_PAGE_LIMIT) {
+    const fetchableCount = Math.min(totalCount, KANBAN_MAX_ITEMS);
+    const remainingPages = Math.ceil(
+      (fetchableCount - KANBAN_PAGE_LIMIT) / KANBAN_PAGE_LIMIT,
+    );
+    const pageNumbers = Array.from(
+      { length: remainingPages },
+      (_, i) => {return i + 2},
+    );
+    const pages = await Promise.all(
+      pageNumbers.map((p) => {return fetchKanbanPage(authHeaders, baseFilters, p)}),
+    );
+    allCards = [first.data, ...pages.map((p) => {return p.data})].flat();
+  }
 
   const columns: Record<IssueStatus, KanbanCard[]> = {
     open: [],
@@ -100,13 +134,13 @@ export async function getKanbanIssues(
     done: [],
   };
 
-  for (const card of json.data) {
+  for (const card of allCards) {
     if (card.status in columns) {
       columns[card.status].push(card);
     }
   }
 
-  return { columns, totalCount, isTruncated: json.data.length < totalCount };
+  return { columns, totalCount, isTruncated: totalCount > KANBAN_MAX_ITEMS };
 }
 
 /**
