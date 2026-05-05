@@ -235,8 +235,8 @@ export function TasksKanbanClient({
 
       if (thisCall !== fetchCounterRef.current) return;
 
-      if (result.error === null) {
-        setColumns(result.data);
+      if (result.error === null && result.data) {
+        setColumns(result.data.columns);
         columnsVersionRef.current += 1;
         setColumnsVersion(columnsVersionRef.current);
       } else {

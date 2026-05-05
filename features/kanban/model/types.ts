@@ -49,7 +49,9 @@ export interface KanbanFilters {
 export const KANBAN_COLUMNS: Pick<KanbanColumn, 'id' | 'label' | 'color'>[] = [
   { id: 'open', label: 'To Do', color: '#94a3b8' },
   { id: 'in_progress', label: 'In Progress', color: '#f59e0b' },
+  { id: 'review', label: 'Review', color: '#60a5fa' },
   { id: 'paused', label: 'Paused', color: '#818cf8' },
+  { id: 'reopen', label: 'Reopened', color: '#f87171' },
   { id: 'done', label: 'Done', color: '#34d399' },
 ];
 

@@ -5,6 +5,7 @@ export {
   updateIssue,
   deleteIssue,
   dispatchIssue,
+  answerAgentFlow,
   getPersons,
   getEpics,
   getIssueAttachments,

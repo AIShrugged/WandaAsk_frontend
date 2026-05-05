@@ -172,6 +172,7 @@ function CommentItem({
                 }}
                 resizable={false}
                 height={80}
+                maxLength={10_000}
                 autoFocus
               />
               <div className='flex gap-2'>
@@ -247,6 +248,7 @@ function CommentItem({
                 placeholder='Write a reply...'
                 resizable={false}
                 height={72}
+                maxLength={10_000}
                 autoFocus
               />
               <div className='flex gap-2'>
@@ -435,6 +437,7 @@ export function IssueComments({
           placeholder='Add a comment...'
           resizable={false}
           height={80}
+          maxLength={10_000}
         />
         <div className='flex justify-end'>
           <Button

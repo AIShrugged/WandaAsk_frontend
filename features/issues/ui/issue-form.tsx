@@ -1,13 +1,14 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useMemo, useState, useTransition } from 'react';
+import { useEffect, useMemo, useRef, useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import {
   createIssue,
   deleteIssue,
+  deletePendingAttachment,
   updateIssue,
 } from '@/features/issues/api/issues';
 import {
@@ -24,6 +25,7 @@ import Input from '@/shared/ui/input/Input';
 import InputDropdown from '@/shared/ui/input/InputDropdown';
 import InputTextarea from '@/shared/ui/input/InputTextarea';
 import { TenantScopeFields } from '@/shared/ui/input/tenant-scope-fields';
+import { Modal } from '@/shared/ui/modal/modal';
 
 import type { OrganizationProps } from '@/entities/organization';
 import type {
@@ -92,6 +94,24 @@ export function IssueForm({
     IssueAttachment[]
   >([]);
   const [hasPendingOps, setHasPendingOps] = useState(false);
+  const isSubmittedRef = useRef(false);
+  const pendingAttachmentsRef = useRef(pendingAttachments);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+  useEffect(() => {
+    pendingAttachmentsRef.current = pendingAttachments;
+  });
+
+  useEffect(() => {
+    if (!uploadToken) return;
+    return () => {
+      if (!isSubmittedRef.current) {
+        for (const att of pendingAttachmentsRef.current) {
+          void deletePendingAttachment(att.id);
+        }
+      }
+    };
+  }, [uploadToken]);
   const typeOptions = issueTypeOptionsFromOrgs(organizations);
 
   const defaultAuthorId = issue?.user_id
@@ -130,9 +150,18 @@ export function IssueForm({
     reValidateMode: 'onChange',
   });
 
+  const selectedOrgId = watch('organization_id');
+  const filteredPersons = selectedOrgId
+    ? persons.filter(
+        (p) =>
+          {return p.organization_id === null ||
+          p.organization_id === Number(selectedOrgId)},
+      )
+    : persons;
+
   const personOptions = [
     { value: '', label: 'Unassigned' },
-    ...persons.map((person) => {
+    ...filteredPersons.map((person) => {
       return {
         value: String(person.id),
         label: person.email ? `${person.name} (${person.email})` : person.name,
@@ -144,6 +173,16 @@ export function IssueForm({
 
   const onSubmit = (values: IssueFormValues) => {
     setRootError('');
+
+    if (!values.name.trim()) {
+      setError('name', { message: 'Name is required' });
+      return;
+    }
+
+    if (!values.type) {
+      setError('type', { message: 'Type is required' });
+      return;
+    }
 
     if (!values.organization_id) {
       setError('organization_id', { message: 'Organization is required' });
@@ -193,6 +232,7 @@ export function IssueForm({
         return;
       }
 
+      isSubmittedRef.current = true;
       toast.success(issue ? 'Issue updated' : 'Issue created');
       if (issue) {
         router.refresh();
@@ -208,6 +248,8 @@ export function IssueForm({
     <form className='flex flex-col gap-4' onSubmit={handleSubmit(onSubmit)}>
       <Input
         {...register('name', {
+          required: 'Name is required',
+          maxLength: { value: 255, message: 'Max 255 characters' },
           onChange: () => {
             clearErrors('name');
             setRootError('');
@@ -263,6 +305,18 @@ export function IssueForm({
           setValue('organization_id', value, { shouldDirty: true });
           setValue('team_id', '', { shouldDirty: true });
           clearErrors(['organization_id', 'team_id']);
+          const currentAssigneeId = watch('assignee_id');
+          if (currentAssigneeId && value) {
+            const stillValid = persons.some(
+              (p) =>
+                {return String(p.id) === currentAssigneeId &&
+                (p.organization_id === null ||
+                  p.organization_id === Number(value))},
+            );
+            if (!stillValid) {
+              setValue('assignee_id', '', { shouldDirty: true });
+            }
+          }
         }}
         onTeamChange={(value) => {
           setValue('team_id', value, { shouldDirty: true });
@@ -345,10 +399,10 @@ export function IssueForm({
           uploadToken={uploadToken}
           attachments={pendingAttachments}
           onUploaded={(attachment) => {
-            setPendingAttachments((prev) => [...prev, attachment]);
+            setPendingAttachments((prev) => {return [...prev, attachment]});
           }}
           onDeleted={(id) => {
-            setPendingAttachments((prev) => prev.filter((a) => a.id !== id));
+            setPendingAttachments((prev) => {return prev.filter((a) => {return a.id !== id})});
           }}
           onPendingChange={setHasPendingOps}
         />
@@ -367,20 +421,60 @@ export function IssueForm({
           {submitLabel(hasPendingOps, !!issue)}
         </Button>
         {issue ? (
-          <Button
-            type='button'
-            variant={BUTTON_VARIANT.danger}
-            className='w-auto px-4'
-            onClick={() => {
-              startTransition(async () => {
-                await deleteIssue(issue.id);
-                toast.success('Task deleted');
-                router.push(ROUTES.DASHBOARD.ISSUES);
-              });
-            }}
-          >
-            Delete issue
-          </Button>
+          <>
+            <Button
+              type='button'
+              variant={BUTTON_VARIANT.danger}
+              className='w-auto px-4'
+              onClick={() => {
+                setShowDeleteConfirm(true);
+              }}
+            >
+              Delete issue
+            </Button>
+            <Modal
+              isOpen={showDeleteConfirm}
+              onClose={() => {
+                setShowDeleteConfirm(false);
+              }}
+              title='Delete issue'
+            >
+              <div className='flex flex-col gap-4'>
+                <p className='text-sm text-muted-foreground'>
+                  This will permanently delete the issue. This action cannot be
+                  undone.
+                </p>
+                <div className='flex justify-end gap-2'>
+                  <Button
+                    type='button'
+                    variant={BUTTON_VARIANT.secondary}
+                    className='w-auto px-4'
+                    onClick={() => {
+                      setShowDeleteConfirm(false);
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type='button'
+                    variant={BUTTON_VARIANT.danger}
+                    className='w-auto px-4'
+                    loading={isPending}
+                    onClick={() => {
+                      setShowDeleteConfirm(false);
+                      startTransition(async () => {
+                        await deleteIssue(issue.id);
+                        toast.success('Task deleted');
+                        router.push(ROUTES.DASHBOARD.ISSUES);
+                      });
+                    }}
+                  >
+                    Delete
+                  </Button>
+                </div>
+              </div>
+            </Modal>
+          </>
         ) : null}
       </div>
     </form>

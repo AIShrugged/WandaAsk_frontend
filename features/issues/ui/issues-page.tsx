@@ -232,6 +232,7 @@ export function IssuesPage({
       return;
     }
 
+    let cancelled = false;
     const f = filtersRef.current;
 
     loadIssuesChunk({
@@ -251,11 +252,17 @@ export function IssuesPage({
       search: f.search || undefined,
     })
       .then(({ items, hasMore: more }) => {
-        setFirstPage({ items, hasMore: more });
+        if (!cancelled) setFirstPage({ items, hasMore: more });
       })
       .catch(() => {
-        // silently fail — existing items remain visible
+        if (!cancelled) {
+          toast.error('Failed to load issues');
+        }
       });
+
+    return () => {
+      cancelled = true;
+    };
   }, [filtersVersion, sortField, sortOrder]);
 
   // Fetch archived count whenever filters change (non-blocking)

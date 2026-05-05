@@ -45,7 +45,7 @@ function buildKanbanQuery(filters: KanbanFilters = {}): string {
     params.set('exclude_archived', '1');
   }
 
-  params.set('limit', String(filters.limit ?? 100));
+  params.set('limit', String(filters.limit ?? 500));
   params.set('sort', filters.sort ?? 'updated_at');
   params.set('order', filters.order ?? 'desc');
 
@@ -58,11 +58,18 @@ function buildKanbanQuery(filters: KanbanFilters = {}): string {
  * @param filters - kanban filters.
  * @returns map of status → cards.
  */
+export interface KanbanIssuesResult {
+  columns: Record<IssueStatus, KanbanCard[]>;
+  totalCount: number;
+  isTruncated: boolean;
+}
+
 export async function getKanbanIssues(
   filters: KanbanFilters = {},
-): Promise<Record<IssueStatus, KanbanCard[]>> {
+): Promise<KanbanIssuesResult> {
+  const limit = filters.limit ?? 500;
   const authHeaders = await getAuthHeaders();
-  const query = buildKanbanQuery({ exclude_archived: true, ...filters });
+  const query = buildKanbanQuery({ exclude_archived: true, ...filters, limit });
   const res = await fetch(`${API_URL}/issues?${query}`, {
     headers: { ...authHeaders },
     cache: 'no-store',
@@ -82,7 +89,9 @@ export async function getKanbanIssues(
     throw new Error(json.message ?? json.error ?? 'Invalid API response');
   }
 
-  const grouped: Record<IssueStatus, KanbanCard[]> = {
+  const totalCount = Number(res.headers.get('Items-Count') ?? json.data.length);
+
+  const columns: Record<IssueStatus, KanbanCard[]> = {
     open: [],
     in_progress: [],
     paused: [],
@@ -92,12 +101,12 @@ export async function getKanbanIssues(
   };
 
   for (const card of json.data) {
-    if (card.status in grouped) {
-      grouped[card.status].push(card);
+    if (card.status in columns) {
+      columns[card.status].push(card);
     }
   }
 
-  return grouped;
+  return { columns, totalCount, isTruncated: json.data.length < totalCount };
 }
 
 /**
@@ -150,7 +159,7 @@ export async function moveKanbanCard(
  */
 export async function fetchKanbanIssues(
   filters: KanbanFilters,
-): Promise<ActionResult<Record<IssueStatus, KanbanCard[]>>> {
+): Promise<ActionResult<KanbanIssuesResult>> {
   try {
     const data = await getKanbanIssues(filters);
     return { data, error: null };

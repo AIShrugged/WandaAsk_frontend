@@ -4,4 +4,5 @@ export {
   fetchKanbanIssues,
   getKanbanIssues,
 } from './api/kanban';
+export type { KanbanIssuesResult } from './api/kanban';
 export type { KanbanFilters } from './model/types';
