@@ -30,7 +30,7 @@ export function PendingAttachmentUploader({
 }: PendingAttachmentUploaderProps) {
   // Set of in-flight operation IDs — structurally immune to going negative.
   // Covers both uploads and deletes so submit is blocked during either.
-  const [pendingOps, setPendingOps] = useState<Set<string>>(() => new Set());
+  const [pendingOps, setPendingOps] = useState<Set<string>>(() => {return new Set()});
 
   function addOp(id: string) {
     setPendingOps((prev) => {
@@ -78,6 +78,11 @@ export function PendingAttachmentUploader({
               if (!file) return;
               event.target.value = '';
 
+              if (file.size > 10 * 1024 * 1024) {
+                toast.error('File exceeds 10 MB limit');
+                return;
+              }
+
               const opId = crypto.randomUUID();
 
               addOp(opId);
@@ -102,7 +107,7 @@ export function PendingAttachmentUploader({
 
       {attachments.length > 0 && (
         <ul className='flex flex-col gap-2'>
-          {attachments.map((attachment) => (
+          {attachments.map((attachment) => {return (
             <li
               key={attachment.id}
               className='flex items-center justify-between gap-3 rounded-[var(--radius-card)] border border-border bg-background/30 px-3 py-2'
@@ -143,7 +148,7 @@ export function PendingAttachmentUploader({
                 <Trash2 className='h-3.5 w-3.5' />
               </Button>
             </li>
-          ))}
+          )})}
         </ul>
       )}
     </div>

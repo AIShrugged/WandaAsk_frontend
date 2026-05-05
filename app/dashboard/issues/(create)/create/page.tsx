@@ -1,6 +1,5 @@
-import { getPersons } from '@/features/issues';
+import { getEpics, getPersons } from '@/features/issues';
 import { IssueCreatePageClient } from '@/features/issues/ui/issue-create-page-client';
-import { getEpics, getPersons, IssueForm } from '@/features/issues';
 import { getOrganizations } from '@/features/organization';
 import { getUser } from '@/features/user';
 import { getOrganizationId } from '@/shared/lib/getOrganizationId';

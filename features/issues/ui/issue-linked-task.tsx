@@ -2,14 +2,15 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useTransition } from 'react';
+import { useEffect, useRef, useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
-import { dispatchIssue } from '@/features/issues/api/issues';
+import { answerAgentFlow, dispatchIssue } from '@/features/issues/api/issues';
 import { Badge } from '@/shared/ui/badge';
 import { Button } from '@/shared/ui/button/Button';
 import Card from '@/shared/ui/card/Card';
 import CardBody from '@/shared/ui/card/CardBody';
+import Textarea from '@/shared/ui/input/textarea';
 
 import type { Issue, IssueAgentFlowStep } from '@/features/issues/model/types';
 
@@ -89,9 +90,11 @@ export function IssueLinkedTask({ issue }: IssueLinkedTaskProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [answerText, setAnswerText] = useState('');
 
   const runStatus = issue.agent_task_run?.status;
   const isProcessing = runStatus === 'queued' || runStatus === 'processing';
+  const isWaitingForUser = issue.agent_flow?.status === 'waiting_for_user';
 
   useEffect(() => {
     if (isProcessing && !pollingRef.current) {
@@ -130,6 +133,20 @@ export function IssueLinkedTask({ issue }: IssueLinkedTaskProps) {
       }
 
       toast.success('Agent dispatched successfully');
+      router.refresh();
+    });
+  };
+
+  const handleAnswer = () => {
+    if (!answerText.trim()) return;
+    startTransition(async () => {
+      const result = await answerAgentFlow(issue.id, answerText.trim());
+      if (result.error) {
+        toast.error(result.error);
+        return;
+      }
+      toast.success('Answer submitted');
+      setAnswerText('');
       router.refresh();
     });
   };
@@ -191,6 +208,33 @@ export function IssueLinkedTask({ issue }: IssueLinkedTaskProps) {
             <p className='text-sm text-muted-foreground'>
               No agent task linked to this issue.
             </p>
+          )}
+
+          {isWaitingForUser && (
+            <div className='flex flex-col gap-2 rounded-[var(--radius-card)] border border-amber-500/30 bg-amber-500/10 p-3'>
+              <p className='text-sm font-medium text-amber-400'>
+                Agent is waiting for your input
+              </p>
+              <Textarea
+                value={answerText}
+                onChange={(e) => {
+                  setAnswerText(e.target.value);
+                }}
+                placeholder='Enter your answer...'
+                resizable={false}
+                height={80}
+                maxLength={5000}
+              />
+              <Button
+                type='button'
+                className='w-full'
+                onClick={handleAnswer}
+                disabled={isPending || !answerText.trim()}
+                loading={isPending}
+              >
+                Submit Answer
+              </Button>
+            </div>
           )}
 
           <Button

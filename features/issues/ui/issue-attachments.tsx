@@ -326,6 +326,12 @@ export function IssueAttachments({
 
               if (!file) return;
 
+              if (file.size > 10 * 1024 * 1024) {
+                toast.error('File exceeds 10 MB limit');
+                event.target.value = '';
+                return;
+              }
+
               startTransition(async () => {
                 const result = await uploadIssueAttachment(issueId, file);
 

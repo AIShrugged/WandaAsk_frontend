@@ -9,7 +9,11 @@ import { IssueAttachments } from './issue-attachments';
 import { IssueForm } from './issue-form';
 
 import type { OrganizationProps } from '@/entities/organization';
-import type { Issue, PersonOption } from '@/features/issues/model/types';
+import type {
+  EpicOption,
+  Issue,
+  PersonOption,
+} from '@/features/issues/model/types';
 
 interface CurrentUser {
   id: number;
@@ -20,6 +24,7 @@ interface CurrentUser {
 interface IssueCreatePageClientProps {
   organizations: OrganizationProps[];
   persons: PersonOption[];
+  epics?: EpicOption[];
   defaultOrganizationId: string;
   currentUser: CurrentUser | null;
 }
@@ -27,12 +32,13 @@ interface IssueCreatePageClientProps {
 export function IssueCreatePageClient({
   organizations,
   persons,
+  epics = [],
   defaultOrganizationId,
   currentUser,
 }: IssueCreatePageClientProps) {
   // Stable for the lifetime of this component — one UUID per create session.
   // useMemo with [] deps is generated once on mount, clear intent vs useRef.
-  const uploadToken = useMemo(() => crypto.randomUUID(), []);
+  const uploadToken = useMemo(() => {return crypto.randomUUID()}, []);
   const [createdIssue, setCreatedIssue] = useState<Issue | null>(null);
 
   if (createdIssue === null) {
@@ -40,6 +46,7 @@ export function IssueCreatePageClient({
       <IssueForm
         organizations={organizations}
         persons={persons}
+        epics={epics}
         defaultOrganizationId={defaultOrganizationId}
         currentUser={currentUser}
         onCreated={setCreatedIssue}

@@ -7,29 +7,41 @@ import { KanbanBoard, fetchKanbanIssues } from '@/features/kanban';
 
 import type { OrganizationProps } from '@/entities/organization';
 import type { PersonOption } from '@/features/issues/model/types';
+import type { KanbanIssuesResult } from '@/features/kanban/api/kanban';
 import type { IssueStatus, KanbanCard } from '@/features/kanban/model/types';
 
 interface IssuesKanbanTabProps {
-  initialColumns: Record<IssueStatus, KanbanCard[]>;
+  initialResult: KanbanIssuesResult;
   organizations: OrganizationProps[];
   persons: PersonOption[];
 }
+
+const EMPTY_COLUMNS: Record<IssueStatus, KanbanCard[]> = {
+  open: [],
+  in_progress: [],
+  paused: [],
+  review: [],
+  reopen: [],
+  done: [],
+};
 
 /**
  * IssuesKanbanTab — client wrapper that reads filter context and renders KanbanBoard.
  * Refetches kanban data client-side when filters change.
  */
 export function IssuesKanbanTab({
-  initialColumns,
+  initialResult,
   organizations,
   persons,
 }: IssuesKanbanTabProps) {
   const { filters, columnsVersion, setShowArchived } = useFiltersContext();
-  const [columns, setColumns] =
-    useState<Record<IssueStatus, KanbanCard[]>>(initialColumns);
+  const [columns, setColumns] = useState<Record<IssueStatus, KanbanCard[]>>(
+    initialResult.columns,
+  );
+  const [isTruncated, setIsTruncated] = useState(initialResult.isTruncated);
   // Skip the first render only when SSR already provided data (full-page load).
   // On tab navigation initialColumns is empty, so we fetch immediately.
-  const hasInitialData = Object.values(initialColumns).some((col) => {
+  const hasInitialData = Object.values(initialResult.columns).some((col) => {
     return col.length > 0;
   });
   const isFirstRender = useRef(hasInitialData);
@@ -59,7 +71,8 @@ export function IssuesKanbanTab({
       if (cancelled) return;
 
       if (!result.error && result.data) {
-        setColumns(result.data);
+        setColumns(result.data.columns);
+        setIsTruncated(result.data.isTruncated);
       }
     };
 
@@ -78,12 +91,20 @@ export function IssuesKanbanTab({
   ]);
 
   return (
-    <KanbanBoard
-      columns={columns}
-      organizations={organizations}
-      persons={persons}
-      filters={filters}
-      onShowArchivedChange={setShowArchived}
-    />
+    <>
+      {isTruncated && (
+        <div className='mx-2 mb-2 rounded-[var(--radius-card)] border border-amber-500/30 bg-amber-500/10 px-4 py-2 text-sm text-amber-400'>
+          Some issues are not shown — there are more than 500 open issues. Use
+          filters to narrow the view.
+        </div>
+      )}
+      <KanbanBoard
+        columns={columns}
+        organizations={organizations}
+        persons={persons}
+        filters={filters}
+        onShowArchivedChange={setShowArchived}
+      />
+    </>
   );
 }

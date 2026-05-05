@@ -143,7 +143,7 @@ export function IssuesLayoutClient({
 
   const handleFiltersChange = useCallback((patch: Partial<SharedFilters>) => {
     setFilters((prev) => {
-      return { ...prev, ...patch, show_archived: false };
+      return { ...prev, ...patch };
     });
     setFiltersVersion((v) => {
       return v + 1;

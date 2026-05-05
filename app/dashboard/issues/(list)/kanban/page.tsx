@@ -40,7 +40,7 @@ export default async function IssuesKanbanPage({
     search: typeof params.search === 'string' ? params.search : undefined,
   };
 
-  const [organizationsResponse, persons, groupedCards] = await Promise.all([
+  const [organizationsResponse, persons, kanbanResult] = await Promise.all([
     getOrganizations(),
     getPersons(),
     getKanbanIssues(kanbanFilters),
@@ -48,7 +48,7 @@ export default async function IssuesKanbanPage({
 
   return (
     <IssuesKanbanTab
-      initialColumns={groupedCards}
+      initialResult={kanbanResult}
       organizations={organizationsResponse.data ?? []}
       persons={persons}
     />

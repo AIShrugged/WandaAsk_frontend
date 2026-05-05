@@ -1,7 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 
 import { parseApiError } from '@/shared/lib/apiError';
 import { API_URL, FILES_URL } from '@/shared/lib/config';
@@ -272,6 +272,7 @@ export async function getIssue(id: number): Promise<Issue> {
 
   if (!res.ok) {
     if (res.status === 401) redirect('/api/auth/clear-session');
+    if (res.status === 404 || res.status === 403) notFound();
     const text = await res.text();
 
     throw new Error(parseApiError(text, 'Failed to load issue').message);
@@ -410,6 +411,36 @@ export async function dispatchIssue(
   const json: ApiResponse<AgentTaskRun> = await res.json();
 
   return { data: json.data ?? null, error: null };
+}
+
+/**
+ * answerAgentFlow submits a free-text answer to a waiting_for_user agent flow.
+ * @param id - issue id.
+ * @param answers - free-text answers to the flow's questions.
+ * @returns action result.
+ */
+export async function answerAgentFlow(
+  id: number,
+  answers: string,
+): Promise<{ error: string | null }> {
+  const authHeaders = await getAuthHeaders();
+  const res = await fetch(`${API_URL}/issues/${id}/agent-flow/answer`, {
+    method: 'POST',
+    headers: { ...authHeaders, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ answers }),
+    cache: 'no-store',
+  });
+
+  if (!res.ok) {
+    if (res.status === 401) redirect('/api/auth/clear-session');
+    const text = await res.text();
+
+    return {
+      error: parseApiError(text, 'Failed to submit answer').message,
+    };
+  }
+
+  return { error: null };
 }
 
 /**
