@@ -45,7 +45,9 @@ function FocusText({ focus }: { focus: UserFocus }) {
   return (
     <>
       <div className='text-sm text-foreground prose prose-sm dark:prose-invert max-w-none [&>p]:my-0'>
-        <ReactMarkdown remarkPlugins={[remarkGfm]}>{focus.focus_text ?? ''}</ReactMarkdown>
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+          {focus.focus_text ?? ''}
+        </ReactMarkdown>
       </div>
       {focus.deadline !== null && (
         <p className='text-xs text-muted-foreground mt-1'>

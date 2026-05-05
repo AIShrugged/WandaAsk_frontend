@@ -1,5 +1,5 @@
 ---
-title: "feat: Meeting Key Points Table + Decisions Backfill Job"
+title: 'feat: Meeting Key Points Table + Decisions Backfill Job'
 type: feat
 status: completed
 date: 2026-04-30
@@ -9,15 +9,16 @@ date: 2026-04-30
 
 ## Overview
 
-The **Decisions tab** in the team dashboard is empty despite data existing in the
-database. This plan covers two parallel tracks:
+The **Decisions tab** in the team dashboard is empty despite data existing in
+the database. This plan covers two parallel tracks:
 
 1. **Root cause fix** — decisions are created with `team_id = NULL` due to a
-   fallback in `resolveTeamContexts()`, making them invisible in team-scoped queries.
+   fallback in `resolveTeamContexts()`, making them invisible in team-scoped
+   queries.
 2. **New feature** — a dedicated `meeting_key_points` table (with unique IDs) to
-   normalize key points from `meeting_summaries.key_points` JSON, plus a backfill
-   job and a new API endpoint, so the frontend table can display Key Points
-   alongside Decisions.
+   normalize key points from `meeting_summaries.key_points` JSON, plus a
+   backfill job and a new API endpoint, so the frontend table can display Key
+   Points alongside Decisions.
 
 ---
 
@@ -38,6 +39,7 @@ meetings → meeting_summaries → ExtractDecisionsService → decisions table
 ```
 
 **File:** `app/Services/Decisions/ExtractDecisionsService.php`
+
 ```php
 // Line ~107 — the fallback that orphans decisions
 if ($userIds->isEmpty()) {
@@ -45,15 +47,16 @@ if ($userIds->isEmpty()) {
 }
 ```
 
-The `BackfillDecisionsCommand` (`app/Console/Commands/BackfillDecisionsCommand.php`)
-also uses the same `extract()` method, so running it again without fixing the
-resolution logic still produces orphaned records.
+The `BackfillDecisionsCommand`
+(`app/Console/Commands/BackfillDecisionsCommand.php`) also uses the same
+`extract()` method, so running it again without fixing the resolution logic
+still produces orphaned records.
 
 ### Why key_points need their own table
 
 `meeting_summaries.key_points` is a JSON string array — no IDs, no team context,
-not queryable independently. Each key point must become a first-class record so the
-frontend can display, paginate and search them alongside decisions.
+not queryable independently. Each key point must become a first-class record so
+the frontend can display, paginate and search them alongside decisions.
 
 ---
 
@@ -61,9 +64,9 @@ frontend can display, paginate and search them alongside decisions.
 
 ### Track A — Fix `resolveTeamContexts()` fallback
 
-Modify `ExtractDecisionsService::resolveTeamContexts()` so that when no participant
-can be linked to a team, it attempts resolution via the **calendar event's
-organization** directly:
+Modify `ExtractDecisionsService::resolveTeamContexts()` so that when no
+participant can be linked to a team, it attempts resolution via the **calendar
+event's organization** directly:
 
 ```php
 // Fallback: find organization from event's creator or calendar integration
@@ -87,8 +90,9 @@ if ($teams->isEmpty()) {
 }
 ```
 
-This ensures decisions at least get an `organization_id`, and ideally a `team_id`.
-After this fix, re-run the backfill command to repair existing orphaned records.
+This ensures decisions at least get an `organization_id`, and ideally a
+`team_id`. After this fix, re-run the backfill command to repair existing
+orphaned records.
 
 ### Track B — `meeting_key_points` table
 
@@ -133,6 +137,7 @@ app/Http/Resources/API/v1/
 ```
 
 **Migration schema (`create_meeting_key_points_table.php`):**
+
 ```php
 Schema::create('meeting_key_points', function (Blueprint $table) {
     $table->id();  // unique bigint PK — required by the user
@@ -161,6 +166,7 @@ DB::statement('CREATE INDEX meeting_key_points_search_gin ON meeting_key_points 
 ```
 
 **Model (`MeetingKeyPoint.php`):**
+
 ```php
 class MeetingKeyPoint extends Model
 {
@@ -176,6 +182,7 @@ class MeetingKeyPoint extends Model
 ```
 
 **Resource (`MeetingKeyPointResource.php`):**
+
 ```php
 return [
     'id'               => $this->id,
@@ -198,6 +205,7 @@ return [
 #### Phase 2 — Backend: Backfill Job + Service
 
 **New files:**
+
 ```
 app/Services/Decisions/
   ExtractKeyPointsService.php       ← mirrors ExtractDecisionsService pattern
@@ -210,6 +218,7 @@ app/Jobs/
 ```
 
 **`ExtractKeyPointsService::extract(MeetingSummary $summary): int`**
+
 ```php
 public function extract(MeetingSummary $summary): int
 {
@@ -248,20 +257,22 @@ public function extract(MeetingSummary $summary): int
 ```
 
 **`BackfillKeyPointsCommand.php` signature:**
+
 ```
 decisions:backfill-key-points
   {--summary-id= : Process only this summary id}
   {--skip-existing : Skip summaries that already have key points in meeting_key_points}
 ```
 
-Same pattern as `BackfillDecisionsCommand` — iterate all `MeetingSummary` records
-where `key_points IS NOT NULL AND key_points != '[]'`.
+Same pattern as `BackfillDecisionsCommand` — iterate all `MeetingSummary`
+records where `key_points IS NOT NULL AND key_points != '[]'`.
 
 ---
 
 #### Phase 3 — Backend: API Endpoint
 
 Add route in `routes/api.php` (same throttle group as decisions):
+
 ```php
 Route::middleware('throttle:60,1')->group(function () {
     Route::get('teams/{team}/key-points', [TeamKeyPointController::class, 'index']);
@@ -269,6 +280,7 @@ Route::middleware('throttle:60,1')->group(function () {
 ```
 
 **New controller:**
+
 ```
 app/Http/Controllers/API/v1/
   TeamKeyPointController.php
@@ -311,6 +323,7 @@ class TeamKeyPointController extends Controller
 #### Phase 4 — Fix Existing Orphaned Decisions
 
 After fixing `resolveTeamContexts()` in `ExtractDecisionsService`, run:
+
 ```bash
 # On backend server:
 php artisan decisions:backfill --skip-existing  # skip already-linked ones
@@ -324,6 +337,7 @@ This will re-process all summaries and create properly team-scoped records.
 #### Phase 5 — Frontend: Key Points API + Updated Table
 
 **New frontend files:**
+
 ```
 features/decisions/api/key-points.ts          ← Server Action for GET /teams/{id}/key-points
 features/decisions/model/types.ts             ← Add MeetingKeyPoint interface
@@ -331,6 +345,7 @@ features/decisions/ui/decisions-table.tsx     ← Already updated; extend to acc
 ```
 
 **`features/decisions/api/key-points.ts`:**
+
 ```ts
 'use server';
 import { httpClientList } from '@/shared/lib/httpClient';
@@ -347,22 +362,27 @@ export interface MeetingKeyPoint {
   updated_at: string;
 }
 
-export async function getKeyPoints(teamId: number, params?: {
-  search?: string | null;
-  offset?: number;
-  limit?: number;
-}) {
+export async function getKeyPoints(
+  teamId: number,
+  params?: {
+    search?: string | null;
+    offset?: number;
+    limit?: number;
+  },
+) {
   return httpClientList<MeetingKeyPoint>(
     `${API_URL}/teams/${teamId}/key-points`,
-    { params }
+    { params },
   );
 }
 ```
 
-**`DecisionsPage` update:** Add a mode toggle or a combined view showing both key
-points and decisions in the same table (with a `type` column distinguishing them).
+**`DecisionsPage` update:** Add a mode toggle or a combined view showing both
+key points and decisions in the same table (with a `type` column distinguishing
+them).
 
 Alternatively, the `decisions-page.tsx` component can render two sections:
+
 - "Key Points" section → `<DecisionsTable>` with key point rows
 - "Decisions" section → `<DecisionsTable>` with decision rows
 
@@ -431,18 +451,23 @@ erDiagram
 
 ### Backend
 
-- [x] Migration `create_meeting_key_points_table` runs cleanly with `php artisan migrate`
+- [x] Migration `create_meeting_key_points_table` runs cleanly with
+      `php artisan migrate`
 - [x] Each `meeting_key_points` row has a unique auto-increment `id`
 - [x] `ExtractKeyPointsService::extract()` is idempotent (re-run safe)
-- [x] `BackfillKeyPointsCommand` processes all `meeting_summaries` with non-empty `key_points`
-- [x] `GET /api/v1/teams/{team}/key-points` returns key points scoped to `team_id`, paginated, with `Items-Count` header
+- [x] `BackfillKeyPointsCommand` processes all `meeting_summaries` with
+      non-empty `key_points`
+- [x] `GET /api/v1/teams/{team}/key-points` returns key points scoped to
+      `team_id`, paginated, with `Items-Count` header
 - [x] Full-text search works via `?search=term`
-- [x] `ExtractDecisionsService::resolveTeamContexts()` fixed — existing orphaned decisions updated via backfill re-run
+- [x] `ExtractDecisionsService::resolveTeamContexts()` fixed — existing orphaned
+      decisions updated via backfill re-run
 
 ### Frontend
 
 - [x] Decisions tab shows rows from `/teams/{id}/decisions`
-- [x] Key points section visible in the same tab, pulling from `/teams/{id}/key-points`
+- [x] Key points section visible in the same tab, pulling from
+      `/teams/{id}/key-points`
 - [x] Table columns: Key Point / Decision | Event | Date | Source
 - [x] Empty state shown when both endpoints return 0 rows
 
@@ -452,24 +477,24 @@ erDiagram
 
 ### Backend (`/Users/slavapopov/Documents/WandaAsk_backend`)
 
-| Action | File |
-|--------|------|
-| CREATE | `database/migrations/2026_04_30_XXXXXX_create_meeting_key_points_table.php` |
-| CREATE | `app/Models/MeetingKeyPoint.php` |
-| CREATE | `app/Http/Resources/API/v1/MeetingKeyPointResource.php` |
-| CREATE | `app/Http/Controllers/API/v1/TeamKeyPointController.php` |
-| CREATE | `app/Services/Decisions/ExtractKeyPointsService.php` |
-| CREATE | `app/Console/Commands/BackfillKeyPointsCommand.php` |
+| Action | File                                                                                        |
+| ------ | ------------------------------------------------------------------------------------------- |
+| CREATE | `database/migrations/2026_04_30_XXXXXX_create_meeting_key_points_table.php`                 |
+| CREATE | `app/Models/MeetingKeyPoint.php`                                                            |
+| CREATE | `app/Http/Resources/API/v1/MeetingKeyPointResource.php`                                     |
+| CREATE | `app/Http/Controllers/API/v1/TeamKeyPointController.php`                                    |
+| CREATE | `app/Services/Decisions/ExtractKeyPointsService.php`                                        |
+| CREATE | `app/Console/Commands/BackfillKeyPointsCommand.php`                                         |
 | MODIFY | `app/Services/Decisions/ExtractDecisionsService.php` — fix `resolveTeamContexts()` fallback |
-| MODIFY | `routes/api.php` — add `GET teams/{team}/key-points` |
+| MODIFY | `routes/api.php` — add `GET teams/{team}/key-points`                                        |
 
 ### Frontend (`/Users/slavapopov/Documents/WandaAsk_frontend`)
 
-| Action | File |
-|--------|------|
-| CREATE | `features/decisions/api/key-points.ts` |
-| MODIFY | `features/decisions/model/types.ts` — add `MeetingKeyPoint` interface |
-| MODIFY | `features/decisions/ui/decisions-page.tsx` — add key points section |
+| Action | File                                                                     |
+| ------ | ------------------------------------------------------------------------ |
+| CREATE | `features/decisions/api/key-points.ts`                                   |
+| MODIFY | `features/decisions/model/types.ts` — add `MeetingKeyPoint` interface    |
+| MODIFY | `features/decisions/ui/decisions-page.tsx` — add key points section      |
 | MODIFY | `features/decisions/ui/decisions-table.tsx` — support both types in rows |
 
 ---
@@ -484,7 +509,8 @@ erDiagram
    curl -H "Authorization: Bearer <token>" \
      https://dev-api.shrugged.ai/api/v1/teams/<id>/key-points
    ```
-5. **Frontend:** Navigate to `/dashboard/teams?tab=decisions` — should show non-empty table with Key Points and Decisions sections
+5. **Frontend:** Navigate to `/dashboard/teams?tab=decisions` — should show
+   non-empty table with Key Points and Decisions sections
 6. **Run tests:** `npm test -- --passWithNoTests`
 7. **Run lint:** `npm run lint`
 
@@ -492,9 +518,9 @@ erDiagram
 
 ## Risk Analysis
 
-| Risk | Likelihood | Mitigation |
-|------|-----------|------------|
-| `resolveTeamContexts()` fix breaks existing logic | Medium | Cover with tests; run backfill with `--skip-existing` first to see count change |
-| Backfill creates duplicate rows | Low | `MeetingKeyPoint::where('meeting_summary_id', $id)->delete()` before insert — idempotent |
-| LLM returned non-string items in `key_points` JSON | Low | `is_string($text)` guard in `ExtractKeyPointsService` |
-| Frontend API contract mismatch | Low | Run `backend-contract-validator` agent after writing TypeScript types |
+| Risk                                               | Likelihood | Mitigation                                                                               |
+| -------------------------------------------------- | ---------- | ---------------------------------------------------------------------------------------- |
+| `resolveTeamContexts()` fix breaks existing logic  | Medium     | Cover with tests; run backfill with `--skip-existing` first to see count change          |
+| Backfill creates duplicate rows                    | Low        | `MeetingKeyPoint::where('meeting_summary_id', $id)->delete()` before insert — idempotent |
+| LLM returned non-string items in `key_points` JSON | Low        | `is_string($text)` guard in `ExtractKeyPointsService`                                    |
+| Frontend API contract mismatch                     | Low        | Run `backend-contract-validator` agent after writing TypeScript types                    |

@@ -74,16 +74,20 @@ export function TaskTable({ data }: { data: TaskTableArtifact['data'] }) {
                 {STATUS_LABELS[task.status] ?? task.status}
               </span>
             </div>
-            {task.description && (
-              task.description.trimStart().startsWith('{') || task.description.trimStart().startsWith('[') ? (
+            {task.description &&
+              (task.description.trimStart().startsWith('{') ||
+              task.description.trimStart().startsWith('[') ? (
                 <details className='text-xs text-muted-foreground'>
                   <summary className='cursor-pointer'>Raw data</summary>
-                  <pre className='mt-1 text-xs overflow-auto max-h-32 whitespace-pre-wrap'>{task.description}</pre>
+                  <pre className='mt-1 text-xs overflow-auto max-h-32 whitespace-pre-wrap'>
+                    {task.description}
+                  </pre>
                 </details>
               ) : (
-                <p className='text-xs text-muted-foreground leading-relaxed line-clamp-2'>{task.description}</p>
-              )
-            )}
+                <p className='text-xs text-muted-foreground leading-relaxed line-clamp-2'>
+                  {task.description}
+                </p>
+              ))}
             <div className='flex items-center gap-3 mt-0.5 text-xs text-muted-foreground'>
               {task.assignee_name && <span>{task.assignee_name}</span>}
               {task.due_date && <span>{formatDueDate(task.due_date)}</span>}

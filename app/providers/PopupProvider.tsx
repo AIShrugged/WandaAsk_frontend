@@ -161,7 +161,9 @@ export function PopupProvider({ children }: PropsWithChildren) {
               width: config.width ? `${config.width}px` : 'auto',
             }}
           >
-            {typeof config.content === 'function' ? config.content() : config.content}
+            {typeof config.content === 'function'
+              ? config.content()
+              : config.content}
           </div>,
           document.body,
         )}

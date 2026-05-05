@@ -9,10 +9,14 @@ import Card from '@/shared/ui/card/Card';
 import { EmptyState } from '@/shared/ui/feedback/empty-state';
 
 import { getCriticalPath, rebuildCriticalPath } from '../api/critical-path';
+
 import { CriticalPathGraph } from './critical-path-graph';
 import { CriticalPathNodeDetail } from './critical-path-node-detail';
 
-import type { CriticalPathGraph as CriticalPathGraphType, CriticalPathNode } from '../model/types';
+import type {
+  CriticalPathGraph as CriticalPathGraphType,
+  CriticalPathNode,
+} from '../model/types';
 
 const POLL_INTERVAL_MS = 3000;
 
@@ -31,11 +35,19 @@ function StatChip({ label, value, highlight }: StatChipProps) {
       className='flex items-center gap-1.5 px-2.5 py-1 rounded-md border text-xs'
       style={{
         background: 'hsl(var(--muted))',
-        borderColor: highlight === true ? 'hsl(var(--destructive) / 0.25)' : BORDER_COLOR,
+        borderColor:
+          highlight === true ? 'hsl(var(--destructive) / 0.25)' : BORDER_COLOR,
       }}
     >
       <span className='text-muted-foreground'>{label}:</span>
-      <strong style={{ color: highlight === true ? 'hsl(var(--destructive))' : 'hsl(var(--foreground))' }}>
+      <strong
+        style={{
+          color:
+            highlight === true
+              ? 'hsl(var(--destructive))'
+              : 'hsl(var(--foreground))',
+        }}
+      >
         {value}
       </strong>
     </div>
@@ -78,7 +90,10 @@ export function CriticalPathPageClient({
     async function poll() {
       if (!mountedRef.current) return;
       try {
-        const data = await getCriticalPath({ organization_id: organizationId, team_id: teamId });
+        const data = await getCriticalPath({
+          organization_id: organizationId,
+          team_id: teamId,
+        });
         if (!mountedRef.current) return;
         if (data === null) {
           setNotFound(true);
@@ -107,7 +122,10 @@ export function CriticalPathPageClient({
 
   async function handleRebuild() {
     setRebuilding(true);
-    const result = await rebuildCriticalPath({ organization_id: organizationId, team_id: teamId });
+    const result = await rebuildCriticalPath({
+      organization_id: organizationId,
+      team_id: teamId,
+    });
     if (result.error) {
       toast.error(result.error);
       setRebuilding(false);
@@ -137,7 +155,10 @@ export function CriticalPathPageClient({
     async function repoll() {
       if (!mountedRef.current) return;
       try {
-        const data = await getCriticalPath({ organization_id: organizationId, team_id: teamId });
+        const data = await getCriticalPath({
+          organization_id: organizationId,
+          team_id: teamId,
+        });
         if (!mountedRef.current) return;
         if (data !== null) {
           setGraph(data);
@@ -156,10 +177,16 @@ export function CriticalPathPageClient({
   const selectedNode: CriticalPathNode | undefined =
     selectedNodeId === null
       ? undefined
-      : graph?.nodes.find((n) => n.node_id === selectedNodeId);
+      : graph?.nodes.find((n) => {
+          return n.node_id === selectedNodeId;
+        });
 
-  const criticalCount = graph?.nodes.filter((n) => n.is_critical).length ?? 0;
-  const isComputing = graph?.status === 'computing' || graph?.status === 'pending';
+  const criticalCount =
+    graph?.nodes.filter((n) => {
+      return n.is_critical;
+    }).length ?? 0;
+  const isComputing =
+    graph?.status === 'computing' || graph?.status === 'pending';
 
   if (loading) {
     return (
@@ -167,7 +194,9 @@ export function CriticalPathPageClient({
         <div className='flex-1 flex items-center justify-center'>
           <div className='flex flex-col items-center gap-3'>
             <div className='w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin' />
-            <p className='text-sm text-muted-foreground'>Loading critical path…</p>
+            <p className='text-sm text-muted-foreground'>
+              Loading critical path…
+            </p>
           </div>
         </div>
       </Card>
@@ -212,7 +241,9 @@ export function CriticalPathPageClient({
             onClick={handleRebuild}
             className='flex items-center gap-2 px-4 py-2 rounded-lg bg-destructive text-destructive-foreground text-sm font-medium hover:bg-destructive/90 transition-colors disabled:opacity-50'
           >
-            <RefreshCw className={`w-4 h-4 ${rebuilding ? 'animate-spin' : ''}`} />
+            <RefreshCw
+              className={`w-4 h-4 ${rebuilding ? 'animate-spin' : ''}`}
+            />
             Rebuild
           </button>
         </div>
@@ -246,12 +277,21 @@ export function CriticalPathPageClient({
         {graph !== null && (
           <>
             <StatChip label='Issues' value={graph.nodes.length} />
-            <StatChip label='Critical' value={criticalCount} highlight={criticalCount > 0} />
-            <StatChip label='Duration' value={`${graph.project_duration_days}d`} />
+            <StatChip
+              label='Critical'
+              value={criticalCount}
+              highlight={criticalCount > 0}
+            />
+            <StatChip
+              label='Duration'
+              value={`${graph.project_duration_days}d`}
+            />
             {graph.computed_at !== null && (
               <StatChip
                 label='Updated'
-                value={formatDistanceToNow(new Date(graph.computed_at), { addSuffix: true })}
+                value={formatDistanceToNow(new Date(graph.computed_at), {
+                  addSuffix: true,
+                })}
               />
             )}
           </>
@@ -268,7 +308,9 @@ export function CriticalPathPageClient({
           onClick={handleRebuild}
           className='ml-auto flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-border text-xs text-muted-foreground hover:text-foreground hover:border-border/70 transition-colors disabled:opacity-40'
         >
-          <RefreshCw className={`w-3.5 h-3.5 ${rebuilding ? 'animate-spin' : ''}`} />
+          <RefreshCw
+            className={`w-3.5 h-3.5 ${rebuilding ? 'animate-spin' : ''}`}
+          />
           Rebuild
         </button>
       </div>
@@ -287,39 +329,55 @@ export function CriticalPathPageClient({
             Issues
           </div>
           <div className='overflow-y-auto flex-1 py-1.5'>
-            {graph?.nodes.toSorted((a, b) => (a.early_start ?? 0) - (b.early_start ?? 0)).map((node) => {
-              const isActive = selectedNodeId === node.node_id;
-              const dotColor = getNodeDotColor(node);
-              return (
-                <button
-                  key={node.node_id}
-                  type='button'
-                  onClick={() => setSelectedNodeId(isActive ? null : node.node_id)}
-                  className='flex w-full items-center gap-2 px-4 py-1.5 text-left transition-colors border-l-2'
-                  style={{
-                    background: isActive ? 'hsl(var(--destructive) / 0.06)' : 'transparent',
-                    borderLeftColor: isActive ? 'hsl(var(--destructive))' : 'transparent',
-                  }}
-                >
-                  <span
-                    className='w-1.5 h-1.5 rounded-full shrink-0'
-                    style={{
-                      background: dotColor,
-                      boxShadow: node.is_critical ? '0 0 6px hsl(var(--destructive) / 0.6)' : undefined,
+            {graph?.nodes
+              .toSorted((a, b) => {
+                return (a.early_start ?? 0) - (b.early_start ?? 0);
+              })
+              .map((node) => {
+                const isActive = selectedNodeId === node.node_id;
+                const dotColor = getNodeDotColor(node);
+                return (
+                  <button
+                    key={node.node_id}
+                    type='button'
+                    onClick={() => {
+                      return setSelectedNodeId(isActive ? null : node.node_id);
                     }}
-                  />
-                  <span
-                    className='flex-1 min-w-0 truncate text-xs'
-                    style={{ color: isActive ? 'hsl(var(--foreground))' : 'hsl(var(--muted-foreground))' }}
+                    className='flex w-full items-center gap-2 px-4 py-1.5 text-left transition-colors border-l-2'
+                    style={{
+                      background: isActive
+                        ? 'hsl(var(--destructive) / 0.06)'
+                        : 'transparent',
+                      borderLeftColor: isActive
+                        ? 'hsl(var(--destructive))'
+                        : 'transparent',
+                    }}
                   >
-                    {node.issue_name ?? `Issue #${node.issue_id}`}
-                  </span>
-                  <span className='text-[11px] shrink-0 text-muted-foreground'>
-                    {node.duration_days}d
-                  </span>
-                </button>
-              );
-            })}
+                    <span
+                      className='w-1.5 h-1.5 rounded-full shrink-0'
+                      style={{
+                        background: dotColor,
+                        boxShadow: node.is_critical
+                          ? '0 0 6px hsl(var(--destructive) / 0.6)'
+                          : undefined,
+                      }}
+                    />
+                    <span
+                      className='flex-1 min-w-0 truncate text-xs'
+                      style={{
+                        color: isActive
+                          ? 'hsl(var(--foreground))'
+                          : 'hsl(var(--muted-foreground))',
+                      }}
+                    >
+                      {node.issue_name ?? `Issue #${node.issue_id}`}
+                    </span>
+                    <span className='text-[11px] shrink-0 text-muted-foreground'>
+                      {node.duration_days}d
+                    </span>
+                  </button>
+                );
+              })}
           </div>
         </div>
 
@@ -339,7 +397,9 @@ export function CriticalPathPageClient({
             node={selectedNode}
             allNodes={graph.nodes}
             edges={graph.edges}
-            onClose={() => setSelectedNodeId(null)}
+            onClose={() => {
+              return setSelectedNodeId(null);
+            }}
             onSelectNode={setSelectedNodeId}
           />
         )}

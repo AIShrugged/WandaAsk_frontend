@@ -26,8 +26,12 @@ function StatCard({
   return (
     <div className='flex flex-col gap-2 rounded-[var(--radius-card)] border border-border bg-card p-4'>
       <div className='flex items-center justify-between'>
-        <span className='text-xs font-medium text-muted-foreground'>{label}</span>
-        <div className={`flex h-7 w-7 items-center justify-center rounded-md ${iconClassName}`}>
+        <span className='text-xs font-medium text-muted-foreground'>
+          {label}
+        </span>
+        <div
+          className={`flex h-7 w-7 items-center justify-center rounded-md ${iconClassName}`}
+        >
           {icon}
         </div>
       </div>
@@ -39,7 +43,11 @@ function StatCard({
   );
 }
 
-export function TaskSummaryArtifactView({ data }: { data: TaskSummaryArtifact['data'] }) {
+export function TaskSummaryArtifactView({
+  data,
+}: {
+  data: TaskSummaryArtifact['data'];
+}) {
   const periodLabel = data.period_label ?? 'This week';
 
   const cards: StatCardProps[] = [

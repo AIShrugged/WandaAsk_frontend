@@ -1,5 +1,6 @@
 import { getPersons } from '@/features/issues';
 import { IssueCreatePageClient } from '@/features/issues/ui/issue-create-page-client';
+import { getEpics, getPersons, IssueForm } from '@/features/issues';
 import { getOrganizations } from '@/features/organization';
 import { getUser } from '@/features/user';
 import { getOrganizationId } from '@/shared/lib/getOrganizationId';
@@ -12,10 +13,13 @@ import PageHeader from '@/widgets/layout/ui/page-header';
  * @returns JSX element.
  */
 export default async function IssueCreatePage() {
-  const [organizationsResponse, persons, organizationId, userResponse] =
+  const [organizationsResponse, persons, epics, organizationId, userResponse] =
     await Promise.all([
       getOrganizations(),
       getPersons(),
+      getEpics().catch(() => {
+        return [];
+      }),
       getOrganizationId(),
       getUser(),
     ]);
@@ -28,6 +32,7 @@ export default async function IssueCreatePage() {
           <IssueCreatePageClient
             organizations={organizationsResponse.data ?? []}
             persons={persons}
+            epics={epics}
             defaultOrganizationId={organizationId}
             currentUser={userResponse.data ?? null}
           />

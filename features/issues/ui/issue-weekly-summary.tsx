@@ -101,7 +101,9 @@ function generateFeedback(stats: IssueStats): string[] {
     return item !== null;
   });
 
-  return items.length > 0 ? items : ['All metrics look stable. Keep the current pace going.'];
+  return items.length > 0
+    ? items
+    : ['All metrics look stable. Keep the current pace going.'];
 }
 
 export function IssueWeeklySummary({ stats }: { stats: IssueStats }) {

@@ -19,11 +19,16 @@ export async function FocusReminderBanner({ focus }: FocusReminderBannerProps) {
       <div className='rounded-[var(--radius-card)] border border-border bg-card p-4'>
         <div className='flex items-center gap-2 mb-2'>
           <Target className='h-4 w-4 text-muted-foreground shrink-0' />
-          <span className='text-sm font-medium text-muted-foreground'>Focused Tasks</span>
+          <span className='text-sm font-medium text-muted-foreground'>
+            Focused Tasks
+          </span>
         </div>
         <p className='text-xs text-muted-foreground'>
           No focus set.{' '}
-          <Link href={ROUTES.DASHBOARD.PROFILE_ACCOUNT} className='underline hover:text-foreground'>
+          <Link
+            href={ROUTES.DASHBOARD.PROFILE_ACCOUNT}
+            className='underline hover:text-foreground'
+          >
             Set your focus
           </Link>{' '}
           to surface relevant tasks here.
@@ -39,9 +44,13 @@ export async function FocusReminderBanner({ focus }: FocusReminderBannerProps) {
       <div className='rounded-[var(--radius-card)] border border-border bg-card p-4'>
         <div className='flex items-center gap-2 mb-2'>
           <Target className='h-4 w-4 text-primary shrink-0' />
-          <span className='text-sm font-medium text-foreground'>Focused Tasks</span>
+          <span className='text-sm font-medium text-foreground'>
+            Focused Tasks
+          </span>
         </div>
-        <p className='text-xs text-muted-foreground'>No tasks match your current focus.</p>
+        <p className='text-xs text-muted-foreground'>
+          No tasks match your current focus.
+        </p>
       </div>
     );
   }
@@ -52,9 +61,13 @@ export async function FocusReminderBanner({ focus }: FocusReminderBannerProps) {
     <div className='rounded-[var(--radius-card)] border border-primary/30 bg-primary/5 p-4'>
       <div className='flex items-center gap-2 mb-3'>
         <Target className='h-4 w-4 text-primary shrink-0' />
-        <span className='text-sm font-medium text-foreground'>Focused Tasks</span>
+        <span className='text-sm font-medium text-foreground'>
+          Focused Tasks
+        </span>
         {isFallback && (
-          <span className='text-xs text-muted-foreground ml-1'>(critical priority)</span>
+          <span className='text-xs text-muted-foreground ml-1'>
+            (critical priority)
+          </span>
         )}
       </div>
       <div className='flex flex-col gap-2'>
@@ -69,7 +82,9 @@ export async function FocusReminderBanner({ focus }: FocusReminderBannerProps) {
                 {issue.name}
               </span>
               {issue.due_date !== null && (
-                <span className='shrink-0 text-xs text-muted-foreground'>{issue.due_date}</span>
+                <span className='shrink-0 text-xs text-muted-foreground'>
+                  {issue.due_date}
+                </span>
               )}
             </Link>
           );

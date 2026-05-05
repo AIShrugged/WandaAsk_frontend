@@ -19,7 +19,14 @@ interface CriticalPathNodeDetailProps {
   onSelectNode: (id: number) => void;
 }
 
-const VALID_STATUSES = new Set(['open', 'in_progress', 'paused', 'done', 'review', 'reopen']);
+const VALID_STATUSES = new Set([
+  'open',
+  'in_progress',
+  'paused',
+  'done',
+  'review',
+  'reopen',
+]);
 const BORDER_COLOR = 'hsl(var(--border))';
 
 function isValidStatus(s: string | null): s is ExtendedIssueStatus {
@@ -33,12 +40,7 @@ interface CpmCellProps {
   highlight?: boolean;
 }
 
-function CpmCell({
-  label,
-  value,
-  sub,
-  highlight,
-}: CpmCellProps) {
+function CpmCell({ label, value, sub, highlight }: CpmCellProps) {
   return (
     <div
       className='rounded-lg p-2.5 border'
@@ -50,7 +52,11 @@ function CpmCell({
       <p className='text-[10px] text-muted-foreground mb-0.5'>{label}</p>
       <p
         className='text-lg font-bold leading-none'
-        style={{ color: highlight ? 'hsl(var(--destructive))' : 'hsl(var(--foreground))' }}
+        style={{
+          color: highlight
+            ? 'hsl(var(--destructive))'
+            : 'hsl(var(--foreground))',
+        }}
       >
         {value ?? '—'}
       </p>
@@ -76,12 +82,18 @@ function DepItem({
           ? 'hsl(var(--destructive) / 0.25)'
           : BORDER_COLOR,
         background: 'hsl(var(--muted))',
-        color: node.is_critical ? 'hsl(var(--destructive))' : 'hsl(var(--muted-foreground))',
+        color: node.is_critical
+          ? 'hsl(var(--destructive))'
+          : 'hsl(var(--muted-foreground))',
       }}
     >
       <span
         className='w-1.5 h-1.5 rounded-full shrink-0'
-        style={{ background: node.is_critical ? 'hsl(var(--destructive))' : 'hsl(var(--muted-foreground))' }}
+        style={{
+          background: node.is_critical
+            ? 'hsl(var(--destructive))'
+            : 'hsl(var(--muted-foreground))',
+        }}
       />
       <span className='flex-1 truncate'>
         {node.issue_name ?? `Issue #${node.issue_id}`}
@@ -97,17 +109,33 @@ export function CriticalPathNodeDetail({
   onClose,
   onSelectNode,
 }: CriticalPathNodeDetailProps) {
-  const nodeMap = new Map(allNodes.map((n) => {return [n.node_id, n]}));
+  const nodeMap = new Map(
+    allNodes.map((n) => {
+      return [n.node_id, n];
+    }),
+  );
 
   const predecessors = edges
-    .filter((e) => {return e.to_node_id === node.node_id})
-    .map((e) => {return nodeMap.get(e.from_node_id)})
-    .filter((n): n is CriticalPathNode => {return n !== undefined});
+    .filter((e) => {
+      return e.to_node_id === node.node_id;
+    })
+    .map((e) => {
+      return nodeMap.get(e.from_node_id);
+    })
+    .filter((n): n is CriticalPathNode => {
+      return n !== undefined;
+    });
 
   const successors = edges
-    .filter((e) => {return e.from_node_id === node.node_id})
-    .map((e) => {return nodeMap.get(e.to_node_id)})
-    .filter((n): n is CriticalPathNode => {return n !== undefined});
+    .filter((e) => {
+      return e.from_node_id === node.node_id;
+    })
+    .map((e) => {
+      return nodeMap.get(e.to_node_id);
+    })
+    .filter((n): n is CriticalPathNode => {
+      return n !== undefined;
+    });
 
   const slack = node.slack ?? 0;
 
@@ -168,12 +196,20 @@ export function CriticalPathNodeDetail({
             <CpmCell
               label='Early Start'
               value={node.early_start}
-              sub={node.early_start == null ? undefined : `Day ${node.early_start + 1}`}
+              sub={
+                node.early_start == null
+                  ? undefined
+                  : `Day ${node.early_start + 1}`
+              }
             />
             <CpmCell
               label='Early Finish'
               value={node.early_finish}
-              sub={node.early_finish == null ? undefined : `Day ${node.early_finish}`}
+              sub={
+                node.early_finish == null
+                  ? undefined
+                  : `Day ${node.early_finish}`
+              }
             />
             <CpmCell
               label='Late Start'
@@ -194,9 +230,7 @@ export function CriticalPathNodeDetail({
             <p className='text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5'>
               Due Date
             </p>
-            <p className='text-sm text-foreground'>
-              {node.due_date}
-            </p>
+            <p className='text-sm text-foreground'>{node.due_date}</p>
           </div>
         )}
 
@@ -207,13 +241,17 @@ export function CriticalPathNodeDetail({
               Depends on
             </p>
             <div className='flex flex-col gap-1.5'>
-              {predecessors.map((dep) => {return (
-                <DepItem
-                  key={dep.node_id}
-                  node={dep}
-                  onClick={() => {return onSelectNode(dep.node_id)}}
-                />
-              )})}
+              {predecessors.map((dep) => {
+                return (
+                  <DepItem
+                    key={dep.node_id}
+                    node={dep}
+                    onClick={() => {
+                      return onSelectNode(dep.node_id);
+                    }}
+                  />
+                );
+              })}
             </div>
           </div>
         )}
@@ -225,13 +263,17 @@ export function CriticalPathNodeDetail({
               Blocks
             </p>
             <div className='flex flex-col gap-1.5'>
-              {successors.map((dep) => {return (
-                <DepItem
-                  key={dep.node_id}
-                  node={dep}
-                  onClick={() => {return onSelectNode(dep.node_id)}}
-                />
-              )})}
+              {successors.map((dep) => {
+                return (
+                  <DepItem
+                    key={dep.node_id}
+                    node={dep}
+                    onClick={() => {
+                      return onSelectNode(dep.node_id);
+                    }}
+                  />
+                );
+              })}
             </div>
           </div>
         )}

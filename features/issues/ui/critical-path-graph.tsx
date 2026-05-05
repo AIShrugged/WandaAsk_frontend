@@ -20,7 +20,11 @@ function getStatusColor(status: string | null) {
 }
 
 function computeLevels(nodes: CriticalPathNode[], edges: CriticalPathEdge[]) {
-  const nodeIds = new Set(nodes.map((n) => {return n.node_id}));
+  const nodeIds = new Set(
+    nodes.map((n) => {
+      return n.node_id;
+    }),
+  );
   const successors = new Map<number, number[]>();
   const predecessors = new Map<number, number[]>();
 
@@ -40,7 +44,14 @@ function computeLevels(nodes: CriticalPathNode[], edges: CriticalPathEdge[]) {
   const getLevel = (id: number): number => {
     if (levels.has(id)) return levels.get(id)!;
     const preds = predecessors.get(id) ?? [];
-    const level = preds.length > 0 ? Math.max(...preds.map((id) => getLevel(id))) + 1 : 0;
+    const level =
+      preds.length > 0
+        ? Math.max(
+            ...preds.map((id) => {
+              return getLevel(id);
+            }),
+          ) + 1
+        : 0;
     levels.set(id, level);
     return level;
   };
@@ -63,7 +74,12 @@ function computePositions(
     cols.get(level)?.push(node.node_id);
   }
 
-  const maxColSize = Math.max(1, ...[...cols.values()].map((c) => {return c.length}));
+  const maxColSize = Math.max(
+    1,
+    ...[...cols.values()].map((c) => {
+      return c.length;
+    }),
+  );
   const totalH = maxColSize * (NODE_H + ROW_GAP) - ROW_GAP;
 
   const positions = new Map<number, { x: number; y: number }>();
@@ -111,20 +127,34 @@ export function CriticalPathGraph({
   const dragging = useRef(false);
   const dragStart = useRef({ mx: 0, my: 0, tx: 0, ty: 0 });
 
-  const nodeIds = new Set(nodes.map((n) => {return n.node_id}));
-  const renderableEdges = edges.filter(
-    (e) => {return nodeIds.has(e.from_node_id) && nodeIds.has(e.to_node_id)},
+  const nodeIds = new Set(
+    nodes.map((n) => {
+      return n.node_id;
+    }),
   );
+  const renderableEdges = edges.filter((e) => {
+    return nodeIds.has(e.from_node_id) && nodeIds.has(e.to_node_id);
+  });
 
   const positions = computePositions(nodes, renderableEdges);
 
-  const allX = [...positions.values()].map((p) => {return p.x + NODE_W});
-  const allY = [...positions.values()].map((p) => {return p.y + NODE_H});
+  const allX = [...positions.values()].map((p) => {
+    return p.x + NODE_W;
+  });
+  const allY = [...positions.values()].map((p) => {
+    return p.y + NODE_H;
+  });
   const graphW = allX.length > 0 ? Math.max(...allX) + 60 : 400;
   const graphH = allY.length > 0 ? Math.max(...allY) + 60 : 300;
 
   const criticalNodeIds = new Set(
-    nodes.filter((n) => {return n.is_critical}).map((n) => {return n.node_id}),
+    nodes
+      .filter((n) => {
+        return n.is_critical;
+      })
+      .map((n) => {
+        return n.node_id;
+      }),
   );
 
   const criticalChainEdges = new Set<string>();
@@ -203,33 +233,34 @@ export function CriticalPathGraph({
     const el = svgRef.current;
     if (!el) return;
     el.addEventListener('wheel', onWheel, { passive: false });
-    return () => {return el.removeEventListener('wheel', onWheel)};
+    return () => {
+      return el.removeEventListener('wheel', onWheel);
+    };
   }, [onWheel]);
 
-  const onMouseDown = useCallback(
-    (e: React.MouseEvent) => {
-      if ((e.target as Element).closest('.cpm-node')) return;
-      dragging.current = true;
-      dragStart.current = {
-        mx: e.clientX,
-        my: e.clientY,
-        tx: transformRef.current.x,
-        ty: transformRef.current.y,
-      };
-    },
-    [],
-  );
+  const onMouseDown = useCallback((e: React.MouseEvent) => {
+    if ((e.target as Element).closest('.cpm-node')) return;
+    dragging.current = true;
+    dragStart.current = {
+      mx: e.clientX,
+      my: e.clientY,
+      tx: transformRef.current.x,
+      ty: transformRef.current.y,
+    };
+  }, []);
 
   const onMouseMove = useCallback(
     (e: React.MouseEvent) => {
       if (!dragging.current) return;
       const dx = e.clientX - dragStart.current.mx;
       const dy = e.clientY - dragStart.current.my;
-      setTransform((prev) => {return {
-        ...prev,
-        x: dragStart.current.tx + dx,
-        y: dragStart.current.ty + dy,
-      }});
+      setTransform((prev) => {
+        return {
+          ...prev,
+          x: dragStart.current.tx + dx,
+          y: dragStart.current.ty + dy,
+        };
+      });
     },
     [setTransform],
   );
@@ -242,7 +273,8 @@ export function CriticalPathGraph({
     <div
       className='relative flex-1 overflow-hidden'
       style={{
-        background: 'radial-gradient(ellipse at 50% 40%, hsl(var(--muted)) 0%, hsl(var(--background)) 70%)',
+        background:
+          'radial-gradient(ellipse at 50% 40%, hsl(var(--muted)) 0%, hsl(var(--background)) 70%)',
         cursor: 'grab',
       }}
       onMouseDown={onMouseDown}
@@ -252,31 +284,77 @@ export function CriticalPathGraph({
     >
       <svg ref={svgRef} className='absolute inset-0 w-full h-full'>
         <defs>
-          <filter id='cpm-glow-critical' x='-50%' y='-50%' width='200%' height='200%'>
+          <filter
+            id='cpm-glow-critical'
+            x='-50%'
+            y='-50%'
+            width='200%'
+            height='200%'
+          >
             <feGaussianBlur in='SourceGraphic' stdDeviation='3' result='blur' />
             <feMerge>
               <feMergeNode in='blur' />
               <feMergeNode in='SourceGraphic' />
             </feMerge>
           </filter>
-          <filter id='cpm-glow-node' x='-30%' y='-30%' width='160%' height='160%'>
+          <filter
+            id='cpm-glow-node'
+            x='-30%'
+            y='-30%'
+            width='160%'
+            height='160%'
+          >
             <feGaussianBlur in='SourceGraphic' stdDeviation='5' result='blur' />
             <feMerge>
               <feMergeNode in='blur' />
               <feMergeNode in='SourceGraphic' />
             </feMerge>
           </filter>
-          <marker id='cpm-arrow-normal' markerWidth='8' markerHeight='8' refX='7' refY='3' orient='auto'>
+          <marker
+            id='cpm-arrow-normal'
+            markerWidth='8'
+            markerHeight='8'
+            refX='7'
+            refY='3'
+            orient='auto'
+          >
             <path d='M0,0 L0,6 L8,3 z' fill='hsl(var(--border))' />
           </marker>
-          <marker id='cpm-arrow-critical' markerWidth='8' markerHeight='8' refX='7' refY='3' orient='auto'>
+          <marker
+            id='cpm-arrow-critical'
+            markerWidth='8'
+            markerHeight='8'
+            refX='7'
+            refY='3'
+            orient='auto'
+          >
             <path d='M0,0 L0,6 L8,3 z' fill='hsl(var(--destructive))' />
           </marker>
-          <marker id='cpm-arrow-selected' markerWidth='8' markerHeight='8' refX='7' refY='3' orient='auto'>
+          <marker
+            id='cpm-arrow-selected'
+            markerWidth='8'
+            markerHeight='8'
+            refX='7'
+            refY='3'
+            orient='auto'
+          >
             <path d='M0,0 L0,6 L8,3 z' fill='hsl(var(--primary))' />
           </marker>
-          <pattern id='cpm-dots' x='0' y='0' width='32' height='32' patternUnits='userSpaceOnUse'>
-            <circle cx='1' cy='1' r='1' fill='hsl(var(--border))' opacity='0.5' />
+          <pattern
+            id='cpm-dots'
+            x='0'
+            y='0'
+            width='32'
+            height='32'
+            patternUnits='userSpaceOnUse'
+          >
+            <circle
+              cx='1'
+              cy='1'
+              r='1'
+              fill='hsl(var(--border))'
+              opacity='0.5'
+            />
           </pattern>
         </defs>
 
@@ -295,7 +373,8 @@ export function CriticalPathGraph({
             const isCritical = criticalChainEdges.has(key);
             const isSelected =
               selectedNodeId !== null &&
-              (edge.to_node_id === selectedNodeId || edge.from_node_id === selectedNodeId);
+              (edge.to_node_id === selectedNodeId ||
+                edge.from_node_id === selectedNodeId);
             const d = edgePath(sx, sy, tx, ty);
 
             if (isCritical) {
@@ -376,7 +455,11 @@ export function CriticalPathGraph({
               <g
                 key={node.node_id}
                 className='cpm-node'
-                style={{ cursor: 'pointer', opacity: isDimmed ? 0.4 : 1, transition: 'opacity 0.2s' }}
+                style={{
+                  cursor: 'pointer',
+                  opacity: isDimmed ? 0.4 : 1,
+                  transition: 'opacity 0.2s',
+                }}
                 onClick={(e) => {
                   e.stopPropagation();
                   onSelectNode(isSelected ? null : node.node_id);
@@ -419,7 +502,11 @@ export function CriticalPathGraph({
                   y={pos.y + 19}
                   fontSize='9'
                   fontWeight='700'
-                  fill={isCritical ? 'hsl(var(--destructive))' : 'hsl(var(--muted-foreground))'}
+                  fill={
+                    isCritical
+                      ? 'hsl(var(--destructive))'
+                      : 'hsl(var(--muted-foreground))'
+                  }
                   letterSpacing='0.06em'
                   style={{ textTransform: 'uppercase' }}
                 >
@@ -442,7 +529,12 @@ export function CriticalPathGraph({
                 >
                   {`${node.duration_days}d  ·  ES:${node.early_start ?? '?'}  EF:${node.early_finish ?? '?'}`}
                 </text>
-                <circle cx={pos.x + NODE_W - 16} cy={pos.y + 16} r='4' fill={sc} />
+                <circle
+                  cx={pos.x + NODE_W - 16}
+                  cy={pos.y + 16}
+                  r='4'
+                  fill={sc}
+                />
                 {node.status === 'in_progress' && (
                   <circle
                     cx={pos.x + NODE_W - 16}
@@ -460,8 +552,16 @@ export function CriticalPathGraph({
                   width='32'
                   height='14'
                   rx='4'
-                  fill={slack === 0 ? 'hsl(var(--destructive) / 0.12)' : 'hsl(var(--muted))'}
-                  stroke={slack === 0 ? 'hsl(var(--destructive) / 0.3)' : 'hsl(var(--border))'}
+                  fill={
+                    slack === 0
+                      ? 'hsl(var(--destructive) / 0.12)'
+                      : 'hsl(var(--muted))'
+                  }
+                  stroke={
+                    slack === 0
+                      ? 'hsl(var(--destructive) / 0.3)'
+                      : 'hsl(var(--border))'
+                  }
                   strokeWidth='0.5'
                 />
                 <text
@@ -470,7 +570,11 @@ export function CriticalPathGraph({
                   fontSize='9'
                   fontWeight='700'
                   textAnchor='middle'
-                  fill={slack === 0 ? 'hsl(var(--destructive))' : 'hsl(var(--muted-foreground))'}
+                  fill={
+                    slack === 0
+                      ? 'hsl(var(--destructive))'
+                      : 'hsl(var(--muted-foreground))'
+                  }
                 >
                   {slack === 0 ? 'Slack:0' : `+${slack}`}
                 </text>
@@ -484,14 +588,22 @@ export function CriticalPathGraph({
       <div className='absolute bottom-4 left-4 flex flex-col gap-0.5'>
         <button
           type='button'
-          onClick={() => setTransform((p) => ({ ...p, scale: Math.min(3, p.scale * 1.2) }))}
+          onClick={() => {
+            return setTransform((p) => {
+              return { ...p, scale: Math.min(3, p.scale * 1.2) };
+            });
+          }}
           className='w-7 h-7 flex items-center justify-center rounded-md text-muted-foreground hover:text-foreground bg-card border border-border hover:border-border/80 transition-colors text-base select-none'
         >
           +
         </button>
         <button
           type='button'
-          onClick={() => setTransform((p) => ({ ...p, scale: Math.max(0.25, p.scale / 1.2) }))}
+          onClick={() => {
+            return setTransform((p) => {
+              return { ...p, scale: Math.max(0.25, p.scale / 1.2) };
+            });
+          }}
           className='w-7 h-7 flex items-center justify-center rounded-md text-muted-foreground hover:text-foreground bg-card border border-border hover:border-border/80 transition-colors text-base select-none'
         >
           −
@@ -540,7 +652,9 @@ export function CriticalPathGraph({
         <div
           className='absolute inset-0'
           style={{ zIndex: -1 }}
-          onClick={() => {return onSelectNode(null)}}
+          onClick={() => {
+            return onSelectNode(null);
+          }}
         />
       )}
     </div>

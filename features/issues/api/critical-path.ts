@@ -19,7 +19,9 @@ export async function getCriticalPath(
     params.set('organization_id', String(scope.organization_id));
 
   const qs = params.toString();
-  const url = qs ? `${API_URL}/critical-path?${qs}` : `${API_URL}/critical-path`;
+  const url = qs
+    ? `${API_URL}/critical-path?${qs}`
+    : `${API_URL}/critical-path`;
   const { data } = await httpClient<CriticalPathGraph>(url);
   return data ?? null;
 }

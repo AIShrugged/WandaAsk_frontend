@@ -1,7 +1,6 @@
 'use client';
 
 import { Plus, Search, SlidersHorizontal } from 'lucide-react';
-import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
@@ -9,7 +8,6 @@ import { getDecisions } from '@/features/decisions/api/decisions';
 import { AddDecisionModal } from '@/features/decisions/ui/add-decision-modal';
 import { DecisionDetailModal } from '@/features/decisions/ui/decision-detail-modal';
 import { DecisionsTable } from '@/features/decisions/ui/decisions-table';
-import { ROUTES } from '@/shared/lib/routes';
 import { BUTTON_VARIANT } from '@/shared/types/button';
 import { Button } from '@/shared/ui/button/Button';
 import { CollapsibleSection } from '@/shared/ui/layout/collapsible-section';

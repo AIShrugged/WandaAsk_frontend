@@ -20,7 +20,10 @@ function splitTaskBlocks(content: string): Segment[] {
 
   while ((match = pattern.exec(content)) !== null) {
     if (match.index > lastIndex) {
-      segments.push({ type: 'text', content: content.slice(lastIndex, match.index) });
+      segments.push({
+        type: 'text',
+        content: content.slice(lastIndex, match.index),
+      });
     }
     try {
       const parsed: unknown = JSON.parse(match[1]);
@@ -31,7 +34,10 @@ function splitTaskBlocks(content: string): Segment[] {
         parsed[0] !== null &&
         'title' in parsed[0]
       ) {
-        segments.push({ type: 'tasks', tasks: parsed as TaskTableArtifact['data']['tasks'] });
+        segments.push({
+          type: 'tasks',
+          tasks: parsed as TaskTableArtifact['data']['tasks'],
+        });
         lastIndex = match.index + match[0].length;
         continue;
       }
@@ -78,13 +84,15 @@ export function ChatMessageContent({ content }: ChatMessageContentProps) {
 
     return (
       <div className='chat-html-content flex flex-col gap-3'>
-        {segments.map((seg, i) =>
-          {return seg.type === 'tasks' ? (
+        {segments.map((seg, i) => {
+          return seg.type === 'tasks' ? (
             <TaskTable key={i} data={{ tasks: seg.tasks }} />
           ) : (
-            <ReactMarkdown key={i} remarkPlugins={[remarkGfm]}>{seg.content}</ReactMarkdown>
-          )}
-        )}
+            <ReactMarkdown key={i} remarkPlugins={[remarkGfm]}>
+              {seg.content}
+            </ReactMarkdown>
+          );
+        })}
       </div>
     );
   }

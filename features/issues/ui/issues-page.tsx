@@ -78,9 +78,10 @@ function formatIssueDate(value: string) {
  * @param dueDate - ISO date string or null.
  * @returns Object with label and className.
  */
-function formatIssueDueDate(
-  dueDate: string | null,
-): { label: string; className: string } {
+function formatIssueDueDate(dueDate: string | null): {
+  label: string;
+  className: string;
+} {
   if (!dueDate) return { label: '—', className: 'text-muted-foreground' };
 
   const today = new Date();
@@ -429,6 +430,7 @@ export function IssuesPage({
             status: nextStatus,
             organization_id: issue.organization_id,
             team_id: issue.team_id,
+            epic_id: issue.epic_id ?? null,
             assignee_id: nextAssigneeId,
             author_id: issue.user_id ?? null,
             due_date: issue.due_date,
@@ -595,6 +597,21 @@ export function IssuesPage({
                           <p className='mt-1 line-clamp-2 text-xs text-muted-foreground'>
                             {issue.description}
                           </p>
+                        ) : null}
+                        {issue.epic_id ? (
+                          <Link
+                            href={`${ROUTES.DASHBOARD.ISSUES}/${issue.epic_id}`}
+                            className='mt-1 inline-flex items-center gap-1 text-xs text-violet-400 hover:text-violet-300'
+                            onClick={(e) => {
+                              e.stopPropagation();
+                            }}
+                          >
+                            <span className='rounded px-1 py-0.5 bg-violet-500/10 border border-violet-500/20'>
+                              {issue.epic?.name
+                                ? `Epic: ${issue.epic.name}`
+                                : `Epic #${issue.epic_id}`}
+                            </span>
+                          </Link>
                         ) : null}
                       </td>
                       <td className='max-w-0 truncate p-2 align-top'>

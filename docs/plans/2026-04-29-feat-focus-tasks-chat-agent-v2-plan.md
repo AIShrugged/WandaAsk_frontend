@@ -1,5 +1,6 @@
 ---
-title: 'feat: Focus Tasks — Chat/Telegram Agent Response, Formatting & Edge Cases v2'
+title:
+  'feat: Focus Tasks — Chat/Telegram Agent Response, Formatting & Edge Cases v2'
 type: feat
 status: active
 date: 2026-04-29
@@ -18,8 +19,8 @@ This plan covers three tightly coupled problem areas in the Focus feature:
    currently receive raw JSON or MD with broken formatting; we need a robust
    display layer.
 3. **Focus-setting via chat/Telegram** — the bot's `set_user_focus` pathway
-   needs to cover all sub-cases: with date/sprint/sync context, without
-   date, and explicit focus correction ("focus changed to…").
+   needs to cover all sub-cases: with date/sprint/sync context, without date,
+   and explicit focus correction ("focus changed to…").
 
 ---
 
@@ -27,15 +28,16 @@ This plan covers three tightly coupled problem areas in the Focus feature:
 
 ### 1. Agent gap: "focused tasks" request → generic task list
 
-When a user says **"покажи мои фокусные задачи"** or **"what are my focused tasks?"**:
+When a user says **"покажи мои фокусные задачи"** or **"what are my focused
+tasks?"**:
 
-- The agent currently has no explicit instruction to filter `get_open_issues`
-  by the user's focus text or by priority.
+- The agent currently has no explicit instruction to filter `get_open_issues` by
+  the user's focus text or by priority.
 - It can call `get_open_issues` and return **all open tasks**, or call
   `build_daily_plan` — neither of which is "focused tasks".
 - The TA requires: if the user's focus text implies a topic/sprint/date, return
-  tasks that match it. If no match, suggest high-priority ones and say there
-  are no exact focus matches.
+  tasks that match it. If no match, suggest high-priority ones and say there are
+  no exact focus matches.
 
 ### 2. Rendering: task data arrives as raw JSON or Markdown in chat messages
 
@@ -51,19 +53,19 @@ When a user says **"покажи мои фокусные задачи"** or **"w
 
 Per the TA subcases:
 
-| Sub-case | Current behavior | Expected |
-|----------|-----------------|----------|
-| User says "Фокусируюсь на v2.0 до 25 апреля" | `set_user_focus` IS called — ✅ | Parse date correctly → `deadline: 2026-04-25` |
-| User sets focus for a sprint/sync ("sprint 14") | `set_user_focus` called — ✅ | Store sprint label as focus_text; ideally extract end date from context |
-| User says "мои задачи" (no focus) | Agent calls `get_open_issues` without focus filter — ❌ | Should explain focus is not set; offer top-priority tasks |
-| User corrects focus "нет, фокус изменился — теперь v2.1" | Agent calls `set_user_focus` if it hears "фокус" — ✅ but only if wording matches | Must reliably detect corrections/overrides |
-| User asks for focused tasks but has 0 priority issues | Falls through to all open tasks — ❌ | Graceful fallback with explanation |
+| Sub-case                                                 | Current behavior                                                                  | Expected                                                                |
+| -------------------------------------------------------- | --------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| User says "Фокусируюсь на v2.0 до 25 апреля"             | `set_user_focus` IS called — ✅                                                   | Parse date correctly → `deadline: 2026-04-25`                           |
+| User sets focus for a sprint/sync ("sprint 14")          | `set_user_focus` called — ✅                                                      | Store sprint label as focus_text; ideally extract end date from context |
+| User says "мои задачи" (no focus)                        | Agent calls `get_open_issues` without focus filter — ❌                           | Should explain focus is not set; offer top-priority tasks               |
+| User corrects focus "нет, фокус изменился — теперь v2.1" | Agent calls `set_user_focus` if it hears "фокус" — ✅ but only if wording matches | Must reliably detect corrections/overrides                              |
+| User asks for focused tasks but has 0 priority issues    | Falls through to all open tasks — ❌                                              | Graceful fallback with explanation                                      |
 
 ### 4. `FocusBlock` task rendering — markdown/JSON cleanup
 
-When focus_text contains markdown formatting (`**bold**`, `- list item`) or
-is stored with newlines, the `ReadonlyFocusBlock` renders it as raw text
-(plain `<p>` tag). MD is not parsed.
+When focus_text contains markdown formatting (`**bold**`, `- list item`) or is
+stored with newlines, the `ReadonlyFocusBlock` renders it as raw text (plain
+`<p>` tag). MD is not parsed.
 
 ---
 
@@ -91,9 +93,9 @@ frontend/
   features/chat/ui/chat-message-content.tsx    ← markdown+HTML renderer for chat messages
 ```
 
-**Key invariant:** Focus is a **plain text goal string**, not a foreign key
-to any issue. There is no `focus_task_id`. The agent must use heuristic
-matching (keywords, sprint names, date ranges) to map focus to tasks.
+**Key invariant:** Focus is a **plain text goal string**, not a foreign key to
+any issue. There is no `focus_task_id`. The agent must use heuristic matching
+(keywords, sprint names, date ranges) to map focus to tasks.
 
 ---
 
@@ -198,12 +200,14 @@ Register in `AgentToolRegistrar.php`.
 File: `features/chat/ui/chat-message-content.tsx`
 
 Problem: Agent sometimes sends inline JSON like:
-```
+
+````
 Here are your tasks:
 ```json
 [{"title": "Deploy v2.0", "status": "open", ...}]
-```
-```
+````
+
+````
 
 This renders as ugly code block with raw JSON.
 
@@ -216,7 +220,7 @@ rendered `<TaskTable>` component inline in the message.
 function extractInlineTaskBlocks(content: string): {
   segments: Array<{ type: 'text' | 'tasks'; content: string | TaskTableData }>;
 }
-```
+````
 
 Detection heuristic: fenced code block with `json` language tag whose content
 parses to an array where every item has at least `title` + `status`.
@@ -226,6 +230,7 @@ parses to an array where every item has at least `title` + `status`.
 File: `entities/artifact/ui/task-table.tsx`
 
 Current issues:
+
 - `task.description` can be a long JSON string (when sourced from DB without
   truncation) — needs `line-clamp-2` already applied, but JSON structure looks
   bad
@@ -235,22 +240,23 @@ Current issues:
   fall through to `bg-muted` with raw string label
 
 Fix:
+
 - Expand `STATUS_STYLES` and `STATUS_LABELS` for `paused`, `review`, `reopen`
 - Optionally render a priority indicator (icon or dot) when `priority >= 8`
-- Sanitize description: if it looks like JSON (starts with `{` or `[`), show
-  a collapsed `<details>` instead of inline text
+- Sanitize description: if it looks like JSON (starts with `{` or `[`), show a
+  collapsed `<details>` instead of inline text
 
 #### C3. `FocusBlock` — render markdown in focus_text
 
 File: `features/user-focus/ui/focus-block.tsx`
 
-`ReadonlyFocusBlock` and `FocusText` render `focus.focus_text` as plain text.
-If the user wrote `**v2.0** до апреля` or the bot stored multiline text, it
-shows raw markdown.
+`ReadonlyFocusBlock` and `FocusText` render `focus.focus_text` as plain text. If
+the user wrote `**v2.0** до апреля` or the bot stored multiline text, it shows
+raw markdown.
 
 Fix: Use `react-markdown` (already a dependency) with `remarkGfm` to render
-`focus_text` in readonly mode. In edit mode, keep plain textarea (user types
-raw text).
+`focus_text` in readonly mode. In edit mode, keep plain textarea (user types raw
+text).
 
 ```tsx
 import ReactMarkdown from 'react-markdown';
@@ -276,13 +282,14 @@ function FocusText({ focus }: { focus: UserFocus }) {
 
 ### EC1: User sets focus with date "до 25 апреля" (relative date in Russian)
 
-The `SetUserFocusTool` accepts `deadline` in `YYYY-MM-DD` format. The agent
-must convert "до 25 апреля" → `2026-04-25` before calling the tool.
+The `SetUserFocusTool` accepts `deadline` in `YYYY-MM-DD` format. The agent must
+convert "до 25 апреля" → `2026-04-25` before calling the tool.
 
-**Current state:** The LLM can do this conversion, but the system prompt
-doesn't explicitly instruct it to.
+**Current state:** The LLM can do this conversion, but the system prompt doesn't
+explicitly instruct it to.
 
 **Fix (system prompt addition):**
+
 ```
 When extracting deadline from natural language (e.g. "до 25 апреля",
 "by end of May", "until sprint 14 end"), convert to YYYY-MM-DD
@@ -293,16 +300,16 @@ using the current year (2026) before passing to set_user_focus.
 
 "Фокусируюсь на v2.0 до конца спринта" — sprint has no explicit end date.
 
-**Fix:** Store as-is (`focus_text: "v2.0"`, no deadline), agent replies:
-"Saved focus: v2.0. Want to add a deadline for this sprint?"
+**Fix:** Store as-is (`focus_text: "v2.0"`, no deadline), agent replies: "Saved
+focus: v2.0. Want to add a deadline for this sprint?"
 
 ### EC3: User has focus set but 0 matching tasks and 0 high-priority tasks
 
 `GetFocusedIssuesTool` returns `matched_count: 0` and empty `fallback_tasks`.
 
-**Agent response:** "Your focus is set to «{focus_text}» but I couldn't find
-any open tasks that match. All tasks may already be done — great job! 🎉
-You can [clear your focus] or set a new one."
+**Agent response:** "Your focus is set to «{focus_text}» but I couldn't find any
+open tasks that match. All tasks may already be done — great job! 🎉 You can
+[clear your focus] or set a new one."
 
 ### EC4: User asks via Telegram (not web chat)
 
@@ -312,10 +319,12 @@ profile context — it works identically in both channels.
 
 **Frontend rendering:** Telegram has no artifact panel. The agent must detect
 channel and adjust output format:
+
 - Web: `create_artifact(type: "task_table")` + short chat message
 - Telegram: format as numbered markdown list in message text (no artifacts)
 
 The system prompt already has channel-awareness. Add to the Focus Tasks section:
+
 ```
 If channel = telegram: format focused tasks as a markdown list in the message.
 If channel = web: always use task_table artifact.
@@ -325,16 +334,16 @@ If channel = web: always use task_table artifact.
 
 "Нет, фокус изменился — теперь это backend API, не фронт"
 
-Must trigger `set_user_focus` with `source=confirmed`. The corrected text
-should overwrite the previous focus (backend upserts via `updateOrCreate`).
+Must trigger `set_user_focus` with `source=confirmed`. The corrected text should
+overwrite the previous focus (backend upserts via `updateOrCreate`).
 
 ### EC6: User asks about focused tasks when focus has expired
 
-`UserFocus.expires_at` is in the past. `MemoryService` only injects active
-focus (checks `active()` scope). So the agent sees NO active focus in context.
+`UserFocus.expires_at` is in the past. `MemoryService` only injects active focus
+(checks `active()` scope). So the agent sees NO active focus in context.
 
-**Result:** Agent should treat this as "no focus" (EC3/EC4 fallback).
-Frontend `FocusBlock` already shows the "Focus completed!" expired state.
+**Result:** Agent should treat this as "no focus" (EC3/EC4 fallback). Frontend
+`FocusBlock` already shows the "Focus completed!" expired state.
 
 ---
 
@@ -342,10 +351,13 @@ Frontend `FocusBlock` already shows the "Focus completed!" expired state.
 
 ### Frontend — Chat rendering
 
-- [ ] `TaskTable` renders status `paused`, `review`, `reopen` with appropriate colors
+- [ ] `TaskTable` renders status `paused`, `review`, `reopen` with appropriate
+      colors
 - [ ] `TaskTable` truncates and sanitizes description — no raw JSON visible
-- [ ] `ChatMessageContent` detects fenced JSON task arrays and renders them as `TaskTable` inline
-- [ ] `FocusBlock` readonly mode renders markdown in `focus_text` via `react-markdown`
+- [ ] `ChatMessageContent` detects fenced JSON task arrays and renders them as
+      `TaskTable` inline
+- [ ] `FocusBlock` readonly mode renders markdown in `focus_text` via
+      `react-markdown`
 - [ ] `FocusReminderBanner` also renders markdown in focus_text
 - [ ] Focus edit form: textarea accepts plain text (no markdown preview)
 
@@ -358,16 +370,19 @@ Frontend `FocusBlock` already shows the "Focus completed!" expired state.
 ### Frontend — Focused Tasks block
 
 - [ ] `FocusedTasksBlock` appears on `/dashboard/today/tasks` below FocusBlock
-- [ ] `FocusedTasksBlock` appears on `/dashboard/issues/(list)/list` above main table
+- [ ] `FocusedTasksBlock` appears on `/dashboard/issues/(list)/list` above main
+      table
 - [ ] Each task card links to `/dashboard/issues/{id}`
 - [ ] Empty state shown when no tasks match focus
 - [ ] "Set focus" CTA shown when user has no active focus
 
 ### Backend — Agent
 
-- [ ] "Покажи мои фокусные задачи" → `get_focused_issues` called, `task_table` artifact returned
+- [ ] "Покажи мои фокусные задачи" → `get_focused_issues` called, `task_table`
+      artifact returned
 - [ ] No focus set → fallback message + top-critical tasks offered
-- [ ] "Фокусируюсь на v2.0 до 25 апреля" → `set_user_focus` with `deadline: "2026-04-25"`
+- [ ] "Фокусируюсь на v2.0 до 25 апреля" → `set_user_focus` with
+      `deadline: "2026-04-25"`
 - [ ] "Нет, фокус изменился" → `set_user_focus` overrides existing
 - [ ] Telegram: numbered list with issue links; no artifact
 - [ ] Web: `task_table` artifact + one-sentence context message
@@ -394,34 +409,40 @@ Frontend `FocusBlock` already shows the "Focus completed!" expired state.
 
 1. `entities/artifact/ui/task-table.tsx` — expand status styles + description
    sanitization + optional priority dot
-2. `features/user-focus/ui/focus-block.tsx` — add `react-markdown` rendering
-   in readonly `FocusText`
+2. `features/user-focus/ui/focus-block.tsx` — add `react-markdown` rendering in
+   readonly `FocusText`
 3. `features/chat/ui/chat-message-content.tsx` — JSON task block detection +
    inline `TaskTable` rendering
 
 **Files:**
+
 - `entities/artifact/ui/task-table.tsx`
 - `features/user-focus/ui/focus-block.tsx`
 - `features/chat/ui/chat-message-content.tsx`
 
 ### Phase 2 — Backend: System prompt enhancement
 
-1. Extend `AgentService.php` "Focus & Priorities" section (lines 932–940)
-   with focused-task request behavior, correction detection, and date parsing
+1. Extend `AgentService.php` "Focus & Priorities" section (lines 932–940) with
+   focused-task request behavior, correction detection, and date parsing
 2. Add channel-aware output format instruction (web vs telegram)
 
 **Files:**
+
 - `/Users/slavapopov/Documents/WandaAsk_backend/app/Services/Agent/AgentService.php`
   (lines 932–940, +new section ~950+)
 
 ### Phase 3 — Backend: New `GetFocusedIssuesTool`
 
-1. Create `GetFocusedIssuesTool.php` with keyword-match + priority fallback logic
+1. Create `GetFocusedIssuesTool.php` with keyword-match + priority fallback
+   logic
 2. Register in `AgentToolRegistrar.php`
-3. Update system prompt to reference the new tool instead of generic `get_open_issues`
+3. Update system prompt to reference the new tool instead of generic
+   `get_open_issues`
 
 **Files:**
-- `/Users/slavapopov/Documents/WandaAsk_backend/app/Services/Agent/Tools/GetFocusedIssuesTool.php` ← NEW
+
+- `/Users/slavapopov/Documents/WandaAsk_backend/app/Services/Agent/Tools/GetFocusedIssuesTool.php`
+  ← NEW
 - `/Users/slavapopov/Documents/WandaAsk_backend/app/Services/Agent/AgentToolRegistrar.php`
 - `/Users/slavapopov/Documents/WandaAsk_backend/app/Services/Agent/AgentService.php`
 
@@ -433,19 +454,23 @@ Frontend `FocusBlock` already shows the "Focus completed!" expired state.
 4. Format deadline with relative time + color coding
 
 **Files:**
+
 - `features/issues/ui/issues-page.tsx` — add 2 columns to `<thead>` + `<tbody>`
 - `features/issues/model/types.ts` — extend `IssueSortField`
 - `app/dashboard/issues/(list)/list/page.tsx` — allow new sort params
 
 ### Phase 5 — Frontend: FocusedTasksBlock component + server action
 
-1. Create `features/user-focus/api/focused-issues.ts` — calls `/me/issues/focused`
+1. Create `features/user-focus/api/focused-issues.ts` — calls
+   `/me/issues/focused`
 2. Create `features/user-focus/ui/focused-tasks-block.tsx` — Server Component
 3. Integrate into `app/dashboard/today/tasks/page.tsx`
-4. Integrate into `app/dashboard/issues/(list)/list/page.tsx` via `IssuesListTab`
+4. Integrate into `app/dashboard/issues/(list)/list/page.tsx` via
+   `IssuesListTab`
 5. Export from `features/user-focus/index.ts`
 
 **Files:**
+
 - `features/user-focus/api/focused-issues.ts` — NEW
 - `features/user-focus/ui/focused-tasks-block.tsx` — NEW
 - `features/user-focus/index.ts` — add exports
@@ -455,8 +480,11 @@ Frontend `FocusBlock` already shows the "Focus completed!" expired state.
 ### Phase 6 — QA: Edge case testing
 
 Test matrix:
-- [ ] Web chat: set focus → ask focused tasks → verify task_table artifact appears
-- [ ] Web chat: no focus → ask focused tasks → verify fallback message + top tasks
+
+- [ ] Web chat: set focus → ask focused tasks → verify task_table artifact
+      appears
+- [ ] Web chat: no focus → ask focused tasks → verify fallback message + top
+      tasks
 - [ ] Telegram: same two scenarios with markdown list output
 - [ ] Set focus with date "до 3 мая" → verify deadline parsed as 2026-05-03
 - [ ] Set focus without date → verify no deadline stored
@@ -467,26 +495,38 @@ Test matrix:
 
 ## Confirmed Answers (from product)
 
-1. **Keyword matching**: Use PostgreSQL full-text search (`@@` operator) for Russian text robustness.
-2. **Priority threshold for fallback**: Show only `priority >= CRITICAL (500)`, not HIGH.
-3. **Telegram task format**: Task name + link to the task in the web app (e.g. `https://app.shrugged.ai/dashboard/issues/{id}`). No status or assignee inline.
-4. **FocusReminderBanner**: Apply markdown rendering there too (same as FocusBlock).
-5. **`task_table` priority field**: No — do not add priority to the artifact schema.
+1. **Keyword matching**: Use PostgreSQL full-text search (`@@` operator) for
+   Russian text robustness.
+2. **Priority threshold for fallback**: Show only `priority >= CRITICAL (500)`,
+   not HIGH.
+3. **Telegram task format**: Task name + link to the task in the web app (e.g.
+   `https://app.shrugged.ai/dashboard/issues/{id}`). No status or assignee
+   inline.
+4. **FocusReminderBanner**: Apply markdown rendering there too (same as
+   FocusBlock).
+5. **`task_table` priority field**: No — do not add priority to the artifact
+   schema.
 
 ## New Requirements (from product, 2026-04-29)
 
 ### NR1: Issues list + Dashboard-Tasks pages must show "Focused Tasks" section
 
-Both `/dashboard/issues/(list)/list` and `/dashboard/today/tasks` must display
-a dedicated **"Focused Tasks"** block at the top (above the main task table/list).
+Both `/dashboard/issues/(list)/list` and `/dashboard/today/tasks` must display a
+dedicated **"Focused Tasks"** block at the top (above the main task table/list).
 
 **Behavior:**
-- If user has active focus: show tasks that match focus keywords (PG full-text) OR are `priority >= 500`.
-- If no matching tasks: show empty-state "No focused tasks" with a CTA to set focus.
-- If no focus set: show "You haven't set a focus" with link to `/dashboard/profile/account`.
-- Focused tasks list is **separate from the main list** — tasks can appear in both.
+
+- If user has active focus: show tasks that match focus keywords (PG full-text)
+  OR are `priority >= 500`.
+- If no matching tasks: show empty-state "No focused tasks" with a CTA to set
+  focus.
+- If no focus set: show "You haven't set a focus" with link to
+  `/dashboard/profile/account`.
+- Focused tasks list is **separate from the main list** — tasks can appear in
+  both.
 
 **Frontend architecture:**
+
 ```
 features/user-focus/ui/focused-tasks-block.tsx   ← NEW Server Component
   Props: focus: UserFocus | null
@@ -501,8 +541,12 @@ features/user-focus/api/focused-issues.ts        ← NEW server action
 ```
 
 **Page integration:**
-- `app/dashboard/today/tasks/page.tsx` — add `<FocusedTasksBlock focus={focus} />` below `<FocusBlock>`, above `<TaskStatsBlock>`
-- `app/dashboard/issues/(list)/list/page.tsx` — pass focused issues to `IssuesListTab`, render block above the table
+
+- `app/dashboard/today/tasks/page.tsx` — add
+  `<FocusedTasksBlock focus={focus} />` below `<FocusBlock>`, above
+  `<TaskStatsBlock>`
+- `app/dashboard/issues/(list)/list/page.tsx` — pass focused issues to
+  `IssuesListTab`, render block above the table
 
 ### NR2: Issues list must display Priority and Deadline columns
 
@@ -510,27 +554,37 @@ The current issues table (`features/issues/ui/issues-page.tsx`) does not show
 `priority` as text or `due_date` as a column. Both must be added.
 
 **Priority column:**
-- Show text label (Critical / High / Normal / Low / Minimal) using `getPriorityLevel()`
+
+- Show text label (Critical / High / Normal / Low / Minimal) using
+  `getPriorityLevel()`
 - Color-coded using existing `PRIORITY_LEVELS[].color` constants
 - Only show if `priority !== 0` (Normal is implicit, no need to show)
 - Column header: "Priority" — sortable (add `priority` to `IssueSortField`)
 
 **Deadline column:**
-- Show `due_date` formatted as relative ("3 days left", "overdue", "today") + absolute date
-- Color: `text-destructive` if overdue, `text-amber-500` if due today/tomorrow, else `text-muted-foreground`
+
+- Show `due_date` formatted as relative ("3 days left", "overdue", "today") +
+  absolute date
+- Color: `text-destructive` if overdue, `text-amber-500` if due today/tomorrow,
+  else `text-muted-foreground`
 - Column header: "Deadline" — sortable (add `due_date` to `IssueSortField`)
 - Null due_date: show "—"
 
-**Backend sort support:** Confirm `GET /api/v1/issues` supports `sort=priority` and `sort=due_date`. Check `IssueController` index method for allowed sort fields.
+**Backend sort support:** Confirm `GET /api/v1/issues` supports `sort=priority`
+and `sort=due_date`. Check `IssueController` index method for allowed sort
+fields.
 
 ### NR3: Backend — new `GET /api/v1/issues/focused` endpoint
 
-The `FocusedTasksBlock` needs a dedicated endpoint that applies focus-aware filtering server-side.
+The `FocusedTasksBlock` needs a dedicated endpoint that applies focus-aware
+filtering server-side.
 
 **Route:** `GET /api/v1/me/issues/focused` (or `/api/v1/issues/focused`)
 
 **Logic:**
-1. Load active focus for authenticated user via `UserFocusService::getFocus($profile)`
+
+1. Load active focus for authenticated user via
+   `UserFocusService::getFocus($profile)`
 2. If focus set: query `Issue` where:
    - `to_tsvector('russian', name || ' ' || coalesce(description, '')) @@ plainto_tsquery('russian', $focusKeywords)`
    - OR `priority >= Issue::PRIORITY_CRITICAL` (500)
@@ -540,6 +594,7 @@ The `FocusedTasksBlock` needs a dedicated endpoint that applies focus-aware filt
 4. Return `IssueResource` collection + `meta.has_focus`, `meta.focus_text`
 
 **Files:**
+
 - `routes/api.php` — new route
 - `app/Http/Controllers/API/v1/FocusedIssuesController.php` — NEW
 - Returns existing `IssueResource` (no new resource needed)
@@ -551,15 +606,20 @@ The `FocusedTasksBlock` needs a dedicated endpoint that applies focus-aware filt
 ### Internal
 
 - `features/user-focus/ui/focus-block.tsx` — FocusBlock component (all modes)
-- `features/user-focus/api/focus.ts` — getUserFocus / setUserFocus / clearUserFocus
+- `features/user-focus/api/focus.ts` — getUserFocus / setUserFocus /
+  clearUserFocus
 - `entities/artifact/ui/task-table.tsx` — TaskTable artifact renderer
 - `features/chat/ui/chat-message-content.tsx` — chat markdown/HTML renderer
 - `entities/artifact/model/types.ts` — ArtifactType union + TaskTableArtifact
-- Backend: `app/Services/Agent/AgentService.php` lines 932–940 — focus system prompt
+- Backend: `app/Services/Agent/AgentService.php` lines 932–940 — focus system
+  prompt
 - Backend: `app/Services/Agent/Tools/SetUserFocusTool.php` — focus save tool
-- Backend: `app/Services/Agent/Tools/GetOpenIssuesTool.php` — generic issues tool
-- Backend: `app/Services/Agent/Tools/GetMeetingTasksTool.php` — meeting tasks tool
-- Backend: `app/Services/Agent/MemoryService.php` line 81 — focus injection into context
+- Backend: `app/Services/Agent/Tools/GetOpenIssuesTool.php` — generic issues
+  tool
+- Backend: `app/Services/Agent/Tools/GetMeetingTasksTool.php` — meeting tasks
+  tool
+- Backend: `app/Services/Agent/MemoryService.php` line 81 — focus injection into
+  context
 - Backend: `app/Models/Issue.php` — `PRIORITY_CRITICAL` constant (line 102)
 - Previous plans:
   - `docs/plans/2026-04-24-feat-user-focus-surface-across-app-plan.md`

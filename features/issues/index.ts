@@ -6,6 +6,7 @@ export {
   deleteIssue,
   dispatchIssue,
   getPersons,
+  getEpics,
   getIssueAttachments,
   uploadIssueAttachment,
   deleteAttachment,
@@ -16,6 +17,7 @@ export { getIssueStats } from '@/features/issues/api/issue-stats';
 export { getIssueStatsHistory } from '@/features/issues/api/issue-stats-history';
 export type {
   Issue,
+  EpicOption,
   IssueAttachment,
   IssueFilters,
   IssueUpsertDTO,

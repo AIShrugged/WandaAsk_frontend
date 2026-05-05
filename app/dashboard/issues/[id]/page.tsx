@@ -5,6 +5,7 @@ import {
   getIssue,
   getIssueAttachments,
   getPersons,
+  getEpics,
   IssueAttachments,
   IssueComments,
   getIssueComments,
@@ -39,6 +40,7 @@ export default async function IssueDetailPage({
     attachments,
     organizationsResponse,
     persons,
+    epics,
     comments,
     userResponse,
   ] = await Promise.all([
@@ -57,6 +59,9 @@ export default async function IssueDetailPage({
     }),
     getOrganizations(),
     getPersons(),
+    getEpics().catch(() => {
+      return [];
+    }),
     getIssueComments(issueId).catch(() => {
       return [];
     }),
@@ -92,6 +97,7 @@ export default async function IssueDetailPage({
                   issue={issue}
                   organizations={organizationsResponse.data ?? []}
                   persons={persons}
+                  epics={epics}
                   currentUser={userResponse.data ?? null}
                 />
               </CardBody>

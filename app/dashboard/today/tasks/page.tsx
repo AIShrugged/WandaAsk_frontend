@@ -7,7 +7,7 @@ import {
   getTodayBriefing,
   WaitingOnYou,
 } from '@/features/today-briefing';
-import { FocusBlock, FocusedTasksBlock } from '@/features/user-focus';
+import { FocusedTasksBlock } from '@/features/user-focus';
 import { getUserFocus } from '@/features/user-focus/api/focus';
 import Card from '@/shared/ui/card/Card';
 import CardBody from '@/shared/ui/card/CardBody';

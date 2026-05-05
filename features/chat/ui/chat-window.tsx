@@ -208,10 +208,9 @@ export function ChatWindow({
       return;
     }
 
-    const rawText = document.body?.innerText ?? '';
+    const rawText = document.body?.textContent ?? '';
     const pageContext: PageContext = {
-      page_text:
-        rawText.length > 30_000 ? rawText.slice(0, 30_000) : rawText,
+      page_text: rawText.length > 30_000 ? rawText.slice(0, 30_000) : rawText,
       page_title: document.title,
       page_url: globalThis.location.href,
     };
