@@ -103,11 +103,13 @@ export interface Issue {
   close_date: string | null;
   created_at: string;
   updated_at: string;
+  attachments?: IssueAttachment[];
 }
 
 export interface IssueAttachment {
   id: number;
   issue_id?: number | null;
+  upload_token?: string | null;
   name?: string | null;
   file_name?: string | null;
   original_name?: string | null;
@@ -221,6 +223,7 @@ export interface IssueUpsertDTO {
   author_id: number | null;
   due_date: string | null;
   priority: number;
+  upload_token?: string | null;
 }
 
 export const PRIORITY_LEVELS = [

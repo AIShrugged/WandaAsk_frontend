@@ -1,7 +1,7 @@
 'use client';
 
 import { ExternalLink, Paperclip, Trash2, Upload } from 'lucide-react';
-import { useEffect, useState, useTransition } from 'react';
+import { useEffect, useRef, useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
 import { ChatMessageContent } from '@/features/chat/ui/chat-message-content';
@@ -290,14 +290,20 @@ export function IssueAttachments({
 }: IssueAttachmentsProps) {
   const [attachments, setAttachments] = useState(initialAttachments);
   const [isPending, startTransition] = useTransition();
+  const refreshSeq = useRef(0);
 
   /**
    * refresh — reloads the attachment list from the server.
+   * Sequence counter prevents stale responses from overwriting newer state
+   * when concurrent refresh calls race (e.g. upload + delete in quick succession).
    */
   const refresh = async () => {
+    const seq = ++refreshSeq.current;
     const next = await getIssueAttachments(issueId);
 
-    setAttachments(next);
+    if (seq === refreshSeq.current) {
+      setAttachments(next);
+    }
   };
 
   return (
