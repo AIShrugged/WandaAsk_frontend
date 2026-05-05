@@ -44,6 +44,7 @@ export interface KanbanFilters {
   sort?: string;
   order?: string;
   limit?: number;
+  page?: number;
 }
 
 export const KANBAN_COLUMNS: Pick<KanbanColumn, 'id' | 'label' | 'color'>[] = [
