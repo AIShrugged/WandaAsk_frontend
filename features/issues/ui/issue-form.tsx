@@ -15,6 +15,7 @@ import {
   PRIORITY_OPTIONS,
   issueTypeOptionsFromOrgs,
 } from '@/features/issues/model/types';
+import { PendingAttachmentUploader } from '@/features/issues/ui/pending-attachment-uploader';
 import { getTeams } from '@/features/teams/api/team';
 import { ROUTES } from '@/shared/lib/routes';
 import { BUTTON_VARIANT } from '@/shared/types/button';
@@ -28,6 +29,7 @@ import type { OrganizationProps } from '@/entities/organization';
 import type {
   EpicOption,
   Issue,
+  IssueAttachment,
   IssueStatus,
   PersonOption,
 } from '@/features/issues/model/types';
@@ -45,6 +47,8 @@ interface IssueFormProps {
   issue?: Issue;
   defaultOrganizationId?: string;
   currentUser?: CurrentUser | null;
+  onCreated?: (issue: Issue) => void;
+  uploadToken?: string;
 }
 
 interface IssueFormValues {
@@ -66,6 +70,11 @@ function defaultDueDate(): string {
   return d.toISOString().slice(0, 10);
 }
 
+function submitLabel(hasPendingOps: boolean, isEdit: boolean): string {
+  if (hasPendingOps) return 'Uploading...';
+  return isEdit ? 'Save changes' : 'Create task';
+}
+
 export function IssueForm({
   organizations,
   persons,
@@ -73,10 +82,16 @@ export function IssueForm({
   issue,
   defaultOrganizationId = '',
   currentUser,
+  onCreated,
+  uploadToken,
 }: IssueFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [rootError, setRootError] = useState('');
+  const [pendingAttachments, setPendingAttachments] = useState<
+    IssueAttachment[]
+  >([]);
+  const [hasPendingOps, setHasPendingOps] = useState(false);
   const typeOptions = issueTypeOptionsFromOrgs(organizations);
 
   const defaultAuthorId = issue?.user_id
@@ -155,6 +170,7 @@ export function IssueForm({
         author_id: values.author_id ? Number(values.author_id) : null,
         due_date: values.due_date || null,
         priority: Number(values.priority) || 0,
+        upload_token: uploadToken ?? null,
       };
       const result = issue
         ? await updateIssue(issue.id, payload)
@@ -180,6 +196,8 @@ export function IssueForm({
       toast.success(issue ? 'Issue updated' : 'Issue created');
       if (issue) {
         router.refresh();
+      } else if (onCreated) {
+        onCreated(result as Issue);
       } else {
         router.push(`${ROUTES.DASHBOARD.ISSUES}/${result.id}`);
       }
@@ -322,6 +340,20 @@ export function IssueForm({
         />
       </div>
 
+      {uploadToken !== undefined && (
+        <PendingAttachmentUploader
+          uploadToken={uploadToken}
+          attachments={pendingAttachments}
+          onUploaded={(attachment) => {
+            setPendingAttachments((prev) => [...prev, attachment]);
+          }}
+          onDeleted={(id) => {
+            setPendingAttachments((prev) => prev.filter((a) => a.id !== id));
+          }}
+          onPendingChange={setHasPendingOps}
+        />
+      )}
+
       {rootError ? (
         <p className='text-sm text-destructive'>{rootError}</p>
       ) : null}
@@ -330,9 +362,9 @@ export function IssueForm({
         <Button
           type='submit'
           loading={isPending}
-          disabled={isPending || !isDirty}
+          disabled={isPending || !isDirty || hasPendingOps}
         >
-          {issue ? 'Save changes' : 'Create task'}
+          {submitLabel(hasPendingOps, !!issue)}
         </Button>
         {issue ? (
           <Button

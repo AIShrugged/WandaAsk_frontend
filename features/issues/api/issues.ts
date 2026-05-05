@@ -552,3 +552,75 @@ export async function deleteAttachment(
     throw error;
   }
 }
+
+/**
+ * uploadPendingAttachment — uploads a file before the issue exists.
+ * The file is stored server-side with the given upload_token and bound
+ * to the issue when IssueController::store is called.
+ * @param file - file to upload.
+ * @param uploadToken - UUID v4 session token grouping pre-creation uploads.
+ * @returns uploaded attachment or error.
+ */
+export async function uploadPendingAttachment(
+  file: File,
+  uploadToken: string,
+): Promise<ActionResult<IssueAttachment>> {
+  try {
+    const formData = new FormData();
+
+    formData.append('file', file);
+    formData.append('upload_token', uploadToken);
+
+    const { data } = await httpClient<IssueAttachmentApiResource>(
+      `${API_URL}/attachments/pending`,
+      { method: 'POST', body: formData },
+    );
+
+    if (!data) return { data: null, error: 'Upload failed' };
+
+    return { data: normalizeIssueAttachment(data), error: null };
+  } catch (error) {
+    if (error instanceof ServerError) {
+      const parsed = parseApiError(
+        error.responseBody ?? '',
+        'Failed to upload file',
+      );
+
+      return {
+        data: null,
+        error: parsed.message,
+        fieldErrors: parsed.fieldErrors,
+      };
+    }
+
+    throw error;
+  }
+}
+
+/**
+ * deletePendingAttachment — deletes a pending (unbound) attachment before issue creation.
+ * @param attachmentId - attachment id.
+ * @returns action result.
+ */
+export async function deletePendingAttachment(
+  attachmentId: number,
+): Promise<ActionResult<null>> {
+  try {
+    await httpClient(`${API_URL}/attachments/pending/${attachmentId}`, {
+      method: 'DELETE',
+    });
+
+    return { data: null, error: null };
+  } catch (error) {
+    if (error instanceof ServerError) {
+      const parsed = parseApiError(
+        error.responseBody ?? '',
+        'Failed to delete file',
+      );
+
+      return { data: null, error: parsed.message, fieldErrors: undefined };
+    }
+
+    throw error;
+  }
+}

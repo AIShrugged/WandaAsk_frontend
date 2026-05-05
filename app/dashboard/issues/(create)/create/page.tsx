@@ -1,3 +1,5 @@
+import { getPersons } from '@/features/issues';
+import { IssueCreatePageClient } from '@/features/issues/ui/issue-create-page-client';
 import { getEpics, getPersons, IssueForm } from '@/features/issues';
 import { getOrganizations } from '@/features/organization';
 import { getUser } from '@/features/user';
@@ -27,16 +29,13 @@ export default async function IssueCreatePage() {
       <PageHeader hasButtonBack title='Create task' />
       <div className='h-full overflow-y-auto'>
         <CardBody>
-          <IssueForm
+          <IssueCreatePageClient
             organizations={organizationsResponse.data ?? []}
             persons={persons}
             epics={epics}
             defaultOrganizationId={organizationId}
             currentUser={userResponse.data ?? null}
           />
-          <p className='mt-4 text-sm text-muted-foreground'>
-            You can add attachments after saving the task.
-          </p>
         </CardBody>
       </div>
     </Card>

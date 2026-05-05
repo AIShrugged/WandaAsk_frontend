@@ -10,6 +10,8 @@ export {
   getIssueAttachments,
   uploadIssueAttachment,
   deleteAttachment,
+  uploadPendingAttachment,
+  deletePendingAttachment,
 } from '@/features/issues/api/issues';
 export { getIssueStats } from '@/features/issues/api/issue-stats';
 export { getIssueStatsHistory } from '@/features/issues/api/issue-stats-history';
@@ -46,6 +48,8 @@ export type { ExtendedIssueStatus } from './ui/issue-status-badge';
 export { getIssueComments } from './api/comments';
 export type { IssueComment, IssueCommentUser } from './model/types';
 export { IssueForm } from './ui/issue-form';
+export { IssueCreatePageClient } from './ui/issue-create-page-client';
+export { PendingAttachmentUploader } from './ui/pending-attachment-uploader';
 export { IssuesKanbanTab } from './ui/issues-kanban-tab';
 export { default as IssueCreateButton } from './ui/issue-create-button';
 export { IssuesLayoutClient } from './ui/issues-layout-client';

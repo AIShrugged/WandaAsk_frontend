@@ -110,7 +110,6 @@ export default async function IssuesListPage({
 
   return (
     <div className='flex flex-col gap-4'>
-      <FocusedTasksBlock focus={focus} />
       <IssuesListTab
         initialIssues={issues.data}
         initialTotalCount={issues.totalCount}
