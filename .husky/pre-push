@@ -1,1 +1,1 @@
-bash scripts/pre-push-checks.sh
+bash deploy/scripts/pre-push-checks.sh
