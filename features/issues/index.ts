@@ -45,7 +45,6 @@ export { TasksKanbanClient } from '../issues/ui/tasks-kanban-client';
 export { IssueAttachments } from './ui/issue-attachments';
 export { IssueComments } from './ui/issue-comments';
 export { IssueStatusBadge } from './ui/issue-status-badge';
-export type { ExtendedIssueStatus } from './ui/issue-status-badge';
 export { getIssueComments } from './api/comments';
 export type { IssueComment, IssueCommentUser } from './model/types';
 export { IssueForm } from './ui/issue-form';

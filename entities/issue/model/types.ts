@@ -5,5 +5,3 @@ export type IssueStatus =
   | 'review'
   | 'reopen'
   | 'done';
-
-export type ExtendedIssueStatus = IssueStatus;
