@@ -14,7 +14,6 @@ import {
   ORGANIZATION_FIELDS,
   ORGANIZATION_VALUES,
 } from '@/features/organization/lib/fields';
-import { BUTTON } from '@/shared/lib/buttons';
 import { VARIANT_MAPPER, type VariantType } from '@/shared/lib/fieldMapper';
 import { ROUTES } from '@/shared/lib/routes';
 import { Button } from '@/shared/ui/button/Button';
@@ -114,7 +113,7 @@ export default function OrganizationForm({
               loading={isPending}
               disabled={isPending || !isDirty}
             >
-              {BUTTON.SAVE}
+              {'Save'}
             </Button>
           </div>
         )}
@@ -128,10 +127,10 @@ export default function OrganizationForm({
             loading={isPending}
             disabled={isPending || !isDirty}
           >
-            {BUTTON.SAVE}
+            {'Save'}
           </Button>
           <Link href={ROUTES.AUTH.ORGANIZATION} className='cursor-pointer'>
-            <Button variant={'secondary'}>{BUTTON.BACK}</Button>
+            <Button variant={'secondary'}>{'Back'}</Button>
           </Link>
         </div>
       )}

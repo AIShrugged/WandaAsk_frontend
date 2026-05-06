@@ -14,7 +14,6 @@ import { createPortal } from 'react-dom';
 import { toast } from 'sonner';
 
 import { setActiveOrganization } from '@/features/organization/api/organization';
-import { BUTTON } from '@/shared/lib/buttons';
 import { ROUTES } from '@/shared/lib/routes';
 
 import type { OrganizationProps } from '@/entities/organization';
@@ -281,7 +280,7 @@ export default function OrganizationDropdown({
                          text-sm font-medium text-primary
                          hover:bg-accent transition-colors'
             >
-              + {BUTTON.CREATE}
+              + {'Create'}
             </button>
           </div>,
           document.body,

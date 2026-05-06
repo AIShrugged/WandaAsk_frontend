@@ -8,7 +8,6 @@ import { toast } from 'sonner';
 import { createTeam, updateTeam } from '@/features/teams/api/team';
 import { TEAM_CREATE_FIELDS } from '@/features/teams/model/fields';
 import { useTeamsStore } from '@/features/teams/model/teams-store';
-import { BUTTON } from '@/shared/lib/buttons';
 import { VARIANT_MAPPER, type VariantType } from '@/shared/lib/fieldMapper';
 import { ROUTES } from '@/shared/lib/routes';
 import { Button } from '@/shared/ui/button/Button';
@@ -117,7 +116,7 @@ export default function TeamCreateForm({
           disabled={isPending || !isDirty}
           type='submit'
         >
-          {BUTTON.SAVE}
+          {'Save'}
         </Button>
       </div>
     </form>

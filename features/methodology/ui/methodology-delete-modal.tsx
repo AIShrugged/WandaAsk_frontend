@@ -1,4 +1,3 @@
-import { BUTTON } from '@/shared/lib/buttons';
 import { BUTTON_VARIANT } from '@/shared/types/button';
 import { Button } from '@/shared/ui/button/Button';
 import ModalBody from '@/shared/ui/modal/modal-body';
@@ -35,7 +34,7 @@ export default function MethodologyDeleteModal({
       <ModalFooter>
         <div className={'flex flex-col gap-3'}>
           <Button type='submit' disabled variant={BUTTON_VARIANT.danger}>
-            {BUTTON.DELETE}
+            {'Delete'}
           </Button>
         </div>
       </ModalFooter>

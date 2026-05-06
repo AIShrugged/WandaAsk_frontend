@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 
-import { BUTTON } from '@/shared/lib/buttons';
 import { ROUTES } from '@/shared/lib/routes';
 import { Button } from '@/shared/ui/button/Button';
 
@@ -20,7 +19,7 @@ export default function OrganizationListEmpty() {
         organization and get all the platform's features!
       </p>
       <Link href={route} className='cursor-pointer'>
-        <Button>{BUTTON.CREATE} Organization</Button>
+        <Button>{'Create'} Organization</Button>
       </Link>
     </div>
   );

@@ -6,7 +6,7 @@ import { useState } from 'react';
 
 import { ROUTES } from '@/shared/lib/routes';
 
-import { CollapsibleSection } from './collapsible-section';
+import { CollapsibleSection } from '@/shared/ui/layout/collapsible-section';
 
 import type { StaleTask } from '../model/types';
 
@@ -21,7 +21,7 @@ export function StaleItems({ tasks }: { tasks: StaleTask[] }) {
   const hasMore = tasks.length > INITIAL_LIMIT;
 
   return (
-    <CollapsibleSection label='Stale — no progress across meetings'>
+    <CollapsibleSection label='Stale — no progress across meetings' extraContent={null}>
       <div className='flex flex-col gap-2'>
         {visible.map((task) => {
           return (

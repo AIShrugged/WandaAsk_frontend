@@ -19,7 +19,7 @@ import { executeAiAction } from '../api/ai-action';
 import { dispatchTaskToAgent } from '../api/dispatch';
 import { sendDirectMessage } from '../api/send-message';
 
-import { CollapsibleSection } from './collapsible-section';
+import { CollapsibleSection } from '@/shared/ui/layout/collapsible-section';
 
 import type { CarriedTask, MeetingTask, TodayEvent } from '../model/types';
 
@@ -170,7 +170,7 @@ export function AiPrepPanel({ event, tasks, carriedTasks }: AiPrepPanelProps) {
   const hasItems = suggestions.length > 0 || dispatchable.length > 0;
 
   return (
-    <CollapsibleSection label='AI prep' defaultExpanded={false}>
+    <CollapsibleSection label='AI prep' defaultOpen={false} extraContent={null}>
       {hasItems && (
         <div className='rounded-lg border border-border bg-card/50 p-3'>
           <p className='text-xs font-medium text-muted-foreground mb-3'>
