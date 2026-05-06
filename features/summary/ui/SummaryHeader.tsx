@@ -1,6 +1,8 @@
 import { format } from 'date-fns';
 import { BarChart3 } from 'lucide-react';
 
+import { H1 } from '@/shared/ui/typography/H1';
+
 /**
  * SummaryHeader component.
  * Displays the page title, subtitle, and current date for the summary report.
@@ -16,7 +18,7 @@ export function SummaryHeader() {
           <BarChart3 className='h-5 w-5' />
         </div>
         <div>
-          <h1 className='text-2xl font-bold text-foreground'>Summary Report</h1>
+          <H1 className='text-2xl'>Summary Report</H1>
           <p className='text-sm text-muted-foreground'>
             Analytics for meetings, tasks and participants
           </p>

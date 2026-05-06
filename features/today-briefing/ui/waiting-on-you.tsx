@@ -5,8 +5,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 import { ROUTES } from '@/shared/lib/routes';
-
-import { CollapsibleSection } from './collapsible-section';
+import { CollapsibleSection } from '@/shared/ui/layout/collapsible-section';
 
 import type { WaitingTask } from '../model/types';
 
@@ -25,7 +24,7 @@ export function WaitingOnYou({ tasks }: WaitingOnYouProps) {
   const hasMore = tasks.length > INITIAL_LIMIT;
 
   return (
-    <CollapsibleSection label='Waiting on you'>
+    <CollapsibleSection label='Waiting on you' extraContent={null}>
       <div className='flex flex-col gap-2'>
         {visible.map((task) => {
           const isUrgent = task.age_days > 7;

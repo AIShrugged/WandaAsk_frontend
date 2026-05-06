@@ -6,7 +6,6 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 import { createChat } from '@/features/chat/api/chats';
-import { BUTTON } from '@/shared/lib/buttons';
 import { ROUTES } from '@/shared/lib/routes';
 import { Button } from '@/shared/ui/button/Button';
 
@@ -53,7 +52,7 @@ export default function MethodologyCreate() {
         disabled={isCreating}
         className='cursor-pointer'
       >
-        <Plus /> {BUTTON.ADD} methodology
+        <Plus /> {'Add'} methodology
       </Button>
     </div>
   );

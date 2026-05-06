@@ -8,7 +8,7 @@ import { Badge } from '@/shared/ui/badge';
 
 import { IssueStatusBadge } from './issue-status-badge';
 
-import type { ExtendedIssueStatus } from './issue-status-badge';
+import type { IssueStatus } from './issue-status-badge';
 import type { CriticalPathNode, CriticalPathEdge } from '../model/types';
 
 interface CriticalPathNodeDetailProps {
@@ -29,7 +29,7 @@ const VALID_STATUSES = new Set([
 ]);
 const BORDER_COLOR = 'hsl(var(--border))';
 
-function isValidStatus(s: string | null): s is ExtendedIssueStatus {
+function isValidStatus(s: string | null): s is IssueStatus {
   return VALID_STATUSES.has(s ?? '');
 }
 

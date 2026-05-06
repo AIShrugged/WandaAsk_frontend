@@ -7,7 +7,6 @@ import {
   type SortOrder,
 } from '@/features/issues';
 import { IssuesListTab } from '@/features/issues';
-import { FocusedTasksBlock } from '@/features/user-focus';
 import { getUserFocus } from '@/features/user-focus/api/focus';
 import { getCurrentUserId } from '@/shared/lib/getCurrentUserId';
 import { getOrganizationId } from '@/shared/lib/getOrganizationId';

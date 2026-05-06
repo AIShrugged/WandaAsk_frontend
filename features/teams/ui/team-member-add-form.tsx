@@ -10,7 +10,6 @@ import {
   TEAM_MEMBER_ADD_FIELDS,
   TEAM_MEMBER_ADD_VALUES,
 } from '@/features/teams/model/fields';
-import { BUTTON } from '@/shared/lib/buttons';
 import { VARIANT_MAPPER, type VariantType } from '@/shared/lib/fieldMapper';
 import { Button } from '@/shared/ui/button/Button';
 
@@ -92,7 +91,7 @@ export default function TeamMemberAddForm({ close }: ModalContextValue) {
       })}
       <div className={'flex flex-col gap-3'}>
         <Button loading={isPending} disabled={isPending || !isDirty}>
-          {BUTTON.INVITE}
+          {'Invite'}
         </Button>
       </div>
     </form>

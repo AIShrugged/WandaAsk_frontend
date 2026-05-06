@@ -13,7 +13,6 @@ import {
   getFormFields,
   METHODOLOGY_FIELDS,
 } from '@/features/methodology/lib/options';
-import { BUTTON } from '@/shared/lib/buttons';
 import { VARIANT_MAPPER, type VariantType } from '@/shared/lib/fieldMapper';
 import { ROUTES } from '@/shared/lib/routes';
 import { BUTTON_VARIANT } from '@/shared/types/button';
@@ -141,7 +140,7 @@ export default function MethodologyForm({
           type={'submit'}
           variant={BUTTON_VARIANT.primary}
         >
-          {BUTTON.SAVE}
+          {'Save'}
         </Button>
       </div>
     </form>

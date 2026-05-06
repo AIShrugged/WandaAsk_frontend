@@ -30,7 +30,9 @@ export function PendingAttachmentUploader({
 }: PendingAttachmentUploaderProps) {
   // Set of in-flight operation IDs — structurally immune to going negative.
   // Covers both uploads and deletes so submit is blocked during either.
-  const [pendingOps, setPendingOps] = useState<Set<string>>(() => {return new Set()});
+  const [pendingOps, setPendingOps] = useState<Set<string>>(() => {
+    return new Set();
+  });
 
   function addOp(id: string) {
     setPendingOps((prev) => {
@@ -107,48 +109,50 @@ export function PendingAttachmentUploader({
 
       {attachments.length > 0 && (
         <ul className='flex flex-col gap-2'>
-          {attachments.map((attachment) => {return (
-            <li
-              key={attachment.id}
-              className='flex items-center justify-between gap-3 rounded-[var(--radius-card)] border border-border bg-background/30 px-3 py-2'
-            >
-              <div className='flex min-w-0 items-center gap-2'>
-                <Paperclip className='h-4 w-4 shrink-0 text-muted-foreground' />
-                <span className='truncate text-sm text-foreground'>
-                  {attachment.original_name ??
-                    attachment.file_name ??
-                    `#${attachment.id}`}
-                </span>
-              </div>
-              <Button
-                type='button'
-                variant={BUTTON_VARIANT.secondary}
-                className='h-7 w-7 shrink-0 p-0'
-                disabled={isBusy}
-                onClick={() => {
-                  const opId = crypto.randomUUID();
-
-                  addOp(opId);
-                  deletePendingAttachment(attachment.id)
-                    .then((result) => {
-                      if (result.error) {
-                        toast.error(result.error);
-                        return;
-                      }
-                      onDeleted(attachment.id);
-                    })
-                    .catch(() => {
-                      toast.error('Delete failed');
-                    })
-                    .finally(() => {
-                      removeOp(opId);
-                    });
-                }}
+          {attachments.map((attachment) => {
+            return (
+              <li
+                key={attachment.id}
+                className='flex items-center justify-between gap-3 rounded-[var(--radius-card)] border border-border bg-background/30 px-3 py-2'
               >
-                <Trash2 className='h-3.5 w-3.5' />
-              </Button>
-            </li>
-          )})}
+                <div className='flex min-w-0 items-center gap-2'>
+                  <Paperclip className='h-4 w-4 shrink-0 text-muted-foreground' />
+                  <span className='truncate text-sm text-foreground'>
+                    {attachment.original_name ??
+                      attachment.file_name ??
+                      `#${attachment.id}`}
+                  </span>
+                </div>
+                <Button
+                  type='button'
+                  variant={BUTTON_VARIANT.secondary}
+                  className='h-7 w-7 shrink-0 p-0'
+                  disabled={isBusy}
+                  onClick={() => {
+                    const opId = crypto.randomUUID();
+
+                    addOp(opId);
+                    deletePendingAttachment(attachment.id)
+                      .then((result) => {
+                        if (result.error) {
+                          toast.error(result.error);
+                          return;
+                        }
+                        onDeleted(attachment.id);
+                      })
+                      .catch(() => {
+                        toast.error('Delete failed');
+                      })
+                      .finally(() => {
+                        removeOp(opId);
+                      });
+                  }}
+                >
+                  <Trash2 className='h-3.5 w-3.5' />
+                </Button>
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>

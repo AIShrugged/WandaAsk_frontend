@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { Minus, Plus, Sparkles, Trash2 } from 'lucide-react';
 
 import { Button } from '@/shared/ui/button/Button';
+import SpinLoader from '@/shared/ui/layout/spin-loader';
 
 const TEAMS_COUNT_OPTIONS = [1, 2, 3] as const;
 const MEETINGS_OPTIONS = [1, 2, 3, 4, 5, 6] as const;
@@ -211,7 +212,7 @@ export function DemoDropdown({
               className='flex items-center justify-center gap-1.5 w-full h-8 rounded-[var(--radius-button)] text-xs font-medium text-destructive hover:bg-destructive/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer'
             >
               {isDeleting ? (
-                <div className='w-3 h-3 border-2 border-destructive border-t-transparent rounded-full animate-spin' />
+                <SpinLoader size='xs' />
               ) : (
                 <Trash2 className='w-3 h-3' />
               )}

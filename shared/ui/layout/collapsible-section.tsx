@@ -9,7 +9,7 @@ type CollapsibleSectionProps = React.PropsWithChildren<{
   icon?: React.ReactNode;
   defaultOpen?: boolean;
   className?: string;
-  extraContent: React.ReactNode;
+  extraContent?: React.ReactNode;
 }>;
 
 export function CollapsibleSection({

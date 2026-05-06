@@ -4,10 +4,10 @@ import { differenceInMinutes, format, parseISO } from 'date-fns';
 import { Clock, Users, Video } from 'lucide-react';
 
 import Card from '@/shared/ui/card/Card';
+import { CollapsibleSection } from '@/shared/ui/layout/collapsible-section';
 import { MarkdownContent } from '@/shared/ui/markdown-content';
 
 import { AgendaList } from './agenda-list';
-import { CollapsibleSection } from './collapsible-section';
 
 import type { TodayEvent } from '../model/types';
 
@@ -77,7 +77,7 @@ export function MeetingDetailCard({ event }: MeetingDetailCardProps) {
       <div className='flex flex-col gap-4 px-5 py-4'>
         {/* Briefing (from past meeting summary) */}
         {event.summary && (
-          <CollapsibleSection label='Briefing'>
+          <CollapsibleSection label='Briefing' extraContent={null}>
             <div className='flex flex-col gap-3'>
               {event.summary.key_points.length > 0 && (
                 <div>
@@ -165,7 +165,7 @@ export function MeetingDetailCard({ event }: MeetingDetailCardProps) {
 
         {/* Agenda content (upcoming/general agenda for future meetings) */}
         {event.meeting_state !== 'ready' && event.agenda_content && (
-          <CollapsibleSection label='Agenda'>
+          <CollapsibleSection label='Agenda' extraContent={null}>
             <p className='text-sm text-foreground whitespace-pre-wrap'>
               {event.agenda_content}
             </p>

@@ -152,11 +152,12 @@ export function IssueForm({
 
   const selectedOrgId = watch('organization_id');
   const filteredPersons = selectedOrgId
-    ? persons.filter(
-        (p) =>
-          {return p.organization_id === null ||
-          p.organization_id === Number(selectedOrgId)},
-      )
+    ? persons.filter((p) => {
+        return (
+          p.organization_id === null ||
+          p.organization_id === Number(selectedOrgId)
+        );
+      })
     : persons;
 
   const personOptions = [
@@ -307,12 +308,13 @@ export function IssueForm({
           clearErrors(['organization_id', 'team_id']);
           const currentAssigneeId = watch('assignee_id');
           if (currentAssigneeId && value) {
-            const stillValid = persons.some(
-              (p) =>
-                {return String(p.id) === currentAssigneeId &&
+            const stillValid = persons.some((p) => {
+              return (
+                String(p.id) === currentAssigneeId &&
                 (p.organization_id === null ||
-                  p.organization_id === Number(value))},
-            );
+                  p.organization_id === Number(value))
+              );
+            });
             if (!stillValid) {
               setValue('assignee_id', '', { shouldDirty: true });
             }
@@ -399,10 +401,16 @@ export function IssueForm({
           uploadToken={uploadToken}
           attachments={pendingAttachments}
           onUploaded={(attachment) => {
-            setPendingAttachments((prev) => {return [...prev, attachment]});
+            setPendingAttachments((prev) => {
+              return [...prev, attachment];
+            });
           }}
           onDeleted={(id) => {
-            setPendingAttachments((prev) => {return prev.filter((a) => {return a.id !== id})});
+            setPendingAttachments((prev) => {
+              return prev.filter((a) => {
+                return a.id !== id;
+              });
+            });
           }}
           onPendingChange={setHasPendingOps}
         />

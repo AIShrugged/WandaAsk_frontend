@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 
 import Card from '@/shared/ui/card/Card';
 import { EmptyState } from '@/shared/ui/feedback/empty-state';
+import SpinLoader from '@/shared/ui/layout/spin-loader';
 
 import { getCriticalPath, rebuildCriticalPath } from '../api/critical-path';
 
@@ -193,7 +194,7 @@ export function CriticalPathPageClient({
       <Card className='h-full flex flex-col'>
         <div className='flex-1 flex items-center justify-center'>
           <div className='flex flex-col items-center gap-3'>
-            <div className='w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin' />
+            <SpinLoader size='lg' />
             <p className='text-sm text-muted-foreground'>
               Loading critical path…
             </p>
@@ -298,7 +299,7 @@ export function CriticalPathPageClient({
         )}
         {isComputing && (
           <div className='flex items-center gap-1.5 text-xs text-muted-foreground ml-1'>
-            <div className='w-3 h-3 rounded-full border border-primary border-t-transparent animate-spin' />
+            <SpinLoader size='xs' />
             Computing…
           </div>
         )}

@@ -13,6 +13,7 @@ import { seedDemo } from '@/features/demo/api/seed-demo';
 import { DemoDropdown } from '@/features/demo/ui/demo-dropdown';
 import { DemoOverlay } from '@/features/demo/ui/demo-overlay';
 import { ROUTES } from '@/shared/lib/routes';
+import SpinLoader from '@/shared/ui/layout/spin-loader';
 
 const POLLING_INTERVAL_MS = 2000;
 const MAX_POLL_RETRIES = 150; // ~5 minutes at 2s interval
@@ -277,7 +278,7 @@ export default function DemoSeedButton() {
         aria-busy={isPending}
       >
         {isPending ? (
-          <div className='w-3.5 h-3.5 border-2 border-primary border-t-transparent rounded-full animate-spin flex-shrink-0' />
+          <SpinLoader size='xs' className='flex-shrink-0' />
         ) : (
           <Sparkles className='w-3.5 h-3.5 flex-shrink-0' />
         )}

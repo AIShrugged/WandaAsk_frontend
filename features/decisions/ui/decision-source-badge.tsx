@@ -1,5 +1,7 @@
 import { BookOpen, Calendar, MessageSquare } from 'lucide-react';
 
+import { Badge } from '@/shared/ui/badge';
+
 import type { DecisionSourceType } from '@/features/decisions/model/types';
 
 const META: Record<
@@ -14,12 +16,12 @@ const META: Record<
   manual: {
     icon: <BookOpen className='w-3 h-3' />,
     label: 'Manual',
-    className: 'bg-violet-500/10 text-violet-400',
+    className: 'bg-primary/10 text-violet-300',
   },
   chat: {
     icon: <MessageSquare className='w-3 h-3' />,
     label: 'Chat',
-    className: 'bg-emerald-500/10 text-emerald-400',
+    className: 'bg-accent/15 text-emerald-400',
   },
 };
 
@@ -31,11 +33,9 @@ export function DecisionSourceBadge({ sourceType }: Props) {
   const meta = META[sourceType] ?? META.manual;
 
   return (
-    <span
-      className={`inline-flex items-center gap-1 text-xs px-1.5 py-0.5 rounded font-medium ${meta.className}`}
-    >
+    <Badge className={`gap-1 ${meta.className}`}>
       {meta.icon}
       {meta.label}
-    </span>
+    </Badge>
   );
 }

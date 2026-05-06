@@ -6,9 +6,8 @@ import { useState } from 'react';
 
 import { TaskStatusBadge } from '@/features/today-briefing/ui/task-status-badge';
 import { ROUTES } from '@/shared/lib/routes';
+import { CollapsibleSection } from '@/shared/ui/layout/collapsible-section';
 import { MarkdownContent } from '@/shared/ui/markdown-content';
-
-import { CollapsibleSection } from './collapsible-section';
 
 import type { MeetingTask } from '../model/types';
 
@@ -38,7 +37,7 @@ export function AgendaList({
     return <p className='text-xs text-muted-foreground italic'>{emptyText}</p>;
   }
   return (
-    <CollapsibleSection label={label}>
+    <CollapsibleSection label={label} extraContent={null}>
       <div className='flex flex-col gap-1'>
         {tasks.map((task, i) => {
           const isExpanded = expandedId === task.id;

@@ -1,3 +1,5 @@
+import Avatar from '@/shared/ui/common/avatar';
+
 import type { PeopleListArtifact } from '@/entities/artifact/model/types';
 
 const AVATAR_COLORS = [
@@ -66,11 +68,12 @@ export function PeopleList({ data }: { data: PeopleListArtifact['data'] }) {
             key={member.user_id}
             className='flex items-center gap-3 p-2 rounded-[var(--radius-button)] hover:bg-accent/40 transition-colors'
           >
-            <div
-              className={`w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold text-white ${avatarColor(member.name)}`}
+            <Avatar
+              size='sm'
+              className={`text-xs font-bold text-white ${avatarColor(member.name)}`}
             >
               {initials(member.name)}
-            </div>
+            </Avatar>
             <div className='min-w-0'>
               <p className='text-sm font-medium text-foreground truncate'>
                 {member.name}

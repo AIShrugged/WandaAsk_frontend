@@ -11,6 +11,7 @@ import { ChatInput } from '@/features/chat/ui/chat-input';
 import { ChatMessage } from '@/features/chat/ui/chat-message';
 import { ChatSuggestions } from '@/features/chat/ui/chat-suggestions';
 import { ROUTES } from '@/shared/lib/routes';
+import SpinLoader from '@/shared/ui/layout/spin-loader';
 
 import type {
   Chat,
@@ -360,7 +361,7 @@ export function ChatWindow({
 
         {isLoading && (
           <div className='flex justify-center py-2'>
-            <span className='w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin block' />
+            <SpinLoader size='sm' />
           </div>
         )}
 

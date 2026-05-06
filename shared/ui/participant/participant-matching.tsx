@@ -1,10 +1,11 @@
 'use client';
 
-import { ArrowRight, Loader2 } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { useOptimistic, useTransition } from 'react';
 
 import { setProfile } from '@/features/participants/api/participants';
 import InputDropdown from '@/shared/ui/input/InputDropdown';
+import SpinLoader from '@/shared/ui/layout/spin-loader';
 
 import type { AttendeeProps, GuestProps } from '@/entities/participant';
 
@@ -93,7 +94,7 @@ export default function ParticipantMatching({
 
               {isPending && (
                 <div className='absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none'>
-                  <Loader2 className='w-4 h-4 animate-spin text-primary' />
+                  <SpinLoader size='sm' />
                 </div>
               )}
             </div>

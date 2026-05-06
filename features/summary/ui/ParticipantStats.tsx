@@ -19,6 +19,7 @@ import {
   CHART_TOOLTIP_STYLE,
 } from '@/shared/lib/chart-theme';
 import Card from '@/shared/ui/card/Card';
+import { H3 } from '@/shared/ui/typography/H3';
 
 import type {
   ParticipantStats as ParticipantStatsType,
@@ -114,7 +115,7 @@ interface ParticipantStatsProps {
 export function ParticipantStats({ data }: ParticipantStatsProps) {
   return (
     <div className='flex flex-col gap-4'>
-      <h2 className='text-lg font-semibold text-foreground'>Participants</h2>
+      <H3 className='text-lg'>Participants</H3>
 
       <div className='grid grid-cols-2 gap-3'>
         <div className='flex items-center gap-3 rounded-lg bg-muted/50 px-4 py-3'>

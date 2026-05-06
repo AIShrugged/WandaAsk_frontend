@@ -7,7 +7,6 @@ import {
   FileCheck,
   FileText,
   LayoutDashboard,
-  Loader2,
   Users,
   Video,
   Zap,
@@ -24,6 +23,7 @@ import { TaskSummaryArtifactView } from '@/entities/artifact/ui/task-summary-art
 import { TaskTable } from '@/entities/artifact/ui/task-table';
 import { TranscriptView } from '@/entities/artifact/ui/transcript-view';
 import { Skeleton } from '@/shared/ui/layout/skeleton';
+import SpinLoader from '@/shared/ui/layout/spin-loader';
 
 import type {
   Artifact,
@@ -167,7 +167,7 @@ export function ArtifactCard({ artifact }: { artifact: Artifact }) {
   if (isGenerating) {
     cardBody = (
       <div className='flex items-center justify-center gap-2 py-6 text-sm text-muted-foreground'>
-        <Loader2 className='w-4 h-4 animate-spin' />
+        <SpinLoader size='sm' />
         Generating\u2026
       </div>
     );

@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronLeft, Loader2, MessageSquare, Plus, Send } from 'lucide-react';
+import { ChevronLeft, MessageSquare, Plus, Send } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -10,6 +10,7 @@ import { ChatFormModal } from '@/features/chat/ui/chat-form-modal';
 import { ChatListItem } from '@/features/chat/ui/chat-list-item';
 import { ROUTES } from '@/shared/lib/routes';
 import { CollapsedSidePanel } from '@/shared/ui/layout/collapsed-side-panel';
+import SpinLoader from '@/shared/ui/layout/spin-loader';
 
 import type { OrganizationProps } from '@/entities/organization';
 import type { Chat } from '@/features/chat/types';
@@ -228,7 +229,7 @@ export function ChatList({
 
         {isLoading && (
           <div className='flex justify-center py-2'>
-            <Loader2 className='w-4 h-4 text-primary animate-spin' />
+            <SpinLoader size='sm' />
           </div>
         )}
       </div>
