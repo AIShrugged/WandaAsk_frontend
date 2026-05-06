@@ -4,10 +4,10 @@ import {
   Bot,
   Check,
   FileText,
-  Loader2,
   Mail,
   MessageSquare,
 } from 'lucide-react';
+import SpinLoader from '@/shared/ui/layout/spin-loader';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
@@ -214,7 +214,7 @@ export function AiPrepPanel({ event, tasks, carriedTasks }: AiPrepPanelProps) {
                       className='shrink-0 text-xs text-primary hover:underline disabled:opacity-50 flex items-center gap-1 mt-0.5 cursor-pointer disabled:cursor-wait'
                     >
                       {isLoading ? (
-                        <Loader2 className='h-3 w-3 animate-spin' />
+                        <SpinLoader size='xs' />
                       ) : (
                         'Go →'
                       )}
@@ -265,7 +265,7 @@ export function AiPrepPanel({ event, tasks, carriedTasks }: AiPrepPanelProps) {
                           className='shrink-0 text-xs text-primary hover:underline disabled:opacity-50 flex items-center gap-1 cursor-pointer disabled:cursor-wait'
                         >
                           {isLoading ? (
-                            <Loader2 className='h-3 w-3 animate-spin' />
+                            <SpinLoader size='xs' />
                           ) : (
                             'Dispatch'
                           )}

@@ -2,6 +2,7 @@
 
 import clsx from 'clsx';
 import { Sparkles } from 'lucide-react';
+import SpinLoader from '@/shared/ui/layout/spin-loader';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -277,7 +278,7 @@ export default function DemoSeedButton() {
         aria-busy={isPending}
       >
         {isPending ? (
-          <div className='w-3.5 h-3.5 border-2 border-primary border-t-transparent rounded-full animate-spin flex-shrink-0' />
+          <SpinLoader size='xs' className='flex-shrink-0' />
         ) : (
           <Sparkles className='w-3.5 h-3.5 flex-shrink-0' />
         )}

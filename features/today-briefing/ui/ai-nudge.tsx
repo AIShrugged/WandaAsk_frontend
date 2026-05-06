@@ -1,6 +1,7 @@
 'use client';
 
-import { AlertCircle, Loader2 } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
+import SpinLoader from '@/shared/ui/layout/spin-loader';
 import { useEffect, useState } from 'react';
 
 import { generateNudge } from '../api/nudge';
@@ -42,7 +43,7 @@ export function AiNudge({ text, date }: AiNudgeProps) {
   if (loading) {
     return (
       <div className='flex items-center gap-3 rounded-lg border border-border bg-card px-4 py-3'>
-        <Loader2 className='h-4 w-4 shrink-0 text-muted-foreground animate-spin' />
+        <SpinLoader size='sm' className='shrink-0' />
         <p className='text-sm text-muted-foreground'>
           Generating AI insight...
         </p>

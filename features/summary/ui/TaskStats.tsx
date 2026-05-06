@@ -12,6 +12,7 @@ import {
 
 import { CHART_TOOLTIP_STYLE } from '@/shared/lib/chart-theme';
 import Card from '@/shared/ui/card/Card';
+import { H3 } from '@/shared/ui/typography/H3';
 
 import type { TaskStats as TaskStatsType } from '@/features/summary/types';
 
@@ -111,7 +112,7 @@ export function TaskStats({ data }: TaskStatsProps) {
   return (
     <div className='flex flex-col gap-4'>
       <div className='flex items-center justify-between'>
-        <h2 className='text-lg font-semibold text-foreground'>Tasks</h2>
+        <H3 className='text-lg'>Tasks</H3>
         <span className='text-3xl font-bold text-primary tabular-nums'>
           {data.total}
         </span>

@@ -4,9 +4,16 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { type PropsWithChildren, useEffect, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
 
+const sizeClasses = {
+  sm: 'max-w-md',
+  md: 'max-w-[700px]',
+  lg: 'max-w-3xl',
+} as const;
+
 interface ModalRootProps extends PropsWithChildren {
   open: boolean;
   onClose: () => void;
+  size?: keyof typeof sizeClasses;
 }
 
 /** Noop unsubscribe for useSyncExternalStore. */
@@ -27,7 +34,7 @@ const noopSubscribe = () => {
  * @param props.children - Modal content.
  * @returns React portal mounted to document.body, or null on the server.
  */
-export function ModalRoot({ open, onClose, children }: ModalRootProps) {
+export function ModalRoot({ open, onClose, size = 'md', children }: ModalRootProps) {
   // useSyncExternalStore: server snapshot = false (no portal during SSR),
   // client snapshot = true — avoids setState-in-effect linter warning.
   const mounted = useSyncExternalStore(
@@ -73,7 +80,7 @@ export function ModalRoot({ open, onClose, children }: ModalRootProps) {
           onClick={onClose}
         >
           <motion.div
-            className='bg-card border border-border rounded-[var(--radius-card)] w-full max-w-[700px] mx-4'
+            className={`bg-card border border-border rounded-[var(--radius-card)] w-full ${sizeClasses[size]} mx-4`}
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.95, opacity: 0 }}

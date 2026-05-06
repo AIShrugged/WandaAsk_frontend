@@ -1,6 +1,7 @@
 'use client';
 
 import { ChevronLeft, MessageSquare } from 'lucide-react';
+import SpinLoader from '@/shared/ui/layout/spin-loader';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -360,7 +361,7 @@ export function ChatWindow({
 
         {isLoading && (
           <div className='flex justify-center py-2'>
-            <span className='w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin block' />
+            <SpinLoader size='sm' />
           </div>
         )}
 

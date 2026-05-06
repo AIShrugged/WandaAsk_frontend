@@ -11,6 +11,7 @@ import {
 
 import { CHART_TOOLTIP_STYLE } from '@/shared/lib/chart-theme';
 import Card from '@/shared/ui/card/Card';
+import { H3 } from '@/shared/ui/typography/H3';
 
 import type { FollowupStats as FollowupStatsType } from '@/features/summary/types';
 
@@ -105,7 +106,7 @@ export function FollowupStats({ data }: FollowupStatsProps) {
   return (
     <div className='flex flex-col gap-4'>
       <div className='flex items-center justify-between'>
-        <h2 className='text-lg font-semibold text-foreground'>Follow-up</h2>
+        <H3 className='text-lg'>Follow-up</H3>
         <span className='text-3xl font-bold text-primary tabular-nums'>
           {data.total}
         </span>

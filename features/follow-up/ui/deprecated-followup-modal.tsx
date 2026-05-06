@@ -1,6 +1,7 @@
 'use client';
 
-import { AlertTriangle, Loader2, RefreshCw } from 'lucide-react';
+import { AlertTriangle, RefreshCw } from 'lucide-react';
+import SpinLoader from '@/shared/ui/layout/spin-loader';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -154,7 +155,7 @@ export default function DeprecatedFollowUpModal({
       {(state === 'regenerating' || state === 'polling') && (
         <ModalBody>
           <div className='flex flex-col items-center gap-3 text-center py-2'>
-            <Loader2 className='size-8 animate-spin text-primary' />
+            <SpinLoader size='lg' />
             <div className='space-y-1'>
               <p className='text-sm font-medium text-foreground'>
                 Generating a report with the new methodology...

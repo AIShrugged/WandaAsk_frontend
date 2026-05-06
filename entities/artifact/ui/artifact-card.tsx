@@ -7,11 +7,11 @@ import {
   FileCheck,
   FileText,
   LayoutDashboard,
-  Loader2,
   Users,
   Video,
   Zap,
 } from 'lucide-react';
+import SpinLoader from '@/shared/ui/layout/spin-loader';
 import dynamic from 'next/dynamic';
 import React from 'react';
 
@@ -167,7 +167,7 @@ export function ArtifactCard({ artifact }: { artifact: Artifact }) {
   if (isGenerating) {
     cardBody = (
       <div className='flex items-center justify-center gap-2 py-6 text-sm text-muted-foreground'>
-        <Loader2 className='w-4 h-4 animate-spin' />
+        <SpinLoader size='sm' />
         Generating\u2026
       </div>
     );

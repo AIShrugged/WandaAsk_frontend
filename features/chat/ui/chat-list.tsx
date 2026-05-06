@@ -1,6 +1,7 @@
 'use client';
 
-import { ChevronLeft, Loader2, MessageSquare, Plus, Send } from 'lucide-react';
+import { ChevronLeft, MessageSquare, Plus, Send } from 'lucide-react';
+import SpinLoader from '@/shared/ui/layout/spin-loader';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -228,7 +229,7 @@ export function ChatList({
 
         {isLoading && (
           <div className='flex justify-center py-2'>
-            <Loader2 className='w-4 h-4 text-primary animate-spin' />
+            <SpinLoader size='sm' />
           </div>
         )}
       </div>

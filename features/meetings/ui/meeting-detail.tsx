@@ -21,6 +21,8 @@ import MeetingTasks from '@/features/meeting/ui/meeting-tasks';
 import { ROUTES } from '@/shared/lib/routes';
 import { Badge } from '@/shared/ui/badge';
 import { MarkdownContent } from '@/shared/ui/markdown-content';
+import { H2 } from '@/shared/ui/typography/H2';
+import { Pill } from '@/shared/ui/common/pill';
 
 import type {
   CalendarEventAgendaItem,
@@ -210,7 +212,7 @@ function ParticipantChip({
   const name = getDisplayName(participant);
 
   return (
-    <div className='inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-1.5'>
+    <Pill className='gap-2'>
       <span className='flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-[11px] font-semibold text-primary'>
         {getParticipantInitials(participant)}
       </span>
@@ -229,7 +231,7 @@ function ParticipantChip({
           You
         </Badge>
       )}
-    </div>
+    </Pill>
   );
 }
 
@@ -599,9 +601,7 @@ export async function MeetingDetail({ id }: { id: string }) {
 
           <div className='flex flex-wrap items-start justify-between gap-4'>
             <div className='min-w-0 flex-1'>
-              <h1 className='text-2xl font-semibold tracking-tight text-foreground'>
-                {event.title}
-              </h1>
+              <H2>{event.title}</H2>
               {event.description && (
                 <p className='mt-3 max-w-3xl text-sm leading-6 text-muted-foreground'>
                   {event.description}
@@ -613,21 +613,21 @@ export async function MeetingDetail({ id }: { id: string }) {
 
         <div className='flex flex-wrap items-center gap-3 text-sm text-muted-foreground'>
           {startsAt && endsAt && (
-            <span className='inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-1.5'>
+            <Pill className='gap-2 text-muted-foreground'>
               <CalendarClock className='h-4 w-4' />
               {formatMetaDate(startsAt)}
-            </span>
+            </Pill>
           )}
           {startsAt && endsAt && (
-            <span className='inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-1.5'>
+            <Pill className='gap-2 text-muted-foreground'>
               <Clock3 className='h-4 w-4' />
               {formatMetaTimeRange(startsAt, endsAt)}
-            </span>
+            </Pill>
           )}
-          <span className='inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-1.5'>
+          <Pill className='gap-2 text-muted-foreground'>
             <Link2 className='h-4 w-4' />
             <MeetingPlatformLink platform={event.platform} url={url} />
-          </span>
+          </Pill>
         </div>
 
         <CountsRow counts={data.counts} />

@@ -1,3 +1,4 @@
+export { ArchivedSectionToggle } from './archived-section-toggle';
 export { CollapsibleSection } from './collapsible-section';
 export { CollapsedSidePanel } from './collapsed-side-panel';
 export { default as ComponentHeader } from './component-header';

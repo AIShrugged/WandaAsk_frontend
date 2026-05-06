@@ -19,6 +19,7 @@ import {
   CHART_TOOLTIP_STYLE,
 } from '@/shared/lib/chart-theme';
 import Card from '@/shared/ui/card/Card';
+import { H3 } from '@/shared/ui/typography/H3';
 
 import type {
   TeamStats as TeamStatsType,
@@ -113,7 +114,7 @@ interface TeamStatsProps {
 export function TeamStats({ data }: TeamStatsProps) {
   return (
     <div className='flex flex-col gap-4'>
-      <h2 className='text-lg font-semibold text-foreground'>Teams</h2>
+      <H3 className='text-lg'>Teams</H3>
 
       <div className='flex items-center gap-3 rounded-lg bg-muted/50 px-4 py-3'>
         <div className='flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary'>
