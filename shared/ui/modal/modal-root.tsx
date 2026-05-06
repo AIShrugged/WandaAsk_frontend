@@ -55,6 +55,8 @@ export function ModalRoot({
   useEffect(() => {
     if (!open) return;
 
+    document.body.style.overflow = 'hidden';
+
     /**
      * handleKeyDown.
      * @param e - e.
@@ -68,6 +70,7 @@ export function ModalRoot({
     document.addEventListener('keydown', handleKeyDown);
 
     return () => {
+      document.body.style.overflow = '';
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, [open, onClose]);

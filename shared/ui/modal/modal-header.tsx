@@ -21,6 +21,7 @@ export default function ModalHeader({
         <p className='text-base font-semibold text-foreground'>{title}</p>
         <Hover>
           <button
+            aria-label='Close modal'
             className='cursor-pointer text-muted-foreground hover:text-foreground transition-colors'
             onClick={onClick}
           >
