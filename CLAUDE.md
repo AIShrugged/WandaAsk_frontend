@@ -138,38 +138,14 @@ Symptom: field is undefined at runtime / wrong type
 
 ## MCP Servers (`.mcp.json`)
 
-Two MCP servers are configured for this project:
-
-### 1. `playwright` — Browser automation
-
-Launches a headless Chromium browser for E2E testing and UI exploration.
-
-**Setup (one time):**
-
-```bash
-# Generate auth session first:
-npm run test:e2e -- --project=setup
-# Now e2e/.auth/user.json exists — playwright MCP will use it for auth
-```
-
-**Example prompts:**
-
-- `"Navigate to /dashboard/teams and take a screenshot"`
-- `"Fill the create team form with name 'QA Team' and submit"`
-- `"Run the auth E2E tests and show me what failed"`
-- `"Check if the chat page renders correctly after login"`
-
-**When to use:** UI debugging, visual regression, writing/running E2E tests,
-checking what a page looks like without running dev server manually.
-
-### 2. `wanda-backend` — Laravel HR MCP
+### `wanda-backend` — Laravel HR MCP
 
 Direct access to live backend data via 14 AI tools.
 
 **Setup:**
 
 1. Get your Sanctum token (see above)
-2. Replace `REPLACE_WITH_SANCTUM_TOKEN` in `.mcp.json`
+2. Replace `REPLACE_WITH_SANCTUM_TOKEN` in `.mcp.local.json`
 3. Do NOT commit `.mcp.json` with a real token — use `.mcp.local.json` instead
 
 **Example prompts:**
@@ -183,19 +159,21 @@ Direct access to live backend data via 14 AI tools.
 
 ```bash
 npm install          # Install dependencies
-npm run dev          # Local development server
-npm run build        # Production build
+npm run dev          # Local development server (Turbopack, port 8080)
+npm run build        # Production build (Webpack)
 npm start            # Run production build
 npm run lint         # ESLint check
 npm run lint:fix     # ESLint autofix
 npm run format       # Prettier format
+npm test             # Jest unit tests
+npm run push         # Pre-push checks + git push (bash deploy/scripts/push.sh)
 ```
 
 ## Architecture: Feature Sliced Design (FSD)
 
 ```
 app/                # Next.js App Router — routing only, no business logic
-features/           # Feature-sliced folders (auth/, etc.)
+features/           # Feature-sliced folders (auth/, calendar/, issues/, ...)
   <feature>/
     ui/             # React components, export via index
     model/          # Business logic, state, DTO transformations, Zod schemas
@@ -203,16 +181,16 @@ features/           # Feature-sliced folders (auth/, etc.)
     hooks/          # Feature-specific hooks
     types.ts        # Feature-specific types
     index.ts        # Public API of the feature
-entities/           # Domain entities
+entities/           # Domain entities (artifact/, event/, issue/, team/, user/, ...)
 shared/             # Shared across features
   ui/               # UI kit components (Button, Input, Checkbox, Toast)
-  lib/              # Utilities, helpers
+  lib/              # Utilities, helpers, routes
   api/              # Centralized API client
   store/            # Zustand store factories
   hooks/            # Reusable hooks (use-modal, use-popup, use-infinite-scroll)
   types/            # Shared TypeScript types (ActionResult, PaginatedResult)
 widgets/            # Composite components combining multiple features
-styles/             # Global styles
+deploy/             # Docker, Helm charts, deployment scripts
 ```
 
 **Key FSD rules:**
@@ -242,7 +220,8 @@ styles/             # Global styles
 
 ## Key Config Files
 
-- `.env.example` — environment variables template
+- `.env.example` — environment variables template (`API_URL`,
+  `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`)
 - `next.config.ts` — Next.js configuration (React Compiler enabled)
 - `postcss.config.mjs` — PostCSS with `@tailwindcss/postcss`
 - `eslint.config.mjs` / `.prettierrc` — linting and formatting rules

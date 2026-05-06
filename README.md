@@ -5,10 +5,13 @@ Laravel backend via REST API.
 
 ## Stack
 
-- **Next.js 16** (App Router) + **React 19** + **TypeScript** (strict)
-- **Tailwind CSS v4** — CSS-based config via `@theme` in `globals.css`
+- **Next.js 16** (App Router, Turbopack in dev) + **React 19** + **TypeScript**
+  (strict)
+- **Tailwind CSS v4** — CSS-based config via `@theme inline` in `globals.css`
+  (no `tailwind.config.ts`)
 - **Zod v4** + **react-hook-form** — form validation
 - **Zustand** — client state
+- **Recharts** — charts and analytics
 - **React Compiler** enabled
 - **Jest 30** + **@testing-library/react** — unit and component tests
 
@@ -24,7 +27,7 @@ Laravel backend via REST API.
 npm install
 
 # Copy env and fill in values
-cp .env.local.example .env.local
+cp .env.example .env.local
 
 # Start dev server (Turbopack, port 8080)
 npm run dev
@@ -34,25 +37,25 @@ App will be available at `http://localhost:8080`.
 
 ### Environment variables
 
-| Variable              | Description                       |
-| --------------------- | --------------------------------- |
-| `API_URL`             | Laravel backend URL (server-side) |
-| `NEXT_PUBLIC_API_URL` | Laravel backend URL (client-side) |
-| `NEXT_PUBLIC_WS_URL`  | WebSocket server URL              |
+| Variable             | Description                                   |
+| -------------------- | --------------------------------------------- |
+| `API_URL`            | Laravel backend URL (server-side)             |
+| `TELEGRAM_BOT_TOKEN` | Telegram bot token for pre-push notifications |
+| `TELEGRAM_CHAT_ID`   | Telegram chat ID for pre-push notifications   |
 
 ## Commands
 
 ```bash
-npm run dev        # Dev server with Turbopack
+npm run dev        # Dev server with Turbopack (port 8080)
 npm run build      # Production build (Webpack)
 npm run start      # Run production build
 npm run lint       # ESLint check
 npm run lint:fix   # ESLint autofix
 npm run format     # Prettier format
-npm test           # Jest tests
+npm test           # Jest unit tests
 npm test -- --watch          # Watch mode
 npm test -- --coverage       # With coverage report
-npm test -- schemas          # Filter by file name
+npm run push       # Pre-push checks + git push
 ```
 
 > **Note:** `npm run build` uses Webpack (same as production). Run it locally to
@@ -64,19 +67,21 @@ Feature Sliced Design (FSD):
 
 ```
 app/          # Next.js App Router — routing only
-features/     # Feature modules (auth, calendar, meeting, transcript, ...)
+features/     # Feature modules (auth, calendar, meetings, issues, agents, ...)
   <feature>/
     ui/       # React components
     model/    # State, schemas, DTO transformations
     api/      # Server Actions and API calls
     hooks/    # Feature-specific hooks
     index.ts  # Public API
-entities/     # Domain entities
-widgets/      # Composite components
+entities/     # Domain entities (artifact, event, issue, team, user, ...)
+widgets/      # Composite components combining multiple features
 shared/
   ui/         # UI kit (Button, Input, Toast, ...)
-  api/        # API client, session
   lib/        # Utilities, config, routes
+  hooks/      # Reusable hooks
+  types/      # Shared TypeScript types (ActionResult, PaginatedResult)
+deploy/       # Docker, Helm charts, deployment scripts
 ```
 
 ## Testing
@@ -92,13 +97,6 @@ for pure logic, `*.test.tsx` for components.
 | `@testing-library/react`      | Component rendering                      |
 | `@testing-library/user-event` | User interaction simulation              |
 | `@testing-library/jest-dom`   | DOM matchers (`toBeInTheDocument`, etc.) |
-| `@types/jest`                 | TypeScript types for Jest globals        |
-
-**What is covered:**
-
-- Zod schemas (`features/chat/model/__tests__/`)
-- UI components: `CollapsedSidePanel`, `ThinkingIndicator`, `ChatMessage`,
-  `ChatList`
 
 **Conventions:**
 
@@ -119,7 +117,6 @@ docker build -t wanda-frontend .
 # Run container
 docker run -p 3000:3000 \
   -e API_URL=https://api.example.com \
-  -e NEXT_PUBLIC_API_URL=https://api.example.com \
   wanda-frontend
 ```
 
