@@ -101,8 +101,39 @@ export async function getSomeData() {
   sections
 - `app/dashboard/summary/loading.tsx` — matching skeleton layout
 
+## Button System (updated 2026-05-06)
+
+Types live in `shared/types/button.ts` (`BUTTON_VARIANT`, `BUTTON_SIZE`). All
+components exported from `@/shared/ui/button` (index.ts barrel).
+
+**Never use raw `<button>` — always use the Button family.**
+
+| Component     | File                                | When to use                                        |
+| ------------- | ----------------------------------- | -------------------------------------------------- |
+| `Button`      | `shared/ui/button/Button.tsx`       | Any text/icon button — forms, modals, main actions |
+| `ButtonLink`  | `shared/ui/button/button-link.tsx`  | Link styled as a button (CTA, navigation)          |
+| `ButtonIcon`  | `shared/ui/button/button-icon.tsx`  | Icon-only button — must have `aria-label`          |
+| `ButtonClose` | `shared/ui/button/button-close.tsx` | Modal/panel close — must have `aria-label`         |
+| `ButtonBack`  | `shared/ui/button/button-back.tsx`  | Back navigation (router.back())                    |
+| `ButtonCopy`  | `shared/ui/button/button-copy.tsx`  | Copy to clipboard                                  |
+
+**Variants (`ButtonVariant`):** `primary` (default), `secondary`, `danger`,
+`ghost-danger`, `ghost`, `pill`
+
+**Sizes (`ButtonSize`):** `md` (default, h-10), `sm` (h-9), `xs` (h-7)
+
+**`fullWidth` prop** defaults to `true` — pass `fullWidth={false}` for compact
+inline buttons that should not stretch.
+
 ## Route Constants Locations
 
-All in `shared/lib/routes.ts` under `ROUTES.DASHBOARD.*`: HOME, CALENDAR, CHAT,
-MEETING, TEAMS, METHODOLOGY, STATISTICS, FOLLOWUPS, ORGANIZATION, PROFILE,
-SUMMARY
+All in `shared/lib/routes.ts` under `ROUTES.DASHBOARD.*`: HOME, TODAY,
+TODAY_MEETINGS, TODAY_TASKS, TODAY_ACTIVITY, TODAY_PROGRESS, MEETINGS, TASKS,
+CALENDAR, CHAT, ISSUES, AGENTS, AGENT_PROFILES, AGENT_PROFILES_NEW, AGENT_TASKS,
+AGENT_TASKS_NEW, AGENT_ACTIVITY, TELEGRAM_CHATS, TEAMS, TEAMS_CREATE,
+METHODOLOGY, STATISTICS, FOLLOWUPS, ORGANIZATION, PROFILE, PROFILE_ACCOUNT,
+PROFILE_PASSWORD, PROFILE_CALENDAR, PROFILE_MENU, PROFILE_APPEARANCE, SUMMARY,
+KANBAN, ISSUES_LIST, ISSUES_KANBAN, ISSUES_PROGRESS, MEETINGS_LIST,
+MEETINGS_CALENDAR, MEETINGS_ORGANIZATION, MEETING_DETAIL (fn),
+MEETING_DETAIL_OVERVIEW (fn), MEETING_DETAIL_AGENDA (fn), MEETING_DETAIL_TASKS
+(fn), MEETING_DETAIL_TRANSCRIPT (fn)

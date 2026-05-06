@@ -145,12 +145,14 @@ memory: project
 
 ### Варианты (ButtonVariant)
 
-| Вариант             | Когда использовать                            | Визуал                                             |
-| ------------------- | --------------------------------------------- | -------------------------------------------------- |
-| `primary` (default) | Главное действие, submit форм                 | Фиолетовый градиент, тень-glow                     |
-| `secondary`         | Отмена, второстепенные действия               | Прозрачный с border                                |
-| `danger`            | Удаление с заполненным фоном                  | Красный фон                                        |
-| `ghost-danger`      | Danger zone, деструктивное действие с outline | Прозрачный с красным border, заполняется при hover |
+| Вариант             | Когда использовать                                | Визуал                                             |
+| ------------------- | ------------------------------------------------- | -------------------------------------------------- |
+| `primary` (default) | Главное действие, submit форм                     | Фиолетовый градиент, тень-glow                     |
+| `secondary`         | Отмена, второстепенные действия                   | Прозрачный с border                                |
+| `danger`            | Удаление с заполненным фоном                      | Красный фон                                        |
+| `ghost-danger`      | Danger zone, деструктивное действие с outline     | Прозрачный с красным border, заполняется при hover |
+| `ghost`             | Tertiary/вспомогательные действия рядом с текстом | Прозрачный, только hover highlight                 |
+| `pill`              | Теги, sidebar nav items, inline-кнопки            | Pill shape, compact, без border                    |
 
 ### Размеры (ButtonSize)
 
@@ -158,6 +160,7 @@ memory: project
 | -------------- | ------ | ------------- | ------------------------------------------- |
 | `md` (default) | `h-10` | `px-6 py-2`   | Основные кнопки в формах, модальных окнах   |
 | `sm`           | `h-9`  | `px-4 py-1.5` | Компактные контексты — danger zone, toolbar |
+| `xs`           | `h-7`  | `px-2.5 py-1` | Тулбары, карточки, рядом с текстом          |
 
 ### Известные исключения (документированные)
 
@@ -198,9 +201,27 @@ memory: project
 - Те же варианты что и Button, рендерит `<Link>` вместо `<button>`
 - Prop `external={true}` → `target="_blank" rel="noopener noreferrer"`
 
+**Button (ghost):**
+
+- `bg-transparent text-foreground`
+- Hover: `bg-accent/10 text-accent-foreground`
+
+**Button (pill):**
+
+- `rounded-full bg-transparent text-muted-foreground`
+- Hover: `bg-accent/15 text-foreground`
+- Compact — используется для sidebar nav items и tag-like кнопок
+
 **ButtonIcon (primary):**
 
 - Hover: `text-primary + drop-shadow-[0_0_6px_rgba(124,58,237,0.7)]`
+- Обязателен prop `aria-label` с описанием действия
+
+**`fullWidth` prop:**
+
+- По умолчанию `fullWidth={true}` — кнопка растягивается на всю ширину
+  контейнера
+- Для compact inline кнопок явно передавай `fullWidth={false}`
 
 ## Принципы дизайна
 
