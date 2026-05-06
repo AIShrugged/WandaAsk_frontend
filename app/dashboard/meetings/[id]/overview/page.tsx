@@ -13,9 +13,9 @@ import {
 
 import { getCalendarEventDetail } from '@/features/event';
 import { Badge } from '@/shared/ui/badge';
+import { Pill } from '@/shared/ui/common/pill';
 import { MarkdownContent } from '@/shared/ui/markdown-content';
 import { H2 } from '@/shared/ui/typography/H2';
-import { Pill } from '@/shared/ui/common/pill';
 
 import type {
   CalendarEventParticipant,

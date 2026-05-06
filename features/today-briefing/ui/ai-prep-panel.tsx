@@ -1,25 +1,18 @@
 'use client';
 
-import {
-  Bot,
-  Check,
-  FileText,
-  Mail,
-  MessageSquare,
-} from 'lucide-react';
-import SpinLoader from '@/shared/ui/layout/spin-loader';
+import { Bot, Check, FileText, Mail, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 import { ROUTES } from '@/shared/lib/routes';
+import { CollapsibleSection } from '@/shared/ui/layout/collapsible-section';
+import SpinLoader from '@/shared/ui/layout/spin-loader';
 
 import { executeAiAction } from '../api/ai-action';
 import { dispatchTaskToAgent } from '../api/dispatch';
 import { sendDirectMessage } from '../api/send-message';
-
-import { CollapsibleSection } from '@/shared/ui/layout/collapsible-section';
 
 import type { CarriedTask, MeetingTask, TodayEvent } from '../model/types';
 
@@ -213,11 +206,7 @@ export function AiPrepPanel({ event, tasks, carriedTasks }: AiPrepPanelProps) {
                       }}
                       className='shrink-0 text-xs text-primary hover:underline disabled:opacity-50 flex items-center gap-1 mt-0.5 cursor-pointer disabled:cursor-wait'
                     >
-                      {isLoading ? (
-                        <SpinLoader size='xs' />
-                      ) : (
-                        'Go →'
-                      )}
+                      {isLoading ? <SpinLoader size='xs' /> : 'Go →'}
                     </button>
                   )}
                 </div>
@@ -264,11 +253,7 @@ export function AiPrepPanel({ event, tasks, carriedTasks }: AiPrepPanelProps) {
                           }}
                           className='shrink-0 text-xs text-primary hover:underline disabled:opacity-50 flex items-center gap-1 cursor-pointer disabled:cursor-wait'
                         >
-                          {isLoading ? (
-                            <SpinLoader size='xs' />
-                          ) : (
-                            'Dispatch'
-                          )}
+                          {isLoading ? <SpinLoader size='xs' /> : 'Dispatch'}
                         </button>
                       )}
                     </div>

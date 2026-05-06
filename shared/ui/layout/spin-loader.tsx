@@ -12,7 +12,10 @@ interface SpinLoaderProps {
   className?: string;
 }
 
-export default function SpinLoader({ size = 'lg', className }: SpinLoaderProps) {
+export default function SpinLoader({
+  size = 'lg',
+  className,
+}: SpinLoaderProps) {
   return (
     <div
       className={clsx(

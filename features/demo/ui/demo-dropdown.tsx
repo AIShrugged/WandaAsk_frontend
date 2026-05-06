@@ -2,9 +2,9 @@
 
 import clsx from 'clsx';
 import { Minus, Plus, Sparkles, Trash2 } from 'lucide-react';
-import SpinLoader from '@/shared/ui/layout/spin-loader';
 
 import { Button } from '@/shared/ui/button/Button';
+import SpinLoader from '@/shared/ui/layout/spin-loader';
 
 const TEAMS_COUNT_OPTIONS = [1, 2, 3] as const;
 const MEETINGS_OPTIONS = [1, 2, 3, 4, 5, 6] as const;

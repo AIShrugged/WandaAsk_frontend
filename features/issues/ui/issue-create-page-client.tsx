@@ -38,7 +38,9 @@ export function IssueCreatePageClient({
 }: IssueCreatePageClientProps) {
   // Stable for the lifetime of this component — one UUID per create session.
   // useMemo with [] deps is generated once on mount, clear intent vs useRef.
-  const uploadToken = useMemo(() => {return crypto.randomUUID()}, []);
+  const uploadToken = useMemo(() => {
+    return crypto.randomUUID();
+  }, []);
   const [createdIssue, setCreatedIssue] = useState<Issue | null>(null);
 
   if (createdIssue === null) {

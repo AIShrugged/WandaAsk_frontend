@@ -115,14 +115,20 @@ export async function getKanbanIssues(
     const remainingPages = Math.ceil(
       (fetchableCount - KANBAN_PAGE_LIMIT) / KANBAN_PAGE_LIMIT,
     );
-    const pageNumbers = Array.from(
-      { length: remainingPages },
-      (_, i) => {return i + 2},
-    );
+    const pageNumbers = Array.from({ length: remainingPages }, (_, i) => {
+      return i + 2;
+    });
     const pages = await Promise.all(
-      pageNumbers.map((p) => {return fetchKanbanPage(authHeaders, baseFilters, p)}),
+      pageNumbers.map((p) => {
+        return fetchKanbanPage(authHeaders, baseFilters, p);
+      }),
     );
-    allCards = [first.data, ...pages.map((p) => {return p.data})].flat();
+    allCards = [
+      first.data,
+      ...pages.map((p) => {
+        return p.data;
+      }),
+    ].flat();
   }
 
   const columns: Record<IssueStatus, KanbanCard[]> = {

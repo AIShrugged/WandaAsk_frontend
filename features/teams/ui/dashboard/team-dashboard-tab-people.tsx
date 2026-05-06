@@ -7,10 +7,10 @@ import { toast } from 'sonner';
 
 import { cancelTeamInvite, kickTeamMember } from '@/features/teams/api/team';
 import { avatarColor, initials } from '@/features/teams/model/avatar-utils';
-import Avatar from '@/shared/ui/common/avatar';
 import TeamMemberAddModal from '@/features/teams/ui/team-member-add-modal';
 import TeamNotificationSettings from '@/features/teams/ui/team-notification-settings';
 import { useModal } from '@/shared/hooks/use-modal';
+import Avatar from '@/shared/ui/common/avatar';
 
 import type { TeamInvite, TeamProps } from '@/entities/team';
 import type { TelegramChatRegistration } from '@/features/chat/types';
@@ -75,7 +75,10 @@ function MemberRow({ member, analytics, teamId, isManager }: MemberRowProps) {
 
   return (
     <div className='flex items-center gap-3 p-4 rounded-[var(--radius-card)] border border-border bg-card'>
-      <Avatar size='sm' className={`text-xs font-bold text-white ${avatarColor(member.name)}`}>
+      <Avatar
+        size='sm'
+        className={`text-xs font-bold text-white ${avatarColor(member.name)}`}
+      >
         {initials(member.name)}
       </Avatar>
 

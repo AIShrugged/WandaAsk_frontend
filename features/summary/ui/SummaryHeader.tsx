@@ -1,5 +1,6 @@
 import { format } from 'date-fns';
 import { BarChart3 } from 'lucide-react';
+
 import { H1 } from '@/shared/ui/typography/H1';
 
 /**

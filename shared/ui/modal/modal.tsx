@@ -13,7 +13,13 @@ export type ModalProps = PropsWithChildren<{
   size?: 'sm' | 'md' | 'lg';
 }>;
 
-export function Modal({ isOpen, onClose, title, size = 'sm', children }: ModalProps) {
+export function Modal({
+  isOpen,
+  onClose,
+  title,
+  size = 'sm',
+  children,
+}: ModalProps) {
   return (
     <ModalRoot open={isOpen} onClose={onClose} size={size}>
       <ModalHeader title={title} onClick={onClose} />

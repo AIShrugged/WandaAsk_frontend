@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 import { ROUTES } from '@/shared/lib/routes';
-
 import { CollapsibleSection } from '@/shared/ui/layout/collapsible-section';
 
 import type { WaitingTask } from '../model/types';

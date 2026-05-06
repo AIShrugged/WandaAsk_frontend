@@ -1,7 +1,13 @@
 'use client';
 
 import { AnimatePresence, motion } from 'framer-motion';
-import { type PropsWithChildren, useEffect, useMemo, useRef, useSyncExternalStore } from 'react';
+import {
+  type PropsWithChildren,
+  useEffect,
+  useMemo,
+  useRef,
+  useSyncExternalStore,
+} from 'react';
 import { createPortal } from 'react-dom';
 
 interface PopupPosition {
@@ -47,9 +53,20 @@ function getServerSnapshot() {
   return false;
 }
 
-export function Popup({ anchor, open, onClose, width = 240, offset = 8, children }: PopupProps) {
+export function Popup({
+  anchor,
+  open,
+  onClose,
+  width = 240,
+  offset = 8,
+  children,
+}: PopupProps) {
   const popupRef = useRef<HTMLDivElement>(null);
-  const mounted = useSyncExternalStore(noopSubscribe, getClientSnapshot, getServerSnapshot);
+  const mounted = useSyncExternalStore(
+    noopSubscribe,
+    getClientSnapshot,
+    getServerSnapshot,
+  );
 
   const pos = useMemo<PopupPosition>(() => {
     if (open && anchor) return calcPosition(anchor, width, offset);

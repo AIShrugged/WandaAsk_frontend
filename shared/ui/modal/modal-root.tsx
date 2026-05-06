@@ -34,7 +34,12 @@ const noopSubscribe = () => {
  * @param props.children - Modal content.
  * @returns React portal mounted to document.body, or null on the server.
  */
-export function ModalRoot({ open, onClose, size = 'md', children }: ModalRootProps) {
+export function ModalRoot({
+  open,
+  onClose,
+  size = 'md',
+  children,
+}: ModalRootProps) {
   // useSyncExternalStore: server snapshot = false (no portal during SSR),
   // client snapshot = true — avoids setState-in-effect linter warning.
   const mounted = useSyncExternalStore(

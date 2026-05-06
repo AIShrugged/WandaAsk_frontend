@@ -2,12 +2,12 @@
 
 import { formatDistanceToNow } from 'date-fns';
 import { AlertCircle, GitBranch, RefreshCw } from 'lucide-react';
-import SpinLoader from '@/shared/ui/layout/spin-loader';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import Card from '@/shared/ui/card/Card';
 import { EmptyState } from '@/shared/ui/feedback/empty-state';
+import SpinLoader from '@/shared/ui/layout/spin-loader';
 
 import { getCriticalPath, rebuildCriticalPath } from '../api/critical-path';
 

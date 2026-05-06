@@ -2,7 +2,10 @@ import { Badge } from '@/shared/ui/badge';
 
 import type { IssueStatus } from '../model/types';
 
-const VARIANT: Record<IssueStatus, React.ComponentProps<typeof Badge>['variant']> = {
+const VARIANT: Record<
+  IssueStatus,
+  React.ComponentProps<typeof Badge>['variant']
+> = {
   open: 'warning',
   in_progress: 'primary',
   paused: 'default',
@@ -26,7 +29,11 @@ interface IssueStatusBadgeProps {
   className?: string;
 }
 
-export function IssueStatusBadge({ status, isOverdue, className }: IssueStatusBadgeProps) {
+export function IssueStatusBadge({
+  status,
+  isOverdue,
+  className,
+}: IssueStatusBadgeProps) {
   if (isOverdue) {
     return (
       <Badge variant='destructive' className={className}>

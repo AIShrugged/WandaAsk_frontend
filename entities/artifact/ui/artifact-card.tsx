@@ -11,7 +11,6 @@ import {
   Video,
   Zap,
 } from 'lucide-react';
-import SpinLoader from '@/shared/ui/layout/spin-loader';
 import dynamic from 'next/dynamic';
 import React from 'react';
 
@@ -24,6 +23,7 @@ import { TaskSummaryArtifactView } from '@/entities/artifact/ui/task-summary-art
 import { TaskTable } from '@/entities/artifact/ui/task-table';
 import { TranscriptView } from '@/entities/artifact/ui/transcript-view';
 import { Skeleton } from '@/shared/ui/layout/skeleton';
+import SpinLoader from '@/shared/ui/layout/spin-loader';
 
 import type {
   Artifact,

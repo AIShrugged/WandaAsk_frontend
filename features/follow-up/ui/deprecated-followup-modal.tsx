@@ -1,12 +1,12 @@
 'use client';
 
 import { AlertTriangle, RefreshCw } from 'lucide-react';
-import SpinLoader from '@/shared/ui/layout/spin-loader';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { BUTTON_VARIANT } from '@/shared/types/button';
 import { Button } from '@/shared/ui/button/Button';
+import SpinLoader from '@/shared/ui/layout/spin-loader';
 import ModalBody from '@/shared/ui/modal/modal-body';
 import ModalFooter from '@/shared/ui/modal/modal-footer';
 import ModalHeader from '@/shared/ui/modal/modal-header';

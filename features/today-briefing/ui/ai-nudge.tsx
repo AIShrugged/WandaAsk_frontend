@@ -1,8 +1,9 @@
 'use client';
 
 import { AlertCircle } from 'lucide-react';
-import SpinLoader from '@/shared/ui/layout/spin-loader';
 import { useEffect, useState } from 'react';
+
+import SpinLoader from '@/shared/ui/layout/spin-loader';
 
 import { generateNudge } from '../api/nudge';
 

@@ -6,9 +6,8 @@ import { useState } from 'react';
 
 import { TaskStatusBadge } from '@/features/today-briefing/ui/task-status-badge';
 import { ROUTES } from '@/shared/lib/routes';
-import { MarkdownContent } from '@/shared/ui/markdown-content';
-
 import { CollapsibleSection } from '@/shared/ui/layout/collapsible-section';
+import { MarkdownContent } from '@/shared/ui/markdown-content';
 
 import type { MeetingTask } from '../model/types';
 

@@ -1,11 +1,11 @@
 'use client';
 
 import { ArrowRight } from 'lucide-react';
-import SpinLoader from '@/shared/ui/layout/spin-loader';
 import { useOptimistic, useTransition } from 'react';
 
 import { setProfile } from '@/features/participants/api/participants';
 import InputDropdown from '@/shared/ui/input/InputDropdown';
+import SpinLoader from '@/shared/ui/layout/spin-loader';
 
 import type { AttendeeProps, GuestProps } from '@/entities/participant';
 

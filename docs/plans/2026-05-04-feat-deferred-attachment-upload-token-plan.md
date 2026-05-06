@@ -1,5 +1,5 @@
 ---
-title: "feat: Deferred Attachment Binding via upload_token"
+title: 'feat: Deferred Attachment Binding via upload_token'
 type: feat
 status: active
 date: 2026-05-04
@@ -10,29 +10,53 @@ deepened: 2026-05-04
 
 ## Enhancement Summary
 
-**Deepened on:** 2026-05-04
-**Review agents run:** DHH Rails reviewer, Frontend Races reviewer, TypeScript reviewer, Data Migration Expert, Data Integrity Guardian, Security Sentinel, Architecture Strategist, Performance Oracle, Deployment Verification, Best Practices Researcher
+**Deepened on:** 2026-05-04 **Review agents run:** DHH Rails reviewer, Frontend
+Races reviewer, TypeScript reviewer, Data Migration Expert, Data Integrity
+Guardian, Security Sentinel, Architecture Strategist, Performance Oracle,
+Deployment Verification, Best Practices Researcher
 
 ### Key Improvements Over Original Plan
 
-1. **Critical: `uploadOrphanAttachment` cannot be a Server Action** — `File` objects are not serializable across the Next.js Server/Client boundary. Must be a plain async client-side function calling the API directly.
-2. **Critical: Replace `uploadingCount: number` with `pendingOperations: Set<string>`** — the counter can go stale on error paths; a Set is structurally immune to going negative and must cover both uploads AND deletes.
-3. **Critical: Migration safety** — two `Schema::table` calls must be merged into one; `uploaded_at` index must be verified to exist; nullable FK change may require pt-online-schema-change on MySQL < 8.0.
-4. **High: Authorization belongs in a Policy, not `abort_unless`** — `IssueAttachmentPolicy::deleteOrphan()` is the idiomatic Laravel pattern.
-5. **High: Extract `ORPHAN_TTL_HOURS` constant** — used in both the model scope and the prune command; a magic `25` in a query scope is a maintenance trap.
-6. **High: Delete-in-flight + submit race** — submit must be disabled while any delete is in progress, not just uploads.
-7. **High: Stale refresh race in existing `IssueAttachments`** — concurrent refresh calls can restore deleted attachments; add an abort guard.
-8. **Medium: `useMemo` instead of `useRef` for token generation** — same semantics, clearer intent.
-9. **Medium: Rename `/orphan` → `/pending`** — "orphan" is an internal implementation concept; `pending` is the clearer public-facing name.
-10. **Medium: Merge two Schema::table calls** — reduces lock window and round-trips on production DB.
+1. **Critical: `uploadOrphanAttachment` cannot be a Server Action** — `File`
+   objects are not serializable across the Next.js Server/Client boundary. Must
+   be a plain async client-side function calling the API directly.
+2. **Critical: Replace `uploadingCount: number` with
+   `pendingOperations: Set<string>`** — the counter can go stale on error paths;
+   a Set is structurally immune to going negative and must cover both uploads
+   AND deletes.
+3. **Critical: Migration safety** — two `Schema::table` calls must be merged
+   into one; `uploaded_at` index must be verified to exist; nullable FK change
+   may require pt-online-schema-change on MySQL < 8.0.
+4. **High: Authorization belongs in a Policy, not `abort_unless`** —
+   `IssueAttachmentPolicy::deleteOrphan()` is the idiomatic Laravel pattern.
+5. **High: Extract `ORPHAN_TTL_HOURS` constant** — used in both the model scope
+   and the prune command; a magic `25` in a query scope is a maintenance trap.
+6. **High: Delete-in-flight + submit race** — submit must be disabled while any
+   delete is in progress, not just uploads.
+7. **High: Stale refresh race in existing `IssueAttachments`** — concurrent
+   refresh calls can restore deleted attachments; add an abort guard.
+8. **Medium: `useMemo` instead of `useRef` for token generation** — same
+   semantics, clearer intent.
+9. **Medium: Rename `/orphan` → `/pending`** — "orphan" is an internal
+   implementation concept; `pending` is the clearer public-facing name.
+10. **Medium: Merge two Schema::table calls** — reduces lock window and
+    round-trips on production DB.
 
 ---
 
 ## Overview
 
-Unified attachment UX for issue create and edit forms. Today the create flow is a mandatory two-step sequence: submit the issue first, then upload attachments on the second screen. The edit form allows inline uploads. This divergence creates friction and inconsistent UX.
+Unified attachment UX for issue create and edit forms. Today the create flow is
+a mandatory two-step sequence: submit the issue first, then upload attachments
+on the second screen. The edit form allows inline uploads. This divergence
+creates friction and inconsistent UX.
 
-The solution introduces an `upload_token` (UUID v4) generated on the frontend when the create form mounts. Files are uploaded with this token before the issue exists. When the issue is submitted, the backend binds all orphan attachments matching that token to the newly-created issue — atomically, inside a transaction. The edit form is unchanged; it continues to upload directly to the existing issue endpoint.
+The solution introduces an `upload_token` (UUID v4) generated on the frontend
+when the create form mounts. Files are uploaded with this token before the issue
+exists. When the issue is submitted, the backend binds all orphan attachments
+matching that token to the newly-created issue — atomically, inside a
+transaction. The edit form is unchanged; it continues to upload directly to the
+existing issue endpoint.
 
 ---
 
@@ -40,7 +64,9 @@ The solution introduces an `upload_token` (UUID v4) generated on the frontend wh
 
 ### One token per form session (not per file)
 
-All files uploaded during a single create session share one UUID. The `POST /api/v1/issues` payload sends `upload_token: string | null`. The backend runs:
+All files uploaded during a single create session share one UUID. The
+`POST /api/v1/issues` payload sends `upload_token: string | null`. The backend
+runs:
 
 ```sql
 UPDATE issue_attachments
@@ -51,41 +77,70 @@ WHERE upload_token = :token
   AND uploaded_at >= NOW() - INTERVAL 24 HOUR
 ```
 
-**Why one token, not one per file:** Simpler client state (a single `useMemo` value), simpler payload (`upload_token: string`), simpler backend binding query. Per-file tokens add no security benefit since authorization is enforced via `uploaded_by_user_id`, not token secrecy.
+**Why one token, not one per file:** Simpler client state (a single `useMemo`
+value), simpler payload (`upload_token: string`), simpler backend binding query.
+Per-file tokens add no security benefit since authorization is enforced via
+`uploaded_by_user_id`, not token secrecy.
 
 ### Authorization model for orphan uploads
 
-The new upload endpoint is auth-guarded. At upload time the backend stores `uploaded_by_user_id = $request->user()->id`. At binding time it filters by `uploaded_by_user_id = authenticated_user_id`. This prevents cross-user token injection even if an attacker knows the victim's UUID.
+The new upload endpoint is auth-guarded. At upload time the backend stores
+`uploaded_by_user_id = $request->user()->id`. At binding time it filters by
+`uploaded_by_user_id = authenticated_user_id`. This prevents cross-user token
+injection even if an attacker knows the victim's UUID.
 
-Authorization for delete is in `IssueAttachmentPolicy::deleteOrphan()` — not inline `abort_unless` (which belongs in business logic, not the controller).
+Authorization for delete is in `IssueAttachmentPolicy::deleteOrphan()` — not
+inline `abort_unless` (which belongs in business logic, not the controller).
 
 ### Atomicity
 
-`IssueController::store` wraps issue creation + attachment binding in a single `DB::transaction()`. `$userId` is extracted **before** the closure (don't pass `$request` into a transaction closure — it holds a large object graph for the lock duration). If binding throws, the issue is rolled back.
+`IssueController::store` wraps issue creation + attachment binding in a single
+`DB::transaction()`. `$userId` is extracted **before** the closure (don't pass
+`$request` into a transaction closure — it holds a large object graph for the
+lock duration). If binding throws, the issue is rolled back.
 
 ### Cleanup race condition prevention
 
-The cleanup job uses `lockForUpdate()` to lock candidate rows before deleting files and records. This prevents the TOCTOU gap where a cleanup SELECT and a binding UPDATE race on the same row.
+The cleanup job uses `lockForUpdate()` to lock candidate rows before deleting
+files and records. This prevents the TOCTOU gap where a cleanup SELECT and a
+binding UPDATE race on the same row.
 
-The binding scope filters `uploaded_at >= NOW() - INTERVAL 24 HOUR` (matching the cleanup TTL exactly — the 1-hour safety margin in the original plan was unnecessarily complex). The `lockForUpdate` in the cleanup job already prevents the race; the window guard is redundant and was simplified.
+The binding scope filters `uploaded_at >= NOW() - INTERVAL 24 HOUR` (matching
+the cleanup TTL exactly — the 1-hour safety margin in the original plan was
+unnecessarily complex). The `lockForUpdate` in the cleanup job already prevents
+the race; the window guard is redundant and was simplified.
 
 ### TTL constant in one place
 
-`IssueAttachment::ORPHAN_TTL_HOURS = 24` is the single source of truth used by both `scopePending()` and `PruneOrphanAttachments`.
+`IssueAttachment::ORPHAN_TTL_HOURS = 24` is the single source of truth used by
+both `scopePending()` and `PruneOrphanAttachments`.
 
 ### Submit button disabled while any operation is in-flight
 
-The frontend tracks all in-flight operations (uploads AND deletes) in a `Set<string>`. The "Create task" button is disabled while the Set is non-empty. This is structurally immune to going negative and covers the delete-in-flight + submit race.
+The frontend tracks all in-flight operations (uploads AND deletes) in a
+`Set<string>`. The "Create task" button is disabled while the Set is non-empty.
+This is structurally immune to going negative and covers the delete-in-flight +
+submit race.
 
 ### `uploadOrphanAttachment` is NOT a Server Action
 
-`File` is not serializable across the Next.js Server/Client boundary. The upload function must be a plain `async` client-side function that calls the API directly using `fetch` with auth headers. It follows the same safe JSON-parsing pattern documented in `docs/solutions/integration-issues/server-action-html-response-json-parse.md` — use `httpClient` from `shared/lib/httpClient` which already handles this correctly.
+`File` is not serializable across the Next.js Server/Client boundary. The upload
+function must be a plain `async` client-side function that calls the API
+directly using `fetch` with auth headers. It follows the same safe JSON-parsing
+pattern documented in
+`docs/solutions/integration-issues/server-action-html-response-json-parse.md` —
+use `httpClient` from `shared/lib/httpClient` which already handles this
+correctly.
 
-`deleteOrphanAttachment` can be a Server Action since it only takes a `number` (serializable). But for consistency in the same file, both can be plain async functions called from the client component directly.
+`deleteOrphanAttachment` can be a Server Action since it only takes a `number`
+(serializable). But for consistency in the same file, both can be plain async
+functions called from the client component directly.
 
 ### Orphan deletion before form submit
 
-A `DELETE /api/v1/attachments/pending/:id` endpoint allows removing a queued file before submit. The submit button is blocked while any delete is in-progress (via the pending operations Set).
+A `DELETE /api/v1/attachments/pending/:id` endpoint allows removing a queued
+file before submit. The submit button is blocked while any delete is in-progress
+(via the pending operations Set).
 
 ---
 
@@ -130,9 +185,13 @@ A `DELETE /api/v1/attachments/pending/:id` endpoint allows removing a queued fil
 ### New migration: `2026_05_04_000000_extend_issue_attachments_for_upload_token.php`
 
 > **Pre-flight:** Before running in production, verify:
+>
 > 1. `SHOW COLUMNS FROM issue_attachments LIKE 'uploaded_at';` — must exist
-> 2. MySQL/MariaDB version — if < 8.0, the nullable FK change may require `pt-online-schema-change`
-> 3. Run `EXPLAIN ALTER TABLE issue_attachments MODIFY COLUMN issue_id BIGINT UNSIGNED NULL;` on staging and check for `algorithm=copy`
+> 2. MySQL/MariaDB version — if < 8.0, the nullable FK change may require
+>    `pt-online-schema-change`
+> 3. Run
+>    `EXPLAIN ALTER TABLE issue_attachments MODIFY COLUMN issue_id BIGINT UNSIGNED NULL;`
+>    on staging and check for `algorithm=copy`
 
 ```php
 <?php
@@ -188,9 +247,15 @@ return new class extends Migration
 };
 ```
 
-**Index change from original plan:** replaced single `(uploaded_at)` index with composite `(issue_id, uploaded_at)`. The cleanup job queries `WHERE issue_id IS NULL AND uploaded_at < ?`. A composite index with `issue_id` first lets MySQL use the index for the NULL filter and then the date range — more selective than a bare date index.
+**Index change from original plan:** replaced single `(uploaded_at)` index with
+composite `(issue_id, uploaded_at)`. The cleanup job queries
+`WHERE issue_id IS NULL AND uploaded_at < ?`. A composite index with `issue_id`
+first lets MySQL use the index for the NULL filter and then the date range —
+more selective than a bare date index.
 
-**Why `varchar(64)` not `uuid` type:** MySQL's UUID column type is not universally available; `varchar(64)` is portable and indexed efficiently. UUID v4 is always 36 chars so there is no wasted storage.
+**Why `varchar(64)` not `uuid` type:** MySQL's UUID column type is not
+universally available; `varchar(64)` is portable and indexed efficiently. UUID
+v4 is always 36 chars so there is no wasted storage.
 
 ---
 
@@ -228,7 +293,9 @@ public function scopePending(Builder $query, string $token, int $userId): Builde
 }
 ```
 
-**Note on scope name:** renamed from `scopeOrphanFor` → `scopePending` to match the public-facing endpoint name (`pending`) and to better describe the state from the user's perspective.
+**Note on scope name:** renamed from `scopeOrphanFor` → `scopePending` to match
+the public-facing endpoint name (`pending`) and to better describe the state
+from the user's perspective.
 
 ### 2. `IssueAttachmentPolicy` — authorization for orphan/pending delete
 
@@ -257,6 +324,7 @@ class IssueAttachmentPolicy
 ```
 
 Register in `AuthServiceProvider::policies()`:
+
 ```php
 IssueAttachment::class => IssueAttachmentPolicy::class,
 ```
@@ -276,7 +344,9 @@ Route::delete('/attachments/pending/{attachment}', [IssueAttachmentController::c
      ->name('attachments.pending.destroy');
 ```
 
-**Naming rationale:** `pending` communicates the lifecycle state to API consumers; `orphan` is an internal implementation detail. The URL is public-facing.
+**Naming rationale:** `pending` communicates the lifecycle state to API
+consumers; `orphan` is an internal implementation detail. The URL is
+public-facing.
 
 ### 4. `IssueAttachmentController` — new methods
 
@@ -337,9 +407,18 @@ public function destroyPending(IssueAttachment $attachment): JsonResponse
 }
 ```
 
-**Why no `Request $request` in `destroyPending`?** Policy authorization via `$this->authorize()` uses the authenticated user from the request context automatically — injecting `$request` just for `->user()` is unnecessary.
+**Why no `Request $request` in `destroyPending`?** Policy authorization via
+`$this->authorize()` uses the authenticated user from the request context
+automatically — injecting `$request` just for `->user()` is unnecessary.
 
-**Security note on MIME types:** The current `'file' => ['required', 'file', 'max:10240']` rule has no MIME restriction. Consider adding `'mimes:jpg,jpeg,png,gif,webp,pdf,txt,csv,doc,docx,xls,xlsx,zip'` or equivalent. Without it, executable files (`.php`, `.exe`, `.sh`) can be uploaded. Since the download route serves files directly, a malicious PHP file stored on a local disk and served through a PHP web server could be executed. **At minimum, block PHP extensions** — add `'not_regex:/\.php\d?$/i'` to the file validation rules.
+**Security note on MIME types:** The current
+`'file' => ['required', 'file', 'max:10240']` rule has no MIME restriction.
+Consider adding
+`'mimes:jpg,jpeg,png,gif,webp,pdf,txt,csv,doc,docx,xls,xlsx,zip'` or equivalent.
+Without it, executable files (`.php`, `.exe`, `.sh`) can be uploaded. Since the
+download route serves files directly, a malicious PHP file stored on a local
+disk and served through a PHP web server could be executed. **At minimum, block
+PHP extensions** — add `'not_regex:/\.php\d?$/i'` to the file validation rules.
 
 ### 5. `StoreOrphanAttachmentRequest`
 
@@ -447,7 +526,8 @@ public function store(IssueRequest $request): JsonResponse
 'attachments' => IssueAttachmentResource::collection($this->whenLoaded('attachments')),
 ```
 
-`whenLoaded` ensures this field is absent when `load('attachments')` was not called — list endpoints remain N+1 free.
+`whenLoaded` ensures this field is absent when `load('attachments')` was not
+called — list endpoints remain N+1 free.
 
 ### 9. `IssueAttachmentResource` — expose `upload_token`
 
@@ -533,11 +613,20 @@ Schedule::command('attachments:prune-orphans')->hourly();
 
 ### Critical architectural note: upload is NOT a Server Action
 
-`File` objects are not serializable across the Next.js Server/Client boundary. `uploadOrphanAttachment` **must** be a plain `async` function called directly from the client component — it cannot have `'use server'` and cannot go through a Server Action invocation.
+`File` objects are not serializable across the Next.js Server/Client boundary.
+`uploadOrphanAttachment` **must** be a plain `async` function called directly
+from the client component — it cannot have `'use server'` and cannot go through
+a Server Action invocation.
 
-It uses `fetch` directly with the auth token from `getAuthHeaders()` (following the same pattern as `shared/lib/httpClient.ts`). This is consistent with the documented learning in `docs/solutions/integration-issues/server-action-html-response-json-parse.md`: use safe JSON parsing, never call `res.json()` directly.
+It uses `fetch` directly with the auth token from `getAuthHeaders()` (following
+the same pattern as `shared/lib/httpClient.ts`). This is consistent with the
+documented learning in
+`docs/solutions/integration-issues/server-action-html-response-json-parse.md`:
+use safe JSON parsing, never call `res.json()` directly.
 
-`deleteOrphanAttachment` takes only a `number` (serializable) and can be a Server Action, but for consistency in the same module both functions are plain client-callable async functions.
+`deleteOrphanAttachment` takes only a `number` (serializable) and can be a
+Server Action, but for consistency in the same module both functions are plain
+client-callable async functions.
 
 ### 1. Types
 
@@ -547,7 +636,7 @@ It uses `fetch` directly with the auth token from `getAuthHeaders()` (following 
 export interface IssueAttachment {
   id: number;
   issue_id?: number | null;
-  upload_token?: string | null;  // present when pending; null after binding
+  upload_token?: string | null; // present when pending; null after binding
   name?: string | null;
   file_name?: string | null;
   original_name?: string | null;
@@ -561,7 +650,7 @@ export interface IssueAttachment {
 
 export interface Issue {
   // ...existing fields...
-  attachments?: IssueAttachment[];  // populated only on create response (whenLoaded)
+  attachments?: IssueAttachment[]; // populated only on create response (whenLoaded)
 }
 
 export interface IssueUpsertDTO {
@@ -599,7 +688,7 @@ export async function uploadPendingAttachment(
     // Do NOT set Content-Type — browser sets multipart/form-data with boundary
     const res = await fetch(`${API_URL}/attachments/pending`, {
       method: 'POST',
-      headers: authHeaders,  // auth only, no Content-Type override
+      headers: authHeaders, // auth only, no Content-Type override
       body: formData,
     });
 
@@ -613,11 +702,21 @@ export async function uploadPendingAttachment(
     }
 
     if (!res.ok) {
-      const parsed = parseApiError(JSON.stringify(json), 'Failed to upload file');
-      return { data: null, error: parsed.message, fieldErrors: parsed.fieldErrors };
+      const parsed = parseApiError(
+        JSON.stringify(json),
+        'Failed to upload file',
+      );
+      return {
+        data: null,
+        error: parsed.message,
+        fieldErrors: parsed.fieldErrors,
+      };
     }
 
-    return { data: normalizeIssueAttachment(json.data as IssueAttachment), error: null };
+    return {
+      data: normalizeIssueAttachment(json.data as IssueAttachment),
+      error: null,
+    };
   } catch {
     return { data: null, error: 'Upload failed. Check your connection.' };
   }
@@ -636,8 +735,15 @@ export async function deletePendingAttachment(
     if (!res.ok) {
       const text = await res.text();
       let json: Record<string, unknown> = {};
-      try { json = JSON.parse(text) as Record<string, unknown>; } catch { /* ignore */ }
-      const parsed = parseApiError(JSON.stringify(json), 'Failed to delete file');
+      try {
+        json = JSON.parse(text) as Record<string, unknown>;
+      } catch {
+        /* ignore */
+      }
+      const parsed = parseApiError(
+        JSON.stringify(json),
+        'Failed to delete file',
+      );
       return { data: null, error: parsed.message };
     }
 
@@ -652,7 +758,9 @@ export async function deletePendingAttachment(
 
 **File:** `features/issues/ui/pending-attachment-uploader.tsx`
 
-Handles the pre-creation upload flow. Completely separate from `IssueAttachments` to avoid coupling the two modes. The `pendingOps` Set replaces the fragile `uploadingCount` counter.
+Handles the pre-creation upload flow. Completely separate from
+`IssueAttachments` to avoid coupling the two modes. The `pendingOps` Set
+replaces the fragile `uploadingCount` counter.
 
 ```tsx
 'use client';
@@ -728,7 +836,7 @@ export function PendingAttachmentUploader({
             onChange={(event) => {
               const file = event.target.files?.[0];
               if (!file) return;
-              event.target.value = '';  // reset so same file can be re-selected
+              event.target.value = ''; // reset so same file can be re-selected
 
               const opId = crypto.randomUUID();
               addOp(opId);
@@ -762,14 +870,16 @@ export function PendingAttachmentUploader({
               <div className='flex min-w-0 items-center gap-2'>
                 <Paperclip className='h-4 w-4 shrink-0 text-muted-foreground' />
                 <span className='truncate text-sm text-foreground'>
-                  {attachment.original_name ?? attachment.file_name ?? `#${attachment.id}`}
+                  {attachment.original_name ??
+                    attachment.file_name ??
+                    `#${attachment.id}`}
                 </span>
               </div>
               <Button
                 type='button'
                 variant={BUTTON_VARIANT.ghost}
                 className='h-7 w-7 shrink-0 p-0'
-                disabled={pendingOps.size > 0}  // block delete while upload in progress
+                disabled={pendingOps.size > 0} // block delete while upload in progress
                 onClick={() => {
                   const opId = crypto.randomUUID();
                   addOp(opId);
@@ -801,13 +911,19 @@ export function PendingAttachmentUploader({
 }
 ```
 
-**Why `pendingOps` Set lives inside the component, not in the parent?** The parent only needs to know "is anything pending?" (boolean for disabling submit). The Set details are internal to the uploader. `onPendingChange` passes the full Set up so the parent can read `.size > 0` without needing to understand the internals.
+**Why `pendingOps` Set lives inside the component, not in the parent?** The
+parent only needs to know "is anything pending?" (boolean for disabling submit).
+The Set details are internal to the uploader. `onPendingChange` passes the full
+Set up so the parent can read `.size > 0` without needing to understand the
+internals.
 
 ### 4. Fix stale-refresh race in existing `IssueAttachments`
 
 **File:** `features/issues/ui/issue-attachments.tsx`
 
-The current `refresh()` function has a stale-write race: concurrent refresh calls can restore a deleted attachment if the earlier (stale) response resolves after the newer one. Add an abort guard:
+The current `refresh()` function has a stale-write race: concurrent refresh
+calls can restore a deleted attachment if the earlier (stale) response resolves
+after the newer one. Add an abort guard:
 
 ```tsx
 // Add inside IssueAttachments component:
@@ -823,7 +939,9 @@ const refresh = async () => {
 };
 ```
 
-This fix is not strictly part of the new feature but is a pre-existing bug that becomes more visible when the post-create screen shows already-bound attachments and then the user immediately uploads/deletes.
+This fix is not strictly part of the new feature but is a pre-existing bug that
+becomes more visible when the post-create screen shows already-bound attachments
+and then the user immediately uploads/deletes.
 
 ### 5. `IssueForm` — integrate uploader for create mode
 
@@ -912,7 +1030,11 @@ import { IssueForm } from './issue-form';
 import type { OrganizationProps } from '@/entities/organization';
 import type { Issue, PersonOption } from '@/features/issues/model/types';
 
-interface CurrentUser { id: number; name: string; email: string; }
+interface CurrentUser {
+  id: number;
+  name: string;
+  email: string;
+}
 
 interface IssueCreatePageClientProps {
   organizations: OrganizationProps[];
@@ -972,36 +1094,39 @@ export function IssueCreatePageClient({
 
 ```ts
 export { PendingAttachmentUploader } from './ui/pending-attachment-uploader';
-export { uploadPendingAttachment, deletePendingAttachment } from './api/pending-attachments';
+export {
+  uploadPendingAttachment,
+  deletePendingAttachment,
+} from './api/pending-attachments';
 ```
 
 ---
 
 ## Edge Cases — Full Matrix
 
-| Scenario | Handling |
-|---|---|
-| Token not sent (no files uploaded) | Backend skips binding (`upload_token === null`). No side effects. |
-| Token sent, 0 matching pending rows | Binding UPDATE affects 0 rows. Issue created normally. If files were cleaned up, they are gone silently — acceptable (25 h window is generous). |
-| Validation error on issue create → resubmit | Token is stable (`useMemo([])`). Pending rows still exist. Second submit binds them. Works correctly as long as cleanup has not run (24 h window). |
-| Network failure during file upload | `removeOp(opId)` called in `.finally()`. Set returns to previous size. Toast shown. No pending row created (upload never completed). User can retry. |
-| Upload succeeds, issue submit network timeout | Issue may or may not exist. Pending rows remain. Cleanup collects after 24 h. Worst case: silent attachment loss. This is acceptable — no data corruption. |
-| Browser refresh during form fill | New token on remount. Prior pending rows unreachable by new token. Cleanup handles. Acceptable UX trade-off. |
-| Two tabs, same user | Each tab has its own token. Files in tab A are not bound by tab B's submit. Expected and safe — tokens are per-session. |
-| Token guessing attack | UUID v4 has 122 bits of entropy. `uploaded_by_user_id` check at binding prevents cross-user binding even if token known. |
-| High-volume malicious uploads | `throttle:30,1` (30/min). 10 MB/file. Max exposure: 300 MB/min per user before throttling. Add per-user daily quota if needed. |
-| Cleanup job races with binding | `lockForUpdate` on cleanup prevents concurrent binding. If cleanup holds the lock, binding waits → finds 0 rows (already deleted) → issue created with no attachments. |
-| Cleanup job — file not on disk | `Storage::delete` in try/catch. Logs warning, always deletes DB row. No re-accumulation. |
-| `uploaded_by_user_id` null (user deleted) | `nullOnDelete` → field becomes null. Cleanup picks up row (still `issue_id IS NULL`). |
-| Large file (>10 MB) | Rejected by `StoreOrphanAttachmentRequest` (max:10240). No file stored. Frontend shows toast. `removeOp` called in `.finally()`. |
-| Multiple files, one fails | Each file is independent. Successful ones show in list. Failed one shows toast. User retries that file. |
-| Delete while upload in progress | Upload and delete both tracked in same Set. Delete button disabled while Set is non-empty. Structurally prevented. |
-| Submit while any op in progress | `disabled={hasPendingOps}` blocks submit. Button shows "Uploading...". |
-| Orphan file removal before submit | `DELETE /api/v1/attachments/pending/:id` — Policy checks `issue_id IS NULL AND uploaded_by = auth()->id()`. DB + file deleted. `onDeleted` removes from local state. |
-| `IssueResource` N+1 on list endpoints | `whenLoaded('attachments')` — absent unless explicitly loaded. List endpoints unaffected. |
-| `upload_token` not valid UUID | Rejected by regex in both `StoreOrphanAttachmentRequest` and `IssueRequest`. 422 returned. |
-| Executable file upload (`.php`, `.sh`) | Blocked by `not_regex` rule in `StoreOrphanAttachmentRequest`. 422 returned. |
-| Double-submit (form submitted twice) | First submit creates issue + binds. Second submit finds 0 pending rows (already bound). Creates a second empty issue. Mitigated by `disabled={isPending}` on button. No server-side idempotency key — acceptable for this use case. |
+| Scenario                                      | Handling                                                                                                                                                                                                                            |
+| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Token not sent (no files uploaded)            | Backend skips binding (`upload_token === null`). No side effects.                                                                                                                                                                   |
+| Token sent, 0 matching pending rows           | Binding UPDATE affects 0 rows. Issue created normally. If files were cleaned up, they are gone silently — acceptable (25 h window is generous).                                                                                     |
+| Validation error on issue create → resubmit   | Token is stable (`useMemo([])`). Pending rows still exist. Second submit binds them. Works correctly as long as cleanup has not run (24 h window).                                                                                  |
+| Network failure during file upload            | `removeOp(opId)` called in `.finally()`. Set returns to previous size. Toast shown. No pending row created (upload never completed). User can retry.                                                                                |
+| Upload succeeds, issue submit network timeout | Issue may or may not exist. Pending rows remain. Cleanup collects after 24 h. Worst case: silent attachment loss. This is acceptable — no data corruption.                                                                          |
+| Browser refresh during form fill              | New token on remount. Prior pending rows unreachable by new token. Cleanup handles. Acceptable UX trade-off.                                                                                                                        |
+| Two tabs, same user                           | Each tab has its own token. Files in tab A are not bound by tab B's submit. Expected and safe — tokens are per-session.                                                                                                             |
+| Token guessing attack                         | UUID v4 has 122 bits of entropy. `uploaded_by_user_id` check at binding prevents cross-user binding even if token known.                                                                                                            |
+| High-volume malicious uploads                 | `throttle:30,1` (30/min). 10 MB/file. Max exposure: 300 MB/min per user before throttling. Add per-user daily quota if needed.                                                                                                      |
+| Cleanup job races with binding                | `lockForUpdate` on cleanup prevents concurrent binding. If cleanup holds the lock, binding waits → finds 0 rows (already deleted) → issue created with no attachments.                                                              |
+| Cleanup job — file not on disk                | `Storage::delete` in try/catch. Logs warning, always deletes DB row. No re-accumulation.                                                                                                                                            |
+| `uploaded_by_user_id` null (user deleted)     | `nullOnDelete` → field becomes null. Cleanup picks up row (still `issue_id IS NULL`).                                                                                                                                               |
+| Large file (>10 MB)                           | Rejected by `StoreOrphanAttachmentRequest` (max:10240). No file stored. Frontend shows toast. `removeOp` called in `.finally()`.                                                                                                    |
+| Multiple files, one fails                     | Each file is independent. Successful ones show in list. Failed one shows toast. User retries that file.                                                                                                                             |
+| Delete while upload in progress               | Upload and delete both tracked in same Set. Delete button disabled while Set is non-empty. Structurally prevented.                                                                                                                  |
+| Submit while any op in progress               | `disabled={hasPendingOps}` blocks submit. Button shows "Uploading...".                                                                                                                                                              |
+| Orphan file removal before submit             | `DELETE /api/v1/attachments/pending/:id` — Policy checks `issue_id IS NULL AND uploaded_by = auth()->id()`. DB + file deleted. `onDeleted` removes from local state.                                                                |
+| `IssueResource` N+1 on list endpoints         | `whenLoaded('attachments')` — absent unless explicitly loaded. List endpoints unaffected.                                                                                                                                           |
+| `upload_token` not valid UUID                 | Rejected by regex in both `StoreOrphanAttachmentRequest` and `IssueRequest`. 422 returned.                                                                                                                                          |
+| Executable file upload (`.php`, `.sh`)        | Blocked by `not_regex` rule in `StoreOrphanAttachmentRequest`. 422 returned.                                                                                                                                                        |
+| Double-submit (form submitted twice)          | First submit creates issue + binds. Second submit finds 0 pending rows (already bound). Creates a second empty issue. Mitigated by `disabled={isPending}` on button. No server-side idempotency key — acceptable for this use case. |
 
 ---
 
@@ -1009,21 +1134,27 @@ export { uploadPendingAttachment, deletePendingAttachment } from './api/pending-
 
 ### Phase 1 — Backend foundation
 
-1. Pre-flight: confirm `uploaded_at` exists; check MySQL version for instant DDL eligibility
+1. Pre-flight: confirm `uploaded_at` exists; check MySQL version for instant DDL
+   eligibility
 2. Write and run migration (single `Schema::table` call)
-3. Update `IssueAttachment` model (`ORPHAN_TTL_HOURS`, casts, `scopePending()`, `uploadedBy()`)
-4. Write `IssueAttachmentPolicy` with `deletePending()`, register in `AuthServiceProvider`
+3. Update `IssueAttachment` model (`ORPHAN_TTL_HOURS`, casts, `scopePending()`,
+   `uploadedBy()`)
+4. Write `IssueAttachmentPolicy` with `deletePending()`, register in
+   `AuthServiceProvider`
 5. Write `StoreOrphanAttachmentRequest` (with executable extension block)
 6. Add `storePending()` and `destroyPending()` to `IssueAttachmentController`
 7. Register routes in `routes/api.php` (with throttle)
 8. Add `upload_token` nullable rule to `IssueRequest` for `issues.store`
-9. Update `IssueController::store` (extract `$userId`, transaction, `pending()` scope, `load('attachments')`)
+9. Update `IssueController::store` (extract `$userId`, transaction, `pending()`
+   scope, `load('attachments')`)
 10. Update `IssueResource` (`whenLoaded('attachments')`)
 11. Update `IssueAttachmentResource` (`upload_token` field)
-12. Write `PruneOrphanAttachments` command (references `ORPHAN_TTL_HOURS`, `lockForUpdate`, try/catch on delete)
+12. Write `PruneOrphanAttachments` command (references `ORPHAN_TTL_HOURS`,
+    `lockForUpdate`, try/catch on delete)
 13. Register scheduler entry
 
 **Test with cURL:**
+
 ```bash
 # 1. Upload pending file
 curl -X POST https://dev-api.shrugged.ai/api/v1/attachments/pending \
@@ -1043,20 +1174,27 @@ curl -X POST https://dev-api.shrugged.ai/api/v1/issues \
 
 ### Phase 2 — Frontend
 
-1. Add `upload_token` to `IssueAttachment`, `upload_token` to `IssueUpsertDTO`, `attachments?` to `Issue`
-2. Create `features/issues/api/pending-attachments.ts` (plain async functions, NOT Server Actions)
+1. Add `upload_token` to `IssueAttachment`, `upload_token` to `IssueUpsertDTO`,
+   `attachments?` to `Issue`
+2. Create `features/issues/api/pending-attachments.ts` (plain async functions,
+   NOT Server Actions)
 3. Write `PendingAttachmentUploader` component (Set-based pending tracking)
 4. Fix stale-refresh race in `IssueAttachments` (sequence counter guard)
-5. Extend `IssueForm` (add `uploadToken?` prop, `hasPendingOps` state, integrate uploader)
-6. Update `IssueCreatePageClient` (`useMemo` token, populate `initialAttachments`)
+5. Extend `IssueForm` (add `uploadToken?` prop, `hasPendingOps` state, integrate
+   uploader)
+6. Update `IssueCreatePageClient` (`useMemo` token, populate
+   `initialAttachments`)
 7. Update `features/issues/index.ts` exports
 
 ### Phase 3 — Validation
 
-1. Run `backend-contract-validator` agent — verify TypeScript types match backend Resources
+1. Run `backend-contract-validator` agent — verify TypeScript types match
+   backend Resources
 2. Run `fsd-boundary-guard` — check no FSD violations
-3. Manual QA: happy path create with attachments; cancel (navigate away); edit form (unchanged); prune command with `--hours=0`
-4. Verify list endpoints not N+1 (`/dashboard/issues` should not load attachments)
+3. Manual QA: happy path create with attachments; cancel (navigate away); edit
+   form (unchanged); prune command with `--hours=0`
+4. Verify list endpoints not N+1 (`/dashboard/issues` should not load
+   attachments)
 5. Run `mr-reviewer` before push
 
 ---
@@ -1066,8 +1204,11 @@ curl -X POST https://dev-api.shrugged.ai/api/v1/issues \
 ### Pre-deployment
 
 - [ ] Run migration against staging clone of production data (not fixtures)
-- [ ] On staging: `EXPLAIN ALTER TABLE issue_attachments MODIFY COLUMN issue_id BIGINT UNSIGNED NULL;` — confirm not `algorithm=copy` on your MySQL version
-- [ ] Confirm `SELECT COUNT(*) FROM issue_attachments WHERE issue_id IS NULL;` returns 0 before migration (no pre-existing orphans)
+- [ ] On staging:
+      `EXPLAIN ALTER TABLE issue_attachments MODIFY COLUMN issue_id BIGINT UNSIGNED NULL;`
+      — confirm not `algorithm=copy` on your MySQL version
+- [ ] Confirm `SELECT COUNT(*) FROM issue_attachments WHERE issue_id IS NULL;`
+      returns 0 before migration (no pre-existing orphans)
 - [ ] Back up `issue_attachments` table
 - [ ] Schedule migration during low-traffic window if MySQL < 8.0
 
@@ -1080,7 +1221,8 @@ curl -X POST https://dev-api.shrugged.ai/api/v1/issues \
 4. Verify scheduler: php artisan schedule:list | grep prune-orphans
 ```
 
-Backend code can deploy before frontend — new routes simply won't be called yet. Old frontend still works against old endpoints. No rollout risk.
+Backend code can deploy before frontend — new routes simply won't be called yet.
+Old frontend still works against old endpoints. No rollout risk.
 
 ### Post-deployment verification SQL
 
@@ -1133,11 +1275,15 @@ php artisan migrate:rollback --step=1
 ### Functional
 
 - [ ] User can upload files while filling the create form (before submitting)
-- [ ] After issue creation, uploaded files are immediately visible (no empty-state flash)
-- [ ] "Create task" button is disabled while any file upload or delete is in progress
+- [ ] After issue creation, uploaded files are immediately visible (no
+      empty-state flash)
+- [ ] "Create task" button is disabled while any file upload or delete is in
+      progress
 - [ ] User can remove an uploaded file from the queue before submitting
-- [ ] Cancelling the form leaves no visible orphan data; cleanup handles files silently after 24 h
-- [ ] Edit form is unchanged — direct upload to issue endpoint, no token involved
+- [ ] Cancelling the form leaves no visible orphan data; cleanup handles files
+      silently after 24 h
+- [ ] Edit form is unchanged — direct upload to issue endpoint, no token
+      involved
 - [ ] Executable files (`.php`, `.sh`, `.exe`) are rejected at upload time
 
 ### Non-functional
@@ -1146,16 +1292,20 @@ php artisan migrate:rollback --step=1
 - [ ] Cleanup job uses `lockForUpdate` to prevent TOCTOU race
 - [ ] Issue creation + attachment binding are atomic (one DB transaction)
 - [ ] Orphan upload endpoint is rate-limited (30/min per user)
-- [ ] `upload_token` validated as UUID v4 on both upload and issue-create requests
-- [ ] Cross-user token binding is impossible (`uploaded_by_user_id` check at binding)
+- [ ] `upload_token` validated as UUID v4 on both upload and issue-create
+      requests
+- [ ] Cross-user token binding is impossible (`uploaded_by_user_id` check at
+      binding)
 - [ ] `IssueResource` list endpoints have no N+1 from attachments (`whenLoaded`)
 - [ ] `upload_token` cleared to NULL after binding
 
 ### Security
 
 - [ ] `POST /api/v1/attachments/pending` requires authentication
-- [ ] `DELETE /api/v1/attachments/pending/:id` checked via `IssueAttachmentPolicy::deletePending`
-- [ ] Binding in `IssueController::store` scopes by `uploaded_by_user_id = auth()->id()`
+- [ ] `DELETE /api/v1/attachments/pending/:id` checked via
+      `IssueAttachmentPolicy::deletePending`
+- [ ] Binding in `IssueController::store` scopes by
+      `uploaded_by_user_id = auth()->id()`
 - [ ] UUID v4 regex validated on both upload and issue-create requests
 - [ ] File size limit (10 MB) and executable extension block enforced
 
@@ -1165,59 +1315,79 @@ php artisan migrate:rollback --step=1
 
 ### Backend (`/Users/slavapopov/Documents/WandaAsk_backend`)
 
-| File | Change |
-|------|--------|
+| File                                                                                  | Change                                                                                              |
+| ------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
 | `database/migrations/2026_05_04_000000_extend_issue_attachments_for_upload_token.php` | **New** — single ALTER TABLE: nullable `issue_id`, `upload_token`, `uploaded_by_user_id`, 2 indexes |
-| `app/Models/IssueAttachment.php` | Add `ORPHAN_TTL_HOURS`, casts, `uploadedBy()`, `scopePending()` |
-| `app/Policies/IssueAttachmentPolicy.php` | **New** — `deletePending()` ability |
-| `app/Http/Requests/API/v1/StoreOrphanAttachmentRequest.php` | **New** — validation with UUID regex + executable extension block |
-| `app/Http/Controllers/API/v1/IssueAttachmentController.php` | Add `storePending()`, `destroyPending()` |
-| `app/Http/Controllers/API/v1/IssueController.php` | Wrap `store()` in transaction; extract `$userId`; use `pending()` scope; `load('attachments')` |
-| `app/Http/Requests/API/v1/IssueRequest.php` | Add `upload_token` nullable UUID rule to `issues.store` |
-| `app/Http/Resources/API/v1/IssueResource.php` | Add `whenLoaded('attachments')` |
-| `app/Http/Resources/API/v1/IssueAttachmentResource.php` | Add `upload_token` field |
-| `app/Console/Commands/PruneOrphanAttachments.php` | **New** — cleanup command referencing `ORPHAN_TTL_HOURS`, with `lockForUpdate` and try/catch |
-| `app/Console/Kernel.php` / `routes/console.php` | Register hourly scheduler entry |
-| `routes/api.php` | Add 2 new pending attachment routes with throttle |
-| `app/Providers/AuthServiceProvider.php` | Register `IssueAttachmentPolicy` |
+| `app/Models/IssueAttachment.php`                                                      | Add `ORPHAN_TTL_HOURS`, casts, `uploadedBy()`, `scopePending()`                                     |
+| `app/Policies/IssueAttachmentPolicy.php`                                              | **New** — `deletePending()` ability                                                                 |
+| `app/Http/Requests/API/v1/StoreOrphanAttachmentRequest.php`                           | **New** — validation with UUID regex + executable extension block                                   |
+| `app/Http/Controllers/API/v1/IssueAttachmentController.php`                           | Add `storePending()`, `destroyPending()`                                                            |
+| `app/Http/Controllers/API/v1/IssueController.php`                                     | Wrap `store()` in transaction; extract `$userId`; use `pending()` scope; `load('attachments')`      |
+| `app/Http/Requests/API/v1/IssueRequest.php`                                           | Add `upload_token` nullable UUID rule to `issues.store`                                             |
+| `app/Http/Resources/API/v1/IssueResource.php`                                         | Add `whenLoaded('attachments')`                                                                     |
+| `app/Http/Resources/API/v1/IssueAttachmentResource.php`                               | Add `upload_token` field                                                                            |
+| `app/Console/Commands/PruneOrphanAttachments.php`                                     | **New** — cleanup command referencing `ORPHAN_TTL_HOURS`, with `lockForUpdate` and try/catch        |
+| `app/Console/Kernel.php` / `routes/console.php`                                       | Register hourly scheduler entry                                                                     |
+| `routes/api.php`                                                                      | Add 2 new pending attachment routes with throttle                                                   |
+| `app/Providers/AuthServiceProvider.php`                                               | Register `IssueAttachmentPolicy`                                                                    |
 
 ### Frontend (`/Users/slavapopov/Documents/WandaAsk_frontend`)
 
-| File | Change |
-|------|--------|
-| `features/issues/model/types.ts` | Extend `IssueAttachment` (`upload_token`), `Issue` (`attachments?`), `IssueUpsertDTO` (`upload_token`) |
-| `features/issues/api/pending-attachments.ts` | **New** — plain async client functions (NOT Server Actions): `uploadPendingAttachment`, `deletePendingAttachment` |
-| `features/issues/ui/pending-attachment-uploader.tsx` | **New** — pre-create upload widget with Set-based pending tracking |
-| `features/issues/ui/issue-attachments.tsx` | Fix stale-refresh race (sequence counter guard) |
-| `features/issues/ui/issue-form.tsx` | Add `uploadToken?` prop, `hasPendingOps` state, integrate `PendingAttachmentUploader` |
-| `features/issues/ui/issue-create-page-client.tsx` | `useMemo` token, populate `initialAttachments` from create response |
-| `features/issues/index.ts` | Export new component and functions |
+| File                                                 | Change                                                                                                            |
+| ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `features/issues/model/types.ts`                     | Extend `IssueAttachment` (`upload_token`), `Issue` (`attachments?`), `IssueUpsertDTO` (`upload_token`)            |
+| `features/issues/api/pending-attachments.ts`         | **New** — plain async client functions (NOT Server Actions): `uploadPendingAttachment`, `deletePendingAttachment` |
+| `features/issues/ui/pending-attachment-uploader.tsx` | **New** — pre-create upload widget with Set-based pending tracking                                                |
+| `features/issues/ui/issue-attachments.tsx`           | Fix stale-refresh race (sequence counter guard)                                                                   |
+| `features/issues/ui/issue-form.tsx`                  | Add `uploadToken?` prop, `hasPendingOps` state, integrate `PendingAttachmentUploader`                             |
+| `features/issues/ui/issue-create-page-client.tsx`    | `useMemo` token, populate `initialAttachments` from create response                                               |
+| `features/issues/index.ts`                           | Export new component and functions                                                                                |
 
 ---
 
 ## Open Questions (Resolved)
 
-1. **Redirect vs. stay on page after create** — Keep the two-step reveal for now. The post-create screen lets users add more attachments if needed. Removing it is a separate UX decision.
+1. **Redirect vs. stay on page after create** — Keep the two-step reveal for
+   now. The post-create screen lets users add more attachments if needed.
+   Removing it is a separate UX decision.
 
-2. **Storage path for orphans** — Keep `attachments/pending/{upload_token}/{filename}` permanently. Moving files after binding adds complexity and a failure mode. `file_path` in the DB stores the full path; download routes work regardless of path structure.
+2. **Storage path for orphans** — Keep
+   `attachments/pending/{upload_token}/{filename}` permanently. Moving files
+   after binding adds complexity and a failure mode. `file_path` in the DB
+   stores the full path; download routes work regardless of path structure.
 
-3. **Maximum files per token** — Implicitly limited by `throttle:30,1` and the 10 MB cap. Explicit per-token file count cap (e.g., 20) can be added in `storePending` if storage abuse becomes a concern in practice. Defer until needed.
+3. **Maximum files per token** — Implicitly limited by `throttle:30,1` and the
+   10 MB cap. Explicit per-token file count cap (e.g., 20) can be added in
+   `storePending` if storage abuse becomes a concern in practice. Defer until
+   needed.
 
-4. **Notify user if 0 attachments bound after create** — Not implemented. The 24 h window is generous enough that this scenario is extremely rare in normal usage. Add monitoring/alerting on the backend if it becomes a real concern.
+4. **Notify user if 0 attachments bound after create** — Not implemented. The 24
+   h window is generous enough that this scenario is extremely rare in normal
+   usage. Add monitoring/alerting on the backend if it becomes a real concern.
 
 ---
 
 ## References
 
 ### Backend
-- `app/Http/Controllers/API/v1/IssueAttachmentController.php` — existing `store()` and `destroy()` reference
-- `app/Http/Requests/API/v1/IssueRequest.php:64-66` — existing file validation pattern
-- `app/Models/IssueAttachment.php` — `$guarded = []`, `CREATED_AT = 'uploaded_at'`
-- `database/migrations/2026_03_20_100300_rename_tasks_table_to_issues.php:13-29` — current FK constraints
+
+- `app/Http/Controllers/API/v1/IssueAttachmentController.php` — existing
+  `store()` and `destroy()` reference
+- `app/Http/Requests/API/v1/IssueRequest.php:64-66` — existing file validation
+  pattern
+- `app/Models/IssueAttachment.php` — `$guarded = []`,
+  `CREATED_AT = 'uploaded_at'`
+- `database/migrations/2026_03_20_100300_rename_tasks_table_to_issues.php:13-29`
+  — current FK constraints
 
 ### Frontend
-- `features/issues/api/issues.ts:460-493` — `uploadIssueAttachment` reference (but note: this is a Server Action that builds FormData — `uploadPendingAttachment` must NOT be a Server Action)
-- `features/issues/ui/issue-attachments.tsx:287-415` — existing `IssueAttachments` component
+
+- `features/issues/api/issues.ts:460-493` — `uploadIssueAttachment` reference
+  (but note: this is a Server Action that builds FormData —
+  `uploadPendingAttachment` must NOT be a Server Action)
+- `features/issues/ui/issue-attachments.tsx:287-415` — existing
+  `IssueAttachments` component
 - `shared/lib/httpClient.ts:26-28` — FormData + auth header handling pattern
 - `shared/types/server-action.ts` — `ActionResult<T>` pattern
-- `docs/solutions/integration-issues/server-action-html-response-json-parse.md` — safe JSON parsing for direct fetch calls
+- `docs/solutions/integration-issues/server-action-html-response-json-parse.md`
+  — safe JSON parsing for direct fetch calls

@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+
 import type { PropsWithChildren } from 'react';
 
 interface PillProps extends PropsWithChildren {

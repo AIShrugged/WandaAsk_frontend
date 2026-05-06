@@ -1,7 +1,6 @@
 'use client';
 
 import { ChevronLeft, MessageSquare } from 'lucide-react';
-import SpinLoader from '@/shared/ui/layout/spin-loader';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -12,6 +11,7 @@ import { ChatInput } from '@/features/chat/ui/chat-input';
 import { ChatMessage } from '@/features/chat/ui/chat-message';
 import { ChatSuggestions } from '@/features/chat/ui/chat-suggestions';
 import { ROUTES } from '@/shared/lib/routes';
+import SpinLoader from '@/shared/ui/layout/spin-loader';
 
 import type {
   Chat,
