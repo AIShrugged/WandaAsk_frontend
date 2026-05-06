@@ -6,6 +6,7 @@ import { useEffect, useRef } from 'react';
 
 import { getMeetingDisplayState } from '@/features/meetings/model/meeting-state';
 import { ROUTES } from '@/shared/lib/routes';
+import { Button, ButtonIcon } from '@/shared/ui/button';
 
 import { getBotPillIndicator } from '../model/bot-pill-indicator';
 
@@ -96,13 +97,14 @@ export function MeetingCalendarPopover({
         <p className='text-xs font-semibold leading-snug text-foreground line-clamp-2'>
           {event.title}
         </p>
-        <button
-          type='button'
-          onClick={onClose}
-          className='flex-shrink-0 rounded-md p-0.5 text-muted-foreground hover:text-foreground transition-colors'
-        >
-          <X className='h-3.5 w-3.5' />
-        </button>
+        <ButtonIcon
+          aria-label='Close'
+          icon={<X className='h-3.5 w-3.5' />}
+          variant='ghost'
+          size='sm'
+          onClickAction={onClose}
+          className='flex-shrink-0'
+        />
       </div>
 
       {/* Meta */}
@@ -131,14 +133,15 @@ export function MeetingCalendarPopover({
         {!isPast && (
           <BotToggleButton eventId={event.id} isBotAdded={event.required_bot} />
         )}
-        <button
-          type='button'
+        <Button
+          variant='pill'
+          size='xs'
+          fullWidth={false}
+          leftIcon={<Calendar className='h-3 w-3' />}
           onClick={handleViewDetails}
-          className='inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground'
         >
-          <Calendar className='h-3 w-3' />
           View details
-        </button>
+        </Button>
       </div>
     </div>
   );

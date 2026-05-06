@@ -9,7 +9,6 @@ import {
   RefreshCw,
   TimerReset,
 } from 'lucide-react';
-import Link from 'next/link';
 import {
   useCallback,
   useEffect,
@@ -26,7 +25,7 @@ import {
 import { getTeams } from '@/features/teams/api/team';
 import { BUTTON_VARIANT } from '@/shared/types/button';
 import { Badge } from '@/shared/ui/badge';
-import { Button } from '@/shared/ui/button/Button';
+import { Button, ButtonLink } from '@/shared/ui/button';
 import Card from '@/shared/ui/card/Card';
 import CardBody from '@/shared/ui/card/CardBody';
 import { TenantScopeFields } from '@/shared/ui/input/tenant-scope-fields';
@@ -514,13 +513,13 @@ export function TelegramChatsManagement({
                 <RefreshCw className='h-4 w-4' />
                 Refresh
               </Button>
-              <Link
+              <ButtonLink
                 href='/dashboard/chat'
-                className='inline-flex h-10 items-center justify-center gap-2 rounded-[var(--radius-button)] border border-input bg-background px-4 text-sm font-medium text-foreground transition-colors hover:bg-accent'
+                variant='secondary'
+                leftIcon={<ExternalLink className='h-4 w-4' />}
               >
-                <ExternalLink className='h-4 w-4' />
                 Web chats
-              </Link>
+              </ButtonLink>
             </div>
           </div>
         </CardBody>

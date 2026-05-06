@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { formatDateTime } from '@/features/agents/lib/format';
 import { AgentJsonPreview } from '@/features/agents/ui/agent-json-preview';
 import { Badge } from '@/shared/ui/badge';
+import { Button } from '@/shared/ui/button';
 import { EmptyState } from '@/shared/ui/feedback/empty-state';
 
 import type {
@@ -92,22 +93,27 @@ function ActivityItemCard({ item }: { item: AgentTaskActivityItem }) {
             {item.description}
           </p>
           {hasResult && (
-            <button
+            <Button
               type='button'
+              variant='ghost'
+              size='xs'
+              fullWidth={false}
+              className='mt-3'
+              leftIcon={
+                expanded ? (
+                  <ChevronDown className='h-3 w-3' />
+                ) : (
+                  <ChevronRight className='h-3 w-3' />
+                )
+              }
               onClick={() => {
                 setExpanded((prev) => {
                   return !prev;
                 });
               }}
-              className='mt-3 flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground'
             >
-              {expanded ? (
-                <ChevronDown className='h-3 w-3' />
-              ) : (
-                <ChevronRight className='h-3 w-3' />
-              )}
               {expanded ? 'Hide result' : 'Show result'}
-            </button>
+            </Button>
           )}
           {hasResult && expanded && (
             <div className='mt-3'>

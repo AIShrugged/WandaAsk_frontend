@@ -7,6 +7,9 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { toast } from 'sonner';
 
+import { BUTTON_SIZE, BUTTON_VARIANT } from '@/shared/types/button';
+import { Button } from '@/shared/ui/button';
+
 import { clearUserFocus, setUserFocus } from '../api/focus';
 
 import { FOCUS_BANNER_DISMISS_KEY } from './focus-reminder-banner';
@@ -103,20 +106,23 @@ function EditForm({
         </span>
       </div>
       <div className='flex items-center gap-2'>
-        <button
+        <Button
+          size={BUTTON_SIZE.xs}
           onClick={onSave}
           disabled={isPending || focusText.trim().length === 0}
-          className='rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50 transition-colors'
+          fullWidth={false}
         >
           {isPending ? 'Saving…' : 'Save'}
-        </button>
-        <button
+        </Button>
+        <Button
+          size={BUTTON_SIZE.xs}
+          variant={BUTTON_VARIANT.secondary}
           onClick={onCancel}
           disabled={isPending}
-          className='rounded-md border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors'
+          fullWidth={false}
         >
           Cancel
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -151,13 +157,16 @@ function ExpiredFocusView({
       <p className='text-sm text-foreground line-through opacity-60'>
         {focus.focus_text}
       </p>
-      <button
+      <Button
+        size={BUTTON_SIZE.xs}
+        variant={BUTTON_VARIANT.secondary}
         onClick={onClear}
         disabled={isPending}
-        className='mt-3 self-start rounded-md bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 text-xs font-medium text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 disabled:opacity-50 transition-colors'
+        fullWidth={false}
+        className='mt-3 self-start bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20'
       >
         {isPending ? 'Clearing…' : 'Clear & set new focus'}
-      </button>
+      </Button>
     </div>
   );
 }
@@ -223,23 +232,28 @@ function FocusView({ focus, isPending, onEdit, onClear }: FocusViewProps) {
       <div className='flex flex-col gap-2'>
         <FocusText focus={focus} />
         <div className='flex items-center gap-2 mt-1'>
-          <button
+          <Button
+            size={BUTTON_SIZE.xs}
+            variant={BUTTON_VARIANT.ghost}
+            fullWidth={false}
+            leftIcon={<Pencil className='h-3 w-3' />}
             onClick={() => {
               return onEdit(focus);
             }}
-            className='flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors'
           >
-            <Pencil className='h-3 w-3' />
             Edit
-          </button>
-          <button
+          </Button>
+          <Button
+            size={BUTTON_SIZE.xs}
+            variant={BUTTON_VARIANT.ghost}
+            fullWidth={false}
+            leftIcon={<X className='h-3 w-3' />}
             onClick={onClear}
             disabled={isPending}
-            className='flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive transition-colors disabled:opacity-50'
+            className='hover:text-destructive'
           >
-            <X className='h-3 w-3' />
             {isPending ? 'Clearing…' : 'Clear'}
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -247,14 +261,17 @@ function FocusView({ focus, isPending, onEdit, onClear }: FocusViewProps) {
   return (
     <div className='flex flex-col gap-2'>
       <p className='text-xs text-muted-foreground'>No active focus set</p>
-      <button
+      <Button
+        size={BUTTON_SIZE.xs}
+        variant={BUTTON_VARIANT.secondary}
+        fullWidth={false}
+        className='self-start'
         onClick={() => {
           return onEdit(null);
         }}
-        className='self-start rounded-md border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground hover:border-primary/50 transition-colors'
       >
         Set focus
-      </button>
+      </Button>
     </div>
   );
 }

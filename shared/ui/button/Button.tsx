@@ -7,22 +7,21 @@ import {
   type ButtonVariant,
 } from '@/shared/types/button';
 
-import type { ButtonHTMLAttributes, PropsWithChildren } from 'react';
+import type { ButtonHTMLAttributes, PropsWithChildren, ReactNode } from 'react';
 
 interface Props
   extends PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement>> {
   variant?: ButtonVariant;
   size?: ButtonSize;
-  className?: string;
+  fullWidth?: boolean;
   loading?: boolean;
   loadingText?: string;
+  leftIcon?: ReactNode;
+  rightIcon?: ReactNode;
+  justify?: 'center' | 'start' | 'end';
+  className?: string;
 }
 
-/**
- * Loader component.
- * @param props - Component props.
- * @param props.text
- */
 const Loader = ({ text }: { text: string }) => {
   return (
     <div className='flex items-center justify-center gap-2'>
@@ -32,22 +31,15 @@ const Loader = ({ text }: { text: string }) => {
   );
 };
 
-/**
- * Button component.
- * @param root0
- * @param root0.loadingText
- * @param root0.children
- * @param root0.variant
- * @param root0.className
- * @param root0.loading
- * @param root0.disabled
- * @param root0.type
- */
 export function Button({
   loadingText = 'Please wait',
   children,
   variant = BUTTON_VARIANT.primary,
   size = BUTTON_SIZE.md,
+  fullWidth = true,
+  justify = 'center',
+  leftIcon,
+  rightIcon,
   className,
   loading = false,
   disabled = false,
@@ -57,12 +49,25 @@ export function Button({
   const isDisabled = disabled || loading;
   const disabledClass = isDisabled ? 'opacity-50 cursor-not-allowed' : null;
   const loadingClass = loading ? 'cursor-wait' : null;
-  const base =
-    'relative w-full rounded-[var(--radius-button)] font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2';
-  const sizes = {
-    [BUTTON_SIZE.md]: 'h-10 px-6 py-2',
-    [BUTTON_SIZE.sm]: 'h-9 px-4 py-1.5',
+
+  const justifyClass = {
+    center: 'justify-center',
+    start: 'justify-start',
+    end: 'justify-end',
   };
+
+  const base = clsx(
+    'relative rounded-[var(--radius-button)] font-medium text-sm transition-all duration-200 flex items-center gap-2',
+    fullWidth ? 'w-full' : 'w-auto',
+    justifyClass[justify],
+  );
+
+  const sizes = {
+    [BUTTON_SIZE.xs]: 'h-7 px-2.5 py-1 text-xs',
+    [BUTTON_SIZE.sm]: 'h-9 px-4 py-1.5',
+    [BUTTON_SIZE.md]: 'h-10 px-6 py-2',
+  };
+
   const variants = {
     [BUTTON_VARIANT.primary]: clsx(
       'bg-gradient-to-b from-violet-500 to-violet-700 text-primary-foreground cursor-pointer',
@@ -88,6 +93,17 @@ export function Button({
       disabledClass,
       loadingClass,
     ),
+    [BUTTON_VARIANT.ghost]: clsx(
+      'bg-transparent text-foreground cursor-pointer hover:bg-accent hover:text-accent-foreground active:bg-accent/80',
+      disabledClass,
+      loadingClass,
+    ),
+    [BUTTON_VARIANT.pill]: clsx(
+      'rounded-full border border-border bg-background text-muted-foreground cursor-pointer',
+      'hover:border-primary/40 hover:text-foreground',
+      disabledClass,
+      loadingClass,
+    ),
   };
 
   return (
@@ -98,7 +114,15 @@ export function Button({
       aria-disabled={isDisabled}
       {...rest}
     >
-      {loading ? <Loader text={loadingText} /> : children}
+      {loading ? (
+        <Loader text={loadingText} />
+      ) : (
+        <>
+          {leftIcon}
+          {children}
+          {rightIcon}
+        </>
+      )}
     </button>
   );
 }

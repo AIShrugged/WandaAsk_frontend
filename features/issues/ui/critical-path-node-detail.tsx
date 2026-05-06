@@ -5,6 +5,7 @@ import Link from 'next/link';
 
 import { ROUTES } from '@/shared/lib/routes';
 import { Badge } from '@/shared/ui/badge';
+import { ButtonIcon } from '@/shared/ui/button';
 
 import { IssueStatusBadge } from './issue-status-badge';
 
@@ -157,13 +158,14 @@ export function CriticalPathNodeDetail({
           <p className='text-sm font-semibold leading-snug text-card-foreground'>
             {node.issue_name ?? `Issue #${node.issue_id}`}
           </p>
-          <button
-            type='button'
-            onClick={onClose}
-            className='shrink-0 w-5 h-5 flex items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-colors'
-          >
-            <X className='w-3.5 h-3.5' />
-          </button>
+          <ButtonIcon
+            aria-label='Close detail panel'
+            icon={<X className='w-3.5 h-3.5' />}
+            variant='ghost'
+            size='sm'
+            onClickAction={onClose}
+            className='shrink-0'
+          />
         </div>
         <div className='flex flex-wrap gap-1.5 mt-2'>
           {isValidStatus(node.status) && (

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 import { ROUTES } from '@/shared/lib/routes';
+import { Button } from '@/shared/ui/button';
 import { CollapsibleSection } from '@/shared/ui/layout/collapsible-section';
 
 import type { StaleTask } from '../model/types';
@@ -60,26 +61,27 @@ export function StaleItems({ tasks }: { tasks: StaleTask[] }) {
           );
         })}
         {hasMore && (
-          <button
+          <Button
+            variant='ghost'
+            size='xs'
+            fullWidth={false}
+            justify='end'
+            className='self-end'
             onClick={() => {
-              return setShowAll((v) => {
+              setShowAll((v) => {
                 return !v;
               });
             }}
-            className='flex cursor-pointer justify-end items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground'
-          >
-            {showAll ? (
-              <>
-                Show less
+            rightIcon={
+              showAll ? (
                 <ChevronUp className='h-3.5 w-3.5' />
-              </>
-            ) : (
-              <>
-                Show all ({tasks.length})
+              ) : (
                 <ChevronDown className='h-3.5 w-3.5' />
-              </>
-            )}
-          </button>
+              )
+            }
+          >
+            {showAll ? 'Show less' : `Show all (${tasks.length})`}
+          </Button>
         )}
       </div>
     </CollapsibleSection>

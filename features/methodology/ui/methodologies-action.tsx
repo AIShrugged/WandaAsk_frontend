@@ -44,12 +44,14 @@ export function MethodologiesAction({
   return (
     <div className='flex items-center gap-2'>
       <ButtonIcon
+        aria-label='Edit methodology'
         variant='primary'
         disabled={isDefault}
         icon={<Pen className='size-[28]' />}
         href={`${ROUTES.DASHBOARD.METHODOLOGY}/${methodology.id}`}
       />
       <ButtonIcon
+        aria-label='Delete methodology'
         disabled={isPending || isDefault}
         icon={<Trash className='size-[28]' />}
         variant='danger'

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 import { ROUTES } from '@/shared/lib/routes';
+import { Button } from '@/shared/ui/button';
 import { CollapsibleSection } from '@/shared/ui/layout/collapsible-section';
 
 import type { WaitingTask } from '../model/types';
@@ -61,26 +62,25 @@ export function WaitingOnYou({ tasks }: WaitingOnYouProps) {
           );
         })}
         {hasMore && (
-          <button
+          <Button
+            variant='ghost'
+            size='xs'
+            fullWidth={false}
+            leftIcon={
+              showAll ? (
+                <ChevronUp className='h-3.5 w-3.5' />
+              ) : (
+                <ChevronDown className='h-3.5 w-3.5' />
+              )
+            }
             onClick={() => {
-              return setShowAll((v) => {
+              setShowAll((v) => {
                 return !v;
               });
             }}
-            className='flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground'
           >
-            {showAll ? (
-              <>
-                <ChevronUp className='h-3.5 w-3.5' />
-                Show less
-              </>
-            ) : (
-              <>
-                <ChevronDown className='h-3.5 w-3.5' />
-                Show all ({tasks.length})
-              </>
-            )}
-          </button>
+            {showAll ? 'Show less' : `Show all (${tasks.length})`}
+          </Button>
         )}
       </div>
     </CollapsibleSection>

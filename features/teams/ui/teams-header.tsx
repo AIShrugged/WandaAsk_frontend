@@ -1,9 +1,9 @@
 'use client';
 
 import { Plus } from 'lucide-react';
-import Link from 'next/link';
 
 import { ROUTES } from '@/shared/lib/routes';
+import { ButtonLink } from '@/shared/ui/button';
 import InputDropdown from '@/shared/ui/input/InputDropdown';
 
 import type { TeamProps } from '@/entities/team';
@@ -40,14 +40,15 @@ export default function TeamsHeader({
         />
       </div>
 
-      <Link
+      <ButtonLink
         href={ROUTES.DASHBOARD.TEAMS_CREATE}
+        size='xs'
+        className='ml-auto'
+        leftIcon={<Plus className='size-3.5' />}
         data-tour='create-team-btn'
-        className='ml-auto inline-flex h-8 items-center justify-center gap-1.5 rounded-[var(--radius-button)] bg-gradient-to-b from-violet-500 to-violet-700 px-3 text-xs font-medium text-primary-foreground shadow-[0_2px_8px_rgba(124,58,237,0.25)] transition-all hover:from-violet-400 hover:to-violet-600'
       >
-        <Plus className='size-3.5' />
         New
-      </Link>
+      </ButtonLink>
     </div>
   );
 }

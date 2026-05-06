@@ -5,6 +5,7 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import { ArtifactCard } from '@/entities/artifact';
 import { getArtifacts } from '@/entities/artifact/api/artifacts';
+import { ButtonIcon } from '@/shared/ui/button';
 import { CollapsedSidePanel } from '@/shared/ui/layout/collapsed-side-panel';
 
 import type { Artifact, ArtifactsResponse } from '@/features/chat/types';
@@ -118,25 +119,27 @@ export function ArtifactPanel({
           )}
         </div>
         <div className='flex items-center gap-1'>
-          <button
-            onClick={handleRefresh}
-            disabled={isRefreshing}
-            className='p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors disabled:opacity-50 cursor-pointer'
+          <ButtonIcon
             aria-label='Refresh artifacts'
-          >
-            <RefreshCw
-              className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : ''}`}
-            />
-          </button>
-          <button
-            onClick={() => {
+            icon={
+              <RefreshCw
+                className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : ''}`}
+              />
+            }
+            variant='ghost'
+            size='sm'
+            disabled={isRefreshing}
+            onClickAction={handleRefresh}
+          />
+          <ButtonIcon
+            aria-label='Collapse artifacts panel'
+            icon={<ChevronLeft className='w-4 h-4' />}
+            variant='ghost'
+            size='sm'
+            onClickAction={() => {
               return setIsCollapsed(true);
             }}
-            className='p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer'
-            aria-label='Collapse artifacts panel'
-          >
-            <ChevronLeft className='w-4 h-4' />
-          </button>
+          />
         </div>
       </div>
 

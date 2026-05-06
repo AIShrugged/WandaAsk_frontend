@@ -3,7 +3,8 @@
 import clsx from 'clsx';
 import { Minus, Plus, Sparkles, Trash2 } from 'lucide-react';
 
-import { Button } from '@/shared/ui/button/Button';
+import { BUTTON_SIZE, BUTTON_VARIANT } from '@/shared/types/button';
+import { Button } from '@/shared/ui/button';
 import SpinLoader from '@/shared/ui/layout/spin-loader';
 
 const TEAMS_COUNT_OPTIONS = [1, 2, 3] as const;
@@ -205,19 +206,22 @@ export function DemoDropdown({
           </Button>
 
           {hasExistingDemo && (
-            <button
+            <Button
               type='button'
+              variant={BUTTON_VARIANT.ghostDanger}
+              size={BUTTON_SIZE.xs}
               onClick={onDelete}
               disabled={isDeleting}
-              className='flex items-center justify-center gap-1.5 w-full h-8 rounded-[var(--radius-button)] text-xs font-medium text-destructive hover:bg-destructive/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer'
+              leftIcon={
+                isDeleting ? (
+                  <SpinLoader size='xs' />
+                ) : (
+                  <Trash2 className='w-3 h-3' />
+                )
+              }
             >
-              {isDeleting ? (
-                <SpinLoader size='xs' />
-              ) : (
-                <Trash2 className='w-3 h-3' />
-              )}
               {isDeleting ? 'Deleting\u2026' : 'Delete demo data'}
-            </button>
+            </Button>
           )}
         </div>
       </div>

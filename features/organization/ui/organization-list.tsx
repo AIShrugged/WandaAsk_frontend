@@ -3,6 +3,7 @@
 import { ChevronRight } from 'lucide-react';
 
 import { selectOrganizationAction } from '@/features/organization/api/organization';
+import { Button } from '@/shared/ui/button';
 import { H3 } from '@/shared/ui/typography/H3';
 
 import type { OrganizationProps } from '@/entities/organization';
@@ -30,17 +31,22 @@ export default async function OrganizationList({
               value={organization.id}
             />
 
-            <button type='submit' className='cursor-pointer w-full text-left'>
-              <div className='flex flex-row justify-between items-center border-b border-border cursor-pointer py-4'>
-                <div className='flex flex-col justify-between gap-2'>
-                  <H3>{organization.name}</H3>
-                  <p className='text-sm text-muted-foreground'>
-                    Your role: {organization.pivot.role}
-                  </p>
-                </div>
-                <ChevronRight className='text-primary size-6' />
+            <Button
+              type='submit'
+              variant='ghost'
+              justify='start'
+              className='border-b border-border rounded-none py-4 px-0'
+              rightIcon={
+                <ChevronRight className='text-primary size-6 ml-auto' />
+              }
+            >
+              <div className='flex flex-col gap-2'>
+                <H3>{organization.name}</H3>
+                <p className='text-sm text-muted-foreground'>
+                  Your role: {organization.pivot.role}
+                </p>
               </div>
-            </button>
+            </Button>
           </form>
         );
       })}

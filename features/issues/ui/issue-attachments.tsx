@@ -12,7 +12,7 @@ import {
 } from '@/features/issues/api/issues';
 import { BUTTON_VARIANT } from '@/shared/types/button';
 import { Badge } from '@/shared/ui/badge';
-import { Button } from '@/shared/ui/button/Button';
+import { Button, ButtonLink } from '@/shared/ui/button';
 
 import type { IssueAttachment } from '@/features/issues/model/types';
 import type { ReactNode } from 'react';
@@ -362,14 +362,12 @@ export function IssueAttachments({
             <Badge variant='warning'>No file URL</Badge>
           );
           const openButton = url ? (
-            <a
+            <ButtonLink
               href={url}
-              target='_blank'
-              rel='noreferrer'
-              className='inline-flex h-10 w-auto items-center justify-center gap-2 rounded-[var(--radius-button)] border border-input bg-background px-3 text-sm font-medium text-foreground hover:bg-accent'
-            >
-              <ExternalLink className='h-4 w-4' />
-            </a>
+              variant='secondary'
+              external
+              leftIcon={<ExternalLink className='h-4 w-4' />}
+            />
           ) : null;
 
           return (
