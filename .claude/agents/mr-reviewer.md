@@ -401,6 +401,11 @@ npm test -- --ci --passWithNoTests 2>&1 | tail -20
 - [ ] Form inputs are associated with `<label>` elements or `aria-label`
 - [ ] Modal dialogs trap focus and have `role="dialog"` + `aria-modal="true"`
 - [ ] Icon-only buttons have `aria-label` describing the action
+- [ ] `ButtonIcon` and `ButtonClose` components have `aria-label` prop
+- [ ] No raw `<button>` elements — use `Button`, `ButtonIcon`, `ButtonLink`,
+      `ButtonClose`, `ButtonBack`, or `ButtonCopy` from `shared/ui/button`
+      (check documented exceptions in design-guardian.md before flagging)
+- [ ] Non-full-width buttons explicitly pass `fullWidth={false}`
 - [ ] Focus management: after opening/closing dialogs, focus returns to trigger
       element
 - [ ] No `tabIndex > 0` (breaks natural tab order)

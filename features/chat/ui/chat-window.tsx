@@ -11,6 +11,7 @@ import { ChatInput } from '@/features/chat/ui/chat-input';
 import { ChatMessage } from '@/features/chat/ui/chat-message';
 import { ChatSuggestions } from '@/features/chat/ui/chat-suggestions';
 import { ROUTES } from '@/shared/lib/routes';
+import { Button, ButtonIcon } from '@/shared/ui/button';
 import SpinLoader from '@/shared/ui/layout/spin-loader';
 
 import type {
@@ -321,16 +322,18 @@ export function ChatWindow({
       <div className='flex items-center justify-between px-4 h-[var(--topbar-height)] border-b border-border flex-shrink-0'>
         <div className='flex items-center gap-2'>
           {/* Mobile: back to chat list */}
-          <button
-            className='md:hidden flex items-center gap-1 text-sm font-medium text-foreground hover:text-primary transition-colors cursor-pointer'
+          <Button
+            variant='ghost'
+            size='xs'
+            fullWidth={false}
+            leftIcon={<ChevronLeft className='w-4 h-4' />}
+            className='md:hidden'
             onClick={() => {
               return router.push(ROUTES.DASHBOARD.CHAT);
             }}
-            aria-label='Back to chats'
           >
-            <ChevronLeft className='w-4 h-4' />
             Chats
-          </button>
+          </Button>
 
           {/* Desktop: icon + label */}
           <MessageSquare className='hidden md:block w-4 h-4 text-primary' />
@@ -341,13 +344,14 @@ export function ChatWindow({
           </div>
         </div>
         {onCollapse && (
-          <button
-            onClick={onCollapse}
-            className='hidden md:flex p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer'
+          <ButtonIcon
             aria-label='Collapse chat panel'
-          >
-            <ChevronLeft className='w-4 h-4' />
-          </button>
+            icon={<ChevronLeft className='w-4 h-4' />}
+            variant='ghost'
+            size='sm'
+            onClickAction={onCollapse}
+            className='hidden md:flex'
+          />
         )}
       </div>
 

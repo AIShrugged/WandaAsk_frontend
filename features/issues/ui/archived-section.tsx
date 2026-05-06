@@ -5,6 +5,7 @@ import Link from 'next/link';
 
 import { IssueStatusBadge } from '@/features/issues/ui/issue-status-badge';
 import { ROUTES } from '@/shared/lib/routes';
+import { Button } from '@/shared/ui/button';
 import SpinLoader from '@/shared/ui/layout/spin-loader';
 
 import type { Issue } from '@/features/issues/model/types';
@@ -105,13 +106,15 @@ export function ArchivedSection({
           {loading ? (
             <SpinLoader />
           ) : (
-            <button
+            <Button
               type='button'
+              variant='ghost'
+              size='xs'
+              fullWidth={false}
               onClick={onLoadMore}
-              className='text-xs text-muted-foreground hover:text-foreground transition-colors'
             >
               Load more archived
-            </button>
+            </Button>
           )}
         </div>
       )}

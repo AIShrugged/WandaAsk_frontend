@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { BUTTON_VARIANT } from '@/shared/types/button';
-import { Button } from '@/shared/ui/button/Button';
+import { Button } from '@/shared/ui/button';
 import SpinLoader from '@/shared/ui/layout/spin-loader';
 import ModalBody from '@/shared/ui/modal/modal-body';
 import ModalFooter from '@/shared/ui/modal/modal-footer';
@@ -171,7 +171,7 @@ export default function DeprecatedFollowUpModal({
       <ModalFooter>
         <div className='flex flex-col gap-3 sm:flex-row sm:justify-end'>
           {state === 'failed' ? (
-            <Button type='button' onClick={handleRetry} className='w-auto'>
+            <Button type='button' onClick={handleRetry} fullWidth={false}>
               Try again
             </Button>
           ) : (
@@ -179,7 +179,7 @@ export default function DeprecatedFollowUpModal({
               <Button
                 type='button'
                 onClick={handleRetry}
-                className='w-auto'
+                fullWidth={false}
                 loading={state === 'regenerating' || state === 'polling'}
                 loadingText='Generating...'
               >
@@ -190,7 +190,7 @@ export default function DeprecatedFollowUpModal({
                 type='button'
                 variant={BUTTON_VARIANT.secondary}
                 onClick={close}
-                className='w-auto'
+                fullWidth={false}
               >
                 Keep as is
               </Button>

@@ -18,6 +18,6 @@ This creates a complete form setup:
 3. **Server Action** in `features/<feature>/api/` — form submission handler
    - `'use server'` directive
    - Validate input with the same Zod schema
-   - Use `useToast()` for error notifications
+   - Use `toast.error()` / `toast.success()` from `sonner` for notifications
 
 Look at existing forms in the codebase first to match established patterns.

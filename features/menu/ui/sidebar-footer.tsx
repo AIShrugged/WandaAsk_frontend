@@ -1,12 +1,12 @@
 'use client';
 
 import { Moon, Settings, Sun } from 'lucide-react';
-import Link from 'next/link';
 import { useTransition } from 'react';
 import { toast } from 'sonner';
 
 import { useTheme } from '@/app/providers/ThemeProvider';
 import { ROUTES } from '@/shared/lib/routes';
+import { ButtonIcon } from '@/shared/ui/button';
 
 import type { Theme, UserPreferences } from '@/entities/user';
 import type { ActionResult } from '@/shared/types/server-action';
@@ -40,29 +40,29 @@ export function SidebarFooter({
 
   return (
     <div className='flex items-center justify-end'>
-      <button
-        type='button'
-        onClick={toggleTheme}
-        disabled={isPending}
+      <ButtonIcon
         aria-label={
           theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'
         }
-        className='cursor-pointer flex items-center justify-center w-9 h-9 rounded-md text-muted-foreground hover:text-foreground hover:bg-sidebar-accent/50 transition-colors disabled:opacity-50'
-      >
-        {theme === 'dark' ? (
-          <Sun className='w-4 h-4' />
-        ) : (
-          <Moon className='w-4 h-4' />
-        )}
-      </button>
-
-      <Link
-        href={ROUTES.DASHBOARD.PROFILE_MENU}
-        className='cursor-pointer flex items-center justify-center w-9 h-9 rounded-md text-muted-foreground hover:text-foreground hover:bg-sidebar-accent/50 transition-colors'
+        icon={
+          theme === 'dark' ? (
+            <Sun className='w-4 h-4' />
+          ) : (
+            <Moon className='w-4 h-4' />
+          )
+        }
+        variant='ghost'
+        size='md'
+        disabled={isPending}
+        onClickAction={toggleTheme}
+      />
+      <ButtonIcon
         aria-label='Settings'
-      >
-        <Settings className='w-4 h-4' />
-      </Link>
+        icon={<Settings className='w-4 h-4' />}
+        variant='ghost'
+        size='md'
+        href={ROUTES.DASHBOARD.PROFILE_MENU}
+      />
     </div>
   );
 }

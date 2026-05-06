@@ -4,6 +4,7 @@ import React, { type ReactNode, useTransition } from 'react';
 import { USER_MENU } from '@/features/user/lib/options';
 import { logout } from '@/shared/api/session';
 import { ROUTES } from '@/shared/lib/routes';
+import { Button } from '@/shared/ui/button';
 
 import type { UserProps } from '@/entities/user';
 
@@ -65,16 +66,19 @@ export function UserMenuPopup({
         </div>
         {USER_MENU.map((menu) => {
           return (
-            <button
+            <Button
               key={menu.id}
+              variant='ghost'
+              size='sm'
+              justify='start'
               onClick={() => {
                 return handleAction(menu.action);
               }}
               disabled={isPending}
-              className='cursor-pointer w-full px-4 py-2 text-left text-sm text-foreground hover:bg-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+              className='px-4 rounded-none'
             >
               {menu.title}
-            </button>
+            </Button>
           );
         })}
       </div>

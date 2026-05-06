@@ -78,6 +78,7 @@ export function TeamActions({ id, actions }: Props) {
     'add-member': (
       <ButtonIcon
         key='add-member'
+        aria-label='Add team member'
         disabled={isPending}
         icon={<UserPlus className='size-[28]' />}
         variant='primary'
@@ -87,6 +88,7 @@ export function TeamActions({ id, actions }: Props) {
     delete: (
       <ButtonIcon
         key='delete'
+        aria-label='Delete team'
         disabled={isPending}
         icon={<Trash className='size-[28]' />}
         variant='danger'
@@ -96,6 +98,7 @@ export function TeamActions({ id, actions }: Props) {
     view: (
       <ButtonIcon
         key='view'
+        aria-label='View team follow-up'
         disabled={isPending}
         icon={<ChevronRightIcon className='size-[28]' />}
         variant='primary'

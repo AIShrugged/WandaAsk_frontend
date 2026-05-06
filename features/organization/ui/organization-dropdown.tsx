@@ -15,6 +15,7 @@ import { toast } from 'sonner';
 
 import { setActiveOrganization } from '@/features/organization/api/organization';
 import { ROUTES } from '@/shared/lib/routes';
+import { Button } from '@/shared/ui/button';
 
 import type { OrganizationProps } from '@/entities/organization';
 
@@ -75,14 +76,17 @@ function OrgItem({
   }
 
   return (
-    <button
+    <Button
       type='submit'
+      variant='ghost'
+      size='sm'
+      justify='start'
       disabled={pending}
-      className='flex flex-row gap-5 px-4 py-2.5 cursor-pointer w-full items-center justify-between hover:bg-accent transition-colors'
+      className='px-4 rounded-none justify-between'
     >
       <p className='text-sm text-foreground'>{organization.name}</p>
       <p className='text-xs text-muted-foreground'>{organization.pivot.role}</p>
-    </button>
+    </Button>
   );
 }
 
@@ -270,18 +274,19 @@ export default function OrganizationDropdown({
               );
             })}
 
-            <button
+            <Button
+              type='button'
+              variant='ghost'
+              size='sm'
+              justify='start'
+              className='px-4 rounded-none text-primary'
               onClick={() => {
                 setOpen(false);
                 push(`${ROUTES.DASHBOARD.ORGANIZATION}/create`);
               }}
-              type='button'
-              className='cursor-pointer w-full px-4 py-3 text-left
-                         text-sm font-medium text-primary
-                         hover:bg-accent transition-colors'
             >
-              + {'Create'}
-            </button>
+              + Create
+            </Button>
           </div>,
           document.body,
         )}

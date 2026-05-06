@@ -6,6 +6,7 @@ import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
 import { switchBot } from '@/features/event/api/calendar-events';
+import { Button } from '@/shared/ui/button';
 
 interface BotToggleButtonProps {
   eventId: number;
@@ -37,21 +38,24 @@ export function BotToggleButton({ eventId, isBotAdded }: BotToggleButtonProps) {
   };
 
   return (
-    <button
-      type='button'
+    <Button
+      variant='pill'
+      size='xs'
+      fullWidth={false}
+      disabled={isPending}
+      leftIcon={
+        optimisticBotAdded ? (
+          <BotOff className='h-3 w-3' />
+        ) : (
+          <Bot className='h-3 w-3' />
+        )
+      }
       onClick={(e) => {
         e.stopPropagation();
         handleToggle();
       }}
-      disabled={isPending}
-      className='inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50'
     >
-      {optimisticBotAdded ? (
-        <BotOff className='h-3 w-3' />
-      ) : (
-        <Bot className='h-3 w-3' />
-      )}
       {optimisticBotAdded ? 'Remove bot' : 'Add bot'}
-    </button>
+    </Button>
   );
 }

@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
@@ -14,7 +13,7 @@ import {
 import { isAgentActionError } from '@/features/agents/model/types';
 import { ROUTES } from '@/shared/lib/routes';
 import { BUTTON_VARIANT } from '@/shared/types/button';
-import { Button } from '@/shared/ui/button/Button';
+import { Button, ButtonLink } from '@/shared/ui/button';
 
 interface BaseProps {
   backHref: string;
@@ -36,16 +35,13 @@ export function AgentProfileActions({
 
   return (
     <div className='flex flex-wrap gap-3'>
-      <Link
-        href={backHref}
-        className='inline-flex h-10 items-center justify-center rounded-[var(--radius-button)] border border-input bg-background px-4 text-sm text-foreground hover:bg-accent w-full sm:w-auto'
-      >
+      <ButtonLink href={backHref} variant='secondary'>
         Back to profiles
-      </Link>
+      </ButtonLink>
       <Button
         type='button'
         variant={BUTTON_VARIANT.danger}
-        className='w-full sm:w-auto'
+        fullWidth={false}
         loading={isPending}
         onClick={() => {
           if (!isConfirmingDelete) {
@@ -75,7 +71,7 @@ export function AgentProfileActions({
         <Button
           type='button'
           variant={BUTTON_VARIANT.secondary}
-          className='w-full sm:w-auto'
+          fullWidth={false}
           onClick={() => {
             setIsConfirmingDelete(false);
           }}
@@ -109,15 +105,15 @@ export function AgentTaskActions({
 
   return (
     <div className='flex flex-wrap gap-3'>
-      <Link
+      <ButtonLink
         href={`${ROUTES.DASHBOARD.AGENT_TASKS}/${id}?tab=config`}
-        className='inline-flex h-10 items-center justify-center rounded-[var(--radius-button)] border border-input bg-background px-4 text-sm text-foreground hover:bg-accent w-full sm:w-auto'
+        variant='secondary'
       >
         Edit
-      </Link>
+      </ButtonLink>
       <Button
         type='button'
-        className='w-full sm:w-auto'
+        fullWidth={false}
         loading={isPending}
         onClick={() => {
           startTransition(async () => {
@@ -139,7 +135,7 @@ export function AgentTaskActions({
       <Button
         type='button'
         variant={BUTTON_VARIANT.secondary}
-        className='w-full sm:w-auto'
+        fullWidth={false}
         loading={isPending}
         onClick={() => {
           startTransition(async () => {
@@ -161,7 +157,7 @@ export function AgentTaskActions({
       <Button
         type='button'
         variant={BUTTON_VARIANT.danger}
-        className='w-full sm:w-auto'
+        fullWidth={false}
         loading={isDeletePending}
         onClick={() => {
           if (!isConfirmingDelete) {
@@ -195,7 +191,7 @@ export function AgentTaskActions({
         <Button
           type='button'
           variant={BUTTON_VARIANT.secondary}
-          className='w-full sm:w-auto'
+          fullWidth={false}
           onClick={() => {
             setIsConfirmingDelete(false);
           }}

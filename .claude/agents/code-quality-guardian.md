@@ -90,7 +90,19 @@ Scan each `.tsx` component for:
 | ≤3 props with unnecessary named interface | ⚠ Consider inlining                                  |
 | `any` in props                            | ❌ Define proper type                                 |
 
-### 3. Component responsibility audit (manual read)
+### 3. Button system audit
+
+Check all JSX in the target for button usage:
+
+- Raw `<button>` element outside documented exceptions (see
+  `design-guardian.md`) → **Error** (use `Button`, `ButtonIcon`, `ButtonLink`,
+  `ButtonClose`, `ButtonBack`, or `ButtonCopy` from `shared/ui/button`)
+- `ButtonIcon` without `aria-label` prop → **Error** (accessibility violation)
+- `ButtonClose` without `aria-label` prop → **Error** (accessibility violation)
+- Non-full-width button without `fullWidth={false}` → **Warning** (defaults to
+  `w-full`, likely unintended in inline contexts)
+
+### 4. Component responsibility audit (manual read)
 
 Read each component and flag:
 
