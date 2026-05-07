@@ -150,15 +150,7 @@ export function IssueForm({
     reValidateMode: 'onChange',
   });
 
-  const selectedOrgId = watch('organization_id');
-  const filteredPersons = selectedOrgId
-    ? persons.filter((p) => {
-        return (
-          p.organization_id === null ||
-          p.organization_id === Number(selectedOrgId)
-        );
-      })
-    : persons;
+  const filteredPersons = persons;
 
   const personOptions = [
     { value: '', label: 'Unassigned' },
@@ -309,11 +301,7 @@ export function IssueForm({
           const currentAssigneeId = watch('assignee_id');
           if (currentAssigneeId && value) {
             const stillValid = persons.some((p) => {
-              return (
-                String(p.id) === currentAssigneeId &&
-                (p.organization_id === null ||
-                  p.organization_id === Number(value))
-              );
+              return String(p.id) === currentAssigneeId;
             });
             if (!stillValid) {
               setValue('assignee_id', '', { shouldDirty: true });

@@ -480,22 +480,8 @@ export async function getEpics(
  * @returns persons list.
  */
 export async function getPersons(): Promise<PersonOption[]> {
-  const authHeaders = await getAuthHeaders();
-  const res = await fetch(`${API_URL}/persons`, {
-    headers: { ...authHeaders },
-    cache: 'no-store',
-  });
-
-  if (!res.ok) {
-    if (res.status === 401) redirect('/api/auth/clear-session');
-    const text = await res.text();
-
-    throw new Error(parseApiError(text, 'Failed to load persons').message);
-  }
-
-  const json: ApiResponse<PersonOption[]> = await res.json();
-
-  return json.data ?? [];
+  const result = await httpClientList<PersonOption>(`${API_URL}/persons`);
+  return result.data;
 }
 
 /**
