@@ -2,75 +2,134 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 
+import type { CachedListStore } from '@/shared/store/create-cached-list-store';
+
+type FetchResult<T> = { data: T[]; hasMore: boolean };
+
+type CachedStoreHook<T extends { id: number }> = {
+  <U>(selector: (state: CachedListStore<T>) => U): U;
+  getState: () => CachedListStore<T>;
+};
+
 type UseInfiniteScrollOptions<T> = {
-  fetchMore: (offset: number) => Promise<{ items: T[]; hasMore: boolean }>;
+  fetchMore: (offset: number, limit?: number) => Promise<FetchResult<T>>;
   initialItems: T[];
   initialHasMore: boolean;
   maxItems?: number;
+  store?: T extends { id: number }
+    ? CachedStoreHook<T & { id: number }>
+    : never;
+  cacheKey?: string | number;
+  totalCount?: number;
+  limit?: number;
 };
 
-/**
- * useInfiniteScroll hook.
- * @param root0
- * @param root0.fetchMore
- * @param root0.initialItems
- * @param root0.initialHasMore
- * @param root0.maxItems
- */
 export function useInfiniteScroll<T>({
   fetchMore,
   initialItems,
   initialHasMore,
   maxItems,
+  store,
+  cacheKey,
+  totalCount,
+  limit,
 }: UseInfiniteScrollOptions<T>) {
-  const [items, setItems] = useState<T[]>(initialItems);
-  const [offset, setOffset] = useState(initialItems.length);
-  const [hasMore, setHasMore] = useState(initialHasMore);
-  const [isLoading, setIsLoading] = useState(false);
-  // Incremented on every reset so in-flight loadMore calls from a prior
-  // generation are discarded and cannot append stale data.
+  const hasStore = store !== undefined;
+
+  // Store mode — Zustand selectors (only active when store is provided)
+  const storeItems =
+    store?.((s) => {
+      return s.items as T[];
+    }) ?? ([] as T[]);
+  const storeLoading =
+    store?.((s) => {
+      return s.isLoading;
+    }) ?? false;
+  const storeHasMore =
+    store?.((s) => {
+      return s.hasMore;
+    }) ?? false;
+
+  // Local mode — plain useState
+  const [localItems, setLocalItems] = useState<T[]>(initialItems);
+  const [localOffset, setLocalOffset] = useState(initialItems.length);
+  const [localHasMore, setLocalHasMore] = useState(initialHasMore);
+  const [localLoading, setLocalLoading] = useState(false);
   const generationRef = useRef(0);
 
+  const items = hasStore ? storeItems : localItems;
+  const isLoading = hasStore ? storeLoading : localLoading;
+  const hasMore = hasStore ? storeHasMore : localHasMore;
+
+  // Store mode: hydrate on mount / when SSR props change
   useEffect(() => {
+    if (!store || cacheKey === undefined || totalCount === undefined) return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (store.getState() as any).hydrate(initialItems, totalCount, cacheKey);
+  }, [store, initialItems, totalCount, cacheKey]);
+
+  // Local mode: reset when SSR props change (e.g. filter change)
+  useEffect(() => {
+    if (hasStore) return;
     generationRef.current += 1;
-    setItems(initialItems);
-    setOffset(initialItems.length);
-    setHasMore(initialHasMore);
-    setIsLoading(false);
+    setLocalItems(initialItems);
+    setLocalOffset(initialItems.length);
+    setLocalHasMore(initialHasMore);
+    setLocalLoading(false);
   }, [initialItems]);
 
   const sentinelRef = useRef<HTMLDivElement>(null);
+
   const loadMore = useCallback(async () => {
-    if (isLoading || !hasMore) return;
-    setIsLoading(true);
-    const generation = generationRef.current;
-
-    try {
-      const { items: newItems, hasMore: more } = await fetchMore(offset);
-
-      if (generationRef.current !== generation) return;
-
-      setItems((prev) => {
-        const combined = [...prev, ...newItems];
-
-        if (maxItems && combined.length > maxItems) {
-          return combined.slice(-maxItems);
-        }
-
-        return combined;
-      });
-      setOffset((prev) => {
-        return prev + newItems.length;
-      });
-      setHasMore(more);
-    } catch {
-      // silently fail
-    } finally {
-      if (generationRef.current === generation) {
-        setIsLoading(false);
+    if (hasStore && store) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const state = store.getState() as any;
+      if (state.isLoading || !state.hasMore) return;
+      state.setLoading(true);
+      try {
+        const { data, hasMore: more } = await fetchMore(state.offset, limit);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (store.getState() as any).appendChunk(data, more);
+      } catch {
+        // silently fail
+      } finally {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (store.getState() as any).setLoading(false);
+      }
+    } else {
+      if (localLoading || !localHasMore) return;
+      setLocalLoading(true);
+      const generation = generationRef.current;
+      try {
+        const { data: newItems, hasMore: more } = await fetchMore(localOffset);
+        if (generationRef.current !== generation) return;
+        setLocalItems((prev) => {
+          const combined = [...prev, ...newItems];
+          if (maxItems && combined.length > maxItems) {
+            return combined.slice(-maxItems);
+          }
+          return combined;
+        });
+        setLocalOffset((prev) => {
+          return prev + newItems.length;
+        });
+        setLocalHasMore(more);
+      } catch {
+        // silently fail
+      } finally {
+        if (generationRef.current === generation) setLocalLoading(false);
       }
     }
-  }, [fetchMore, offset, isLoading, hasMore, maxItems]);
+  }, [
+    hasStore,
+    store,
+    fetchMore,
+    limit,
+    localLoading,
+    localHasMore,
+    localOffset,
+    maxItems,
+  ]);
 
   useEffect(() => {
     if (!sentinelRef.current) return;

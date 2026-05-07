@@ -5,7 +5,7 @@ import { useCallback } from 'react';
 
 import { getAgentActivity } from '@/features/agents/api/activity';
 import { formatDateTime } from '@/features/agents/lib/format';
-import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
+import { useInfiniteScroll } from '@/shared/hooks';
 import { Badge } from '@/shared/ui/badge';
 import { EmptyState } from '@/shared/ui/feedback/empty-state';
 import { InfiniteScrollStatus } from '@/shared/ui/layout/infinite-scroll-status';
@@ -55,13 +55,13 @@ export function AgentActivityFeed({
 }: Props) {
   const fetchMore = useCallback(
     async (offset: number) => {
-      const { items, hasMore } = await getAgentActivity(
+      const { data, hasMore } = await getAgentActivity(
         offset,
         PAGE_SIZE,
         agentRunUuid,
       );
 
-      return { items, hasMore };
+      return { data, hasMore };
     },
     [agentRunUuid],
   );

@@ -20,7 +20,7 @@ export default async function Transcript({ id }: { id: string }) {
   try {
     const result = await loadTranscriptChunk(id, 0, filters.limit * 2);
 
-    items = result.items;
+    items = result.data;
     totalCount = result.totalCount;
   } catch (error) {
     if (error instanceof ServerError && error.status === 404) {

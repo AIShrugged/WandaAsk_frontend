@@ -11,7 +11,7 @@ import {
   getOrganizationLabel,
   getTeamLabel,
 } from '@/features/agents/lib/format';
-import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
+import { useInfiniteScroll } from '@/shared/hooks';
 import { ROUTES } from '@/shared/lib/routes';
 import { Badge } from '@/shared/ui/badge';
 import { InfiniteScrollStatus } from '@/shared/ui/layout/infinite-scroll-status';
@@ -44,7 +44,7 @@ export function AgentTasksList({ initialTasks, totalCount }: Props) {
   const fetchMore = useCallback(async (offset: number) => {
     const result = await getAgentTasks(offset, PAGE_SIZE);
 
-    return { items: result.data, hasMore: result.hasMore };
+    return { data: result.data, hasMore: result.hasMore };
   }, []);
   const initialHasMore =
     totalCount > 0

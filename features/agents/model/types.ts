@@ -153,7 +153,7 @@ export interface AgentTaskLatestRun {
 }
 
 export interface AgentActivityResponse {
-  items: AgentActivityItem[];
+  data: AgentActivityItem[];
   totalCount: number;
   hasMore: boolean;
 }

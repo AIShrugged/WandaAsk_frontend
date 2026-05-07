@@ -29,7 +29,7 @@ import { ArchivedSectionToggle } from '@/features/issues/ui/archived-section-tog
 import { IssuePriorityBadge } from '@/features/issues/ui/issue-priority-badge';
 import { IssueStatusBadge } from '@/features/issues/ui/issue-status-badge';
 import { clearUserFocus } from '@/features/user-focus/api/focus';
-import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
+import { useInfiniteScroll } from '@/shared/hooks';
 import { ROUTES } from '@/shared/lib/routes';
 import { BUTTON_VARIANT } from '@/shared/types/button';
 import { Button } from '@/shared/ui/button/Button';
@@ -164,10 +164,10 @@ export function IssuesPage({
   const [sortOrder, setSortOrder] = useState<SortOrder>(initialOrder);
   const [updatingIssueId, setUpdatingIssueId] = useState<number | null>(null);
   const [firstPage, setFirstPage] = useState<{
-    items: Issue[];
+    data: Issue[];
     hasMore: boolean;
   }>({
-    items: initialIssues,
+    data: initialIssues,
     hasMore: initialTotalCount > initialIssues.length,
   });
   const isFirstRender = useRef(true);
@@ -251,8 +251,8 @@ export function IssuesPage({
       order: f.order,
       search: f.search || undefined,
     })
-      .then(({ items, hasMore: more }) => {
-        if (!cancelled) setFirstPage({ items, hasMore: more });
+      .then(({ data, hasMore: more }) => {
+        if (!cancelled) setFirstPage({ data, hasMore: more });
       })
       .catch(() => {
         if (!cancelled) {
@@ -301,13 +301,13 @@ export function IssuesPage({
       setArchivedOffset(0);
 
       try {
-        const { items, hasMore } = await loadArchivedChunk({
+        const { data, hasMore } = await loadArchivedChunk({
           ...archivedBaseFilters,
           offset: 0,
           limit: PAGE_SIZE,
         });
 
-        setArchivedItems(items);
+        setArchivedItems(data);
         setArchivedOffset(PAGE_SIZE);
         setArchivedHasMore(hasMore);
       } catch {
@@ -330,9 +330,9 @@ export function IssuesPage({
       offset: archivedOffset,
       limit: PAGE_SIZE,
     })
-      .then(({ items, hasMore }) => {
+      .then(({ data, hasMore }) => {
         setArchivedItems((prev) => {
-          return [...prev, ...items];
+          return [...prev, ...data];
         });
         setArchivedOffset((prev) => {
           return prev + PAGE_SIZE;
@@ -348,7 +348,7 @@ export function IssuesPage({
   }, [archivedLoading, archivedBaseFilters, archivedOffset]);
 
   const scrollInitialItems = useMemo(() => {
-    return firstPage.items;
+    return firstPage.data;
   }, [firstPage]);
 
   const fetchMore = useCallback(

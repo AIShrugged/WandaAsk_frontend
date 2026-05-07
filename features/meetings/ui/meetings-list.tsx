@@ -4,19 +4,15 @@ import { startOfDay } from 'date-fns';
 import { CalendarSearch } from 'lucide-react';
 import { useCallback, useMemo } from 'react';
 
+import { loadMeetingsChunk } from '@/features/meetings/api/meetings';
 import { MEETINGS_PAGE_SIZE } from '@/features/meetings/model/constants';
 import { MeetingCard } from '@/features/meetings/ui/meeting-card';
-import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
+import { useInfiniteScroll } from '@/shared/hooks';
 import { EmptyState } from '@/shared/ui/feedback/empty-state';
 import { InfiniteScrollStatus } from '@/shared/ui/layout/infinite-scroll-status';
 import SpinLoader from '@/shared/ui/layout/spin-loader';
 
 import type { CalendarEventListItem } from '@/features/meetings/model/types';
-
-type MeetingsResponse = {
-  items: CalendarEventListItem[];
-  totalCount: number;
-};
 
 type Props = {
   initialItems: CalendarEventListItem[];
@@ -65,30 +61,9 @@ function formatMeetingGroupLabel(value: Date) {
  * @returns JSX element.
  */
 export function MeetingsList({ initialItems, totalCount }: Props) {
-  const fetchMore = useCallback(
-    async (offset: number) => {
-      const res = await fetch(
-        `/api/meetings?offset=${offset}&limit=${MEETINGS_PAGE_SIZE}`,
-        {
-          cache: 'no-store',
-        },
-      );
-
-      if (!res.ok) {
-        throw new Error('Failed to load meetings');
-      }
-
-      const json = (await res.json()) as MeetingsResponse;
-      const items = Array.isArray(json.items) ? json.items : [];
-      const nextOffset = offset + items.length;
-
-      return {
-        items,
-        hasMore: nextOffset < (json.totalCount ?? totalCount),
-      };
-    },
-    [totalCount],
-  );
+  const fetchMore = useCallback(async (offset: number) => {
+    return loadMeetingsChunk(offset, MEETINGS_PAGE_SIZE);
+  }, []);
 
   const {
     items: rawItems,
