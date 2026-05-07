@@ -1,6 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useTransition } from 'react';
 import { useForm, Controller } from 'react-hook-form';
@@ -90,6 +91,14 @@ export default function LoginForm() {
           );
         })}
       </form>
+      <div className='flex justify-end mt-1 -mb-2'>
+        <Link
+          href={ROUTES.AUTH.FORGOT_PASSWORD}
+          className='text-xs text-muted-foreground hover:text-foreground hover:underline underline-offset-4 transition-colors'
+        >
+          Forgot password?
+        </Link>
+      </div>
       <AuthFormFooter
         loading={isPending}
         disabled={isPending || !isDirty}

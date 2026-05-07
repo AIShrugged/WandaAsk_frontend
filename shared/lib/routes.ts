@@ -3,6 +3,8 @@ export const ROUTES = {
     REGISTER: '/auth/register',
     LOGIN: '/auth/login',
     ORGANIZATION: '/auth/organization',
+    FORGOT_PASSWORD: '/auth/forgot-password', // eslint-disable-line sonarjs/no-hardcoded-passwords
+    RESET_PASSWORD: '/auth/reset-password', // eslint-disable-line sonarjs/no-hardcoded-passwords
   },
   DASHBOARD: {
     HOME: 'dashboard',

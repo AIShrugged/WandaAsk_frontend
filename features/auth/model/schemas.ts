@@ -24,3 +24,28 @@ export const RegisterSchema = z.object({
 
 export type LoginInput = z.infer<typeof LoginSchema>;
 export type RegisterInput = z.infer<typeof RegisterSchema>;
+
+export const ForgotPasswordSchema = z.object({
+  email: z.email('Please enter a valid email'),
+});
+
+export const ResetPasswordSchema = z
+  .object({
+    password: z
+      .string()
+      .min(1, 'Password is required')
+      .min(8, 'The minimum password length is 8 characters'),
+    password_confirmation: z.string().min(1, 'Please confirm your password'),
+  })
+  .refine(
+    (data) => {
+      return data.password === data.password_confirmation;
+    },
+    {
+      message: 'Passwords do not match',
+      path: ['password_confirmation'],
+    },
+  );
+
+export type ForgotPasswordInput = z.infer<typeof ForgotPasswordSchema>;
+export type ResetPasswordInput = z.infer<typeof ResetPasswordSchema>;
