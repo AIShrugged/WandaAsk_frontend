@@ -1,8 +1,6 @@
 import {
   createTeam,
   deleteTeam,
-  getTeamFollowUp,
-  getTeamFollowUps,
   loadTeamsChunk,
   sendInvite,
   updateTeam,
@@ -300,102 +298,6 @@ describe('updateTeam', () => {
 
   it('resolves without error on success', async () => {
     await expect(updateTeam(3, { name: 'Updated' })).resolves.toBeUndefined();
-  });
-});
-
-// ---------------------------------------------------------------------------
-// Tests — getTeamFollowUps
-// ---------------------------------------------------------------------------
-describe('getTeamFollowUps', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  it('returns follow-ups data on success', async () => {
-    const mockFollowUps = [{ id: 1, team_id: 1 }];
-
-    globalThis.fetch = jest
-      .fn()
-      .mockResolvedValue(
-        makeResponse(200, { success: true, data: mockFollowUps }),
-      );
-
-    const result = await getTeamFollowUps(1);
-
-    expect(result.data).toEqual(mockFollowUps);
-  });
-
-  it('builds correct URL with teamId', async () => {
-    globalThis.fetch = jest
-      .fn()
-      .mockResolvedValue(makeResponse(200, { success: true, data: [] }));
-
-    await getTeamFollowUps(99);
-
-    expect(globalThis.fetch).toHaveBeenCalledWith(
-      'https://api.test/teams/99/followups',
-      expect.anything(),
-    );
-  });
-
-  it('throws on non-ok status', async () => {
-    globalThis.fetch = jest.fn().mockResolvedValue(makeResponse(500, 'Error'));
-
-    await expect(getTeamFollowUps(1)).rejects.toThrow();
-  });
-
-  it('throws when success=false', async () => {
-    globalThis.fetch = jest
-      .fn()
-      .mockResolvedValue(
-        makeResponse(200, { success: false, error: 'Invalid' }),
-      );
-
-    await expect(getTeamFollowUps(1)).rejects.toThrow('Invalid');
-  });
-});
-
-// ---------------------------------------------------------------------------
-// Tests — getTeamFollowUp
-// ---------------------------------------------------------------------------
-describe('getTeamFollowUp', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  it('returns followup data on success', async () => {
-    const followUpData = { id: 10, event_id: 5 };
-
-    globalThis.fetch = jest
-      .fn()
-      .mockResolvedValue(
-        makeResponse(200, { success: true, data: followUpData }),
-      );
-
-    const result = await getTeamFollowUp(5);
-
-    expect(result.data).toEqual(followUpData);
-  });
-
-  it('builds correct URL with calendarEventId', async () => {
-    globalThis.fetch = jest
-      .fn()
-      .mockResolvedValue(makeResponse(200, { success: true, data: {} }));
-
-    await getTeamFollowUp(77);
-
-    expect(globalThis.fetch).toHaveBeenCalledWith(
-      'https://api.test/calendar-events/77/followup',
-      expect.anything(),
-    );
-  });
-
-  it('throws on non-ok status', async () => {
-    globalThis.fetch = jest
-      .fn()
-      .mockResolvedValue(makeResponse(404, 'Not found'));
-
-    await expect(getTeamFollowUp(1)).rejects.toThrow();
   });
 });
 

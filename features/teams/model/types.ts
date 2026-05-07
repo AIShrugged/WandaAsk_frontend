@@ -3,7 +3,6 @@ export type {
   TeamCreateDTO,
   TeamAddMemberDTO,
   TeamActionType,
-  TeamFollowUpDTO,
 } from '@/entities/team';
 
 import type { TelegramChatRegistration } from '@/features/chat/types';

@@ -57,9 +57,6 @@ jest.mock('@/features/teams/ui/team-member-add-modal', () => {
 
 jest.mock('lucide-react', () => {
   return {
-    ChevronRightIcon: () => {
-      return <span data-testid='chevron-icon' />;
-    },
     Trash: () => {
       return <span data-testid='trash-icon' />;
     },
@@ -94,8 +91,6 @@ import { toast } from 'sonner';
 import { deleteTeam } from '@/features/teams/api/team';
 import { TeamActions } from '@/features/teams/ui/team-actions';
 
-import type { TeamActionType } from '@/entities/team';
-
 const mockDeleteTeam = deleteTeam as jest.Mock;
 const TRASH_ICON = 'trash-icon';
 const user = userEvent.setup({ delay: null });
@@ -113,20 +108,6 @@ describe('TeamActions', () => {
   it('renders add-member button when actions includes "add-member"', () => {
     render(<TeamActions id={1} actions={['add-member']} />);
     expect(screen.getByTestId('user-plus-icon')).toBeInTheDocument();
-  });
-
-  it('renders view button when actions includes "view"', () => {
-    render(<TeamActions id={1} actions={['view']} />);
-    expect(screen.getByTestId('chevron-icon')).toBeInTheDocument();
-  });
-
-  it('renders all three buttons when all actions provided', () => {
-    const actions: TeamActionType[] = ['delete', 'add-member', 'view'];
-
-    render(<TeamActions id={1} actions={actions} />);
-    expect(screen.getByTestId(TRASH_ICON)).toBeInTheDocument();
-    expect(screen.getByTestId('user-plus-icon')).toBeInTheDocument();
-    expect(screen.getByTestId('chevron-icon')).toBeInTheDocument();
   });
 
   it('calls deleteTeam and shows success toast on delete', async () => {

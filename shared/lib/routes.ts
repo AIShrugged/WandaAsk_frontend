@@ -26,7 +26,6 @@ export const ROUTES = {
     TEAMS: '/dashboard/teams',
     TEAMS_CREATE: '/dashboard/teams/create',
     STATISTICS: '/dashboard/statistics',
-    FOLLOWUPS: '/dashboard/follow-ups',
     ORGANIZATION: '/dashboard/organization',
     PROFILE: '/dashboard/profile',
     PROFILE_ACCOUNT: '/dashboard/profile/account',

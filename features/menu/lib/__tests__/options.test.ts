@@ -69,7 +69,6 @@ describe('ICONS_MAP', () => {
       'teams',
       'bookOpen',
       'calendar',
-      'file',
       'kanban',
       'messageSquare',
       'bug',
