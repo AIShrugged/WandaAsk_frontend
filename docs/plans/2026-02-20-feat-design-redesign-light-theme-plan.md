@@ -29,12 +29,11 @@ The current UI has two categories of issues:
 
 ### 1. Broken/Invalid Code (must fix regardless of redesign)
 
-| Issue                                           | File                                      | Impact                          |
-| ----------------------------------------------- | ----------------------------------------- | ------------------------------- |
-| `box-shadow-primary` should be `shadow-primary` | `shared/ui/card/Card.tsx`                 | All cards render with no shadow |
-| `gap-[3]` invalid Tailwind (missing unit)       | `shared/ui/layout/component-header.tsx`   | Page headers have zero gap      |
-| `text=accent` typo (= instead of -)             | `shared/ui/input/InputDropdown.tsx`       | Checkmark icon color broken     |
-| `revalidatePath('/methodology')` wrong path     | `features/methodology/api/methodology.ts` | List stale after creation       |
+| Issue                                           | File                                    | Impact                          |
+| ----------------------------------------------- | --------------------------------------- | ------------------------------- |
+| `box-shadow-primary` should be `shadow-primary` | `shared/ui/card/Card.tsx`               | All cards render with no shadow |
+| `gap-[3]` invalid Tailwind (missing unit)       | `shared/ui/layout/component-header.tsx` | Page headers have zero gap      |
+| `text=accent` typo (= instead of -)             | `shared/ui/input/InputDropdown.tsx`     | Checkmark icon color broken     |
 
 ### 2. Design Inconsistencies (visual quality)
 
@@ -489,7 +488,6 @@ Each dashboard page needs:
 | `/dashboard/follow-ups/[id]`          | Follow-up detail layout            |
 | `/dashboard/follow-ups/analysis/[id]` | Analysis view                      |
 | `/dashboard/meeting/[id]`             | Tabbed layout, transcript          |
-| `/dashboard/methodology`              | List, create/edit forms            |
 | `/dashboard/organization/[id]`        | Org settings                       |
 | `/dashboard/teams`                    | Team list cards                    |
 | `/dashboard/teams/[id]`               | Team detail, member list           |

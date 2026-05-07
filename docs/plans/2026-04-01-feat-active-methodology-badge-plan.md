@@ -1,10 +1,3 @@
----
-title: 'feat: Visual active methodology badge on /dashboard/methodology'
-type: feat
-status: completed
-date: 2026-04-01
----
-
 # feat: Visual active methodology badge on /dashboard/methodology
 
 ## Overview

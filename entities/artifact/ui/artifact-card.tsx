@@ -4,7 +4,6 @@ import {
   BarChart2,
   BookMarked,
   ClipboardList,
-  FileCheck,
   FileText,
   LayoutDashboard,
   Users,
@@ -17,7 +16,6 @@ import React from 'react';
 import { DecisionLog } from '@/entities/artifact/ui/decision-log';
 import { InsightCard } from '@/entities/artifact/ui/insight-card';
 import { MeetingCard } from '@/entities/artifact/ui/meeting-card';
-import { MethodologyCriteria } from '@/entities/artifact/ui/methodology-criteria';
 import { PeopleList } from '@/entities/artifact/ui/people-list';
 import { TaskSummaryArtifactView } from '@/entities/artifact/ui/task-summary-artifact';
 import { TaskTable } from '@/entities/artifact/ui/task-table';
@@ -32,7 +30,6 @@ import type {
   DecisionLogArtifact,
   InsightCardArtifact,
   MeetingCardArtifact,
-  MethodologyCriteriaArtifact,
   PeopleListArtifact,
   TaskSummaryArtifact,
   TaskTableArtifact,
@@ -69,10 +66,6 @@ const TYPE_META: Record<
     label: 'Transcript',
     icon: <FileText className='w-3.5 h-3.5' />,
   },
-  methodology_criteria: {
-    label: 'Methodology',
-    icon: <FileCheck className='w-3.5 h-3.5' />,
-  },
   decision_log: {
     label: 'Decisions',
     icon: <BookMarked className='w-3.5 h-3.5' />,
@@ -105,9 +98,6 @@ const ARTIFACT_RENDERERS: {
   },
   transcript_view: (a: TranscriptArtifact) => {
     return <TranscriptView data={a.data} />;
-  },
-  methodology_criteria: (a: MethodologyCriteriaArtifact) => {
-    return <MethodologyCriteria data={a.data} />;
   },
   decision_log: (a: DecisionLogArtifact) => {
     return <DecisionLog data={a.data} />;

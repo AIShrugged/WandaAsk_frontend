@@ -99,14 +99,11 @@ Create Team page:
   - [ ] "Back" button/link returns to /dashboard/teams
 ```
 
-#### `e2e/methodology/methodology.spec.ts`
-
 ```
 Unauthenticated:
   - [ ] redirects /dashboard/methodology to /auth/login
 
 Authenticated — structure:
-  - [ ] renders "Methodologies" heading
   - [ ] renders "Create Methodology" button
   - [ ] renders methodology list OR empty state
 
@@ -351,7 +348,6 @@ export async function clearInput(
 | 1   | `e2e/helpers.ts`                        | 1     | —          | shared utility                                  |
 | 2   | `e2e/chat/chat-list.spec.ts`            | 1     | 7          | `/dashboard/chat`                               |
 | 3   | `e2e/teams/teams.spec.ts`               | 1     | 9          | `/dashboard/teams`, `/dashboard/teams/create`   |
-| 4   | `e2e/methodology/methodology.spec.ts`   | 1     | 8          | `/dashboard/methodology`, `*/create`            |
 | 5   | `e2e/chat/chat-room.spec.ts`            | 2     | 7          | `/dashboard/chat/[id]`                          |
 | 6   | `e2e/teams/team-detail.spec.ts`         | 2     | 6          | `/dashboard/teams/[id]`                         |
 | 7   | `e2e/meeting/meeting.spec.ts`           | 2     | 8          | `/dashboard/meeting/[id]`                       |

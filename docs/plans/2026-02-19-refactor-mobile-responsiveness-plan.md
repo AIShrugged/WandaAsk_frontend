@@ -70,8 +70,6 @@ Multiple forms constrain submit buttons to `w-[170px]` / `w-[240px]` /
 `w-[250px]`, making them small touch targets:
 
 - `features/organization/ui/organization-form.tsx:84`
-- `features/methodology/ui/methodology-form.tsx:114`
-- `features/methodology/ui/methodology-create.tsx:14`
 - `features/teams/ui/team-create.tsx:11`
 - `features/teams/ui/team-create-form.tsx:88`
 - `features/event/ui/event-popup.tsx:60`
@@ -289,8 +287,6 @@ Replace fixed `w-[170px]` / `w-[240px]` / `w-[250px]` → `w-full md:w-[170px]`
 **Files:**
 
 - `features/organization/ui/organization-form.tsx:84`
-- `features/methodology/ui/methodology-form.tsx:114`
-- `features/methodology/ui/methodology-create.tsx:14`
 - `features/teams/ui/team-create.tsx:11`
 - `features/teams/ui/team-create-form.tsx:88`
 - `features/event/ui/event-popup.tsx:60`

@@ -26,7 +26,7 @@ export const FEATURES = [
   {
     icon: '👥',
     title: 'Team Workspace',
-    desc: 'Organize your company into teams, invite members, set methodologies, and manage access to meeting data.',
+    desc: 'Organize your company into teams, invite members, and manage access to meeting data.',
     accent: '#dc2626',
   },
   {

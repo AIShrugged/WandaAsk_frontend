@@ -76,8 +76,6 @@ export type {
   DecisionLogArtifact,
   InsightCardArtifact,
   MeetingCardArtifact,
-  MethodologyCriteriaArtifact,
-  MethodologyCriteriaBlock,
   PeopleListArtifact,
   TaskTableArtifact,
   TranscriptArtifact,

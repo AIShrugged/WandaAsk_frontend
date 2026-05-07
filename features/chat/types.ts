@@ -13,8 +13,6 @@ export type {
   ChartType,
   ChartArtifact,
   TranscriptArtifact,
-  MethodologyCriteriaBlock,
-  MethodologyCriteriaArtifact,
   Artifact,
   ArtifactsResponse,
   TelegramChatRegistration,

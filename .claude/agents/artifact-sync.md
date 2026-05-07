@@ -41,7 +41,6 @@ entities/artifact/ui/
   insight-card.tsx
   chart-artifact.tsx
   transcript-view.tsx
-  methodology-criteria.tsx
 
 features/chat/ui/artifact-panel.tsx   ← type dispatch / routing (imports from entities/artifact)
 entities/artifact/model/types.ts      ← TypeScript interfaces
@@ -65,15 +64,14 @@ entities/artifact/model/types.ts      ← TypeScript interfaces
 
 ## Artifact Type → Frontend Mapping
 
-| Backend `type`         | Frontend renderer          | TypeScript interface          |
-| ---------------------- | -------------------------- | ----------------------------- |
-| `task_table`           | `task-table.tsx`           | `TaskTableArtifact`           |
-| `meeting_card`         | `meeting-card.tsx`         | `MeetingCardArtifact`         |
-| `people_list`          | `people-list.tsx`          | `PeopleListArtifact`          |
-| `insight_card`         | `insight-card.tsx`         | `InsightCardArtifact`         |
-| `chart`                | `chart-artifact.tsx`       | `ChartArtifact`               |
-| `transcript_view`      | `transcript-view.tsx`      | `TranscriptArtifact`          |
-| `methodology_criteria` | `methodology-criteria.tsx` | `MethodologyCriteriaArtifact` |
+| Backend `type`    | Frontend renderer     | TypeScript interface  |
+| ----------------- | --------------------- | --------------------- |
+| `task_table`      | `task-table.tsx`      | `TaskTableArtifact`   |
+| `meeting_card`    | `meeting-card.tsx`    | `MeetingCardArtifact` |
+| `people_list`     | `people-list.tsx`     | `PeopleListArtifact`  |
+| `insight_card`    | `insight-card.tsx`    | `InsightCardArtifact` |
+| `chart`           | `chart-artifact.tsx`  | `ChartArtifact`       |
+| `transcript_view` | `transcript-view.tsx` | `TranscriptArtifact`  |
 
 ## Code Quality Rules
 

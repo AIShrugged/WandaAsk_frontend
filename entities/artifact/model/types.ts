@@ -11,7 +11,6 @@ export type ArtifactType =
   | 'insight_card'
   | 'chart'
   | 'transcript_view'
-  | 'methodology_criteria'
   | 'decision_log'
   | 'task_summary';
 
@@ -93,23 +92,6 @@ export interface TranscriptArtifact extends ArtifactBase {
   };
 }
 
-export type MethodologyCriteriaBlock =
-  | { type: 'header'; text: string }
-  | { type: 'scoring_table'; columns: string[]; rows: (string | number)[][] }
-  | {
-      type: 'progress_summary';
-      items: { label: string; value: number; max: number | null }[];
-    }
-  | { type: 'scale'; title: string; items: { score: number; label: string }[] }
-  | { type: 'text_list'; title: string; items: string[] };
-
-export interface MethodologyCriteriaArtifact extends ArtifactBase {
-  type: 'methodology_criteria';
-  data: {
-    blocks: MethodologyCriteriaBlock[];
-  };
-}
-
 export type DecisionEntry =
   | {
       source_type: 'meeting';
@@ -160,7 +142,6 @@ export type Artifact =
   | InsightCardArtifact
   | ChartArtifact
   | TranscriptArtifact
-  | MethodologyCriteriaArtifact
   | DecisionLogArtifact
   | TaskSummaryArtifact;
 

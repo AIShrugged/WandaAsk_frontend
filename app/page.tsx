@@ -7,7 +7,6 @@ import {
   LandingHero,
   LandingHowItWorks,
   LandingIntegrations,
-  LandingMethodology,
   LandingNav,
   LandingStats,
   LandingStyles,
@@ -73,7 +72,6 @@ export default function Home() {
         <LandingHowItWorks />
         <LandingArtifacts />
         <LandingIntegrations />
-        <LandingMethodology />
         <LandingCta />
         <LandingFooter />
       </div>

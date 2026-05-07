@@ -134,8 +134,7 @@ test.describe('<Feature>', () => {
 
 1. **Chat** — create chat, send message, see assistant response, delete chat
 2. **Teams** — view team list, add member, view team details
-3. **Methodology** — create, edit, delete methodology
-4. **Navigation** — sidebar navigation between all main sections
+3. **Navigation** — sidebar navigation between all main sections
 
 ### Medium priority
 

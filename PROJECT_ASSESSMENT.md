@@ -32,10 +32,9 @@
 
 - **1,158 unit-тестов — все зелёные** ✅ (было 1,022; +136 за неделю)
 - **+8 новых test suites** покрывают Server Actions и API-модули: auth, chat
-  (chats/messages/artifacts), teams, methodology, user-profile, organization
+  (chats/messages/artifacts), teams, user-profile, organization
 - **E2E: 15 spec-файлов** (было 3) — покрыты auth, chat, teams, calendar,
-  meeting, profile, dashboard, methodology, follow-ups, summary, landing,
-  organization
+  meeting, profile, dashboard, follow-ups, summary, landing, organization
 - Jest + Testing Library — правильный выбор
 
 ### 3. Качество кода
@@ -63,8 +62,7 @@
 ### 6. Backend contract
 
 - TypeScript типы приведены в соответствие с Laravel Resources/DTOs в 9 доменах:
-  auth, user, team, methodology, organization, participant, follow-up, summary и
-  др.
+  auth, user, team, organization, participant, follow-up, summary и др.
 - Исправлена критическая ошибка: `organization_id` передавался строкой вместо
   integer
 
@@ -106,8 +104,7 @@ useEffect/useMemo/useCallback. Стоит включить хотя бы `warn`.
 ### 5. Мобильная адаптация — частично
 
 Landing-страница адаптирована (шапка, отступы для ≤768px и ≤400px). Остальные
-страницы дашборда (teams, methodology, chat) не проверялись на мобильных
-breakpoints.
+страницы дашборда (teams, chat) не проверялись на мобильных breakpoints.
 
 ---
 
@@ -150,7 +147,6 @@ ESLint не запускается через `npm run lint`. Pre-push hook ис
 | landing      | ✗   | ✓   | ✓     | ✗     | 4      | ✓     |
 | meeting      | ✗   | ✓   | ✗     | ✗     | 2      | ✓     |
 | menu         | ✗   | ✓   | ✓     | ✗     | 3      | ✓     |
-| methodology  | ✓   | ✓   | ✓     | ✗     | **14** | ✓     |
 | organization | ✓   | ✓   | ✓     | ✗     | **10** | ✓     |
 | participants | ✓   | ✓   | ✓     | ✗     | 5      | ✓     |
 | summary      | ✓   | ✓   | ✗     | ✗     | 6      | ✓     |

@@ -60,9 +60,6 @@ participants/profiles endpoints.
 
 In `features/participants/api/participants.ts`:
 
-- Line 29: change `getMethodologies failed` → `getAttendees failed`
-- Line 59: change `getMethodologies failed` → `getGuests failed`
-
 ### Part 2 — Investigate why `/participants` returns 404 when `/followup` succeeds
 
 Two hypotheses:
@@ -115,10 +112,8 @@ rather than crashing. Options:
 
 ### Definite changes
 
-| File                                           | Change                              |
-| ---------------------------------------------- | ----------------------------------- |
-| `features/participants/api/participants.ts:29` | `getMethodologies` → `getAttendees` |
-| `features/participants/api/participants.ts:59` | `getMethodologies` → `getGuests`    |
+| File | Change |
+| ---- | ------ |
 
 ### Conditional changes (after investigation)
 
