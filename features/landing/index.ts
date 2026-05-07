@@ -6,7 +6,6 @@ export { LandingFooter } from '@/features/landing/ui/LandingFooter';
 export { LandingHero } from '@/features/landing/ui/LandingHero';
 export { LandingHowItWorks } from '@/features/landing/ui/LandingHowItWorks';
 export { LandingIntegrations } from '@/features/landing/ui/LandingIntegrations';
-export { LandingMethodology } from '@/features/landing/ui/LandingMethodology';
 export { LandingNav } from '@/features/landing/ui/LandingNav';
 export { LandingStats } from '@/features/landing/ui/LandingStats';
 export { LandingStyles } from '@/features/landing/ui/LandingStyles';
