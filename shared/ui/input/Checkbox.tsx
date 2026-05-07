@@ -1,7 +1,5 @@
 import React, { forwardRef, type ReactNode } from 'react';
 
-import Hover from '@/shared/ui/animation/Hover';
-
 /**
  * CheckboxIcon component.
  */
@@ -51,12 +49,11 @@ const Checkbox = forwardRef<HTMLInputElement, Props>(function Checkbox(
     <label
       className={`flex items-center gap-2 cursor-pointer ${containerClassName || ''}`}
     >
-      <Hover>
-        <input
-          ref={ref}
-          id={id}
-          type='checkbox'
-          className={`
+      <input
+        ref={ref}
+        id={id}
+        type='checkbox'
+        className={`
         appearance-none
         cursor-pointer
         w-4.5 h-4.5 rounded-[4px]
@@ -66,17 +63,17 @@ const Checkbox = forwardRef<HTMLInputElement, Props>(function Checkbox(
         transition-colors relative
         ${className || ''}
       `}
-          onChange={onChange}
-          checked={!!value}
-          defaultValue={defaultValue}
-          {...rest}
-        />
-        {isChecked && (
-          <span className='absolute pointer-events-none flex items-center justify-center w-4.5 h-4.5'>
-            <CheckboxIcon />
-          </span>
-        )}
-      </Hover>
+        onChange={onChange}
+        checked={!!value}
+        defaultValue={defaultValue}
+        {...rest}
+      />
+      {isChecked && (
+        <span className='absolute pointer-events-none flex items-center justify-center w-4.5 h-4.5'>
+          <CheckboxIcon />
+        </span>
+      )}
+
       {label && <span>{label}</span>}
       {labelExtra}
       {rest.children}
