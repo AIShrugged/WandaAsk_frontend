@@ -169,7 +169,6 @@ const chat = await getMethodologyChat(team.methodology_id);
 
 | Файл                                            | Причина                                                                                                                       |
 | ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| `features/landing/ui/LandingMethodology.tsx`    | Маркетинговая страница; не импортирует из `features/methodology`; не ссылается на dashboard-роут                              |
 | `entities/artifact/ui/methodology-criteria.tsx` | Artifact-рендерер для AI-генерируемых артефактов типа `methodology_criteria`; управляется бэкендом через `CreateArtifactTool` |
 | `entities/artifact/model/types.ts`              | `MethodologyCriteriaArtifact` — часть union-типа артефактов; определяется бэкенд-контрактом                                   |
 | `entities/team/model/types.ts`                  | Поле `methodology_id: number \| null` отражает бэкенд `TeamResource`; удалять нельзя                                          |
