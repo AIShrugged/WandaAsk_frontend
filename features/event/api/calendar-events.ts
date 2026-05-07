@@ -192,67 +192,6 @@ export async function switchBot(
 }
 
 /**
- * getFollowUps.
- * @param id - id.
- * @returns Promise.
- */
-export async function getFollowUps(id: number) {
-  const authHeaders = await getAuthHeaders();
-  const res = await fetch(
-    `${API_URL}/calendar-events/${id}/followups?limit=50`,
-    {
-      method: 'GET',
-      headers: {
-        ...authHeaders,
-      },
-      cache: 'no-store',
-    },
-  );
-
-  if (!res.ok) {
-    return null;
-  }
-
-  return res.json();
-}
-
-/**
- * getEventFollowUp.
- * @param calendarEventId - calendarEventId.
- * @returns Promise.
- */
-export const getEventFollowUp = async (calendarEventId: number | string) => {
-  const authHeaders = await getAuthHeaders();
-  const res = await fetch(
-    `${API_URL}/calendar-events/${calendarEventId}/followup`,
-    {
-      headers: {
-        ...authHeaders,
-      },
-      cache: 'no-store',
-    },
-  );
-
-  if (res.status === 404) {
-    return { data: null };
-  }
-
-  if (!res.ok) {
-    const text = await res.text();
-
-    throw new Error(`${text}`);
-  }
-
-  const json = await res.json();
-
-  if (!json.success || !json.data) {
-    throw new Error(json.error ?? 'Invalid API response');
-  }
-
-  return { data: json.data };
-};
-
-/**
  * getMeetingTasks — fetches AI-extracted tasks for a calendar event.
  * @param calendarEventId - The calendar event ID.
  * @returns Array of MeetingTask objects.

@@ -1,9 +1,4 @@
-import {
-  CalendarSearch,
-  ClipboardList,
-  Sparkles,
-  UserSearch,
-} from 'lucide-react';
+import { CalendarSearch, ClipboardList, UserSearch } from 'lucide-react';
 
 import type React from 'react';
 
@@ -19,11 +14,6 @@ interface ChatSuggestionsProps {
 }
 
 const SUGGESTIONS: Suggestion[] = [
-  {
-    label: 'Create methodology',
-    prompt: 'Help create an employee evaluation methodology',
-    icon: <Sparkles className='w-3.5 h-3.5' />,
-  },
   {
     label: 'Employee profile',
     prompt: 'Show employee profile and insights',

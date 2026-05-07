@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronRightIcon, Trash, UserPlus } from 'lucide-react';
+import { Trash, UserPlus } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { type ReactNode, useCallback, useTransition } from 'react';
 import { toast } from 'sonner';
@@ -9,7 +9,6 @@ import { deleteTeam } from '@/features/teams/api/team';
 import { useTeamsStore } from '@/features/teams/model/teams-store';
 import TeamMemberAddModal from '@/features/teams/ui/team-member-add-modal';
 import { useModal } from '@/shared/hooks/use-modal';
-import { ROUTES } from '@/shared/lib/routes';
 import { ButtonIcon } from '@/shared/ui/button/button-icon';
 
 import type { TeamActionType, TeamProps } from '@/entities/team';
@@ -26,7 +25,7 @@ type Props = Pick<TeamProps, 'id'> & {
  */
 export function TeamActions({ id, actions }: Props) {
   const [isPending, startTransition] = useTransition();
-  const { push, replace } = useRouter();
+  const { replace } = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { open, close } = useModal();
@@ -68,12 +67,6 @@ export function TeamActions({ id, actions }: Props) {
       }
     });
   };
-  /**
-   * handleViewTeamFollowUp.
-   */
-  const handleViewTeamFollowUp = () => {
-    push(`${ROUTES.DASHBOARD.FOLLOWUPS}/${String(id)}`);
-  };
   const actionMap: Record<TeamActionType, ReactNode> = {
     'add-member': (
       <ButtonIcon
@@ -93,16 +86,6 @@ export function TeamActions({ id, actions }: Props) {
         icon={<Trash className='size-[28]' />}
         variant='danger'
         onClickAction={handleDelete}
-      />
-    ),
-    view: (
-      <ButtonIcon
-        key='view'
-        aria-label='View team follow-up'
-        disabled={isPending}
-        icon={<ChevronRightIcon className='size-[28]' />}
-        variant='primary'
-        onClickAction={handleViewTeamFollowUp}
       />
     ),
   };

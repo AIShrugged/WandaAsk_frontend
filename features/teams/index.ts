@@ -1,8 +1,6 @@
 export {
   getTeams,
   getTeam,
-  getTeamFollowUps,
-  getTeamFollowUp,
   createTeam,
   updateTeam,
   deleteTeam,

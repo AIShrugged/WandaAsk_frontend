@@ -11,12 +11,10 @@ import { httpClient, httpClientList } from '@/shared/lib/httpClient';
 import type {
   TeamAddMemberDTO,
   TeamCreateDTO,
-  TeamFollowUpDTO,
   TeamInvite,
   TeamProps,
   TeamUserRecord,
 } from '@/entities/team';
-import type { FollowUpDetailProps } from '@/features/follow-up/model/types';
 import type { ApiResponse } from '@/shared/types/common';
 import type { ActionResult } from '@/shared/types/server-action';
 
@@ -157,71 +155,6 @@ export async function updateTeam(id: number, data: TeamCreateDTO) {
 
   revalidatePath('/dashboard/teams');
 }
-
-/**
- * getTeamFollowUps.
- * @param teamId
- * @returns Promise.
- */
-export const getTeamFollowUps = async (
-  teamId: number | string,
-): Promise<{ data: TeamFollowUpDTO[] }> => {
-  const authHeaders = await getAuthHeaders();
-  const res = await fetch(`${API_URL}/teams/${teamId}/followups`, {
-    headers: {
-      ...authHeaders,
-    },
-    cache: 'no-store',
-  });
-
-  if (!res.ok) {
-    const text = await res.text();
-
-    throw new Error(`${text}`);
-  }
-
-  const json: ApiResponse<TeamFollowUpDTO[]> = await res.json();
-
-  if (!json.success || !json.data) {
-    throw new Error(json.error ?? 'Invalid API response');
-  }
-
-  return { data: json.data };
-};
-
-/**
- * getTeamFollowUp.
- * @param calendarEventId - calendarEventId.
- * @returns Promise.
- */
-export const getTeamFollowUp = async (
-  calendarEventId: number | string,
-): Promise<{ data: FollowUpDetailProps }> => {
-  const authHeaders = await getAuthHeaders();
-  const res = await fetch(
-    `${API_URL}/calendar-events/${calendarEventId}/followup`,
-    {
-      headers: {
-        ...authHeaders,
-      },
-      cache: 'no-store',
-    },
-  );
-
-  if (!res.ok) {
-    const text = await res.text();
-
-    throw new Error(`${text}`);
-  }
-
-  const json = await res.json();
-
-  if (!json.success || !json.data) {
-    throw new Error(json.error ?? 'Invalid API response');
-  }
-
-  return { data: json.data };
-};
 
 /**
  * getTeamUsers — list team members as TeamUser pivot records (includes team_user id needed for kick).

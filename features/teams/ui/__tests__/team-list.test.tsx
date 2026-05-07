@@ -105,7 +105,7 @@ describe('TeamList', () => {
         initialTeams={teams}
         totalCount={2}
         organizationId='1'
-        actions={['view']}
+        actions={[]}
         href='/teams'
       />,
     );

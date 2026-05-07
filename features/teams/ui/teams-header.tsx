@@ -45,7 +45,6 @@ export default function TeamsHeader({
         size='xs'
         className='ml-auto'
         leftIcon={<Plus className='size-3.5' />}
-        data-tour='create-team-btn'
       >
         New
       </ButtonLink>

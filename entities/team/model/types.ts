@@ -1,6 +1,3 @@
-import type { EventProps } from '@/entities/event';
-import type { UserBasicProps } from '@/entities/user';
-
 export interface TeamProps extends TeamCreateDTO {
   id: number;
   slug: string;
@@ -22,7 +19,7 @@ export interface TeamAddMemberDTO {
   email: string;
 }
 
-export type TeamActionType = 'add-member' | 'delete' | 'view';
+export type TeamActionType = 'add-member' | 'delete';
 
 export interface TeamUserRecord {
   id: number; // TeamUser pivot ID — used for kick
@@ -40,17 +37,4 @@ export interface TeamInvite {
   expires_at: string | null;
   accepted_at: string | null;
   created_at: string;
-}
-
-export interface TeamFollowUpDTO {
-  id: number;
-  team_id: number;
-  methodology_id: number | null;
-  is_deprecated: boolean;
-  text: string;
-  status: 'in_progress' | 'done' | 'failed';
-  created_at: string | null;
-  updated_at: string;
-  user: UserBasicProps | null;
-  calendar_event: EventProps | null;
 }
