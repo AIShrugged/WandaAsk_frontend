@@ -57,13 +57,6 @@ export function getMenuItems(): MenuProps[] {
       position: 5,
     },
     {
-      id: 'methodology',
-      label: 'Methodologies',
-      icon: 'bookOpen',
-      href: ROUTES.DASHBOARD.METHODOLOGY,
-      position: 70,
-    },
-    {
       id: 'follow-ups',
       label: 'Follow ups (meetings)',
       icon: 'file',

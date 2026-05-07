@@ -17,10 +17,9 @@ interface Props {
 
 /**
  * Client component that renders follow-up analysis artifacts with live polling.
- * Fetches artifacts every 5 seconds so changes made in the methodology chat
- * appear without a page reload.
+ * Fetches artifacts every 5 seconds so new artifacts appear without a page reload.
  * @param props - Component props.
- * @param props.chatId - ID of the methodology chat to poll artifacts from.
+ * @param props.chatId - ID of the chat to poll artifacts from.
  * @param props.initialArtifacts - Pre-fetched artifacts from SSR for instant display.
  * @returns JSX element.
  */
@@ -99,8 +98,8 @@ export function FollowUpAnalysisPolling({ chatId, initialArtifacts }: Props) {
             No analysis configured
           </p>
           <p className='text-sm text-muted-foreground mt-1 leading-relaxed'>
-            No visual artifacts found for this methodology. Ask the AI to create
-            evaluation charts or criteria cards in the methodology chat.
+            No visual artifacts found yet. Ask the AI to create evaluation
+            charts or criteria cards.
           </p>
         </div>
       </div>

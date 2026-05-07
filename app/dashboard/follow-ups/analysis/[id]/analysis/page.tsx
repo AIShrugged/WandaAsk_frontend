@@ -1,7 +1,6 @@
 import { redirect } from 'next/navigation';
 
 import { FollowUpAnalysis } from '@/features/follow-up';
-import { getMethodologyChat } from '@/features/methodology';
 import { getTeamFollowUp } from '@/features/teams';
 import { ROUTES } from '@/shared/lib/routes';
 
@@ -24,15 +23,9 @@ export default async function FollowUpAnalysisTabPage({
     followUp.text != null &&
     Object.keys(followUp.text.artifacts ?? {}).length > 0;
 
-  const methodologyChat =
-    !hasStaticArtifacts && followUp.methodology_id
-      ? await getMethodologyChat(followUp.methodology_id)
-      : null;
-
   return (
     <FollowUpAnalysis
       staticArtifacts={hasStaticArtifacts ? followUp.text : null}
-      chatId={methodologyChat?.id ?? null}
     />
   );
 }

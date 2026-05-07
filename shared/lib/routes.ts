@@ -25,7 +25,6 @@ export const ROUTES = {
     TELEGRAM_CHATS: '/dashboard/chat/telegram',
     TEAMS: '/dashboard/teams',
     TEAMS_CREATE: '/dashboard/teams/create',
-    METHODOLOGY: '/dashboard/methodology',
     STATISTICS: '/dashboard/statistics',
     FOLLOWUPS: '/dashboard/follow-ups',
     ORGANIZATION: '/dashboard/organization',
