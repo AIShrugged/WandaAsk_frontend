@@ -4,15 +4,6 @@ import ModalBody from '@/shared/ui/modal/modal-body';
 import ModalFooter from '@/shared/ui/modal/modal-footer';
 import ModalHeader from '@/shared/ui/modal/modal-header';
 
-jest.mock('@/shared/ui/animation/Hover', () => {
-  return {
-    __esModule: true,
-    default: ({ children }: React.PropsWithChildren) => {
-      return <>{children}</>;
-    },
-  };
-});
-
 describe('ModalHeader', () => {
   it('renders the title', () => {
     render(<ModalHeader title='Confirm Action' onClick={jest.fn()} />);

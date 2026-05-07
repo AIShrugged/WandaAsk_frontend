@@ -91,7 +91,7 @@ describe('getAgentActivity', () => {
 
     const result = await getAgentActivity();
 
-    expect(result.items).toEqual([item]);
+    expect(result.data).toEqual([item]);
     expect(result.totalCount).toBe(5);
     expect(result.hasMore).toBe(true);
   });

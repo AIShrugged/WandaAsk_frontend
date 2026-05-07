@@ -7,7 +7,7 @@ import { useCallback } from 'react';
 import { getAgentTasks } from '@/features/agents/api/agents';
 import { formatDateTime } from '@/features/agents/lib/format';
 import { AgentRunStatusBadge } from '@/features/agents/ui/agent-run-status-badge';
-import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
+import { useInfiniteScroll } from '@/shared/hooks';
 import { ROUTES } from '@/shared/lib/routes';
 import { EmptyState } from '@/shared/ui/feedback/empty-state';
 import { InfiniteScrollStatus } from '@/shared/ui/layout/infinite-scroll-status';
@@ -30,7 +30,7 @@ type Props = {
 export function AgentTasksFeed({ initialItems, totalCount }: Props) {
   const fetchMore = useCallback(async (offset: number) => {
     const { data, hasMore } = await getAgentTasks(offset, PAGE_SIZE);
-    return { items: data, hasMore };
+    return { data, hasMore };
   }, []);
 
   const { items, isLoading, hasMore, sentinelRef } = useInfiniteScroll({

@@ -178,7 +178,7 @@ export async function loadIssuesChunk(filters: IssueFilters = {}) {
   const offset = filters.offset ?? 0;
 
   return {
-    items: json.data,
+    data: json.data,
     hasMore: offset + limit < totalCount,
   };
 }
@@ -220,7 +220,7 @@ export async function getArchivedCount(
  */
 export async function loadArchivedChunk(
   filters: IssueFilters = {},
-): Promise<{ items: Issue[]; hasMore: boolean }> {
+): Promise<{ data: Issue[]; hasMore: boolean }> {
   const authHeaders = await getAuthHeaders();
   const limit = filters.limit ?? 20;
   const offset = filters.offset ?? 0;
@@ -253,7 +253,7 @@ export async function loadArchivedChunk(
   const totalCount = Number(res.headers.get('Items-Count') || '0');
 
   return {
-    items: json.data,
+    data: json.data,
     hasMore: offset + limit < totalCount,
   };
 }

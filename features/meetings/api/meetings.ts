@@ -15,6 +15,25 @@ function toDateParam(date: Date): string {
 }
 
 /**
+ * Load a paginated chunk of personal calendar events for infinite scroll.
+ */
+export async function loadMeetingsChunk(
+  offset: number,
+  limit: number,
+): Promise<{ data: CalendarEventListItem[]; hasMore: boolean }> {
+  const params = new URLSearchParams({
+    offset: String(offset),
+    limit: String(limit),
+  });
+
+  const { data, hasMore } = await httpClientList<CalendarEventListItem>(
+    `${API_URL}/calendar-events?${params.toString()}`,
+  );
+
+  return { data, hasMore };
+}
+
+/**
  * Get all personal calendar events for a single day.
  * Backend supports ?date=YYYY-MM-DD (max limit 50 per day).
  */

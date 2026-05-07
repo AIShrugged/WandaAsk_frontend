@@ -69,12 +69,12 @@ export async function getAgentActivity(
     });
   }
 
-  const items = json.data ?? [];
+  const data = json.data ?? [];
   const totalCount = Number(response.headers.get('Items-Count') ?? '0');
 
   return {
-    items,
+    data,
     totalCount,
-    hasMore: safeOffset + items.length < totalCount,
+    hasMore: safeOffset + data.length < totalCount,
   };
 }

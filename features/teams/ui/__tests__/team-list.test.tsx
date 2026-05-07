@@ -55,11 +55,11 @@ let mockScrollItems: TeamProps[] | null = null;
 let mockIsLoading = false;
 let mockHasMore = false;
 
-jest.mock('@/shared/hooks/use-cached-infinite-scroll', () => {
+jest.mock('@/shared/hooks', () => {
   return {
-    useCachedInfiniteScroll: (opts: {
+    useInfiniteScroll: (opts: {
       initialItems: TeamProps[];
-      totalCount: number;
+      initialHasMore: boolean;
     }) => {
       if (mockScrollItems !== null) {
         return {
@@ -73,7 +73,7 @@ jest.mock('@/shared/hooks/use-cached-infinite-scroll', () => {
       return {
         items: opts.initialItems,
         isLoading: mockIsLoading,
-        hasMore: opts.initialItems.length < opts.totalCount,
+        hasMore: opts.initialHasMore,
         sentinelRef: { current: null },
       };
     },
@@ -149,14 +149,12 @@ describe('TeamList', () => {
     mockScrollItems = null;
 
     // Use a different approach: override store to return null
-    jest
-      .requireMock('@/shared/hooks/use-cached-infinite-scroll')
-      .useCachedInfiniteScroll.mockReturnValueOnce?.({
-        items: null,
-        isLoading: false,
-        hasMore: false,
-        sentinelRef: { current: null },
-      });
+    jest.requireMock('@/shared/hooks').useInfiniteScroll.mockReturnValueOnce?.({
+      items: null,
+      isLoading: false,
+      hasMore: false,
+      sentinelRef: { current: null },
+    });
 
     // Since we can't use mockReturnValueOnce (plain fn), test with empty array
     const { container } = render(

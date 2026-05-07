@@ -97,7 +97,7 @@ describe('loadTranscriptChunk', () => {
 
     const result = await loadTranscriptChunk('event-5', 0, 10);
 
-    expect(result.items).toEqual(mockItems);
-    expect(result.items).toHaveLength(2);
+    expect(result.data).toEqual(mockItems);
+    expect(result.data).toHaveLength(2);
   });
 });

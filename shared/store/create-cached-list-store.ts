@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export type CachedListStore<T> = {
+export type CachedListStore<T extends { id: number }> = {
   items: T[];
   totalCount: number;
   offset: number;
@@ -18,7 +18,7 @@ export type CachedListStore<T> = {
 /**
  * createCachedListStore.
  */
-export function createCachedListStore<T>() {
+export function createCachedListStore<T extends { id: number }>() {
   const initialState = {
     items: [] as T[],
     totalCount: 0,
@@ -107,7 +107,7 @@ export function createCachedListStore<T>() {
         set((state) => {
           return {
             items: state.items.filter((item) => {
-              return (item as { id: number }).id !== id;
+              return item.id !== id;
             }),
             totalCount: state.totalCount - 1,
           };

@@ -44,7 +44,7 @@ describe('Transcript', () => {
     const { loadTranscriptChunk } = jest.requireMock(TRANSCRIPT_API_MODULE);
 
     loadTranscriptChunk.mockResolvedValueOnce({
-      items: [{ id: 1, text: 'Hello' }],
+      data: [{ id: 1, text: 'Hello' }],
       totalCount: 1,
       hasMore: false,
     });
@@ -60,7 +60,7 @@ describe('Transcript', () => {
     const { loadTranscriptChunk } = jest.requireMock(TRANSCRIPT_API_MODULE);
 
     loadTranscriptChunk.mockResolvedValueOnce({
-      items: [],
+      data: [],
       totalCount: 0,
       hasMore: false,
     });

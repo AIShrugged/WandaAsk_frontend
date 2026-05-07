@@ -5,7 +5,7 @@ import { useCallback } from 'react';
 import { loadTranscriptChunk } from '@/features/transcript/api/transcript';
 import { filters } from '@/features/transcript/lib/options';
 import TranscriptList from '@/features/transcript/ui/transcript-list';
-import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
+import { useInfiniteScroll } from '@/shared/hooks';
 import { InfiniteScrollStatus } from '@/shared/ui/layout/infinite-scroll-status';
 import SpinLoader from '@/shared/ui/layout/spin-loader';
 
@@ -31,13 +31,13 @@ export default function TranscriptHistory({
 }: Props) {
   const fetchMore = useCallback(
     async (offset: number) => {
-      const { items, hasMore } = await loadTranscriptChunk(
+      const { data, hasMore } = await loadTranscriptChunk(
         eventId,
         offset,
         filters.limit,
       );
 
-      return { items, hasMore };
+      return { data, hasMore };
     },
     [eventId],
   );

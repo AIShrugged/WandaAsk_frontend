@@ -21,12 +21,12 @@ export default async function AgentActivityPage() {
   }
 
   let accessDenied = false;
-  let activityItems: Awaited<ReturnType<typeof getAgentActivity>>['items'] = [];
+  let activityItems: Awaited<ReturnType<typeof getAgentActivity>>['data'] = [];
   let activityTotal = 0;
 
   await getAgentActivity()
     .then((r) => {
-      activityItems = r.items;
+      activityItems = r.data;
       activityTotal = r.totalCount;
     })
     .catch((error) => {

@@ -12,7 +12,7 @@ export async function loadTranscriptChunk(
   id: string,
   offset: number,
   limit: number,
-): Promise<{ items: TranscriptProps[]; totalCount: number; hasMore: boolean }> {
+): Promise<{ data: TranscriptProps[]; totalCount: number; hasMore: boolean }> {
   const params = new URLSearchParams({
     offset: String(offset),
     limit: String(limit),
@@ -22,5 +22,5 @@ export async function loadTranscriptChunk(
     `${API_URL}/calendar-events/${id}/transcript?${params.toString()}`,
   );
 
-  return { items: data, totalCount, hasMore };
+  return { data, totalCount, hasMore };
 }
