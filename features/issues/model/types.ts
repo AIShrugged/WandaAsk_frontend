@@ -50,8 +50,6 @@ export interface PersonOption {
   id: number;
   name: string;
   email?: string | null;
-  organization_id?: number | null;
-  team_id?: number | null;
 }
 
 export interface IssueAgentFlowStep {
