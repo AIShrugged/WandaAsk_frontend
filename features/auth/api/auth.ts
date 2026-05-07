@@ -5,10 +5,16 @@ import { cookies } from 'next/headers';
 import {
   LoginSchema,
   RegisterSchema,
+  ForgotPasswordSchema,
+  ResetPasswordSchema,
   type LoginInput,
   type RegisterInput,
+  type ForgotPasswordInput,
+  type ResetPasswordInput,
 } from '@/features/auth/model/schemas';
 import { API_URL } from '@/shared/lib/config';
+
+import type { ActionResult } from '@/shared/types/server-action';
 
 const SESSION_COOKIE_OPTIONS = {
   httpOnly: true,
@@ -166,4 +172,71 @@ export async function register(data: RegisterInput): Promise<void> {
       ...SESSION_COOKIE_OPTIONS,
     });
   }
+}
+
+export async function forgotPassword(
+  data: ForgotPasswordInput,
+): Promise<ActionResult<void>> {
+  const validated = ForgotPasswordSchema.parse(data);
+  let res: Response;
+
+  try {
+    res = await fetch(`${API_URL}/auth/password/forgot`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(validated),
+      cache: 'no-store',
+      signal: AbortSignal.timeout(10_000),
+    });
+  } catch (error) {
+    return {
+      data: null,
+      error: normalizeAuthRequestError(error, 'login').message,
+    };
+  }
+
+  if (!res.ok) {
+    return {
+      data: null,
+      error: 'Failed to send reset link. Please try again.',
+    };
+  }
+
+  return { data: undefined, error: null };
+}
+
+export async function resetPassword(
+  token: string,
+  data: ResetPasswordInput,
+): Promise<ActionResult<void>> {
+  const validated = ResetPasswordSchema.parse(data);
+  let res: Response;
+
+  try {
+    res = await fetch(`${API_URL}/auth/password/reset`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token, ...validated }),
+      cache: 'no-store',
+      signal: AbortSignal.timeout(10_000),
+    });
+  } catch (error) {
+    return {
+      data: null,
+      error: normalizeAuthRequestError(error, 'login').message,
+    };
+  }
+
+  if (!res.ok) {
+    if (res.status === 422) {
+      return {
+        data: null,
+        error: 'This password reset link is invalid or has expired.',
+      };
+    }
+
+    return { data: null, error: 'Failed to reset password. Please try again.' };
+  }
+
+  return { data: undefined, error: null };
 }
