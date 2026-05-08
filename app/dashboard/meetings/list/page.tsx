@@ -1,20 +1,6 @@
 import { getMeetingsForDate, MeetingsColumnView } from '@/features/meetings';
+import { formatDateLabel, toDateParam } from '@/shared/lib/date-nav';
 import { Card } from '@/shared/ui/card';
-
-function toDateParam(date: Date): string {
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, '0');
-  const d = String(date.getDate()).padStart(2, '0');
-
-  return `${y}-${m}-${d}`;
-}
-
-function formatColumnDate(date: Date): string {
-  return new Intl.DateTimeFormat('en-US', {
-    month: 'short',
-    day: 'numeric',
-  }).format(date);
-}
 
 /**
  * Meetings list tab — shows meetings for yesterday, today, and tomorrow
@@ -56,9 +42,9 @@ export default async function MeetingsListPage({
         yesterday={yesterday}
         today={today}
         tomorrow={tomorrow}
-        yesterdayDate={formatColumnDate(yesterdayDate)}
-        todayDate={formatColumnDate(centerDate)}
-        tomorrowDate={formatColumnDate(tomorrowDate)}
+        yesterdayDate={formatDateLabel(yesterdayDate)}
+        todayDate={formatDateLabel(centerDate)}
+        tomorrowDate={formatDateLabel(tomorrowDate)}
         centerDate={toDateParam(centerDate)}
       />
     </Card>
