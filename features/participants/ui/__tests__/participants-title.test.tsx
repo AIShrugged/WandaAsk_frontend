@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 
-import ParticipantsTitle from '@/shared/ui/participant/participants-title';
+import ParticipantsTitle from '@/features/participants/ui/participants-title';
 
 describe('ParticipantsTitle', () => {
   it('renders children text', () => {

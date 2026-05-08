@@ -9,13 +9,6 @@ import SpinLoader from '@/shared/ui/layout/spin-loader';
 
 import type { AttendeeProps, GuestProps } from '@/entities/participant';
 
-/**
- * ParticipantMatching component.
- * @param root0
- * @param root0.eventId
- * @param root0.guests
- * @param root0.attendees
- */
 export default function ParticipantMatching({
   eventId,
   guests,
@@ -52,12 +45,7 @@ export default function ParticipantMatching({
       value: String(guest.id),
     };
   });
-  /**
-   * handleSelect.
-   * @param attendeeId - attendeeId.
-   * @param guestId - guestId.
-   * @returns Result.
-   */
+
   const handleSelect = (attendeeId: number, guestId: string) => {
     startTransition(() => {
       updateOptimistic({ attendeeId, guestId });

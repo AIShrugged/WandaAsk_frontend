@@ -1,14 +1,7 @@
-import React from 'react';
-
 import Avatar from '@/shared/ui/common/avatar';
 
 import type { AttendeeProps, GuestProps } from '@/entities/participant';
 
-/**
- * ParticipantList component.
- * @param root0
- * @param root0.data
- */
 export const ParticipantList = ({
   data = [],
 }: {
