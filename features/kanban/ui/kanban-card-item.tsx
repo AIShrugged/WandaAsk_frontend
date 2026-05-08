@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { memo } from 'react';
 
-import { IssuePriorityBadge } from '@/features/issues/ui/issue-priority-badge';
+import { IssuePriorityBadge } from '@/entities/issue';
 import {
   type KanbanCardItemProps,
   TYPE_COLORS,

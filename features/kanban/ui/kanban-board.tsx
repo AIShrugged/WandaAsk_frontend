@@ -9,7 +9,7 @@ import {
 } from 'react';
 import { toast } from 'sonner';
 
-import { getPriorityLevel } from '@/features/issues/model/types';
+import { getPriorityLevel } from '@/entities/issue';
 import { moveKanbanCard } from '@/features/kanban/api/kanban';
 import { useArchivedCards } from '@/features/kanban/hooks/use-archived-cards';
 import {

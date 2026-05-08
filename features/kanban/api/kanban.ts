@@ -6,7 +6,7 @@ import { parseApiError } from '@/shared/lib/apiError';
 import { API_URL } from '@/shared/lib/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 
-import type { IssueStatus } from '@/features/issues/model/types';
+import type { IssueStatus } from '@/entities/issue';
 import type { KanbanCard, KanbanFilters } from '@/features/kanban/model/types';
 import type { ApiResponse } from '@/shared/types/common';
 import type { ActionResult } from '@/shared/types/server-action';

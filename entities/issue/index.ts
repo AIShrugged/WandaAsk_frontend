@@ -1,2 +1,9 @@
 export { IssueStatusBadge } from './ui/issue-status-badge';
-export type { IssueStatus } from './model/types';
+export { IssuePriorityBadge } from './ui/issue-priority-badge';
+export type {
+  IssueStatus,
+  PersonOption,
+  SharedFilters,
+  PriorityLevel,
+} from './model/types';
+export { getPriorityLevel, PRIORITY_LEVELS } from './model/types';

@@ -1,10 +1,17 @@
-export type IssueStatus =
-  | 'open'
-  | 'in_progress'
-  | 'paused'
-  | 'review'
-  | 'reopen'
-  | 'done';
+import { PRIORITY_LEVELS } from '@/entities/issue/model/types';
+
+import type { IssueStatus, PersonOption } from '@/entities/issue/model/types';
+
+export type {
+  IssueStatus,
+  PersonOption,
+  SharedFilters,
+  PriorityLevel,
+} from '@/entities/issue/model/types';
+export {
+  getPriorityLevel,
+  PRIORITY_LEVELS,
+} from '@/entities/issue/model/types';
 
 export function issueTypeOptionsFromOrgs(
   organizations: {
@@ -44,12 +51,6 @@ export function isIssueStatus(value: string): value is IssueStatus {
   return ISSUE_STATUS_OPTIONS.some((option) => {
     return option.value === value;
   });
-}
-
-export interface PersonOption {
-  id: number;
-  name: string;
-  email?: string | null;
 }
 
 export interface IssueAgentFlowStep {
@@ -177,16 +178,6 @@ export function isIssueType(value: string): boolean {
   return value.length > 0;
 }
 
-export interface SharedFilters {
-  organization_id: string;
-  team_id: string;
-  search: string;
-  type: string | '';
-  assignee_id: string;
-  status: IssueStatus | '';
-  show_archived: boolean;
-}
-
 export interface IssueFilters {
   organization_id?: number | null;
   team_id?: number | null;
@@ -233,24 +224,6 @@ export interface IssueUpsertDTO {
   due_date: string | null;
   priority: number;
   upload_token?: string | null;
-}
-
-export const PRIORITY_LEVELS = [
-  { value: 500, label: 'Critical', color: 'text-red-500' },
-  { value: 100, label: 'High', color: 'text-orange-400' },
-  { value: 0, label: 'Normal', color: 'text-foreground' },
-  { value: -100, label: 'Low', color: 'text-blue-400' },
-  { value: -500, label: 'Minimal', color: 'text-muted-foreground' },
-] as const;
-
-export type PriorityLevel = (typeof PRIORITY_LEVELS)[number];
-
-export function getPriorityLevel(priority: number): PriorityLevel {
-  return (
-    [...PRIORITY_LEVELS].find((level) => {
-      return priority >= level.value;
-    }) ?? PRIORITY_LEVELS.at(-1)!
-  );
 }
 
 export const PRIORITY_OPTIONS: { value: string; label: string }[] =

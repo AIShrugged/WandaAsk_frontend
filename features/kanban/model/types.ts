@@ -1,9 +1,9 @@
-import type { OrganizationProps } from '@/entities/organization';
 import type {
   IssueStatus,
   PersonOption,
   SharedFilters,
-} from '@/features/issues/model/types';
+} from '@/entities/issue';
+import type { OrganizationProps } from '@/entities/organization';
 import type React from 'react';
 
 export interface KanbanCard {
@@ -92,8 +92,8 @@ export interface KanbanColumnProps {
   footer?: React.ReactNode;
 }
 
-export {
-  type IssueStatus,
-  type SharedFilters,
-  type PersonOption,
-} from '@/features/issues/model/types';
+export type {
+  IssueStatus,
+  SharedFilters,
+  PersonOption,
+} from '@/entities/issue';
