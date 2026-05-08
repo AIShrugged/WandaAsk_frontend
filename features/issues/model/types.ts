@@ -137,7 +137,7 @@ export type IssueSortField =
   | 'due_date'
   | 'updated_at'
   | 'created_at';
-export type SortOrder = 'asc' | 'desc';
+import type { SortOrder } from '@/shared/ui/table/types';
 
 export const VALID_SORT_FIELDS = new Set<IssueSortField>([
   'id',
@@ -338,3 +338,5 @@ export interface CriticalPathGraph {
   nodes: CriticalPathNode[];
   edges: CriticalPathEdge[];
 }
+
+export { type SortOrder } from '@/shared/ui/table/types';

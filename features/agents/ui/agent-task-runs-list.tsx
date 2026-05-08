@@ -2,15 +2,76 @@ import Link from 'next/link';
 
 import { formatDateTime, formatDuration } from '@/features/agents/lib/format';
 import { AgentRunStatusBadge } from '@/features/agents/ui/agent-run-status-badge';
+import { DataTable } from '@/shared/ui/table';
 
 import type { AgentTaskRun } from '@/features/agents/model/types';
+import type { TableColumn } from '@/shared/ui/table';
+
+function buildColumns(taskId: number): TableColumn<AgentTaskRun>[] {
+  return [
+    {
+      id: 'status',
+      header: 'Status',
+      renderCell: (run) => {
+        return <AgentRunStatusBadge status={run.status} />;
+      },
+    },
+    {
+      id: 'attempt',
+      header: 'Attempt',
+      renderCell: (run) => {
+        return run.attempt ?? '—';
+      },
+    },
+    {
+      id: 'scheduled_for',
+      header: 'Scheduled',
+      cellClassName: 'text-muted-foreground',
+      renderCell: (run) => {
+        return formatDateTime(run.scheduled_for);
+      },
+    },
+    {
+      id: 'started_at',
+      header: 'Started',
+      cellClassName: 'text-muted-foreground',
+      renderCell: (run) => {
+        return formatDateTime(run.started_at);
+      },
+    },
+    {
+      id: 'finished_at',
+      header: 'Finished',
+      cellClassName: 'text-muted-foreground',
+      renderCell: (run) => {
+        return formatDateTime(run.finished_at);
+      },
+    },
+    {
+      id: 'duration',
+      header: 'Duration',
+      renderCell: (run) => {
+        return formatDuration(run);
+      },
+    },
+    {
+      id: 'details',
+      header: 'Details',
+      renderCell: (run) => {
+        const href = `/dashboard/agents/tasks/${taskId}?tab=runs&runId=${run.id}`;
+
+        return (
+          <Link href={href} className='text-primary hover:underline'>
+            Open run #{run.id}
+          </Link>
+        );
+      },
+    },
+  ];
+}
 
 /**
- *
- * @param root0
- * @param root0.taskId
- * @param root0.runs
- * @param root0.selectedRunId
+ * AgentTaskRunsList — renders task runs as a responsive table with mobile card fallback.
  */
 export function AgentTaskRunsList({
   taskId,
@@ -21,90 +82,48 @@ export function AgentTaskRunsList({
   runs: AgentTaskRun[];
   selectedRunId?: number;
 }) {
+  const columns = buildColumns(taskId);
+
   return (
-    <>
-      {/* Mobile card list — hidden on md+ */}
-      <div className='flex flex-col gap-3 md:hidden'>
-        {runs.map((run) => {
-          const href = `/dashboard/agents/tasks/${taskId}?tab=runs&runId=${run.id}`;
-          const isSelected = selectedRunId === run.id;
+    <DataTable
+      columns={columns}
+      items={runs}
+      keyExtractor={(run) => {
+        return run.id;
+      }}
+      caption='Agent Task Runs'
+      captionSrOnly
+      tableMinWidth='min-w-[700px]'
+      getRowClassName={(run) => {
+        return selectedRunId === run.id ? 'bg-accent/20' : '';
+      }}
+      renderMobileCard={(run) => {
+        const href = `/dashboard/agents/tasks/${taskId}?tab=runs&runId=${run.id}`;
+        const isSelected = selectedRunId === run.id;
 
-          return (
-            <Link
-              key={run.id}
-              href={href}
-              className={[
-                'block rounded-[var(--radius-card)] border border-border p-4 transition-colors',
-                isSelected ? 'bg-accent/20' : 'hover:bg-accent/30',
-              ].join(' ')}
-            >
-              <div className='flex items-center justify-between gap-2'>
-                <AgentRunStatusBadge status={run.status} />
-                <span className='text-xs text-muted-foreground'>
-                  Run #{run.id}
-                  {run.attempt == null ? '' : ` · attempt ${run.attempt}`}
-                </span>
-              </div>
-              <div className='mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground'>
-                <span>Started: {formatDateTime(run.started_at)}</span>
-                <span>Finished: {formatDateTime(run.finished_at)}</span>
-                <span>Duration: {formatDuration(run)}</span>
-              </div>
-            </Link>
-          );
-        })}
-      </div>
-
-      {/* Desktop table — hidden below md */}
-      <div className='hidden md:block overflow-x-auto'>
-        <table className='w-full min-w-[700px] text-sm'>
-          <thead className='bg-accent/30 text-left text-muted-foreground'>
-            <tr>
-              <th className='px-4 py-3 font-medium'>Status</th>
-              <th className='px-4 py-3 font-medium'>Attempt</th>
-              <th className='px-4 py-3 font-medium'>Scheduled</th>
-              <th className='px-4 py-3 font-medium'>Started</th>
-              <th className='px-4 py-3 font-medium'>Finished</th>
-              <th className='px-4 py-3 font-medium'>Duration</th>
-              <th className='px-4 py-3 font-medium'>Details</th>
-            </tr>
-          </thead>
-          <tbody>
-            {runs.map((run) => {
-              const href = `/dashboard/agents/tasks/${taskId}?tab=runs&runId=${run.id}`;
-
-              return (
-                <tr
-                  key={run.id}
-                  className={`border-b border-border/60 align-top text-foreground ${
-                    selectedRunId === run.id ? 'bg-accent/20' : ''
-                  }`}
-                >
-                  <td className='px-4 py-3'>
-                    <AgentRunStatusBadge status={run.status} />
-                  </td>
-                  <td className='px-4 py-3'>{run.attempt ?? '—'}</td>
-                  <td className='px-4 py-3 text-muted-foreground'>
-                    {formatDateTime(run.scheduled_for)}
-                  </td>
-                  <td className='px-4 py-3 text-muted-foreground'>
-                    {formatDateTime(run.started_at)}
-                  </td>
-                  <td className='px-4 py-3 text-muted-foreground'>
-                    {formatDateTime(run.finished_at)}
-                  </td>
-                  <td className='px-4 py-3'>{formatDuration(run)}</td>
-                  <td className='px-4 py-3'>
-                    <Link href={href} className='text-primary hover:underline'>
-                      Open run #{run.id}
-                    </Link>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-    </>
+        return (
+          <Link
+            href={href}
+            className={[
+              'block rounded-[var(--radius-card)] border border-border p-4 transition-colors',
+              isSelected ? 'bg-accent/20' : 'hover:bg-accent/30',
+            ].join(' ')}
+          >
+            <div className='flex items-center justify-between gap-2'>
+              <AgentRunStatusBadge status={run.status} />
+              <span className='text-xs text-muted-foreground'>
+                Run #{run.id}
+                {run.attempt == null ? '' : ` · attempt ${run.attempt}`}
+              </span>
+            </div>
+            <div className='mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground'>
+              <span>Started: {formatDateTime(run.started_at)}</span>
+              <span>Finished: {formatDateTime(run.finished_at)}</span>
+              <span>Duration: {formatDuration(run)}</span>
+            </div>
+          </Link>
+        );
+      }}
+    />
   );
 }
