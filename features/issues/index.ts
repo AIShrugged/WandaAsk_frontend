@@ -44,7 +44,7 @@ export {
 export { TasksKanbanClient } from '../issues/ui/tasks-kanban-client';
 export { IssueAttachments } from './ui/issue-attachments';
 export { IssueComments } from './ui/issue-comments';
-export { IssueStatusBadge } from './ui/issue-status-badge';
+export { IssueStatusBadge, IssuePriorityBadge } from '@/entities/issue';
 export { getIssueComments } from './api/comments';
 export type { IssueComment, IssueCommentUser } from './model/types';
 export { IssueForm } from './ui/issue-form';
@@ -55,7 +55,6 @@ export { default as IssueCreateButton } from './ui/issue-create-button';
 export { IssuesLayoutClient } from './ui/issues-layout-client';
 export { IssuesListTab } from './ui/issues-list-tab';
 export { IssueLinkedTask } from './ui/issue-linked-task';
-export { IssuePriorityBadge } from './ui/issue-priority-badge';
 export { getCriticalPath, rebuildCriticalPath } from './api/critical-path';
 export { CriticalPathGraph } from './ui/critical-path-graph';
 export { CriticalPathNodeDetail } from './ui/critical-path-node-detail';

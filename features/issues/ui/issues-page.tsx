@@ -13,6 +13,7 @@ import {
 } from 'react';
 import { toast } from 'sonner';
 
+import { IssuePriorityBadge, IssueStatusBadge } from '@/entities/issue';
 import {
   getArchivedCount,
   loadArchivedChunk,
@@ -26,8 +27,6 @@ import {
 } from '@/features/issues/model/types';
 import { ArchivedSection } from '@/features/issues/ui/archived-section';
 import { ArchivedSectionToggle } from '@/features/issues/ui/archived-section-toggle';
-import { IssuePriorityBadge } from '@/features/issues/ui/issue-priority-badge';
-import { IssueStatusBadge } from '@/features/issues/ui/issue-status-badge';
 import { useInfiniteScroll } from '@/shared/hooks';
 import { ROUTES } from '@/shared/lib/routes';
 import { BUTTON_VARIANT } from '@/shared/types/button';

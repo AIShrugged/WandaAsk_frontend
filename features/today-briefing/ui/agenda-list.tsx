@@ -4,7 +4,7 @@ import { ChevronDown, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
-import { TaskStatusBadge } from '@/features/today-briefing/ui/task-status-badge';
+import { IssueStatusBadge as TaskStatusBadge } from '@/entities/issue';
 import { ROUTES } from '@/shared/lib/routes';
 import { CollapsibleSection } from '@/shared/ui/layout/collapsible-section';
 import { MarkdownContent } from '@/shared/ui/markdown-content';

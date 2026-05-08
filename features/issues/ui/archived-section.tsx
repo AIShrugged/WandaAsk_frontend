@@ -3,7 +3,7 @@
 import { format } from 'date-fns';
 import Link from 'next/link';
 
-import { IssueStatusBadge } from '@/features/issues/ui/issue-status-badge';
+import { IssueStatusBadge } from '@/entities/issue';
 import { ROUTES } from '@/shared/lib/routes';
 import { Button } from '@/shared/ui/button';
 import SpinLoader from '@/shared/ui/layout/spin-loader';
