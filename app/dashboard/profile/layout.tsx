@@ -1,5 +1,5 @@
 import { ProfileTabsNav } from '@/features/user-profile';
-import Card from '@/shared/ui/card/Card';
+import { Card } from '@/shared/ui/card';
 
 import type { PropsWithChildren } from 'react';
 

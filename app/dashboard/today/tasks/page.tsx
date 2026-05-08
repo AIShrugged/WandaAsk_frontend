@@ -7,8 +7,7 @@ import {
   getTodayBriefing,
   WaitingOnYou,
 } from '@/features/today-briefing';
-import Card from '@/shared/ui/card/Card';
-import CardBody from '@/shared/ui/card/CardBody';
+import { Card, CardBody } from '@/shared/ui/card';
 import PageHeader from '@/widgets/layout/ui/page-header';
 
 export default async function TodayTasksPage({

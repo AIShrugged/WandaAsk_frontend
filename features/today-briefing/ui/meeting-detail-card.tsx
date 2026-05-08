@@ -3,7 +3,7 @@
 import { differenceInMinutes, format, parseISO } from 'date-fns';
 import { Clock, Users, Video } from 'lucide-react';
 
-import Card from '@/shared/ui/card/Card';
+import { Card } from '@/shared/ui/card';
 import { CollapsibleSection } from '@/shared/ui/layout/collapsible-section';
 import { MarkdownContent } from '@/shared/ui/markdown-content';
 

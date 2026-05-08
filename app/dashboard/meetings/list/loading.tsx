@@ -1,3 +1,4 @@
+import { PageContainer } from '@/shared/ui/layout/page-container';
 import { Skeleton } from '@/shared/ui/layout/skeleton';
 
 function ColumnSkeleton() {
@@ -25,24 +26,26 @@ function ColumnSkeleton() {
  */
 export default function Loading() {
   return (
-    <div className='px-6 py-6'>
-      {/* DateSwitcher skeleton */}
-      <div className='mb-5 flex items-center justify-between gap-4'>
-        <Skeleton className='h-8 w-8 rounded-md' />
-        <Skeleton className='h-4 w-20' />
-        <Skeleton className='h-8 w-8 rounded-md' />
-      </div>
+    <PageContainer>
+      <div className='px-6 py-6'>
+        {/* DateSwitcher skeleton */}
+        <div className='mb-5 flex items-center justify-between gap-4'>
+          <Skeleton className='h-8 w-8 rounded-md' />
+          <Skeleton className='h-4 w-20' />
+          <Skeleton className='h-8 w-8 rounded-md' />
+        </div>
 
-      <div className='hidden gap-6 md:grid md:grid-cols-3'>
-        <ColumnSkeleton />
-        <ColumnSkeleton />
-        <ColumnSkeleton />
+        <div className='hidden gap-6 md:grid md:grid-cols-3'>
+          <ColumnSkeleton />
+          <ColumnSkeleton />
+          <ColumnSkeleton />
+        </div>
+        <div className='flex flex-col gap-8 md:hidden'>
+          <ColumnSkeleton />
+          <ColumnSkeleton />
+          <ColumnSkeleton />
+        </div>
       </div>
-      <div className='flex flex-col gap-8 md:hidden'>
-        <ColumnSkeleton />
-        <ColumnSkeleton />
-        <ColumnSkeleton />
-      </div>
-    </div>
+    </PageContainer>
   );
 }

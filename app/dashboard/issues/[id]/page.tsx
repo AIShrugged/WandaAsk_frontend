@@ -15,8 +15,7 @@ import {
 import { getOrganizations } from '@/features/organization';
 import { getUser } from '@/features/user';
 import { ROUTES } from '@/shared/lib/routes';
-import Card from '@/shared/ui/card/Card';
-import CardBody from '@/shared/ui/card/CardBody';
+import { Card, CardBody } from '@/shared/ui/card';
 import PageHeader from '@/widgets/layout/ui/page-header';
 
 /**

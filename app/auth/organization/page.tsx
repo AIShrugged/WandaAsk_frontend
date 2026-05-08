@@ -5,7 +5,7 @@ import {
   OrganizationList,
   OrganizationListEmpty,
 } from '@/features/organization';
-import Card from '@/shared/ui/card/Card';
+import { Card } from '@/shared/ui/card';
 
 /**
  * Page component.

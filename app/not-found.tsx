@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 import { ROUTES } from '@/shared/lib/routes';
 import { Button } from '@/shared/ui/button/Button';
-import Card from '@/shared/ui/card/Card';
+import { Card } from '@/shared/ui/card';
 
 /**
  * NotFound component.

@@ -9,8 +9,7 @@ import {
   OrganizationSettingsTabs,
 } from '@/features/organization';
 import { ServerError } from '@/shared/lib/errors';
-import Card from '@/shared/ui/card/Card';
-import CardBody from '@/shared/ui/card/CardBody';
+import { Card, CardBody } from '@/shared/ui/card';
 import PageHeader from '@/widgets/layout/ui/page-header';
 
 import type { AgentProfile } from '@/features/agents';

@@ -1,8 +1,7 @@
 import React from 'react';
 
 import { OrganizationForm } from '@/features/organization';
-import Card from '@/shared/ui/card/Card';
-import CardBody from '@/shared/ui/card/CardBody';
+import { Card, CardBody } from '@/shared/ui/card';
 import PageHeader from '@/widgets/layout/ui/page-header';
 
 /**

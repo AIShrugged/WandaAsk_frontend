@@ -4,8 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 
 import { ROUTES } from '@/shared/lib/routes';
 import { Button } from '@/shared/ui/button/Button';
-import Card from '@/shared/ui/card/Card';
-import CardBody from '@/shared/ui/card/CardBody';
+import { Card, CardBody } from '@/shared/ui/card';
 
 type InviteStatus =
   | 'success'

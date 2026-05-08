@@ -1,5 +1,5 @@
 import { getTodayBriefing } from '@/features/today-briefing';
-import Card from '@/shared/ui/card/Card';
+import { Card } from '@/shared/ui/card';
 
 import { MeetingsContent } from './meetings-content';
 

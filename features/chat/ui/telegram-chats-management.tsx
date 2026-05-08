@@ -26,8 +26,7 @@ import { getTeams } from '@/features/teams/api/team';
 import { BUTTON_VARIANT } from '@/shared/types/button';
 import { Badge } from '@/shared/ui/badge';
 import { Button, ButtonLink } from '@/shared/ui/button';
-import Card from '@/shared/ui/card/Card';
-import CardBody from '@/shared/ui/card/CardBody';
+import { Card, CardBody } from '@/shared/ui/card';
 import { TenantScopeFields } from '@/shared/ui/input/tenant-scope-fields';
 
 import type { OrganizationProps } from '@/entities/organization';

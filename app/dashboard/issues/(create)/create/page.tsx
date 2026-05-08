@@ -3,8 +3,7 @@ import { IssueCreatePageClient } from '@/features/issues/ui/issue-create-page-cl
 import { getOrganizations } from '@/features/organization';
 import { getUser } from '@/features/user';
 import { getOrganizationId } from '@/shared/lib/getOrganizationId';
-import Card from '@/shared/ui/card/Card';
-import CardBody from '@/shared/ui/card/CardBody';
+import { Card, CardBody } from '@/shared/ui/card';
 import PageHeader from '@/widgets/layout/ui/page-header';
 
 /**
