@@ -2,7 +2,7 @@ import { Skeleton } from '@/shared/ui/layout/skeleton';
 
 export default function TodayProgressLoading() {
   return (
-    <div className='space-y-6 p-6'>
+    <div>
       <div className='grid grid-cols-2 gap-4 lg:grid-cols-4'>
         {Array.from({ length: 4 }).map((_, i) => {
           return (
