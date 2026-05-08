@@ -1,0 +1,18 @@
+{
+  "$schema": "https://unpkg.com/knip@latest/schema.json",
+  "entry": [
+    "app/**/{page,layout,loading,error,global-error,route}.{tsx,ts}",
+    "instrumentation.ts",
+    "next.config.ts",
+    "eslint-rules/**/*.{ts,js}"
+  ],
+  "project": [
+    "app/**/*.{ts,tsx}",
+    "features/**/*.{ts,tsx}",
+    "entities/**/*.{ts,tsx}",
+    "shared/**/*.{ts,tsx}",
+    "widgets/**/*.{ts,tsx}"
+  ],
+  "ignoreExportsUsedInFile": true,
+  "ignoreDependencies": ["@types/*"]
+}

@@ -2,6 +2,10 @@
   "name": "spodial_hr_frontend",
   "version": "0.1.0",
   "private": true,
+  "sideEffects": [
+    "./app/globals.css",
+    "./instrumentation.ts"
+  ],
   "scripts": {
     "dev": "next dev -p 8080 --turbopack",
     "dev:container": "NODE_ENV=development next build && NODE_ENV=development next start",
@@ -25,7 +29,6 @@
     "date-fns": "^4.1.0",
     "eslint-plugin-jsdoc": "^62.7.1",
     "framer-motion": "^12.23.26",
-    "gsd-pi": "^2.3.8",
     "html-react-parser": "^5.2.10",
     "lucide-react": "^0.554.0",
     "motion": "^12.23.24",
@@ -75,6 +78,7 @@
     "husky": "^9.1.7",
     "jest": "^30.0.5",
     "jest-environment-jsdom": "^30.0.5",
+    "knip": "^6.12.1",
     "lint-staged": "^16.3.2",
     "prettier": "^3.6.2",
     "tailwindcss": "^4",
