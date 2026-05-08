@@ -8,6 +8,20 @@ import {
 // ---------------------------------------------------------------------------
 // Mocks
 // ---------------------------------------------------------------------------
+const mockClearSession = jest.fn();
+
+jest.mock('@/shared/api/session', () => {
+  return {
+    /**
+     *
+     * @param {...any} args
+     */
+    clearSession: (...args: unknown[]) => {
+      return mockClearSession(...args);
+    },
+  };
+});
+
 const mockRedirect = jest.fn();
 
 jest.mock('next/navigation', () => {
@@ -125,7 +139,7 @@ describe('getOrganizations', () => {
 
     await expect(getOrganizations()).rejects.toThrow();
 
-    expect(mockRedirect).toHaveBeenCalledWith('/api/auth/clear-session');
+    expect(mockClearSession).toHaveBeenCalled();
   });
 
   it('throws on other non-ok status', async () => {

@@ -3,16 +3,16 @@ import { getArtifacts } from '@/entities/artifact/api/artifacts';
 // ---------------------------------------------------------------------------
 // Mocks
 // ---------------------------------------------------------------------------
-const mockRedirect = jest.fn();
+const mockClearSession = jest.fn();
 
-jest.mock('next/navigation', () => {
+jest.mock('@/shared/api/session', () => {
   return {
     /**
      *
      * @param {...any} args
      */
-    redirect: (...args: unknown[]) => {
-      return mockRedirect(...args);
+    clearSession: (...args: unknown[]) => {
+      return mockClearSession(...args);
     },
   };
 });
@@ -121,7 +121,7 @@ describe('getArtifacts', () => {
     // getArtifacts calls redirect() then returns null (doesn't throw in test env)
     await getArtifacts(1);
 
-    expect(mockRedirect).toHaveBeenCalledWith('/api/auth/clear-session');
+    expect(mockClearSession).toHaveBeenCalled();
   });
 
   it('returns null on other non-ok status', async () => {

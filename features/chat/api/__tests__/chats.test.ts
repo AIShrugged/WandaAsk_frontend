@@ -8,16 +8,16 @@ import {
 // ---------------------------------------------------------------------------
 // Mocks
 // ---------------------------------------------------------------------------
-const mockRedirect = jest.fn();
+const mockClearSession = jest.fn();
 
-jest.mock('next/navigation', () => {
+jest.mock('@/shared/api/session', () => {
   return {
     /**
      *
      * @param {...any} args
      */
-    redirect: (...args: unknown[]) => {
-      return mockRedirect(...args);
+    clearSession: (...args: unknown[]) => {
+      return mockClearSession(...args);
     },
   };
 });
@@ -146,7 +146,7 @@ describe('getChats', () => {
 
     await expect(getChats()).rejects.toThrow();
 
-    expect(mockRedirect).toHaveBeenCalledWith('/api/auth/clear-session');
+    expect(mockClearSession).toHaveBeenCalled();
   });
 
   it('throws on other non-ok status', async () => {
@@ -248,7 +248,7 @@ describe('createChat', () => {
 
     await expect(createChat()).rejects.toThrow();
 
-    expect(mockRedirect).toHaveBeenCalledWith('/api/auth/clear-session');
+    expect(mockClearSession).toHaveBeenCalled();
   });
 
   it('throws on failure with message from body', async () => {
@@ -302,7 +302,7 @@ describe('updateChatTitle', () => {
 
     await expect(updateChatTitle(1, 'title')).rejects.toThrow();
 
-    expect(mockRedirect).toHaveBeenCalledWith('/api/auth/clear-session');
+    expect(mockClearSession).toHaveBeenCalled();
   });
 
   it('throws on failure', async () => {
@@ -348,7 +348,7 @@ describe('deleteChat', () => {
 
     await expect(deleteChat(1)).rejects.toThrow();
 
-    expect(mockRedirect).toHaveBeenCalledWith('/api/auth/clear-session');
+    expect(mockClearSession).toHaveBeenCalled();
   });
 
   it('throws on failure', async () => {

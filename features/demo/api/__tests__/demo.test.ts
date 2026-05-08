@@ -5,8 +5,14 @@ import { seedDemo } from '@/features/demo/api/seed-demo';
 // ---------------------------------------------------------------------------
 // Mocks
 // ---------------------------------------------------------------------------
-jest.mock('next/navigation', () => {
-  return { redirect: jest.fn() };
+const mockClearSession = jest.fn();
+
+jest.mock('@/shared/api/session', () => {
+  return {
+    clearSession: jest.fn((...args: unknown[]) => {
+      return mockClearSession(...args);
+    }),
+  };
 });
 
 jest.mock('@/shared/lib/config', () => {
@@ -20,10 +26,6 @@ jest.mock('@/shared/lib/getAuthToken', () => {
     }),
   };
 });
-
-import { redirect } from 'next/navigation';
-
-const mockRedirect = redirect as unknown as jest.Mock;
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -108,7 +110,7 @@ describe('getDemoStatus', () => {
       .mockResolvedValue(makeResponse(401, 'Unauthorized'));
 
     await expect(getDemoStatus()).rejects.toThrow();
-    expect(mockRedirect).toHaveBeenCalledWith('/api/auth/clear-session');
+    expect(mockClearSession).toHaveBeenCalled();
   });
 
   it('fetches the correct URL', async () => {
@@ -191,7 +193,7 @@ describe('seedDemo', () => {
       .mockResolvedValue(makeResponse(401, 'Unauthorized'));
 
     await expect(seedDemo({})).rejects.toThrow();
-    expect(mockRedirect).toHaveBeenCalledWith('/api/auth/clear-session');
+    expect(mockClearSession).toHaveBeenCalled();
   });
 
   it('throws with API message on failure', async () => {
@@ -249,7 +251,7 @@ describe('deleteDemo', () => {
 
     await deleteDemo();
 
-    expect(mockRedirect).toHaveBeenCalledWith('/api/auth/clear-session');
+    expect(mockClearSession).toHaveBeenCalled();
   });
 
   it('returns { error: "No demo data found." } on 404', async () => {

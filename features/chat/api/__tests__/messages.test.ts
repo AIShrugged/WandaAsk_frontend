@@ -7,16 +7,16 @@ import {
 // ---------------------------------------------------------------------------
 // Mocks
 // ---------------------------------------------------------------------------
-const mockRedirect = jest.fn();
+const mockClearSession = jest.fn();
 
-jest.mock('next/navigation', () => {
+jest.mock('@/shared/api/session', () => {
   return {
     /**
      *
      * @param {...any} args
      */
-    redirect: (...args: unknown[]) => {
-      return mockRedirect(...args);
+    clearSession: (...args: unknown[]) => {
+      return mockClearSession(...args);
     },
   };
 });
@@ -166,7 +166,7 @@ describe('getMessages', () => {
 
     await expect(getMessages(1)).rejects.toThrow();
 
-    expect(mockRedirect).toHaveBeenCalledWith('/api/auth/clear-session');
+    expect(mockClearSession).toHaveBeenCalled();
   });
 
   it('throws on non-ok status', async () => {
@@ -258,7 +258,7 @@ describe('sendMessage', () => {
 
     await expect(sendMessage(1, 'hi')).rejects.toThrow();
 
-    expect(mockRedirect).toHaveBeenCalledWith('/api/auth/clear-session');
+    expect(mockClearSession).toHaveBeenCalled();
   });
 
   it('throws with message from error body', async () => {
@@ -324,7 +324,7 @@ describe('pollRun', () => {
 
     await expect(pollRun(1, 'uuid')).rejects.toThrow();
 
-    expect(mockRedirect).toHaveBeenCalledWith('/api/auth/clear-session');
+    expect(mockClearSession).toHaveBeenCalled();
   });
 
   it('throws on non-ok status', async () => {

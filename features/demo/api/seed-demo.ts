@@ -1,7 +1,6 @@
 'use server';
 
-import { redirect } from 'next/navigation';
-
+import { clearSession } from '@/shared/api/session';
 import { API_URL } from '@/shared/lib/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 
@@ -50,7 +49,7 @@ export async function seedDemo(
 
   if (!res.ok) {
     if (res.status === 401) {
-      redirect('/api/auth/clear-session');
+      await clearSession();
     }
 
     throw new Error(

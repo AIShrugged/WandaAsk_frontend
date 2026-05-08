@@ -1,7 +1,6 @@
 'use server';
 
-import { redirect } from 'next/navigation';
-
+import { clearSession } from '@/shared/api/session';
 import { parseApiError } from '@/shared/lib/apiError';
 import { API_URL } from '@/shared/lib/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
@@ -32,7 +31,7 @@ export async function getChats(
   });
 
   if (!res.ok) {
-    if (res.status === 401) redirect('/api/auth/clear-session');
+    if (res.status === 401) await clearSession();
     const text = await res.text();
 
     throw new Error(text || 'Failed to load chats');
@@ -66,7 +65,7 @@ export async function getChat(id: number): Promise<Chat> {
   });
 
   if (!res.ok) {
-    if (res.status === 401) redirect('/api/auth/clear-session');
+    if (res.status === 401) await clearSession();
     const text = await res.text();
 
     throw new Error(parseApiError(text, 'Failed to load chat').message);
@@ -107,7 +106,7 @@ export async function createChat(
   });
 
   if (!res.ok) {
-    if (res.status === 401) redirect('/api/auth/clear-session');
+    if (res.status === 401) await clearSession();
     const text = await res.text();
 
     const parsed = parseApiError(text, 'Failed to create chat');
@@ -161,7 +160,7 @@ export async function updateChat(
   });
 
   if (!res.ok) {
-    if (res.status === 401) redirect('/api/auth/clear-session');
+    if (res.status === 401) await clearSession();
     const text = await res.text();
 
     const parsed = parseApiError(text, 'Failed to update chat');
@@ -213,7 +212,7 @@ export async function deleteChat(id: number): Promise<void> {
   });
 
   if (!res.ok) {
-    if (res.status === 401) redirect('/api/auth/clear-session');
+    if (res.status === 401) await clearSession();
     const text = await res.text();
 
     throw new Error(parseApiError(text, 'Failed to delete chat').message);

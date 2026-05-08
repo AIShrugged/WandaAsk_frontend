@@ -1,7 +1,6 @@
 'use server';
 
-import { redirect } from 'next/navigation';
-
+import { clearSession } from '@/shared/api/session';
 import { parseApiError } from '@/shared/lib/apiError';
 import { API_URL } from '@/shared/lib/config';
 import { ServerError } from '@/shared/lib/errors';
@@ -46,7 +45,7 @@ export async function getAgentActivity(
   });
 
   if (!response.ok) {
-    if (response.status === 401) redirect('/api/auth/clear-session');
+    if (response.status === 401) await clearSession();
 
     const text = await response.text();
 

@@ -1,8 +1,9 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { notFound, redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 
+import { clearSession } from '@/shared/api/session';
 import { parseApiError } from '@/shared/lib/apiError';
 import { API_URL, FILES_URL } from '@/shared/lib/config';
 import { ServerError } from '@/shared/lib/errors';
@@ -126,7 +127,7 @@ export async function getIssues(filters: IssueFilters = {}) {
   });
 
   if (!res.ok) {
-    if (res.status === 401) redirect('/api/auth/clear-session');
+    if (res.status === 401) await clearSession();
     const text = await res.text();
 
     throw new Error(parseApiError(text, 'Failed to load issues').message);
@@ -161,7 +162,7 @@ export async function loadIssuesChunk(filters: IssueFilters = {}) {
   });
 
   if (!res.ok) {
-    if (res.status === 401) redirect('/api/auth/clear-session');
+    if (res.status === 401) await clearSession();
     const text = await res.text();
 
     throw new Error(parseApiError(text, 'Failed to load issues').message);
@@ -205,7 +206,7 @@ export async function getArchivedCount(
   });
 
   if (!res.ok) {
-    if (res.status === 401) redirect('/api/auth/clear-session');
+    if (res.status === 401) await clearSession();
 
     return 0;
   }
@@ -236,7 +237,7 @@ export async function loadArchivedChunk(
   });
 
   if (!res.ok) {
-    if (res.status === 401) redirect('/api/auth/clear-session');
+    if (res.status === 401) await clearSession();
     const text = await res.text();
 
     throw new Error(
@@ -271,7 +272,7 @@ export async function getIssue(id: number): Promise<Issue> {
   });
 
   if (!res.ok) {
-    if (res.status === 401) redirect('/api/auth/clear-session');
+    if (res.status === 401) await clearSession();
     if (res.status === 404 || res.status === 403) notFound();
     const text = await res.text();
 
@@ -300,7 +301,7 @@ export async function createIssue(
   });
 
   if (!res.ok) {
-    if (res.status === 401) redirect('/api/auth/clear-session');
+    if (res.status === 401) await clearSession();
     const text = await res.text();
     const parsed = parseApiError(text, 'Failed to create issue');
 
@@ -339,7 +340,7 @@ export async function updateIssue(
   });
 
   if (!res.ok) {
-    if (res.status === 401) redirect('/api/auth/clear-session');
+    if (res.status === 401) await clearSession();
     const text = await res.text();
     const parsed = parseApiError(text, 'Failed to update issue');
 
@@ -376,7 +377,7 @@ export async function deleteIssue(id: number): Promise<void> {
   });
 
   if (!res.ok) {
-    if (res.status === 401) redirect('/api/auth/clear-session');
+    if (res.status === 401) await clearSession();
     const text = await res.text();
 
     throw new Error(parseApiError(text, 'Failed to delete issue').message);
@@ -399,7 +400,7 @@ export async function dispatchIssue(
   });
 
   if (!res.ok) {
-    if (res.status === 401) redirect('/api/auth/clear-session');
+    if (res.status === 401) await clearSession();
     const text = await res.text();
 
     return {
@@ -432,7 +433,7 @@ export async function answerAgentFlow(
   });
 
   if (!res.ok) {
-    if (res.status === 401) redirect('/api/auth/clear-session');
+    if (res.status === 401) await clearSession();
     const text = await res.text();
 
     return {
@@ -465,7 +466,7 @@ export async function getEpics(
   });
 
   if (!res.ok) {
-    if (res.status === 401) redirect('/api/auth/clear-session');
+    if (res.status === 401) await clearSession();
 
     return [];
   }

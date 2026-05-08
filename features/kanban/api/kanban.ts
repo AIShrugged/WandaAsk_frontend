@@ -1,7 +1,6 @@
 'use server';
 
-import { redirect } from 'next/navigation';
-
+import { clearSession } from '@/shared/api/session';
 import { parseApiError } from '@/shared/lib/apiError';
 import { API_URL } from '@/shared/lib/config';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
@@ -84,7 +83,7 @@ async function fetchKanbanPage(
   });
 
   if (!res.ok) {
-    if (res.status === 401) redirect('/api/auth/clear-session');
+    if (res.status === 401) await clearSession();
     const text = await res.text();
     throw new Error(parseApiError(text, 'Failed to load kanban data').message);
   }
@@ -179,7 +178,7 @@ export async function moveKanbanCard(
   });
 
   if (!res.ok) {
-    if (res.status === 401) redirect('/api/auth/clear-session');
+    if (res.status === 401) await clearSession();
 
     const text = await res.text();
 
@@ -230,7 +229,7 @@ export async function fetchArchivedKanbanCards(
   });
 
   if (!res.ok) {
-    if (res.status === 401) redirect('/api/auth/clear-session');
+    if (res.status === 401) await clearSession();
     const text = await res.text();
 
     return {
