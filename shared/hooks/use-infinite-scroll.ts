@@ -142,7 +142,9 @@ export function useInfiniteScroll<T>({
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) void loadMoreRef.current();
+        if (entry.isIntersecting) {
+          loadMoreRef.current().catch(() => {});
+        }
       },
       { rootMargin: '20px' },
     );
