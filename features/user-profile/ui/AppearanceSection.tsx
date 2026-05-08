@@ -8,10 +8,6 @@ import { updateThemePreference } from '@/features/user-profile/api/preferences';
 
 import type { Theme, UserPreferences } from '@/entities/user';
 
-interface Props {
-  currentPreferences: UserPreferences;
-}
-
 const THEMES: { value: Theme; label: string; description: string }[] = [
   { value: 'dark', label: 'Dark', description: 'Cosmic dark theme (default)' },
   {
@@ -21,7 +17,11 @@ const THEMES: { value: Theme; label: string; description: string }[] = [
   },
 ];
 
-export function AppearanceSection({ currentPreferences }: Props) {
+export function AppearanceSection({
+  currentPreferences,
+}: {
+  currentPreferences: UserPreferences;
+}) {
   const { theme, setTheme } = useTheme();
   const [isPending, startTransition] = useTransition();
 
@@ -40,15 +40,6 @@ export function AppearanceSection({ currentPreferences }: Props) {
 
   return (
     <section aria-labelledby='appearance-heading' className='space-y-6'>
-      <div>
-        <h2 id='appearance-heading' className='text-lg font-semibold'>
-          Appearance
-        </h2>
-        <p className='text-sm text-muted-foreground mt-1'>
-          Choose your preferred display theme.
-        </p>
-      </div>
-
       <div
         role='radiogroup'
         aria-label='Theme selection'
