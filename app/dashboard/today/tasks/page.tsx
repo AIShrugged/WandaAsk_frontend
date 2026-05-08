@@ -7,8 +7,6 @@ import {
   getTodayBriefing,
   WaitingOnYou,
 } from '@/features/today-briefing';
-import { FocusedTasksBlock } from '@/features/user-focus';
-import { getUserFocus } from '@/features/user-focus/api/focus';
 import Card from '@/shared/ui/card/Card';
 import CardBody from '@/shared/ui/card/CardBody';
 import PageHeader from '@/widgets/layout/ui/page-header';
@@ -19,19 +17,12 @@ export default async function TodayTasksPage({
   searchParams?: Promise<{ date?: string }>;
 }) {
   const { date } = (await searchParams) ?? {};
-  const [data, focus] = await Promise.all([
-    getTodayBriefing(date),
-    getUserFocus(),
-  ]);
+  const data = await getTodayBriefing(date);
 
   return (
     <Card className='flex flex-col'>
       <PageHeader title='Tasks' />
       <div className='px-6 pt-4 flex flex-col gap-4'>
-        {/*
-        <FocusBlock initialFocus={focus} readonly />
-*/}
-        <FocusedTasksBlock focus={focus} />
         <TaskStatsBlock />
         <ClosedTasksBlock />
       </div>

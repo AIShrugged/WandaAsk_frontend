@@ -28,7 +28,6 @@ import { ArchivedSection } from '@/features/issues/ui/archived-section';
 import { ArchivedSectionToggle } from '@/features/issues/ui/archived-section-toggle';
 import { IssuePriorityBadge } from '@/features/issues/ui/issue-priority-badge';
 import { IssueStatusBadge } from '@/features/issues/ui/issue-status-badge';
-import { clearUserFocus } from '@/features/user-focus/api/focus';
 import { useInfiniteScroll } from '@/shared/hooks';
 import { ROUTES } from '@/shared/lib/routes';
 import { BUTTON_VARIANT } from '@/shared/types/button';
@@ -48,7 +47,6 @@ import type {
   SharedFilters,
   SortOrder,
 } from '@/features/issues/model/types';
-import type { UserFocus } from '@/features/user-focus/types';
 
 const PAGE_SIZE = 20;
 
@@ -61,7 +59,6 @@ interface IssuesPageProps {
   initialSort: IssueSortField;
   initialOrder: SortOrder;
   onShowArchivedChange: (value: boolean) => void;
-  focus?: UserFocus | null;
 }
 
 /**
@@ -150,16 +147,9 @@ export function IssuesPage({
   initialSort,
   initialOrder,
   onShowArchivedChange,
-  focus,
 }: IssuesPageProps) {
   const { bumpColumnsVersion } = useFiltersContext();
   const [isPending, startTransition] = useTransition();
-
-  const handleClearFocus = useCallback(() => {
-    startTransition(() => {
-      void clearUserFocus();
-    });
-  }, [startTransition]);
   const [sortField, setSortField] = useState<IssueSortField>(initialSort);
   const [sortOrder, setSortOrder] = useState<SortOrder>(initialOrder);
   const [updatingIssueId, setUpdatingIssueId] = useState<number | null>(null);
@@ -458,15 +448,11 @@ export function IssuesPage({
           if (nextStatus === 'done') {
             const level =
               issue.priority === 0 ? null : getPriorityLevel(issue.priority);
-            const clearFocusAction = focus?.focus_text
-              ? { label: 'Clear focus', onClick: handleClearFocus }
-              : undefined;
             toast.success(level ? `Done: ${issue.name}` : 'Issue updated', {
               description: level
                 ? `${level.label} priority issue completed`
                 : undefined,
               duration: 5000,
-              action: clearFocusAction,
             });
           } else {
             toast.success('Issue updated');

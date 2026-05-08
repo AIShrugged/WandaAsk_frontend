@@ -4,23 +4,17 @@ import { useFiltersContext } from '@/features/issues/model/filters-context';
 import { IssuesPage } from '@/features/issues/ui/issues-page';
 
 import type { Issue, PersonOption } from '@/features/issues/model/types';
-import type { UserFocus } from '@/features/user-focus/types';
 
 interface IssuesListTabProps {
   initialIssues: Issue[];
   initialTotalCount: number;
   persons: PersonOption[];
-  focus?: UserFocus | null;
 }
 
-/**
- * IssuesListTab — client wrapper that reads filter context and renders IssuesPage.
- */
 export function IssuesListTab({
   initialIssues,
   initialTotalCount,
   persons,
-  focus,
 }: IssuesListTabProps) {
   const {
     filters,
@@ -40,7 +34,6 @@ export function IssuesListTab({
       initialSort={initialSort}
       initialOrder={initialOrder}
       onShowArchivedChange={setShowArchived}
-      focus={focus}
     />
   );
 }

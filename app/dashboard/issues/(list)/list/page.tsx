@@ -7,7 +7,6 @@ import {
   type SortOrder,
 } from '@/features/issues';
 import { IssuesListTab } from '@/features/issues';
-import { getUserFocus } from '@/features/user-focus/api/focus';
 import { getCurrentUserId } from '@/shared/lib/getCurrentUserId';
 import { getOrganizationId } from '@/shared/lib/getOrganizationId';
 
@@ -72,12 +71,9 @@ export default async function IssuesListPage({
     assigneeIdParam = '';
   }
 
-  const [persons, currentUserId, focus] = await Promise.all([
+  const [persons, currentUserId] = await Promise.all([
     getPersons(),
     getCurrentUserId(),
-    getUserFocus().catch(() => {
-      return null;
-    }),
   ]);
 
   const isUnassigned = assigneeIdParam === 'unassigned';
@@ -113,7 +109,6 @@ export default async function IssuesListPage({
         initialIssues={issues.data}
         initialTotalCount={issues.totalCount}
         persons={persons}
-        focus={focus}
       />
     </div>
   );
