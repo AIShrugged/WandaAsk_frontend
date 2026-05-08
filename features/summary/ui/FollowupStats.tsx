@@ -10,7 +10,7 @@ import {
 } from 'recharts';
 
 import { CHART_TOOLTIP_STYLE } from '@/shared/lib/chart-theme';
-import Card from '@/shared/ui/card/Card';
+import { Card } from '@/shared/ui/card';
 import { H3 } from '@/shared/ui/typography/H3';
 
 import type { FollowupStats as FollowupStatsType } from '@/features/summary/types';

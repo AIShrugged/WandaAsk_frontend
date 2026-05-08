@@ -1,8 +1,10 @@
+import { PageContainer } from '@/shared/ui/layout/page-container';
 import { SkeletonList } from '@/shared/ui/layout/skeleton';
 
-/**
- * Loading skeleton for the agent tasks tab.
- */
 export default function Loading() {
-  return <SkeletonList rows={5} />;
+  return (
+    <PageContainer>
+      <SkeletonList rows={5} />
+    </PageContainer>
+  );
 }

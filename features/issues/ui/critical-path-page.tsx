@@ -5,7 +5,7 @@ import { AlertCircle, GitBranch, RefreshCw } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
-import Card from '@/shared/ui/card/Card';
+import { Card } from '@/shared/ui/card';
 import { EmptyState } from '@/shared/ui/feedback/empty-state';
 import SpinLoader from '@/shared/ui/layout/spin-loader';
 

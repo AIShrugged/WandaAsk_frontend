@@ -9,7 +9,7 @@ import {
   MeetingDetailCard,
   WaitingState,
 } from '@/features/today-briefing';
-import CardBody from '@/shared/ui/card/CardBody';
+import { CardBody } from '@/shared/ui/card';
 import { Skeleton } from '@/shared/ui/layout/skeleton';
 import PageHeader from '@/widgets/layout/ui/page-header';
 

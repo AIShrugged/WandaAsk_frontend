@@ -2,7 +2,7 @@ import { Suspense } from 'react';
 
 import { ResetPasswordForm } from '@/features/auth';
 import { TribesLogo } from '@/shared/ui/brand';
-import Card from '@/shared/ui/card/Card';
+import { Card } from '@/shared/ui/card';
 
 export default async function Page() {
   return (

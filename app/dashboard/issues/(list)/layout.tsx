@@ -1,7 +1,7 @@
 import { getPersons, IssuesLayoutClient } from '@/features/issues';
 import { getOrganizations } from '@/features/organization';
 import { getCurrentUserId } from '@/shared/lib/getCurrentUserId';
-import Card from '@/shared/ui/card/Card';
+import { Card } from '@/shared/ui/card';
 
 import type { PropsWithChildren } from 'react';
 

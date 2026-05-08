@@ -10,8 +10,7 @@ import {
 import { ServerError } from '@/shared/lib/errors';
 import { ROUTES } from '@/shared/lib/routes';
 import { Badge } from '@/shared/ui/badge';
-import Card from '@/shared/ui/card/Card';
-import CardBody from '@/shared/ui/card/CardBody';
+import { Card, CardBody } from '@/shared/ui/card';
 import { PageTabsNav } from '@/shared/ui/navigation/page-tabs-nav';
 import PageHeader from '@/widgets/layout/ui/page-header';
 

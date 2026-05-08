@@ -1,6 +1,6 @@
 import { TEAM_CREATE_VALUES, TeamCreateForm } from '@/features/teams';
 import { getOrganizationId } from '@/shared/lib/getOrganizationId';
-import Card from '@/shared/ui/card/Card';
+import { Card } from '@/shared/ui/card';
 import PageHeader from '@/widgets/layout/ui/page-header';
 
 import type { TeamProps } from '@/entities/team';

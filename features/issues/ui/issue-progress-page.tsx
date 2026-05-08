@@ -22,7 +22,7 @@ export function IssueProgressPage({
   hasActiveFilters?: boolean;
 }) {
   return (
-    <div className='space-y-6 p-6'>
+    <div>
       {hasActiveFilters && (
         <div className='flex items-start gap-2 rounded-lg border border-blue-500/20 bg-blue-500/10 px-4 py-3 text-sm text-blue-300'>
           <Info className='mt-0.5 size-4 shrink-0' />

@@ -6,3 +6,4 @@ export { GenericList } from './generic-list';
 export { InfiniteScrollStatus } from './infinite-scroll-status';
 export { Skeleton, SkeletonList } from './skeleton';
 export { default as SpinLoader } from './spin-loader';
+export { PageContainer } from './page-container';

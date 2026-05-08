@@ -13,7 +13,7 @@ import {
 } from '@/features/agents';
 import { ServerError } from '@/shared/lib/errors';
 import { ROUTES } from '@/shared/lib/routes';
-import Card from '@/shared/ui/card/Card';
+import { Card } from '@/shared/ui/card';
 import { EmptyState } from '@/shared/ui/feedback/empty-state';
 
 import type { AgentTasksMeta } from '@/features/agents';

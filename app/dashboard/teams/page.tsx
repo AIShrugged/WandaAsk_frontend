@@ -13,7 +13,7 @@ import {
 } from '@/features/teams';
 import { getOrganizationId } from '@/shared/lib/getOrganizationId';
 import { ROUTES } from '@/shared/lib/routes';
-import Card from '@/shared/ui/card/Card';
+import { Card } from '@/shared/ui/card';
 
 interface SearchParams {
   team_id?: string;

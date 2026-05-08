@@ -1,5 +1,5 @@
 import { getMeetingsForDate, MeetingsColumnView } from '@/features/meetings';
-import Card from '@/shared/ui/card/Card';
+import { Card } from '@/shared/ui/card';
 
 function toDateParam(date: Date): string {
   const y = date.getFullYear();

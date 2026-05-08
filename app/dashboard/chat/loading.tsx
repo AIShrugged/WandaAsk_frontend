@@ -1,4 +1,4 @@
-import Card from '@/shared/ui/card/Card';
+import { Card } from '@/shared/ui/card';
 import { SkeletonList } from '@/shared/ui/layout/skeleton';
 
 /**

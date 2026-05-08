@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { getCalendarEventDetail } from '@/features/event';
 import { MeetingDetailTabsNav } from '@/features/meetings';
 import { ROUTES } from '@/shared/lib/routes';
-import Card from '@/shared/ui/card/Card';
+import { Card } from '@/shared/ui/card';
 
 import type { PropsWithChildren } from 'react';
 

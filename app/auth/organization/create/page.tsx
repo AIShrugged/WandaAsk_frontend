@@ -1,6 +1,6 @@
 import { AUTH_TITLE_VARIANT, AuthTitle } from '@/features/auth';
 import { OrganizationForm } from '@/features/organization';
-import Card from '@/shared/ui/card/Card';
+import { Card } from '@/shared/ui/card';
 
 /**
  * Page component.

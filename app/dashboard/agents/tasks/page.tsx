@@ -1,5 +1,4 @@
 import { Bot } from 'lucide-react';
-import Link from 'next/link';
 
 import {
   getAgentTasks,
@@ -8,8 +7,7 @@ import {
   AgentTasksList,
 } from '@/features/agents';
 import { ServerError } from '@/shared/lib/errors';
-import { ROUTES } from '@/shared/lib/routes';
-import Card from '@/shared/ui/card/Card';
+import { Card } from '@/shared/ui/card';
 import { EmptyState } from '@/shared/ui/feedback/empty-state';
 
 export const metadata = { title: 'Agent Tasks' };
@@ -18,7 +16,7 @@ export const metadata = { title: 'Agent Tasks' };
  * Agent Tasks tab page.
  */
 export default async function AgentTasksPage() {
-  const { canManageAgents, activeOrganization } = await getAgentAccessContext();
+  const { canManageAgents } = await getAgentAccessContext();
 
   if (!canManageAgents) {
     return (
@@ -51,18 +49,6 @@ export default async function AgentTasksPage() {
 
   return (
     <Card>
-      <div className='mb-6 flex flex-wrap items-center justify-between gap-3'>
-        <p className='text-sm text-muted-foreground'>
-          Active organization context: {activeOrganization?.name ?? 'Unknown'} ·{' '}
-          {tasksTotal > 0 ? tasksTotal : tasks.length} tasks
-        </p>
-        <Link
-          href={ROUTES.DASHBOARD.AGENT_TASKS_NEW}
-          className='inline-flex h-10 items-center justify-center rounded-[var(--radius-button)] bg-primary px-4 text-sm text-primary-foreground'
-        >
-          New task
-        </Link>
-      </div>
       {tasks.length > 0 ? (
         <AgentTasksList initialTasks={tasks} totalCount={tasksTotal} />
       ) : (

@@ -8,8 +8,7 @@ import { toast } from 'sonner';
 import { answerAgentFlow, dispatchIssue } from '@/features/issues/api/issues';
 import { Badge } from '@/shared/ui/badge';
 import { Button } from '@/shared/ui/button/Button';
-import Card from '@/shared/ui/card/Card';
-import CardBody from '@/shared/ui/card/CardBody';
+import { Card, CardBody } from '@/shared/ui/card';
 import Textarea from '@/shared/ui/input/textarea';
 
 import type { Issue, IssueAgentFlowStep } from '@/features/issues/model/types';

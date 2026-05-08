@@ -13,6 +13,7 @@ import {
 
 import { getCalendarEventDetail } from '@/features/event';
 import { Badge } from '@/shared/ui/badge';
+import { Card } from '@/shared/ui/card';
 import { Pill } from '@/shared/ui/common/pill';
 import { MarkdownContent } from '@/shared/ui/markdown-content';
 import { H2 } from '@/shared/ui/typography/H2';
@@ -128,13 +129,13 @@ function SectionCard({
   children,
 }: PropsWithChildren<{ title: string; icon?: LucideIcon }>) {
   return (
-    <section className='rounded-[var(--radius-card)] border border-border bg-card px-5 py-4'>
+    <Card className='px-5 py-4'>
       <div className='flex items-center gap-2 text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground'>
         {Icon && <Icon className='h-3.5 w-3.5' />}
         {title}
       </div>
       <div className='mt-4'>{children}</div>
-    </section>
+    </Card>
   );
 }
 
@@ -381,7 +382,7 @@ export default async function MeetingOverviewPage({
     <div className='mx-auto w-full max-w-4xl px-6 py-6'>
       <div className='flex flex-col gap-6'>
         {/* Header card */}
-        <section className='flex flex-col gap-4 rounded-[var(--radius-card)] border border-border bg-card px-5 py-5 '>
+        <Card className='flex flex-col gap-4 px-5 py-5'>
           <div className='flex flex-col gap-3'>
             <div className='flex flex-wrap items-center gap-2 text-xs uppercase tracking-[0.18em] text-muted-foreground'>
               <FileText className='h-3.5 w-3.5' />
@@ -415,7 +416,7 @@ export default async function MeetingOverviewPage({
           </div>
 
           <CountsRow counts={data.counts} />
-        </section>
+        </Card>
 
         {/* Participants */}
         <SectionCard

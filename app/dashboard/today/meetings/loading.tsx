@@ -1,5 +1,10 @@
+import { PageContainer } from '@/shared/ui/layout/page-container';
 import { SkeletonList } from '@/shared/ui/layout/skeleton';
 
 export default function Loading() {
-  return <SkeletonList rows={4} />;
+  return (
+    <PageContainer>
+      <SkeletonList rows={4} />
+    </PageContainer>
+  );
 }

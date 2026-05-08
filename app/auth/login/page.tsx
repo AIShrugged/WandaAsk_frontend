@@ -1,6 +1,6 @@
 import { LoginForm } from '@/features/auth';
 import { TribesLogo } from '@/shared/ui/brand';
-import Card from '@/shared/ui/card/Card';
+import { Card } from '@/shared/ui/card';
 
 /**
  * Page component.
