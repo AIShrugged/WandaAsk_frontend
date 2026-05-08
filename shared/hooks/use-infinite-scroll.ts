@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import type { CachedListStore } from '@/shared/store/create-cached-list-store';
 
@@ -115,9 +115,7 @@ export function useInfiniteScroll<T>({
         });
         setLocalHasMore(more);
       } catch {
-        // silently fail
-      } finally {
-        if (generationRef.current === generation) setLocalLoading(false);
+        setLocalLoading(false);
       }
     }
   }, [
@@ -131,14 +129,20 @@ export function useInfiniteScroll<T>({
     maxItems,
   ]);
 
+  // Keep a stable ref to loadMore so the observer never needs to be recreated.
+  // This prevents the double-page-load bug in React 19 concurrent mode where
+  // IntersectionObserver fires an initial entry on every re-observe() call.
+  const loadMoreRef = useRef(loadMore);
+  useEffect(() => {
+    loadMoreRef.current = loadMore;
+  }, [loadMore]);
+
   useEffect(() => {
     if (!sentinelRef.current) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && hasMore && !isLoading) {
-          void loadMore();
-        }
+        if (entry.isIntersecting) void loadMoreRef.current();
       },
       { rootMargin: '20px' },
     );
@@ -148,7 +152,7 @@ export function useInfiniteScroll<T>({
     return () => {
       return observer.disconnect();
     };
-  }, [hasMore, isLoading, loadMore]);
+  }, []);
 
   return { items, isLoading, hasMore, sentinelRef };
 }

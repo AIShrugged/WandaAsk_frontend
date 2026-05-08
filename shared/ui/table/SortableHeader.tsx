@@ -1,6 +1,6 @@
 import { ChevronDown, ChevronUp, ChevronsUpDown } from 'lucide-react';
 
-export type SortOrder = 'asc' | 'desc';
+import type { SortOrder } from './types';
 
 interface SortableHeaderProps {
   label: string;
