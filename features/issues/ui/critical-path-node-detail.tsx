@@ -3,14 +3,13 @@
 import { X, ExternalLink, Zap } from 'lucide-react';
 import Link from 'next/link';
 
+import { IssueStatusBadge } from '@/entities/issue';
 import { ROUTES } from '@/shared/lib/routes';
 import { Badge } from '@/shared/ui/badge';
 import { ButtonIcon } from '@/shared/ui/button';
 
-import { IssueStatusBadge } from './issue-status-badge';
-
-import type { IssueStatus } from './issue-status-badge';
 import type { CriticalPathNode, CriticalPathEdge } from '../model/types';
+import type { IssueStatus } from '@/entities/issue';
 
 interface CriticalPathNodeDetailProps {
   node: CriticalPathNode;
