@@ -1,15 +1,15 @@
 import Link from 'next/link';
 
-/**
- * OrganizationCreateLink component.
- */
-export default function OrganizationCreateLink() {
-  const route = 'organization/create';
+import { ROUTES } from '@/shared/lib/routes';
 
+export default function OrganizationCreateLink() {
   return (
-    <p className={'text-[20px] mt-[30px]'}>
+    <p className='text-sm text-muted-foreground mt-6'>
       I want to create a{' '}
-      <Link className={'cursor-pointer text-primary font-bold'} href={route}>
+      <Link
+        className='text-primary font-medium hover:underline underline-offset-4'
+        href={`${ROUTES.AUTH.ORGANIZATION}/create`}
+      >
         new organization
       </Link>
     </p>
