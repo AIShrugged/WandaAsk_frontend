@@ -1,0 +1,27 @@
+export { acceptStructure, generateStructure } from './api/onboarding';
+export {
+  deletePendingAttachment,
+  uploadPendingAttachment,
+} from './api/attachments';
+export { useOnboardingPoll } from './hooks/use-onboarding-poll';
+export type {
+  AcceptStructurePayload,
+  AcceptStructureResponse,
+  DraftGoal,
+  DraftStatus,
+  DraftTask,
+  DraftTeamMember,
+  EditableGoal,
+  EditableTeamMember,
+  GenerateStructurePayload,
+  InputState,
+  NeedsInfoData,
+  OnboardingDraftResponse,
+  OnboardingDraftResult,
+  OnboardingDraftResultComplete,
+  OnboardingDraftResultNeedsInfo,
+  PendingAttachment,
+  PreviewData,
+  TaskType,
+} from './model/types';
+export { isNeedsMoreInfo } from './model/types';

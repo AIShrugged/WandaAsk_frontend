@@ -223,12 +223,20 @@ describe('createOrganization', () => {
 
   it('sends POST to /organizations', async () => {
     // On success, createOrganization calls selectOrganizationAction which calls
-    // redirect('/dashboard/calendar'). In the test env, redirect() is mocked
-    // and does NOT throw, so the function resolves normally.
+    // getOrganization (GET) and then redirect. Both fetch calls must be mocked.
+    const orgWithOnboarding = {
+      ...mockOrg,
+      id: 5,
+      onboarded_at: '2026-01-01T00:00:00Z',
+    };
+
     globalThis.fetch = jest
       .fn()
       .mockResolvedValueOnce(
-        makeResponse(201, { success: true, data: { ...mockOrg, id: 5 } }),
+        makeResponse(201, { success: true, data: orgWithOnboarding }),
+      )
+      .mockResolvedValueOnce(
+        makeResponse(200, { success: true, data: orgWithOnboarding }),
       );
 
     await createOrganization({ name: 'New Org' });
@@ -240,10 +248,19 @@ describe('createOrganization', () => {
   });
 
   it('includes org data in request body', async () => {
+    const orgWithOnboarding = {
+      ...mockOrg,
+      id: 5,
+      onboarded_at: '2026-01-01T00:00:00Z',
+    };
+
     globalThis.fetch = jest
       .fn()
       .mockResolvedValueOnce(
-        makeResponse(201, { success: true, data: { ...mockOrg, id: 5 } }),
+        makeResponse(201, { success: true, data: orgWithOnboarding }),
+      )
+      .mockResolvedValueOnce(
+        makeResponse(200, { success: true, data: orgWithOnboarding }),
       );
 
     await createOrganization({ name: 'Test Org' });

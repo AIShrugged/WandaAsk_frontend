@@ -1,0 +1,187 @@
+'use client';
+
+import { Link2, Plus, X } from 'lucide-react';
+
+import { BUTTON_VARIANT } from '@/shared/types/button';
+import { Button } from '@/shared/ui/button/Button';
+import Input from '@/shared/ui/input/Input';
+import Textarea from '@/shared/ui/input/textarea';
+
+import { OnboardingFileUpload } from './onboarding-file-upload';
+
+import type { InputState, NeedsInfoData } from '../model/types';
+
+const MAX_LINKS = 5;
+
+function getSubmitLabel(
+  isSubmitting: boolean,
+  hasFilePending: boolean,
+  isRefine: boolean,
+) {
+  if (isSubmitting) return 'Generating...';
+  if (hasFilePending) return 'Uploading file...';
+
+  return isRefine ? 'Regenerate' : 'Generate structure';
+}
+
+interface Props {
+  state: InputState;
+  needsInfoData?: NeedsInfoData;
+  isSubmitting: boolean;
+  hasFilePending: boolean;
+  onDescriptionChange: (value: string) => void;
+  onLinkAdd: () => void;
+  onLinkChange: (index: number, value: string) => void;
+  onLinkRemove: (index: number) => void;
+  onUploaded: (attachment: InputState['attachments'][number]) => void;
+  onDeleted: (attachmentId: number) => void;
+  onPendingChange: (hasPending: boolean) => void;
+  onSubmit: () => void;
+  onSkip: () => void;
+}
+
+export function OnboardingInputStep({
+  state,
+  needsInfoData,
+  isSubmitting,
+  hasFilePending,
+  onDescriptionChange,
+  onLinkAdd,
+  onLinkChange,
+  onLinkRemove,
+  onUploaded,
+  onDeleted,
+  onPendingChange,
+  onSubmit,
+  onSkip,
+}: Props) {
+  const isRefine = Boolean(needsInfoData);
+
+  return (
+    <div className='flex flex-col gap-6'>
+      <div>
+        <h1 className='text-2xl font-semibold text-foreground'>
+          {isRefine
+            ? 'A few more details needed'
+            : 'Tell us about your organization'}
+        </h1>
+        <p className='mt-1 text-sm text-muted-foreground'>
+          {isRefine
+            ? 'Our AI needs a bit more context to generate the best structure for you.'
+            : 'Describe your company, team, or project. The more detail you provide, the better.'}
+        </p>
+      </div>
+
+      {needsInfoData && (
+        <div className='rounded-[var(--radius-card)] border border-border bg-surface/40 p-4 flex flex-col gap-3'>
+          <p className='text-sm text-foreground'>{needsInfoData.message}</p>
+          {needsInfoData.questions.length > 0 && (
+            <ul className='flex flex-col gap-1.5 pl-4'>
+              {needsInfoData.questions.map((q, i) => {
+                return (
+                  <li
+                    key={i}
+                    className='text-sm text-muted-foreground list-disc'
+                  >
+                    {q}
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+      )}
+
+      <Textarea
+        label='Description'
+        value={state.description}
+        placeholder='e.g. We are a 40-person SaaS company building HR tools for enterprise clients...'
+        resizable={false}
+        height={160}
+        onChange={(e) => {
+          return onDescriptionChange(e.target.value);
+        }}
+      />
+
+      {/* URL slots */}
+      <div className='flex flex-col gap-2'>
+        <div className='flex items-center justify-between'>
+          <span className='text-sm font-medium text-foreground'>
+            Links{' '}
+            <span className='text-muted-foreground'>
+              ({state.links.length}/{MAX_LINKS})
+            </span>
+          </span>
+          {state.links.length < MAX_LINKS && (
+            <Button
+              type='button'
+              variant={BUTTON_VARIANT.secondary}
+              className='h-7 gap-1 px-2 text-xs'
+              onClick={onLinkAdd}
+            >
+              <Plus className='h-3 w-3' />
+              Add link
+            </Button>
+          )}
+        </div>
+
+        {state.links.map((link, index) => {
+          return (
+            <div key={index} className='flex items-center gap-2'>
+              <Input
+                value={link}
+                placeholder='https://...'
+                startAdornment={
+                  <Link2 className='h-3.5 w-3.5 text-muted-foreground' />
+                }
+                endAdornment={
+                  <button
+                    type='button'
+                    className='text-muted-foreground hover:text-foreground transition-colors'
+                    onClick={() => {
+                      return onLinkRemove(index);
+                    }}
+                  >
+                    <X className='h-3.5 w-3.5' />
+                  </button>
+                }
+                onChange={(e) => {
+                  return onLinkChange(index, e.target.value);
+                }}
+              />
+            </div>
+          );
+        })}
+      </div>
+
+      {state.uploadToken && (
+        <OnboardingFileUpload
+          uploadToken={state.uploadToken}
+          attachments={state.attachments}
+          onUploaded={onUploaded}
+          onDeleted={onDeleted}
+          onPendingChange={onPendingChange}
+        />
+      )}
+
+      <div className='flex items-center justify-between gap-3 pt-2'>
+        <Button
+          type='button'
+          variant={BUTTON_VARIANT.ghost}
+          className='text-muted-foreground'
+          onClick={onSkip}
+        >
+          Skip for now
+        </Button>
+        <Button
+          type='button'
+          variant={BUTTON_VARIANT.primary}
+          disabled={isSubmitting || hasFilePending || !state.description.trim()}
+          onClick={onSubmit}
+        >
+          {getSubmitLabel(isSubmitting, hasFilePending, isRefine)}
+        </Button>
+      </div>
+    </div>
+  );
+}

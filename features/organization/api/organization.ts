@@ -217,6 +217,12 @@ export async function selectOrganizationAction(formData: FormData) {
     maxAge: 60 * 60 * 24 * 7,
   });
 
+  const { data: org } = await getOrganization(id);
+
+  if (!org?.onboarded_at) {
+    redirect(ROUTES.ONBOARDING);
+  }
+
   redirect(ROUTES.DASHBOARD.TODAY);
 }
 
