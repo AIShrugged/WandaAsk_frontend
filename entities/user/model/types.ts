@@ -22,7 +22,6 @@ export interface UserProps {
   readonly email_verified_at: string | null;
   readonly created_at: string;
   readonly updated_at: string;
-  readonly is_demo: boolean;
   readonly onboarding_completed?: boolean;
   readonly onboarding_last_step?: number;
   readonly preferences?: UserPreferences | null;

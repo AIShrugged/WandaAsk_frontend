@@ -2,7 +2,6 @@ import { cookies } from 'next/headers';
 import React, { type PropsWithChildren } from 'react';
 
 import { ThemeProvider } from '@/app/providers/ThemeProvider';
-import { DemoSeedButtonLoader } from '@/features/demo';
 import { MenuSidebar, SidebarFooter } from '@/features/menu';
 import { OrganizationSelector } from '@/features/organization';
 import { User, getUser } from '@/features/user';
@@ -77,7 +76,6 @@ export default async function Layout({ children }: PropsWithChildren) {
               <OrganizationSelector />
             </div>
             <div className='flex items-center gap-2 flex-shrink-0'>
-              <DemoSeedButtonLoader />
               <User />
             </div>
           </header>
