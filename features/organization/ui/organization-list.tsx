@@ -9,6 +9,14 @@ export default async function OrganizationList({
 }: {
   organizations: OrganizationProps[];
 }) {
+  if (!organizations?.length) {
+    return (
+      <p className='text-sm text-muted-foreground py-4'>
+        still no organizations
+      </p>
+    );
+  }
+
   return (
     <div className='max-h-[280px] overflow-y-auto'>
       {organizations.map((organization) => {

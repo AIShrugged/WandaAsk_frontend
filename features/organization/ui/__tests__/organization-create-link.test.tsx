@@ -26,7 +26,7 @@ describe('OrganizationCreateLink', () => {
     render(<OrganizationCreateLink />);
     expect(screen.getByRole('link')).toHaveAttribute(
       'href',
-      'organization/create',
+      '/auth/organization/create',
     );
   });
 });
