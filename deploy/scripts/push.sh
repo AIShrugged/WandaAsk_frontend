@@ -9,7 +9,7 @@ cd "$(git rev-parse --show-toplevel)"
 
 # ── Load Telegram credentials from .env.local ──────────────────────────────
 TELEGRAM_BOT_TOKEN=""
-TELEGRAM_CHAT_ID=""
+TELEGRAM_USER_ID=""
 
 if [ -f ".env.local" ]; then
   while IFS='=' read -r key value || [ -n "$key" ]; do
@@ -18,7 +18,7 @@ if [ -f ".env.local" ]; then
     esac
     case "$key" in
       TELEGRAM_BOT_TOKEN) TELEGRAM_BOT_TOKEN="$value" ;;
-      TELEGRAM_CHAT_ID)   TELEGRAM_CHAT_ID="$value"   ;;
+      TELEGRAM_USER_ID)   TELEGRAM_USER_ID="$value"   ;;
     esac
   done < ".env.local"
 fi
@@ -26,14 +26,14 @@ fi
 # ── Telegram send function ──────────────────────────────────────────────────
 tg_send() {
   local message="$1"
-  if [ -z "$TELEGRAM_BOT_TOKEN" ] || [ -z "$TELEGRAM_CHAT_ID" ]; then
+  if [ -z "$TELEGRAM_BOT_TOKEN" ] || [ -z "$TELEGRAM_USER_ID" ]; then
     return 0
   fi
   curl -s -X POST \
     "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
     -H "Content-Type: application/json" \
     -d "{
-      \"chat_id\": \"${TELEGRAM_CHAT_ID}\",
+      \"chat_id\": \"${TELEGRAM_USER_ID}\",
       \"text\": $(printf '%s' "$message" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read()))'),
       \"parse_mode\": \"HTML\",
       \"disable_web_page_preview\": true
