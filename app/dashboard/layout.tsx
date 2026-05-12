@@ -1,11 +1,13 @@
 import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 import React, { type PropsWithChildren } from 'react';
 
 import { ThemeProvider } from '@/app/providers/ThemeProvider';
 import { MenuSidebar, SidebarFooter } from '@/features/menu';
-import { OrganizationSelector } from '@/features/organization';
+import { OrganizationSelector, getOrganization } from '@/features/organization';
 import { User, getUser } from '@/features/user';
 import { updateThemePreference } from '@/features/user-profile/api/preferences';
+import { ROUTES } from '@/shared/lib/routes';
 import { TribesLogo } from '@/shared/ui/brand';
 import {
   DashboardChatColumn,
@@ -20,6 +22,21 @@ export default async function Layout({ children }: PropsWithChildren) {
   const rawTheme = cookieStore.get('wanda-theme')?.value;
   const theme: Theme =
     rawTheme === 'light' || rawTheme === 'dark' ? rawTheme : 'dark';
+
+  const isOnboarded = cookieStore.get('org_onboarded')?.value === '1';
+
+  if (!isOnboarded) {
+    const orgId = cookieStore.get('organization_id')?.value;
+
+    if (orgId) {
+      const { data: org } = await getOrganization(orgId);
+
+      if (!org?.onboarded_at) {
+        redirect(ROUTES.ONBOARDING);
+      }
+    }
+  }
+
   const { data: user } = await getUser();
 
   return (
