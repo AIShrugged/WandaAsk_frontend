@@ -18,6 +18,8 @@ This creates a complete form setup:
 3. **Server Action** in `features/<feature>/api/` — form submission handler
    - `'use server'` directive
    - Validate input with the same Zod schema
+   - Return `ActionResult<T>` from `@/shared/types/server-action` so the form
+     can display field-level errors without throwing
    - Use `toast.error()` / `toast.success()` from `sonner` for notifications
 
 Look at existing forms in the codebase first to match established patterns.

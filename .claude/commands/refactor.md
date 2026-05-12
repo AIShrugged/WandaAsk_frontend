@@ -28,11 +28,13 @@ The argument can be a file path, feature name, or component name.
 
 ### Forms (if applicable)
 
-- Use `react-hook-form` + `zodResolver` pattern (as in `login-form.tsx`)
+- Use `react-hook-form` + `zodResolver` pattern (see existing forms in
+  `features/*/ui/`)
 - Zod schemas in `model/`, form UI in `ui/`
 - `useTransition` + `startTransition` for Server Action calls
-- Error handling via `handleFormError` from `shared/lib/formErrors`
-- Field config via `VARIANT_MAPPER` from `shared/lib/fieldMapper`
+- Error utilities: `isFieldError`, `getErrorMessage` from
+  `shared/lib/formErrors`
+- Dynamic field rendering via `VARIANT_MAPPER` from `shared/lib/fieldMapper.tsx`
 
 ### State management (if applicable)
 
