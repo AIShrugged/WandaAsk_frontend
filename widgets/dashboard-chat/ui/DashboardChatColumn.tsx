@@ -29,7 +29,7 @@ export function DashboardChatColumn({ children }: PropsWithChildren) {
 
   return (
     <div
-      className={`hidden xl:flex flex-col flex-shrink-0 border-l border-border/50 overflow-hidden transition-all duration-300 ${isCollapsed ? 'w-10' : 'w-[480px]'}`}
+      className={`hidden xl:flex flex-col flex-shrink-0 border-l border-[var(--border)] overflow-hidden transition-[width] duration-[var(--dur-norm)] ${isCollapsed ? 'w-10' : 'w-[480px]'}`}
     >
       {isCollapsed ? (
         <CollapsedSidePanel
@@ -42,16 +42,16 @@ export function DashboardChatColumn({ children }: PropsWithChildren) {
         />
       ) : (
         <>
-          <div className='flex items-center h-8 px-2 flex-shrink-0 border-b border-border/30'>
+          <div className='flex items-center h-8 px-2 flex-shrink-0 border-b border-[var(--border)]'>
             <button
               onClick={() => {
                 return setCollapsed(true);
               }}
-              className='flex items-center p-1 text-muted-foreground hover:text-foreground transition-colors cursor-pointer'
+              className='flex items-center gap-1 p-1 text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors cursor-pointer rounded-[var(--r-sm)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]'
               aria-label='Collapse chat panel'
             >
-              <ChevronRight className='w-4 h-4' />{' '}
-              <p className={'text-muted-foreground  text-xs'}>Hide</p>
+              <ChevronRight className='w-4 h-4' />
+              <span className='text-[length:var(--fs-xs)]'>Hide</span>
             </button>
           </div>
           <Suspense fallback={<Skeleton className='h-full w-full' />}>

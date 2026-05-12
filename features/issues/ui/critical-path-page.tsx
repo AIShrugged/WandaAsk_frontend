@@ -21,8 +21,8 @@ import type {
 
 const POLL_INTERVAL_MS = 3000;
 
-const BORDER_COLOR = 'hsl(var(--border))';
-const BG_DARK = 'hsl(var(--background))';
+const BORDER_COLOR = 'var(--color-border)';
+const BG_DARK = 'var(--color-background)';
 
 interface StatChipProps {
   label: string;
@@ -35,9 +35,11 @@ function StatChip({ label, value, highlight }: StatChipProps) {
     <div
       className='flex items-center gap-1.5 px-2.5 py-1 rounded-md border text-xs'
       style={{
-        background: 'hsl(var(--muted))',
+        background: 'var(--color-muted)',
         borderColor:
-          highlight === true ? 'hsl(var(--destructive) / 0.25)' : BORDER_COLOR,
+          highlight === true
+            ? 'color-mix(in srgb, var(--color-destructive) 25%, transparent)'
+            : BORDER_COLOR,
       }}
     >
       <span className='text-muted-foreground'>{label}:</span>
@@ -45,8 +47,8 @@ function StatChip({ label, value, highlight }: StatChipProps) {
         style={{
           color:
             highlight === true
-              ? 'hsl(var(--destructive))'
-              : 'hsl(var(--foreground))',
+              ? 'var(--color-destructive)'
+              : 'var(--color-foreground)',
         }}
       >
         {value}
@@ -56,10 +58,10 @@ function StatChip({ label, value, highlight }: StatChipProps) {
 }
 
 function getNodeDotColor(node: CriticalPathNode): string {
-  if (node.is_critical) return 'hsl(var(--destructive))';
-  if (node.status === 'done') return 'hsl(var(--accent))';
-  if (node.status === 'in_progress') return 'hsl(var(--primary))';
-  return 'hsl(var(--muted-foreground))';
+  if (node.is_critical) return 'var(--color-destructive)';
+  if (node.status === 'done') return 'var(--color-accent)';
+  if (node.status === 'in_progress') return 'var(--color-primary)';
+  return 'var(--color-muted-foreground)';
 }
 
 export function CriticalPathPageClient({
@@ -347,10 +349,10 @@ export function CriticalPathPageClient({
                     className='flex w-full items-center gap-2 px-4 py-1.5 text-left transition-colors border-l-2'
                     style={{
                       background: isActive
-                        ? 'hsl(var(--destructive) / 0.06)'
+                        ? 'color-mix(in srgb, var(--color-destructive) 6%, transparent)'
                         : 'transparent',
                       borderLeftColor: isActive
-                        ? 'hsl(var(--destructive))'
+                        ? 'var(--color-destructive)'
                         : 'transparent',
                     }}
                   >
@@ -359,7 +361,7 @@ export function CriticalPathPageClient({
                       style={{
                         background: dotColor,
                         boxShadow: node.is_critical
-                          ? '0 0 6px hsl(var(--destructive) / 0.6)'
+                          ? '0 0 6px color-mix(in srgb, var(--color-destructive) 60%, transparent)'
                           : undefined,
                       }}
                     />
@@ -367,8 +369,8 @@ export function CriticalPathPageClient({
                       className='flex-1 min-w-0 truncate text-xs'
                       style={{
                         color: isActive
-                          ? 'hsl(var(--foreground))'
-                          : 'hsl(var(--muted-foreground))',
+                          ? 'var(--color-foreground)'
+                          : 'var(--color-muted-foreground)',
                       }}
                     >
                       {node.issue_name ?? `Issue #${node.issue_id}`}

@@ -11,7 +11,12 @@ interface SkeletonProps {
  */
 export function Skeleton({ className }: SkeletonProps) {
   return (
-    <div className={clsx('animate-pulse rounded-md bg-muted', className)} />
+    <div
+      className={clsx(
+        'animate-pulse rounded-[var(--r-md)] bg-[var(--surface-3)]',
+        className,
+      )}
+    />
   );
 }
 

@@ -10,6 +10,7 @@ export default createJestConfig({
     '^next/cache$': '<rootDir>/__mocks__/next-cache.js',
     '^react-markdown$': '<rootDir>/__mocks__/react-markdown.js',
     '^remark-gfm$': '<rootDir>/__mocks__/remark-gfm.js',
+    '^isomorphic-dompurify$': '<rootDir>/__mocks__/isomorphic-dompurify.js',
     '^@/(.*)$': '<rootDir>/$1',
   },
   testPathIgnorePatterns: [

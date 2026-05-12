@@ -1,29 +1,27 @@
 import { X } from 'lucide-react';
 
-/**
- * ModalHeader component.
- * @param root0
- * @param root0.title
- * @param root0.onClick
- */
 export default function ModalHeader({
   title,
   onClick,
+  id,
 }: {
   title: string;
   onClick: () => void;
+  id?: string;
 }) {
   return (
-    <div className='px-6 py-4 border-b border-border'>
-      <div className='flex flex-row justify-between items-center'>
-        <p className='text-base font-semibold text-foreground'>{title}</p>
-
+    <div className='px-[var(--sp-6)] py-[var(--sp-5)] border-b border-[var(--divider)]'>
+      <div className='flex flex-row justify-between items-center gap-4'>
+        <p id={id} className='text-base font-semibold text-[var(--foreground)]'>
+          {title}
+        </p>
         <button
+          type='button'
           aria-label='Close modal'
-          className='cursor-pointer text-muted-foreground hover:text-foreground transition-colors'
+          className='cursor-pointer text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-1 rounded-[var(--r-sm)]'
           onClick={onClick}
         >
-          <X size={20} />
+          <X size={18} />
         </button>
       </div>
     </div>

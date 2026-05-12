@@ -16,7 +16,10 @@ export default async function MenuSidebar() {
       <MenuNested items={primary} />
       {secondary.length > 0 && (
         <>
-          <hr className='border-white/10 my-1' />
+          <hr
+            className='my-1'
+            style={{ borderColor: 'var(--sidebar-border)' }}
+          />
           <MenuNested items={secondary} />
         </>
       )}

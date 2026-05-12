@@ -14,14 +14,10 @@ export interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   value: string;
 }
 
-/**
- * cn.
- * @param parts - parts.
- * @returns Result.
- */
 const cn = (...parts: Array<string | false | null | undefined>) => {
   return parts.filter(Boolean).join(' ');
 };
+
 const Input = forwardRef<HTMLInputElement, Props>(function Input(
   {
     id,
@@ -48,31 +44,16 @@ const Input = forwardRef<HTMLInputElement, Props>(function Input(
   const hasValue =
     (value || rest.placeholder) !== undefined && (value || '').length > 0;
 
-  /**
-   * handleFocus.
-   * @param e - e.
-   * @returns Result.
-   */
   function handleFocus(e: React.FocusEvent<HTMLInputElement>) {
     setIsFocused(true);
     onFocus?.(e);
   }
 
-  /**
-   * handleBlur.
-   * @param e - e.
-   * @returns Result.
-   */
   function handleBlur(e: React.FocusEvent<HTMLInputElement>) {
     setIsFocused(false);
     onBlur?.(e);
   }
 
-  /**
-   * handleChange.
-   * @param e - e.
-   * @returns Result.
-   */
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     onChange?.(e);
   }
@@ -88,10 +69,13 @@ const Input = forwardRef<HTMLInputElement, Props>(function Input(
     >
       <div
         className={cn(
-          'px-4 flex items-center rounded-[var(--radius-button)] h-10 w-full',
-          'border border-input bg-background transition-colors focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/30 focus-within:ring-offset-0',
-          error ? 'border-destructive' : '',
-          'relative',
+          'px-4 flex items-center rounded-[var(--radius-button)] h-9 w-full relative',
+          // Inset box-shadow border — no box-model impact, smooth focus transition
+          'bg-[var(--background)] transition-shadow',
+          !error &&
+            'shadow-[inset_0_0_0_1px_var(--border)] focus-within:shadow-[inset_0_0_0_1.5px_var(--primary),0_0_0_3px_color-mix(in_oklab,var(--ring)_18%,transparent)]',
+          error &&
+            'shadow-[inset_0_0_0_1.5px_var(--destructive)] focus-within:shadow-[inset_0_0_0_1.5px_var(--destructive),0_0_0_3px_color-mix(in_oklab,var(--destructive)_18%,transparent)]',
         )}
       >
         {startAdornment ? (
@@ -108,7 +92,7 @@ const Input = forwardRef<HTMLInputElement, Props>(function Input(
           onBlur={handleBlur}
           onChange={handleChange}
           className={cn(
-            'peer bg-transparent outline-none w-full placeholder-muted-foreground/70 py-2',
+            'peer bg-transparent outline-none w-full placeholder-[var(--muted-foreground)]/70 py-2 text-[var(--foreground)]',
             className ?? '',
           )}
           aria-invalid={!!error}
@@ -125,8 +109,8 @@ const Input = forwardRef<HTMLInputElement, Props>(function Input(
             className={cn(
               'absolute left-3 transition-all pointer-events-none select-none text-sm',
               floatingActive
-                ? '-translate-y-5 scale-90 px-1 bg-background text-xs text-muted-foreground'
-                : 'translate-y-0 scale-100 text-muted-foreground',
+                ? '-translate-y-5 scale-90 px-1 bg-[var(--background)] text-xs text-[var(--muted-foreground)]'
+                : 'translate-y-0 scale-100 text-[var(--muted-foreground)]',
               startAdornment ? 'left-8' : 'left-4',
               error ? 'text-destructive' : '',
             )}

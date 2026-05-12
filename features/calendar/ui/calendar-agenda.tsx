@@ -67,7 +67,7 @@ export default function CalendarAgenda({
       {[...grouped.entries()].map(([date, dayEvents]) => {
         return (
           <div key={date}>
-            <p className='text-xs font-medium text-muted-foreground mb-1'>
+            <p className='text-[length:var(--fs-xs)] font-medium text-[var(--muted-foreground)] mb-1'>
               {format(parseISO(date), 'EEE, d MMM')}
             </p>
             <div className='flex flex-col gap-1'>
@@ -78,7 +78,7 @@ export default function CalendarAgenda({
                 return (
                   <div
                     key={ev.id}
-                    className='px-3 py-2 rounded-md bg-muted text-sm text-foreground flex items-center gap-2'
+                    className='px-3 py-2 rounded-[var(--r-md)] bg-[var(--surface-2)] text-[length:var(--fs-sm)] text-[var(--foreground)] flex items-center gap-2'
                   >
                     <span className='truncate flex-1'>{ev.title}</span>
                     <BotPillIcon indicator={botIndicator} size={12} />

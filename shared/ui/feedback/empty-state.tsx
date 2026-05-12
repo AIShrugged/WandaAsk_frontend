@@ -22,15 +22,24 @@ export function EmptyState({
   return (
     <div
       role='status'
-      className='flex flex-col items-center justify-center gap-3 py-16 text-center'
+      className='flex flex-col items-center justify-center gap-[var(--sp-4)] py-16 text-center'
     >
-      <div className='flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary'>
+      <div
+        className='flex h-12 w-12 items-center justify-center rounded-full text-[var(--primary)]'
+        style={{
+          background: 'color-mix(in oklab, var(--primary) 12%, transparent)',
+        }}
+      >
         <Icon className='h-6 w-6' />
       </div>
       <div className='flex flex-col gap-1'>
-        <p className='text-sm font-medium text-foreground'>{title}</p>
+        <p className='text-[length:var(--fs-sm)] font-medium text-[var(--foreground)]'>
+          {title}
+        </p>
         {description && (
-          <p className='text-xs text-muted-foreground'>{description}</p>
+          <p className='text-[length:var(--fs-xs)] text-[var(--muted-foreground)]'>
+            {description}
+          </p>
         )}
       </div>
     </div>

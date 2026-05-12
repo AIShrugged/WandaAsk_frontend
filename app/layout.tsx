@@ -1,4 +1,3 @@
-import { Inter } from 'next/font/google';
 import { cookies } from 'next/headers';
 import { PublicEnvScript } from 'next-runtime-env';
 
@@ -8,15 +7,11 @@ import { APP_NAME } from '@/shared/lib/app-name';
 
 import './globals.css';
 
+import { instrumentSerif, inter, jetbrainsMono } from './fonts';
 import Providers from './Providers';
 
 import type { Metadata } from 'next';
 import type { PropsWithChildren } from 'react';
-
-const getFont = Inter({
-  variable: '--font-inter-sans',
-  subsets: ['latin'],
-});
 
 export const metadata: Metadata = {
   title: APP_NAME,
@@ -25,14 +20,20 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: PropsWithChildren) {
   const cookieStore = await cookies();
-  const theme = (cookieStore.get('wanda-theme')?.value ?? 'dark') as Theme;
+  const rawTheme = cookieStore.get('wanda-theme')?.value;
+  const theme: Theme =
+    rawTheme === 'light' || rawTheme === 'dark' ? rawTheme : 'dark';
 
   return (
-    <html lang='en' data-theme={theme}>
+    <html
+      lang='en'
+      data-theme={theme}
+      className={`${inter.variable} ${instrumentSerif.variable} ${jetbrainsMono.variable}`}
+    >
       <head>
         <PublicEnvScript />
       </head>
-      <body className={`${getFont.variable} antialiased`}>
+      <body className='antialiased'>
         <Providers>{children}</Providers>
       </body>
     </html>

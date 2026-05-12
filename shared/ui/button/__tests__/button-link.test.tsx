@@ -20,7 +20,8 @@ describe('ButtonLink', () => {
     render(<ButtonLink href='/'>Primary</ButtonLink>);
     const link = screen.getByRole('link');
 
-    expect(link.className).toContain('from-violet-500');
+    expect(link.className).toContain('bg-[var(--primary)]');
+    expect(link.className).toContain('text-[var(--primary-foreground)]');
   });
 
   it('applies secondary variant classes', () => {
@@ -31,7 +32,8 @@ describe('ButtonLink', () => {
     );
     const link = screen.getByRole('link');
 
-    expect(link.className).toContain('border-input');
+    expect(link.className).toContain('border');
+    expect(link.className).toContain('bg-[var(--background)]');
   });
 
   it('applies ghost-danger variant classes', () => {
@@ -54,16 +56,16 @@ describe('ButtonLink', () => {
     );
     const link = screen.getByRole('link');
 
-    expect(link.className).toContain('h-9');
-    expect(link.className).toContain('px-4');
+    expect(link.className).toContain('h-[30px]');
+    expect(link.className).toContain('px-3.5');
   });
 
   it('applies md size classes by default', () => {
     render(<ButtonLink href='/'>Default</ButtonLink>);
     const link = screen.getByRole('link');
 
-    expect(link.className).toContain('h-10');
-    expect(link.className).toContain('px-6');
+    expect(link.className).toContain('h-9');
+    expect(link.className).toContain('px-5');
   });
 
   it('sets target and rel for external links', () => {

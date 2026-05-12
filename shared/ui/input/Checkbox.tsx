@@ -1,8 +1,5 @@
 import React, { forwardRef, type ReactNode } from 'react';
 
-/**
- * CheckboxIcon component.
- */
 const CheckboxIcon = () => {
   return (
     <svg
@@ -11,6 +8,7 @@ const CheckboxIcon = () => {
       height='10'
       viewBox='0 0 12 10'
       fill='none'
+      aria-hidden='true'
     >
       <path d='M4 9.4L0 5.4L1.4 4L4 6.6L10.6 0L12 1.4L4 9.4Z' fill='white' />
     </svg>
@@ -42,37 +40,45 @@ const Checkbox = forwardRef<HTMLInputElement, Props>(function Checkbox(
   const isChecked = value;
   const baseBorder = error ? 'border-destructive' : 'border-border';
   const checkedStyles = isChecked
-    ? 'bg-primary border-primary text-primary-foreground'
-    : 'bg-background';
+    ? 'bg-[var(--primary)] border-[var(--primary)]'
+    : 'bg-[var(--background)]';
 
   return (
     <label
-      className={`flex items-center gap-2 cursor-pointer ${containerClassName || ''}`}
+      className={`flex items-center gap-2 cursor-pointer ${containerClassName ?? ''}`}
     >
-      <input
-        ref={ref}
-        id={id}
-        type='checkbox'
-        className={`
-        appearance-none
-        cursor-pointer
-        w-4.5 h-4.5 rounded-[4px]
-        border
-        ${baseBorder}
-        ${checkedStyles}
-        transition-colors relative
-        ${className || ''}
-      `}
-        onChange={onChange}
-        checked={!!value}
-        defaultValue={defaultValue}
-        {...rest}
-      />
-      {isChecked && (
-        <span className='absolute pointer-events-none flex items-center justify-center w-4.5 h-4.5'>
-          <CheckboxIcon />
-        </span>
-      )}
+      {/* Wrapper provides positioning context for the check icon overlay */}
+      <span className='relative inline-flex items-center justify-center flex-shrink-0'>
+        <input
+          ref={ref}
+          id={id}
+          type='checkbox'
+          className={`
+            appearance-none
+            cursor-pointer
+            w-4.5 h-4.5 rounded-[4px]
+            border
+            ${baseBorder}
+            ${checkedStyles}
+            transition-colors
+            focus-visible:outline-none
+            focus-visible:ring-2
+            focus-visible:ring-[var(--ring)]
+            focus-visible:ring-offset-2
+            focus-visible:ring-offset-[var(--background)]
+            ${className ?? ''}
+          `}
+          onChange={onChange}
+          checked={!!value}
+          defaultValue={defaultValue}
+          {...rest}
+        />
+        {isChecked && (
+          <span className='absolute pointer-events-none flex items-center justify-center'>
+            <CheckboxIcon />
+          </span>
+        )}
+      </span>
 
       {label && <span>{label}</span>}
       {labelExtra}

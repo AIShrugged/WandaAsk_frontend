@@ -27,7 +27,7 @@ const VALID_STATUSES = new Set([
   'review',
   'reopen',
 ]);
-const BORDER_COLOR = 'hsl(var(--border))';
+const BORDER_COLOR = 'var(--color-border)';
 
 function isValidStatus(s: string | null): s is IssueStatus {
   return VALID_STATUSES.has(s ?? '');
@@ -45,8 +45,10 @@ function CpmCell({ label, value, sub, highlight }: CpmCellProps) {
     <div
       className='rounded-lg p-2.5 border'
       style={{
-        background: 'hsl(var(--muted))',
-        borderColor: highlight ? 'hsl(var(--destructive) / 0.3)' : BORDER_COLOR,
+        background: 'var(--color-muted)',
+        borderColor: highlight
+          ? 'color-mix(in srgb, var(--color-destructive) 30%, transparent)'
+          : BORDER_COLOR,
       }}
     >
       <p className='text-[10px] text-muted-foreground mb-0.5'>{label}</p>
@@ -54,8 +56,8 @@ function CpmCell({ label, value, sub, highlight }: CpmCellProps) {
         className='text-lg font-bold leading-none'
         style={{
           color: highlight
-            ? 'hsl(var(--destructive))'
-            : 'hsl(var(--foreground))',
+            ? 'var(--color-destructive)'
+            : 'var(--color-foreground)',
         }}
       >
         {value ?? '—'}
@@ -79,20 +81,20 @@ function DepItem({
       className='flex items-center gap-2 w-full rounded-md px-2.5 py-1.5 text-left text-xs border transition-colors hover:bg-muted/30'
       style={{
         borderColor: node.is_critical
-          ? 'hsl(var(--destructive) / 0.25)'
+          ? 'color-mix(in srgb, var(--color-destructive) 25%, transparent)'
           : BORDER_COLOR,
-        background: 'hsl(var(--muted))',
+        background: 'var(--color-muted)',
         color: node.is_critical
-          ? 'hsl(var(--destructive))'
-          : 'hsl(var(--muted-foreground))',
+          ? 'var(--color-destructive)'
+          : 'var(--color-muted-foreground)',
       }}
     >
       <span
         className='w-1.5 h-1.5 rounded-full shrink-0'
         style={{
           background: node.is_critical
-            ? 'hsl(var(--destructive))'
-            : 'hsl(var(--muted-foreground))',
+            ? 'var(--color-destructive)'
+            : 'var(--color-muted-foreground)',
         }}
       />
       <span className='flex-1 truncate'>
@@ -144,7 +146,7 @@ export function CriticalPathNodeDetail({
       className='flex flex-col border-l overflow-y-auto shrink-0'
       style={{
         width: 280,
-        background: 'hsl(var(--background))',
+        background: 'var(--color-background)',
         borderColor: BORDER_COLOR,
       }}
     >

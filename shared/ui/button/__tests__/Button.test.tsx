@@ -93,15 +93,15 @@ describe('Button', () => {
     render(<Button size={BUTTON_SIZE.sm}>Small</Button>);
     const btn = screen.getByRole('button');
 
-    expect(btn.className).toContain('h-9');
-    expect(btn.className).toContain('px-4');
+    expect(btn.className).toContain('h-[30px]');
+    expect(btn.className).toContain('px-3.5');
   });
 
   it('applies md size classes by default', () => {
     render(<Button>Default</Button>);
     const btn = screen.getByRole('button');
 
-    expect(btn.className).toContain('h-10');
-    expect(btn.className).toContain('px-6');
+    expect(btn.className).toContain('h-9');
+    expect(btn.className).toContain('px-5');
   });
 });

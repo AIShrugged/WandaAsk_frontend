@@ -97,8 +97,8 @@ const Event = ({ event, onFutureEventClick }: EventComponentProps) => {
         className={clsx(
           'flex flex-row items-center gap-2 rounded-full p-[6px] transition-colors cursor-pointer select-none',
           isPast
-            ? 'bg-muted text-muted-foreground'
-            : 'bg-primary text-primary-foreground',
+            ? 'bg-[var(--surface-3)] text-[var(--muted-foreground)]'
+            : 'bg-[var(--primary)] text-[var(--primary-foreground)]',
         )}
       >
         <div className='flex flex-row items-center gap-2 flex-shrink-0'>
@@ -114,7 +114,7 @@ const Event = ({ event, onFutureEventClick }: EventComponentProps) => {
           )}
           {/* eslint-enable no-nested-ternary, sonarjs/no-nested-conditional */}
           {isPast && (
-            <p className='text-xs text-muted-foreground line-through whitespace-nowrap'>
+            <p className='text-[length:var(--fs-xs)] text-[var(--muted-foreground)] line-through whitespace-nowrap'>
               {formatDate(event.starts_at)}
             </p>
           )}
@@ -127,13 +127,13 @@ const Event = ({ event, onFutureEventClick }: EventComponentProps) => {
       <div
         className={clsx(
           'pointer-events-none absolute z-50 left-0 top-full mt-1',
-          'w-56 rounded-xl border border-border bg-card shadow-lg',
+          'w-56 rounded-[var(--r-xl)] bg-[var(--card)] shadow-[inset_0_0_0_1px_var(--border),var(--shadow-lg)]',
           'opacity-0 group-hover:opacity-100 transition-opacity duration-150',
         )}
       >
         {/* Title */}
-        <div className='px-3 pt-3 pb-2 border-b border-border/60'>
-          <p className='text-xs font-semibold text-foreground leading-snug'>
+        <div className='px-3 pt-3 pb-2 border-b border-[var(--border)]'>
+          <p className='text-[length:var(--fs-xs)] font-semibold text-[var(--foreground)] leading-snug'>
             {event.title}
           </p>
         </div>

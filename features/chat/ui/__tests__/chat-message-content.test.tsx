@@ -53,9 +53,11 @@ describe('ChatMessageContent', () => {
     expect(container.querySelector('#injected')).toBeInTheDocument();
   });
 
-  it('re-executes script tags inside HTML content', () => {
+  it('does not re-execute script tags inside HTML content (XSS fix)', () => {
+    // Script re-execution was removed as a P0 security fix.
+    // DOMPurify strips <script> tags; no new script elements should be created
+    // by ChatMessageContent as a side-effect of rendering AI HTML.
     const executed: string[] = [];
-    // Capture document.createElement calls to detect script creation
     const originalCreate = document.createElement.bind(document);
     const createSpy = jest
       .spyOn(document, 'createElement')
@@ -71,7 +73,7 @@ describe('ChatMessageContent', () => {
       <ChatMessageContent content='<script>var x=1;</script><p>text</p>' />,
     );
 
-    expect(executed).toContain('script');
+    expect(executed).not.toContain('script');
     createSpy.mockRestore();
   });
 });

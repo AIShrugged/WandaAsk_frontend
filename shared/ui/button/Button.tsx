@@ -25,11 +25,15 @@ interface Props
 const Loader = ({ text }: { text: string }) => {
   return (
     <div className='flex items-center justify-center gap-2'>
-      <div className='animate-spin rounded-full h-5 w-5 border-2 border-primary-foreground border-t-transparent' />
+      <div className='animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent' />
       <p>{text}</p>
     </div>
   );
 };
+
+// Focus ring applied to all variants via base class
+const focusRing =
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]';
 
 export function Button({
   loadingText = 'Please wait',
@@ -58,49 +62,57 @@ export function Button({
 
   const base = clsx(
     'relative rounded-[var(--radius-button)] font-medium text-sm transition-all duration-200 flex items-center gap-2',
+    focusRing,
     fullWidth ? 'w-full' : 'w-auto',
     justifyClass[justify],
   );
 
   const sizes = {
-    [BUTTON_SIZE.xs]: 'h-7 px-2.5 py-1 text-xs',
-    [BUTTON_SIZE.sm]: 'h-9 px-4 py-1.5',
-    [BUTTON_SIZE.md]: 'h-10 px-6 py-2',
+    [BUTTON_SIZE.xs]: 'h-6 px-2.5 py-1 text-xs',
+    [BUTTON_SIZE.sm]: 'h-[30px] px-3.5 py-1',
+    [BUTTON_SIZE.md]: 'h-9 px-5 py-2',
+    [BUTTON_SIZE.lg]: 'h-[42px] px-6 py-2.5 text-base',
   };
 
   const variants = {
     [BUTTON_VARIANT.primary]: clsx(
-      'bg-gradient-to-b from-violet-500 to-violet-700 text-primary-foreground cursor-pointer',
-      'border border-violet-400/20 border-t-violet-300/30',
-      'shadow-[0_2px_12px_rgba(124,58,237,0.25)]',
-      'hover:from-violet-400 hover:to-violet-600 hover:shadow-[0_4px_20px_rgba(124,58,237,0.5)]',
-      'active:from-violet-600 active:to-violet-800 active:shadow-[0_1px_8px_rgba(124,58,237,0.3)]',
+      'bg-[var(--primary)] text-[var(--primary-foreground)] cursor-pointer',
+      'shadow-[inset_0_0_0_1px_oklch(54%_0.200_271),inset_0_-2px_0_oklch(36%_0.180_268)]',
+      'hover:bg-[var(--primary-hover)]',
+      'active:translate-y-px active:shadow-[inset_0_0_0_1px_oklch(54%_0.200_271)]',
       disabledClass,
       loadingClass,
     ),
     [BUTTON_VARIANT.secondary]: clsx(
-      'border border-input bg-background text-foreground cursor-pointer hover:bg-accent hover:text-accent-foreground active:bg-accent/80',
+      'border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] cursor-pointer',
+      'hover:bg-[var(--secondary)] hover:text-[var(--foreground)]',
+      'active:bg-[var(--secondary)]',
       disabledClass,
       loadingClass,
     ),
     [BUTTON_VARIANT.danger]: clsx(
-      'bg-destructive text-destructive-foreground cursor-pointer hover:bg-destructive/90 active:bg-destructive/80',
+      'bg-destructive text-destructive-foreground cursor-pointer',
+      'hover:bg-destructive/90 active:bg-destructive/80',
       disabledClass,
       loadingClass,
     ),
     [BUTTON_VARIANT.ghostDanger]: clsx(
-      'border border-destructive/50 bg-background text-destructive cursor-pointer hover:bg-destructive hover:text-destructive-foreground active:bg-destructive/90',
+      'border border-destructive/50 bg-transparent text-destructive cursor-pointer',
+      'hover:bg-[var(--danger-bg)] hover:border-destructive',
+      'active:bg-destructive/10',
       disabledClass,
       loadingClass,
     ),
     [BUTTON_VARIANT.ghost]: clsx(
-      'bg-transparent text-foreground cursor-pointer hover:bg-accent hover:text-accent-foreground active:bg-accent/80',
+      'bg-transparent text-[var(--foreground)] cursor-pointer',
+      'hover:bg-[var(--secondary)]',
+      'active:bg-[var(--secondary)]',
       disabledClass,
       loadingClass,
     ),
     [BUTTON_VARIANT.pill]: clsx(
-      'rounded-full border border-border bg-background text-muted-foreground cursor-pointer',
-      'hover:border-primary/40 hover:text-foreground',
+      'rounded-full border border-[var(--border)] bg-[var(--background)] text-[var(--muted-foreground)] cursor-pointer',
+      'hover:border-[var(--primary)] hover:text-[var(--foreground)]',
       disabledClass,
       loadingClass,
     ),

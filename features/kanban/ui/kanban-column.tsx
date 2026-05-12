@@ -24,10 +24,10 @@ export const KanbanColumn = memo(function KanbanColumn({
   return (
     <div
       className={[
-        'flex flex-col w-[calc(25%-9px)] min-w-[200px] shrink-0 rounded-xl border transition-colors self-start',
+        'flex flex-col w-[280px] shrink-0 rounded-[var(--r-xl)] border transition-colors self-start',
         isDragOver
-          ? 'border-primary/40 bg-primary/5'
-          : 'border-border bg-card/50',
+          ? 'border-[var(--primary)] bg-[color-mix(in_oklab,var(--primary)_6%,transparent)]'
+          : 'border-[var(--border)] bg-[var(--surface-2)]',
       ].join(' ')}
       onDragOver={(event) => {
         event.preventDefault();
@@ -48,17 +48,17 @@ export const KanbanColumn = memo(function KanbanColumn({
         }
       }}
     >
-      <div className='flex items-center justify-between px-3 py-2.5 border-b border-border/60'>
+      <div className='flex items-center justify-between px-[var(--sp-4)] py-[var(--sp-3)] border-b border-[var(--border)]'>
         <div className='flex items-center gap-2'>
           <span
             className='w-2 h-2 rounded-full flex-shrink-0'
             style={{ backgroundColor: color }}
           />
-          <span className='text-xs font-semibold uppercase tracking-wider text-muted-foreground'>
+          <span className='text-[length:var(--fs-xs)] font-semibold uppercase tracking-[0.04em] text-[var(--muted-foreground)]'>
             {label}
           </span>
         </div>
-        <span className='text-xs font-medium text-muted-foreground bg-secondary rounded-full px-2 py-0.5'>
+        <span className='text-[length:var(--fs-xs)] font-medium text-[var(--muted-foreground)] bg-[var(--secondary)] rounded-full px-2 py-0.5'>
           {cards.length}
         </span>
       </div>

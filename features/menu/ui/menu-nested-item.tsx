@@ -10,12 +10,6 @@ import { ICONS_MAP } from '@/features/menu/lib/options';
 
 import type { MenuProps } from '@/features/menu/model/types';
 
-/**
- * NestedMenuItem component.
- * @param root0
- * @param root0.item
- * @param root0.level
- */
 export function NestedMenuItem({
   item,
   level,
@@ -31,41 +25,38 @@ export function NestedMenuItem({
     return pathname === href || pathname.startsWith(`${href}/`);
   });
   const [isOpen, setIsOpen] = useState(isActive);
-  /**
-   * handleToggle.
-   */
+
   const handleToggle = () => {
-    if (hasChildren) {
-      setIsOpen(!isOpen);
-    }
+    if (hasChildren) setIsOpen(!isOpen);
   };
+
   const Icon = item.icon ? ICONS_MAP[item.icon] : null;
+
   const Content = (
     <div
-      className={`
-        flex items-center gap-3 px-4 py-2 min-h-[36px] rounded-md cursor-pointer
-        transition-all duration-200
-        ${
-          isActive
-            ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-            : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground'
-        }
-      `}
+      className={[
+        'flex items-center gap-3 px-4 py-1.5 min-h-[36px] rounded-[var(--r-md)] cursor-pointer',
+        'transition-all duration-200 text-sm font-medium',
+        // TRIBES nav-item active: inset border, not filled background
+        isActive
+          ? 'text-[var(--sidebar-accent-foreground)] shadow-[inset_0_0_0_1px_var(--sidebar-border)] bg-[var(--sidebar-accent)]'
+          : 'text-[var(--sidebar-foreground)] hover:bg-[var(--sidebar-accent)]/40 hover:text-[var(--sidebar-accent-foreground)]',
+      ].join(' ')}
       style={{ paddingLeft: `${level * 16 + 16}px` }}
       onClick={handleToggle}
     >
       {Icon && (
         <Icon
-          className={`w-4 h-4 ${isActive ? 'text-primary' : 'text-muted-foreground'}`}
+          className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-[var(--primary)]' : 'text-[var(--muted-foreground)]'}`}
         />
       )}
-      <span className='flex-1 text-sm font-medium'>{item.label}</span>
+      <span className='flex-1 truncate'>{item.label}</span>
       {hasChildren && (
         <motion.div
           animate={{ rotate: isOpen ? 90 : 0 }}
           transition={{ duration: 0.2 }}
         >
-          <ChevronRight className='w-4 h-4 text-muted-foreground' />
+          <ChevronRight className='w-4 h-4 text-[var(--muted-foreground)] flex-shrink-0' />
         </motion.div>
       )}
     </div>

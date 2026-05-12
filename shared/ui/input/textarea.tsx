@@ -84,9 +84,12 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       <div className={cn('relative flex flex-col w-full', containerClassName)}>
         <div
           className={cn(
-            'relative w-full rounded-[var(--radius-button)] border border-input bg-background pl-4 px-1.5 py-3',
-            'transition-colors focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/30',
-            error ? 'border-destructive' : '',
+            'relative w-full rounded-[var(--radius-button)] bg-[var(--background)] pl-4 px-1.5 py-3',
+            'transition-shadow',
+            !error &&
+              'shadow-[inset_0_0_0_1px_var(--border)] focus-within:shadow-[inset_0_0_0_1.5px_var(--primary),0_0_0_3px_color-mix(in_oklab,var(--ring)_18%,transparent)]',
+            error &&
+              'shadow-[inset_0_0_0_1.5px_var(--destructive)] focus-within:shadow-[inset_0_0_0_1.5px_var(--destructive),0_0_0_3px_color-mix(in_oklab,var(--destructive)_18%,transparent)]',
           )}
           style={height ? { height } : undefined}
         >
@@ -119,8 +122,8 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
               className={cn(
                 'absolute left-4 top-2.5 origin-left pointer-events-none select-none transition-all duration-200 text-sm',
                 floatingActive
-                  ? '-translate-y-7 scale-90 bg-background px-1 text-xs text-muted-foreground'
-                  : 'translate-y-0 scale-100 text-muted-foreground',
+                  ? '-translate-y-7 scale-90 bg-[var(--background)] px-1 text-xs text-[var(--muted-foreground)]'
+                  : 'translate-y-0 scale-100 text-[var(--muted-foreground)]',
                 error && 'text-destructive',
               )}
               style={{ zIndex: 10 }}

@@ -118,14 +118,14 @@ export function DataTable<T>({
               {caption}
             </caption>
 
-            <thead className='bg-accent/30 text-left text-muted-foreground'>
+            <thead className='bg-[var(--surface-2)] text-left text-[var(--muted-foreground)]'>
               <tr>
                 {columns.map((col) => {
                   return (
                     <th
                       key={col.id}
                       scope='col'
-                      className='px-4 py-3 font-medium'
+                      className='px-[var(--sp-5)] py-[var(--sp-4)] text-[length:var(--fs-xs)] font-medium uppercase tracking-[0.04em]'
                     >
                       {col.header}
                     </th>
@@ -141,8 +141,9 @@ export function DataTable<T>({
                     key={keyExtractor(row)}
                     aria-rowindex={rowIndex + 1}
                     className={clsx(
-                      'border-b border-border/60 align-top text-foreground',
-                      onRowClick && 'cursor-pointer hover:bg-accent/10',
+                      'border-b border-[var(--border)] align-top text-[var(--foreground)]',
+                      onRowClick &&
+                        'cursor-pointer hover:bg-[var(--surface-2)]',
                       getRowClassName?.(row),
                     )}
                     onClick={
@@ -167,7 +168,10 @@ export function DataTable<T>({
                       return (
                         <td
                           key={col.id}
-                          className={clsx('px-4 py-3', col.cellClassName)}
+                          className={clsx(
+                            'px-[var(--sp-5)] py-[var(--sp-4)]',
+                            col.cellClassName,
+                          )}
                         >
                           {col.renderCell(row)}
                         </td>

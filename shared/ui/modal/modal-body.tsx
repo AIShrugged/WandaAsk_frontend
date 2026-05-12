@@ -1,12 +1,7 @@
 import type { PropsWithChildren } from 'react';
 
-/**
- * ModalBody component.
- * @param props - Component props.
- * @param props.children
- */
 export default function ModalBody({ children }: PropsWithChildren) {
   if (!children) return null;
 
-  return <div className={'px-7 py-4.5'}>{children}</div>;
+  return <div className='px-[var(--sp-6)] py-[var(--sp-5)]'>{children}</div>;
 }

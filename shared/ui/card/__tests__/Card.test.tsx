@@ -16,7 +16,17 @@ describe('Card', () => {
     const { container } = render(<Card>Content</Card>);
     const div = container.firstChild as HTMLElement;
 
-    expect(div).toHaveClass('bg-card', 'border', 'border-border');
+    expect(div).toHaveClass('bg-card');
+  });
+
+  it('applies elevated variant', () => {
+    const { container } = render(<Card variant='elevated'>Content</Card>);
+    expect(container.firstChild).toHaveClass('bg-card');
+  });
+
+  it('applies flush variant with explicit border', () => {
+    const { container } = render(<Card variant='flush'>Content</Card>);
+    expect(container.firstChild).toHaveClass('border', 'border-border');
   });
 
   it('merges custom className', () => {

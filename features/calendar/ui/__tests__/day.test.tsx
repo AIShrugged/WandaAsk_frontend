@@ -12,13 +12,13 @@ describe('Day', () => {
     render(<Day currentDay={new Date()} />);
     const el = screen.getByText(new Date().getDate().toString());
 
-    expect(el).toHaveClass('bg-primary');
+    expect(el).toHaveClass('bg-[var(--primary)]');
   });
 
   it('does not apply primary background for non-today', () => {
     render(<Day currentDay={new Date(2000, 0, 1)} />);
     const el = screen.getByText('1');
 
-    expect(el).not.toHaveClass('bg-primary');
+    expect(el).not.toHaveClass('bg-[var(--primary)]');
   });
 });

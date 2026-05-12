@@ -1,32 +1,34 @@
-// Chart theme constants — synchronized with app/globals.css dark theme
-// ⚠️ Change only together with CSS variable values in globals.css
+// Chart theme constants — resolved from CSS custom properties at render time.
+// Using var() references ensures correct rendering in both light and dark themes
+// and remains valid after the TRIBES OKLCH token migration (Phase 1).
+// ⚠️ Token names must stay in sync with the @theme inline block in globals.css.
 
-// Tooltip with dark theme background (was: white — visual bug on dark bg)
+// Tooltip background and text follow the card/surface theme
 export const CHART_TOOLTIP_STYLE = {
-  background: 'hsl(240 30% 7%)',
-  border: '1px solid hsl(240 15% 16%)',
+  background: 'var(--color-card)',
+  border: '1px solid var(--color-border)',
   borderRadius: '6px',
   fontSize: 12,
-  color: 'hsl(220 20% 93%)',
+  color: 'var(--color-foreground)',
 } as const;
 
 // Axis tick labels
 export const CHART_TICK_STYLE = {
   fontSize: 11,
-  fill: 'hsl(240 8% 56%)',
+  fill: 'var(--color-muted-foreground)',
 } as const;
 
 // Cartesian grid lines
-export const CHART_GRID_COLOR = 'hsl(240 15% 16%)';
+export const CHART_GRID_COLOR = 'var(--color-border)';
 
-// Hover cursor overlay for BarChart (was: white flash on dark bg)
+// Hover cursor overlay for BarChart
 export const CHART_CURSOR_BAR = {
-  fill: 'hsl(240 20% 13%)',
+  fill: 'var(--color-muted)',
   opacity: 0.6,
 } as const;
 
 // Hover cursor for LineChart
 export const CHART_CURSOR_LINE = {
-  stroke: 'hsl(240 15% 16%)',
+  stroke: 'var(--color-border)',
   strokeWidth: 1,
 } as const;

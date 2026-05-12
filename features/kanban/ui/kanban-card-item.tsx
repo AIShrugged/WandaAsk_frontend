@@ -33,8 +33,8 @@ export const KanbanCardItem = memo(function KanbanCardItem({
         event.dataTransfer.setData('sourceStatus', card.status);
       }}
       className={[
-        'group rounded-lg border bg-card p-3 cursor-grab active:cursor-grabbing transition-all',
-        'border-border hover:border-primary/30 hover:shadow-[0_0_12px_rgba(124,58,237,0.12)]',
+        'group rounded-[var(--r-lg)] bg-[var(--card)] p-[var(--sp-4)] cursor-grab active:cursor-grabbing transition-all',
+        'shadow-[inset_0_0_0_1px_var(--border)] hover:shadow-[inset_0_0_0_1px_var(--border),var(--shadow-sm)]',
         isMoving ? 'opacity-60 pointer-events-none' : '',
       ].join(' ')}
     >

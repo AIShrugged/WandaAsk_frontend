@@ -25,8 +25,8 @@ interface Props {
   className?: string;
   /**
    * Visual variant:
-   * - 'underline' (default): bottom border active indicator
-   * - 'segmented': pill/button group style for in-page detail views
+   * - 'underline' (default): pseudo-element active indicator, no layout shift
+   * - 'segmented': pill/button group inside a surface-3 container
    */
   variant?: 'underline' | 'segmented';
 }
@@ -43,12 +43,16 @@ export function PageTabsNav({
 
   if (variant === 'segmented') {
     return (
+      // Surface-3 pill container — TRIBES segmented tab pattern
       <div
-        className={['flex overflow-x-auto', className]
+        className={[
+          'inline-flex rounded-[var(--r-lg)] bg-[var(--surface-3)] p-[3px] gap-0.5',
+          className,
+        ]
           .filter(Boolean)
           .join(' ')}
       >
-        {tabs.map((tab, index) => {
+        {tabs.map((tab) => {
           const isActive =
             tab.match === 'exact'
               ? pathname === tab.href
@@ -62,15 +66,11 @@ export function PageTabsNav({
               href={href}
               scroll={false}
               className={[
-                'flex-shrink-0 border border-border px-3 py-1.5 text-sm transition-all',
+                'flex-shrink-0 rounded-[calc(var(--r-lg)-3px)] px-3 py-1.5 text-sm font-medium transition-all',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]',
                 isActive
-                  ? 'bg-primary border-primary text-primary-foreground'
-                  : 'bg-background text-foreground hover:bg-accent',
-                index === 0 ? 'rounded-l-[var(--radius-button)]' : '',
-                index === tabs.length - 1
-                  ? 'rounded-r-[var(--radius-button)]'
-                  : '',
-                index > 0 ? '-ml-px' : '',
+                  ? 'bg-[var(--surface)] text-[var(--foreground)] shadow-[var(--shadow-xs)]'
+                  : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)]',
               ]
                 .filter(Boolean)
                 .join(' ')}
@@ -83,9 +83,11 @@ export function PageTabsNav({
     );
   }
 
+  // Underline variant: bottom border on container, active tab uses absolute
+  // pseudo-element indicator — zero layout shift vs border-b-2 on the link.
   return (
     <div
-      className={['flex gap-1 border-b border-border', className]
+      className={['flex gap-1 border-b border-[var(--divider)]', className]
         .filter(Boolean)
         .join(' ')}
     >
@@ -103,10 +105,12 @@ export function PageTabsNav({
             href={href}
             scroll={false}
             className={[
-              'cursor-pointer px-4 py-2 text-sm font-medium transition-colors',
+              'relative cursor-pointer px-4 py-2 text-sm font-medium transition-colors',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:rounded-[var(--r-sm)]',
+              // Active indicator: absolute 2px bar at the bottom via after:
               isActive
-                ? 'border-b-2 border-primary text-primary'
-                : 'text-muted-foreground hover:text-foreground',
+                ? 'text-[var(--primary)] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:rounded-full after:bg-[var(--primary)]'
+                : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)]',
             ].join(' ')}
           >
             {tab.label}

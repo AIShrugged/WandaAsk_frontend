@@ -492,7 +492,7 @@ export function IssuesPage({
                 <col className='w-[240px]' />
                 <col className='w-[150px]' />
               </colgroup>
-              <thead className='bg-accent/30 text-left text-muted-foreground'>
+              <thead className='bg-[var(--surface-2)] text-left text-muted-foreground'>
                 <tr>
                   <th className='p-2'>
                     <SortableHeader

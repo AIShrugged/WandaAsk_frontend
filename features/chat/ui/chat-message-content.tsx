@@ -1,5 +1,6 @@
 'use client';
 
+import DOMPurify from 'isomorphic-dompurify';
 import { useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -102,8 +103,10 @@ export function ChatMessageContent({ content }: ChatMessageContentProps) {
 
 /**
  * HtmlContent component.
+ * Sanitizes AI-generated HTML with DOMPurify before injection to prevent XSS.
+ * Script tags are intentionally stripped — AI HTML output must not execute code.
  * @param props - Component props.
- * @param props.content - Raw HTML string to inject and execute.
+ * @param props.content - Raw HTML string from AI to sanitize and render.
  * @returns Result.
  */
 function HtmlContent({ content }: { content: string }) {
@@ -112,20 +115,7 @@ function HtmlContent({ content }: { content: string }) {
   useEffect(() => {
     if (!ref.current) return;
 
-    ref.current.innerHTML = content;
-
-    // Re-execute script tags: innerHTML-injected scripts don't execute automatically
-    const scripts = ref.current.querySelectorAll('script');
-
-    for (const oldScript of scripts) {
-      const newScript = document.createElement('script');
-
-      for (const attr of oldScript.attributes) {
-        newScript.setAttribute(attr.name, attr.value);
-      }
-      newScript.textContent = oldScript.textContent;
-      oldScript.parentNode?.replaceChild(newScript, oldScript);
-    }
+    ref.current.innerHTML = DOMPurify.sanitize(content, { FORCE_BODY: true });
   }, [content]);
 
   return <div ref={ref} className='chat-html-content' />;

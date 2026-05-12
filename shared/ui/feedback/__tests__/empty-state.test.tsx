@@ -41,6 +41,6 @@ describe('EmptyState', () => {
     render(<EmptyState icon={Users} title='No items' />);
     const title = screen.getByText('No items');
 
-    expect(title).toHaveClass('text-foreground');
+    expect(title).toHaveClass('text-[var(--foreground)]');
   });
 });

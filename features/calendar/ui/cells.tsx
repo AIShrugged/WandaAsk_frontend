@@ -60,7 +60,7 @@ export default function Cells({
 
   return (
     <div
-      className='grid grid-cols-7 border-t border-l border-border h-full'
+      className='grid grid-cols-7 border-t border-l border-[var(--border)] h-full'
       style={{ gridTemplateRows: `repeat(${weeksCount}, 1fr)` }}
     >
       {Array.from({ length: totalDays }, (_, i) => {
@@ -72,10 +72,10 @@ export default function Cells({
         return (
           <div
             key={dateKey}
-            className={`relative border border-border flex flex-col h-full px-1 ${
+            className={`relative border border-[var(--border)] flex flex-col h-full px-1 ${
               isCurrentMonth
-                ? 'bg-background'
-                : 'bg-muted text-muted-foreground'
+                ? 'bg-[var(--background)]'
+                : 'bg-[var(--surface-2)] text-[var(--muted-foreground)]'
             }`}
           >
             <Day currentDay={day} />

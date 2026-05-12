@@ -10,13 +10,13 @@ const COL_GAP = 110;
 const ROW_GAP = 24;
 
 const STATUS_COLOR: Record<string, string> = {
-  done: 'hsl(var(--accent))',
-  in_progress: 'hsl(var(--primary))',
-  open: 'hsl(var(--primary) / 0.7)',
+  done: 'var(--color-accent)',
+  in_progress: 'var(--color-primary)',
+  open: 'color-mix(in srgb, var(--color-primary) 70%, transparent)',
 };
 
 function getStatusColor(status: string | null) {
-  return STATUS_COLOR[status ?? ''] ?? 'hsl(var(--muted-foreground))';
+  return STATUS_COLOR[status ?? ''] ?? 'var(--color-muted-foreground)';
 }
 
 function computeLevels(nodes: CriticalPathNode[], edges: CriticalPathEdge[]) {
@@ -274,7 +274,7 @@ export function CriticalPathGraph({
       className='relative flex-1 overflow-hidden'
       style={{
         background:
-          'radial-gradient(ellipse at 50% 40%, hsl(var(--muted)) 0%, hsl(var(--background)) 70%)',
+          'radial-gradient(ellipse at 50% 40%, var(--color-muted) 0%, var(--color-background) 70%)',
         cursor: 'grab',
       }}
       onMouseDown={onMouseDown}
@@ -318,7 +318,7 @@ export function CriticalPathGraph({
             refY='3'
             orient='auto'
           >
-            <path d='M0,0 L0,6 L8,3 z' fill='hsl(var(--border))' />
+            <path d='M0,0 L0,6 L8,3 z' fill='var(--color-border)' />
           </marker>
           <marker
             id='cpm-arrow-critical'
@@ -328,7 +328,7 @@ export function CriticalPathGraph({
             refY='3'
             orient='auto'
           >
-            <path d='M0,0 L0,6 L8,3 z' fill='hsl(var(--destructive))' />
+            <path d='M0,0 L0,6 L8,3 z' fill='var(--color-destructive)' />
           </marker>
           <marker
             id='cpm-arrow-selected'
@@ -338,7 +338,7 @@ export function CriticalPathGraph({
             refY='3'
             orient='auto'
           >
-            <path d='M0,0 L0,6 L8,3 z' fill='hsl(var(--primary))' />
+            <path d='M0,0 L0,6 L8,3 z' fill='var(--color-primary)' />
           </marker>
           <pattern
             id='cpm-dots'
@@ -352,7 +352,7 @@ export function CriticalPathGraph({
               cx='1'
               cy='1'
               r='1'
-              fill='hsl(var(--border))'
+              fill='var(--color-border)'
               opacity='0.5'
             />
           </pattern>
@@ -382,7 +382,7 @@ export function CriticalPathGraph({
                 <g key={key}>
                   <path
                     d={d}
-                    stroke='hsl(var(--destructive))'
+                    stroke='var(--color-destructive)'
                     strokeWidth='3'
                     fill='none'
                     opacity='0.25'
@@ -390,7 +390,7 @@ export function CriticalPathGraph({
                   />
                   <path
                     d={d}
-                    stroke='hsl(var(--destructive))'
+                    stroke='var(--color-destructive)'
                     strokeWidth='2'
                     fill='none'
                     opacity='0.9'
@@ -405,7 +405,7 @@ export function CriticalPathGraph({
                 <path
                   key={key}
                   d={d}
-                  stroke='hsl(var(--primary))'
+                  stroke='var(--color-primary)'
                   strokeWidth='1.5'
                   fill='none'
                   strokeDasharray='4 3'
@@ -419,7 +419,7 @@ export function CriticalPathGraph({
               <path
                 key={key}
                 d={d}
-                stroke='hsl(var(--border))'
+                stroke='var(--color-border)'
                 strokeWidth='1.5'
                 fill='none'
                 opacity='0.7'
@@ -439,13 +439,15 @@ export function CriticalPathGraph({
               !isCritical &&
               !selectedPredecessors.has(node.node_id);
             const sc = getStatusColor(node.status);
-            let borderColor = 'hsl(var(--border))';
-            if (isCritical) borderColor = 'hsl(var(--destructive))';
-            if (isSelected) borderColor = 'hsl(var(--primary))';
+            let borderColor = 'var(--color-border)';
+            if (isCritical) borderColor = 'var(--color-destructive)';
+            if (isSelected) borderColor = 'var(--color-primary)';
 
-            let bgColor = 'hsl(var(--card))';
-            if (isCritical) bgColor = 'hsl(var(--destructive) / 0.15)';
-            if (isSelected) bgColor = 'hsl(var(--secondary))';
+            let bgColor = 'var(--color-card)';
+            if (isCritical)
+              bgColor =
+                'color-mix(in srgb, var(--color-destructive) 15%, transparent)';
+            if (isSelected) bgColor = 'var(--color-secondary)';
             const slack = node.slack ?? 0;
             const name = node.issue_name ?? `Issue #${node.issue_id}`;
             const truncatedName =
@@ -472,8 +474,8 @@ export function CriticalPathGraph({
                     width={NODE_W + 4}
                     height={NODE_H + 4}
                     rx='11'
-                    fill='hsl(var(--destructive) / 0.06)'
-                    stroke='hsl(var(--destructive) / 0.15)'
+                    fill='color-mix(in srgb, var(--color-destructive) 6%, transparent)'
+                    stroke='color-mix(in srgb, var(--color-destructive) 15%, transparent)'
                     strokeWidth='1'
                     filter='url(#cpm-glow-node)'
                   />
@@ -504,8 +506,8 @@ export function CriticalPathGraph({
                   fontWeight='700'
                   fill={
                     isCritical
-                      ? 'hsl(var(--destructive))'
-                      : 'hsl(var(--muted-foreground))'
+                      ? 'var(--color-destructive)'
+                      : 'var(--color-muted-foreground)'
                   }
                   letterSpacing='0.06em'
                   style={{ textTransform: 'uppercase' }}
@@ -517,7 +519,7 @@ export function CriticalPathGraph({
                   y={pos.y + 36}
                   fontSize='12'
                   fontWeight='600'
-                  fill='hsl(var(--foreground))'
+                  fill='var(--color-foreground)'
                 >
                   {truncatedName}
                 </text>
@@ -525,7 +527,7 @@ export function CriticalPathGraph({
                   x={pos.x + 14}
                   y={pos.y + 53}
                   fontSize='10'
-                  fill='hsl(var(--muted-foreground))'
+                  fill='var(--color-muted-foreground)'
                 >
                   {`${node.duration_days}d  ·  ES:${node.early_start ?? '?'}  EF:${node.early_finish ?? '?'}`}
                 </text>
@@ -554,13 +556,13 @@ export function CriticalPathGraph({
                   rx='4'
                   fill={
                     slack === 0
-                      ? 'hsl(var(--destructive) / 0.12)'
-                      : 'hsl(var(--muted))'
+                      ? 'color-mix(in srgb, var(--color-destructive) 12%, transparent)'
+                      : 'var(--color-muted)'
                   }
                   stroke={
                     slack === 0
-                      ? 'hsl(var(--destructive) / 0.3)'
-                      : 'hsl(var(--border))'
+                      ? 'color-mix(in srgb, var(--color-destructive) 30%, transparent)'
+                      : 'var(--color-border)'
                   }
                   strokeWidth='0.5'
                 />
@@ -572,8 +574,8 @@ export function CriticalPathGraph({
                   textAnchor='middle'
                   fill={
                     slack === 0
-                      ? 'hsl(var(--destructive))'
-                      : 'hsl(var(--muted-foreground))'
+                      ? 'var(--color-destructive)'
+                      : 'var(--color-muted-foreground)'
                   }
                 >
                   {slack === 0 ? 'Slack:0' : `+${slack}`}
@@ -625,7 +627,10 @@ export function CriticalPathGraph({
         <div className='flex items-center gap-1.5 text-[11px] text-muted-foreground'>
           <span
             className='w-5 h-0.5 shrink-0 rounded-full bg-destructive'
-            style={{ boxShadow: '0 0 6px hsl(var(--destructive) / 0.5)' }}
+            style={{
+              boxShadow:
+                '0 0 6px color-mix(in srgb, var(--color-destructive) 50%, transparent)',
+            }}
           />
           Critical path
         </div>
