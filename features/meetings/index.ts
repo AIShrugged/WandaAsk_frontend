@@ -33,5 +33,16 @@ export {
   getMeetingsForDate,
   getMeetingsForThreeDays,
   getCalendarEventsForMonth,
+  getMeetingsList,
 } from './api/meetings';
 export { getOrgCalendarEvents } from './api/org-calendar';
+export {
+  type MeetingScope,
+  type MeetingsListFilters,
+  DEFAULT_MEETINGS_FILTERS,
+  parseFilters,
+  serializeFilters,
+  hasActiveFilters,
+} from './model/filters';
+export { MeetingsListFiltersBar } from './ui/meetings-list-filters-bar';
+export { MeetingsListClient } from './ui/meetings-list-client';

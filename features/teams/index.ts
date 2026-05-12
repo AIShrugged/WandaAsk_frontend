@@ -24,3 +24,31 @@ export {
   updateTeamNotificationSetting,
   deleteTeamNotificationSetting,
 } from './api/notification-settings';
+export {
+  getMeetingSummaryTemplate,
+  upsertMeetingSummaryTemplate,
+} from './api/meeting-summary-template';
+export {
+  getAgendaTemplate,
+  upsertAgendaTemplate,
+} from './api/agenda-template';
+export { TemplatesTab } from './ui/templates/templates-tab';
+export { MeetingSummaryTemplateEditor } from './ui/templates/meeting-summary-template-editor';
+export { AgendaTemplateEditor } from './ui/templates/agenda-template-editor';
+export type {
+  TeamNotificationSetting,
+  TeamNotificationSettingCreateDTO,
+  TeamNotificationSettingUpdateDTO,
+  MeetingSummarySection,
+  MeetingSummaryTemplate,
+  MeetingSummaryTemplateResolved,
+  AgendaSection,
+  AgendaTemplate,
+  AgendaTemplateResolved,
+} from './model/types';
+export {
+  MEETING_SUMMARY_DEFAULT_SECTIONS,
+  AGENDA_SECTIONS_PRE_MEETING,
+  AGENDA_SECTIONS_UPCOMING,
+  AGENDA_DEFAULT_SECTIONS,
+} from './model/types';
