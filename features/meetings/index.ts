@@ -19,6 +19,8 @@ export type {
   CalendarEventSectionValue,
   CalendarEventReadMore,
   CalendarEventTakeaway,
+  MeetingDecision,
+  MeetingDecisionLinkedIssue,
 } from './model/types';
 export {
   getMeetingDisplayState,
@@ -46,3 +48,4 @@ export {
 } from './model/filters';
 export { MeetingsListFiltersBar } from './ui/meetings-list-filters-bar';
 export { MeetingsListClient } from './ui/meetings-list-client';
+export { MeetingDecisionsSection } from './ui/meeting-decisions-section';

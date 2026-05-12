@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 
 import { getCalendarEventDetail } from '@/features/event';
+import { MeetingDecisionsSection } from '@/features/meetings';
 import { Badge } from '@/shared/ui/badge';
 import { Card } from '@/shared/ui/card';
 import { Pill } from '@/shared/ui/common/pill';
@@ -443,6 +444,9 @@ export default async function MeetingOverviewPage({
             </div>
           )}
         </SectionCard>
+
+        {/* Decisions (пункты протокола) */}
+        <MeetingDecisionsSection decisions={data.decisions ?? []} />
 
         {/* Key takeaways */}
         {data.key_takeaways.length > 0 && (
