@@ -41,16 +41,16 @@ export {
   VALID_SORT_FIELDS,
   issueTypeOptionsFromOrgs,
 } from '@/features/issues/model/types';
-export { TasksKanbanClient } from '../issues/ui/tasks-kanban-client';
+export { TasksKanbanClient } from './ui/tasks-kanban-client';
 export { IssueAttachments } from './ui/issue-attachments';
 export { IssueComments } from './ui/issue-comments';
 export { IssueStatusBadge, IssuePriorityBadge } from '@/entities/issue';
 export { getIssueComments } from './api/comments';
 export type { IssueComment, IssueCommentUser } from './model/types';
 export { IssueForm } from './ui/issue-form';
-export { IssueCreatePageClient } from './ui/issue-create-page-client';
-export { PendingAttachmentUploader } from './ui/pending-attachment-uploader';
 export { IssuesKanbanTab } from './ui/issues-kanban-tab';
+export { IssueProgressPage } from './ui/issue-progress-page';
+export { IssuesTabsNav } from './ui/issues-tabs-nav';
 export { default as IssueCreateButton } from './ui/issue-create-button';
 export { IssuesLayoutClient } from './ui/issues-layout-client';
 export { IssuesListTab } from './ui/issues-list-tab';

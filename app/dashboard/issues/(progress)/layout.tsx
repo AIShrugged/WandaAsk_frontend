@@ -1,4 +1,4 @@
-import { IssuesTabsNav } from '@/features/issues/ui/issues-tabs-nav';
+import { IssuesTabsNav } from '@/features/issues';
 import { Card } from '@/shared/ui/card';
 
 import type { PropsWithChildren } from 'react';

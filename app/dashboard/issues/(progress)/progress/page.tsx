@@ -1,5 +1,8 @@
-import { getIssueStats, getIssueStatsHistory } from '@/features/issues';
-import { IssueProgressPage } from '@/features/issues/ui/issue-progress-page';
+import {
+  getIssueStats,
+  getIssueStatsHistory,
+  IssueProgressPage,
+} from '@/features/issues';
 
 import type { IssueHistoryPeriod } from '@/features/issues';
 

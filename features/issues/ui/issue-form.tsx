@@ -28,6 +28,7 @@ import { TenantScopeFields } from '@/shared/ui/input/tenant-scope-fields';
 import { Modal } from '@/shared/ui/modal/modal';
 
 import type { OrganizationProps } from '@/entities/organization';
+import type { UserBasicProps } from '@/entities/user';
 import type {
   EpicOption,
   Issue,
@@ -36,21 +37,13 @@ import type {
   PersonOption,
 } from '@/features/issues/model/types';
 
-interface CurrentUser {
-  id: number;
-  name: string;
-  email: string;
-}
-
 interface IssueFormProps {
   organizations: OrganizationProps[];
   persons: PersonOption[];
   epics?: EpicOption[];
   issue?: Issue;
   defaultOrganizationId?: string;
-  currentUser?: CurrentUser | null;
-  onCreated?: (issue: Issue) => void;
-  uploadToken?: string;
+  currentUser?: UserBasicProps | null;
 }
 
 interface IssueFormValues {
@@ -84,8 +77,6 @@ export function IssueForm({
   issue,
   defaultOrganizationId = '',
   currentUser,
-  onCreated,
-  uploadToken,
 }: IssueFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -98,20 +89,28 @@ export function IssueForm({
   const pendingAttachmentsRef = useRef(pendingAttachments);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
+  // Stable upload token for create mode — lazy initializer runs exactly once per mount.
+  // useState guarantees stability; useMemo does not (React may discard memoized values).
+  const [uploadToken] = useState<string>(() => {
+    return crypto.randomUUID();
+  });
+
   useEffect(() => {
     pendingAttachmentsRef.current = pendingAttachments;
   });
 
+  // Cleanup pending attachments if the create form is abandoned without submitting.
+  // Only runs in create mode (no issue prop); edit mode has no pending attachments.
   useEffect(() => {
-    if (!uploadToken) return;
+    if (issue) return;
     return () => {
-      if (!isSubmittedRef.current) {
-        for (const att of pendingAttachmentsRef.current) {
-          void deletePendingAttachment(att.id);
-        }
+      if (isSubmittedRef.current) return;
+      for (const att of pendingAttachmentsRef.current) {
+        void deletePendingAttachment(att.id);
       }
     };
-  }, [uploadToken]);
+  }, []);
+
   const typeOptions = issueTypeOptionsFromOrgs(organizations);
 
   const defaultAuthorId = issue?.user_id
@@ -150,11 +149,9 @@ export function IssueForm({
     reValidateMode: 'onChange',
   });
 
-  const filteredPersons = persons;
-
   const personOptions = [
     { value: '', label: 'Unassigned' },
-    ...filteredPersons.map((person) => {
+    ...persons.map((person) => {
       return {
         value: String(person.id),
         label: person.email ? `${person.name} (${person.email})` : person.name,
@@ -202,7 +199,7 @@ export function IssueForm({
         author_id: values.author_id ? Number(values.author_id) : null,
         due_date: values.due_date || null,
         priority: Number(values.priority) || 0,
-        upload_token: uploadToken ?? null,
+        upload_token: issue ? null : uploadToken,
       };
       const result = issue
         ? await updateIssue(issue.id, payload)
@@ -229,10 +226,8 @@ export function IssueForm({
       toast.success(issue ? 'Issue updated' : 'Issue created');
       if (issue) {
         router.refresh();
-      } else if (onCreated) {
-        onCreated(result as Issue);
       } else {
-        router.push(`${ROUTES.DASHBOARD.ISSUES}/${result.id}`);
+        router.push(`${ROUTES.DASHBOARD.ISSUES}/${(result as Issue).id}`);
       }
     });
   };
@@ -384,7 +379,7 @@ export function IssueForm({
         />
       </div>
 
-      {uploadToken !== undefined && (
+      {!issue && (
         <PendingAttachmentUploader
           uploadToken={uploadToken}
           attachments={pendingAttachments}
@@ -412,7 +407,7 @@ export function IssueForm({
         <Button
           type='submit'
           loading={isPending}
-          disabled={isPending || !isDirty || hasPendingOps}
+          disabled={isPending || (!!issue && !isDirty) || hasPendingOps}
         >
           {submitLabel(hasPendingOps, !!issue)}
         </Button>
