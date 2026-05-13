@@ -6,11 +6,12 @@ import OrganizationDropdown from '@/features/organization/ui/organization-dropdo
 import type { OrganizationProps } from '@/entities/organization';
 
 const mockPush = jest.fn();
+const mockRefresh = jest.fn();
 
 jest.mock('next/navigation', () => {
   return {
     useRouter: () => {
-      return { push: mockPush };
+      return { push: mockPush, refresh: mockRefresh };
     },
   };
 });

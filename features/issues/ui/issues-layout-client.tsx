@@ -23,6 +23,7 @@ type IssuesLayoutClientProps = React.PropsWithChildren<{
   organizations: OrganizationProps[];
   persons: PersonOption[];
   currentUserId: number | null;
+  cookieOrgId: string;
 }>;
 
 const KEEP_WHEN_EMPTY = new Set(['assignee_id']);
@@ -54,6 +55,7 @@ export function IssuesLayoutClient({
   organizations,
   persons,
   currentUserId,
+  cookieOrgId,
   children,
 }: IssuesLayoutClientProps) {
   const router = useRouter();
@@ -70,7 +72,7 @@ export function IssuesLayoutClient({
       : (currentUserId?.toString() ?? '');
 
     return {
-      organization_id: searchParams.get('organization_id') ?? '',
+      organization_id: searchParams.get('organization_id') ?? cookieOrgId,
       team_id: searchParams.get('team_id') ?? '',
       search: searchParams.get('search') ?? '',
       type: isIssueType(typeRaw) ? typeRaw : '',
@@ -98,6 +100,20 @@ export function IssuesLayoutClient({
   const [columnsVersion, setColumnsVersion] = useState(0);
   const isFirstFiltersRender = useRef(true);
 
+  // Mid-render org-change detection: when cookieOrgId prop changes (after router.refresh()
+  // delivers new Server Component props), reset org and team filters immediately.
+  // columnsVersion is bumped in a useEffect below (refs cannot be written during render).
+  const [prevCookieOrgId, setPrevCookieOrgId] = useState(cookieOrgId);
+  if (cookieOrgId !== prevCookieOrgId) {
+    setPrevCookieOrgId(cookieOrgId);
+    setFilters((prev) => {
+      return { ...prev, organization_id: cookieOrgId, team_id: '' };
+    });
+    setFiltersVersion((v) => {
+      return v + 1;
+    });
+  }
+
   // On mount: remove stale legacy params and write default assignee_id if absent.
   useEffect(() => {
     const current = new URLSearchParams(searchParams.toString());
@@ -119,6 +135,11 @@ export function IssuesLayoutClient({
       router.replace(`${pathname}?${current.toString()}`, { scroll: false });
     }
   }, []);
+
+  useEffect(() => {
+    columnsVersionRef.current += 1;
+    setColumnsVersion(columnsVersionRef.current);
+  }, [prevCookieOrgId]);
 
   const updateUrl = useCallback(
     (patch: Record<string, string>) => {
@@ -210,6 +231,7 @@ export function IssuesLayoutClient({
             extraContent={<IssueCreateButton />}
           >
             <SharedFiltersBar
+              key={filters.organization_id}
               filters={filters}
               organizations={organizations}
               persons={persons}
