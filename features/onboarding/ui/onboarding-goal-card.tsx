@@ -70,8 +70,6 @@ export function OnboardingGoalCard({ goal, index, onUpdate, onRemove }: Props) {
           <Textarea
             label='Description'
             value={goal.description}
-            resizable={false}
-            height={80}
             onChange={(e) => {
               return onUpdate({ ...goal, description: e.target.value });
             }}

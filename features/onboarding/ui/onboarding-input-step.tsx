@@ -96,8 +96,6 @@ export function OnboardingInputStep({
         label='Description'
         value={state.description}
         placeholder='e.g. We are a 40-person SaaS company building HR tools for enterprise clients...'
-        resizable={false}
-        height={160}
         onChange={(e) => {
           return onDescriptionChange(e.target.value);
         }}

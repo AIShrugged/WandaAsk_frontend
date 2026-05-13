@@ -63,8 +63,6 @@ export function OnboardingPreviewStep({
           <Textarea
             label='Description'
             value={data.organization.description}
-            resizable={false}
-            height={100}
             onChange={(e) => {
               return onOrgDescriptionChange(e.target.value);
             }}

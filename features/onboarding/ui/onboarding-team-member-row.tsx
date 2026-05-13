@@ -16,7 +16,7 @@ interface Props {
 
 export function OnboardingTeamMemberRow({ member, onUpdate, onRemove }: Props) {
   return (
-    <div className='flex items-center gap-2 rounded-[var(--radius-card)] border border-border bg-surface/40 px-3 py-2'>
+    <div className='flex items-center gap-2 rounded-[var(--radius-card)] border border-border bg-surface/40 px-3 pt-4 pb-2'>
       <div className='grid flex-1 grid-cols-3 gap-2 min-w-0'>
         <Input
           label='Name'
