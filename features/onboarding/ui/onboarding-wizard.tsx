@@ -176,8 +176,11 @@ export function OnboardingWizard({
       return;
     }
 
-    toast.success('Organization setup complete!');
-    router.push(ROUTES.DASHBOARD.TODAY);
+    toast.success('Organization set up!', {
+      description: 'Your goals are ready in the issue tracker.',
+      duration: 5000,
+    });
+    router.push(ROUTES.DASHBOARD.ISSUES_LIST);
   }
 
   async function handleSkip() {
