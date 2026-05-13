@@ -1,7 +1,7 @@
 'use client';
 
 import { Paperclip, Trash2, Upload } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import {
@@ -13,7 +13,6 @@ import { Button } from '@/shared/ui/button/Button';
 
 import type { PendingAttachment } from '../model/types';
 
-const MAX_FILES = 3;
 const MAX_SIZE_BYTES = 10 * 1024 * 1024;
 
 interface Props {
@@ -24,6 +23,12 @@ interface Props {
   onPendingChange: (hasPending: boolean) => void;
 }
 
+function formatSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
 export function OnboardingFileUpload({
   uploadToken,
   attachments,
@@ -32,13 +37,20 @@ export function OnboardingFileUpload({
   onPendingChange,
 }: Props) {
   const [pendingOps, setPendingOps] = useState<Set<string>>(new Set());
+  const [fileNames, setFileNames] = useState<Map<number, string>>(new Map());
+  const [fileSizes, setFileSizes] = useState<Map<number, number>>(new Map());
+
+  const isBusy = pendingOps.size > 0;
+
+  useEffect(() => {
+    onPendingChange(isBusy);
+  }, [isBusy, onPendingChange]);
 
   function addOp(id: string) {
     setPendingOps((prev) => {
       const next = new Set(prev);
 
       next.add(id);
-      onPendingChange(next.size > 0);
       return next;
     });
   }
@@ -48,29 +60,53 @@ export function OnboardingFileUpload({
       const next = new Set(prev);
 
       next.delete(id);
-      onPendingChange(next.size > 0);
       return next;
     });
   }
 
-  const isBusy = pendingOps.size > 0;
-  const isAtLimit = attachments.length >= MAX_FILES;
+  function getDisplayName(attachment: PendingAttachment): string {
+    return (
+      fileNames.get(attachment.id) ??
+      attachment.original_name ??
+      `attachment-${attachment.id}`
+    );
+  }
+
+  function removeFileName(id: number) {
+    setFileNames((prev) => {
+      const next = new Map(prev);
+
+      next.delete(id);
+      return next;
+    });
+  }
+
+  function removeFileSize(id: number) {
+    setFileSizes((prev) => {
+      const next = new Map(prev);
+
+      next.delete(id);
+      return next;
+    });
+  }
 
   return (
     <div className='flex flex-col gap-3'>
       <div className='flex items-center justify-between'>
         <span className='text-sm font-medium text-foreground'>
           Attachments{' '}
-          <span className='text-muted-foreground'>
-            ({attachments.length}/{MAX_FILES})
-          </span>
+          {attachments.length > 0 && (
+            <span className='text-muted-foreground'>
+              ({attachments.length})
+            </span>
+          )}
         </span>
         <label
           className={[
             'inline-flex cursor-pointer items-center gap-2 rounded-[var(--radius-button)]',
             'border border-input bg-background px-3 py-1.5 text-sm font-medium',
             'text-foreground hover:bg-accent transition-colors',
-            isBusy || isAtLimit ? 'pointer-events-none opacity-50' : '',
+            isBusy ? 'pointer-events-none opacity-50' : '',
           ].join(' ')}
         >
           <Upload className='h-3.5 w-3.5' />
@@ -79,7 +115,7 @@ export function OnboardingFileUpload({
             type='file'
             className='hidden'
             accept='.pdf,.docx,.md,.txt'
-            disabled={isBusy || isAtLimit}
+            disabled={isBusy}
             onChange={(event) => {
               const file = event.target.files?.[0];
 
@@ -91,12 +127,9 @@ export function OnboardingFileUpload({
                 return;
               }
 
-              if (attachments.length >= MAX_FILES) {
-                toast.error(`Maximum ${MAX_FILES} files allowed`);
-                return;
-              }
-
               const opId = crypto.randomUUID();
+              const originalName = file.name;
+              const originalSize = file.size;
 
               addOp(opId);
               uploadPendingAttachment(file, uploadToken)
@@ -105,7 +138,17 @@ export function OnboardingFileUpload({
                     toast.error(result.error);
                     return;
                   }
-                  if (result.data) onUploaded(result.data);
+                  if (result.data) {
+                    const id = result.data.id;
+
+                    setFileNames((prev) => {
+                      return new Map(prev).set(id, originalName);
+                    });
+                    setFileSizes((prev) => {
+                      return new Map(prev).set(id, originalSize);
+                    });
+                    onUploaded(result.data);
+                  }
                 })
                 .catch(() => {
                   toast.error('Upload failed. Please try again.');
@@ -121,23 +164,29 @@ export function OnboardingFileUpload({
       {attachments.length > 0 && (
         <ul className='flex flex-col gap-2'>
           {attachments.map((attachment) => {
+            const displayName = getDisplayName(attachment);
+
             return (
               <li
                 key={attachment.id}
-                className='flex items-center justify-between gap-3 rounded-[var(--radius-card)] border border-border bg-surface/40 px-3 py-2'
+                className='flex min-w-0 items-center gap-3 rounded-[var(--radius-card)] border border-border bg-background/30 px-3 py-2'
               >
-                <div className='flex min-w-0 items-center gap-2'>
-                  <Paperclip className='h-4 w-4 shrink-0 text-muted-foreground' />
+                <Paperclip className='h-4 w-4 shrink-0 text-muted-foreground' />
+                <div className='flex min-w-0 flex-1 items-center gap-2'>
                   <span className='truncate text-sm text-foreground'>
-                    {attachment.original_name ??
-                      attachment.file_name ??
-                      `attachment-${attachment.id}`}
+                    {displayName}
                   </span>
+                  {fileSizes.has(attachment.id) && (
+                    <span className='shrink-0 text-xs text-muted-foreground'>
+                      {formatSize(fileSizes.get(attachment.id)!)}
+                    </span>
+                  )}
                 </div>
                 <Button
                   type='button'
-                  variant={BUTTON_VARIANT.secondary}
-                  className='h-7 w-7 shrink-0 p-0'
+                  variant={BUTTON_VARIANT.ghost}
+                  fullWidth={false}
+                  className='h-7 w-7 shrink-0 p-0 text-muted-foreground hover:text-destructive'
                   disabled={isBusy}
                   onClick={() => {
                     const opId = crypto.randomUUID();
@@ -149,6 +198,8 @@ export function OnboardingFileUpload({
                           toast.error(result.error);
                           return;
                         }
+                        removeFileName(attachment.id);
+                        removeFileSize(attachment.id);
                         onDeleted(attachment.id);
                       })
                       .catch(() => {

@@ -52,6 +52,7 @@ export default async function OnboardingPage() {
     <OnboardingWizard
       orgId={org.id}
       orgName={org.name}
+      orgDescription={org.context ?? ''}
       initialDraft={initialDraft}
     />
   );

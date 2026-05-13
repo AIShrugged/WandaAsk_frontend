@@ -46,6 +46,28 @@ export async function generateStructure(
   }
 }
 
+export async function skipOnboarding(
+  orgId: number,
+  orgName: string,
+  orgDescription: string,
+): Promise<ActionResult<AcceptStructureResponse>> {
+  const payload: AcceptStructurePayload = {
+    organization: {
+      name: orgName,
+      description:
+        orgDescription || 'Organization set up during onboarding skip.',
+    },
+    goals: [
+      {
+        title: 'Getting started',
+      },
+    ],
+    team: [],
+  };
+
+  return acceptStructure(orgId, payload);
+}
+
 export async function acceptStructure(
   orgId: number,
   payload: AcceptStructurePayload,
