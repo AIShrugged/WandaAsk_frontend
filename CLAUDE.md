@@ -5,8 +5,8 @@ code in this repository.
 
 ## Project
 
-AI Ask Wanda — frontend application. Next.js 16 + TypeScript + React 19. Backend
-is a separate PHP/Laravel app accessed via API.
+Tribes — frontend application. Next.js 16 + TypeScript + React 19. Backend is a
+separate PHP/Laravel app accessed via API.
 
 Repository: `git.fabit.ru/tribes/ai_ask_wanda-frontend`
 

@@ -53,7 +53,7 @@ describe('MeetingDetail', () => {
           id: 175,
           platform: 'google_meet',
           url: 'https://meet.google.com/ukb-cmhd-jqr',
-          title: 'Wanda: техсинк',
+          title: 'Tribes: техсинк',
           description: '',
           starts_at: '2026-04-02T09:00:00.000000Z',
           ends_at: '2026-04-02T09:30:00.000000Z',

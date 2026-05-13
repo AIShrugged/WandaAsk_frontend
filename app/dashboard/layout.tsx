@@ -19,7 +19,7 @@ import type { Theme } from '@/entities/user';
 
 export default async function Layout({ children }: PropsWithChildren) {
   const cookieStore = await cookies();
-  const rawTheme = cookieStore.get('wanda-theme')?.value;
+  const rawTheme = cookieStore.get('tribes-theme')?.value;
   const theme: Theme =
     rawTheme === 'light' || rawTheme === 'dark' ? rawTheme : 'dark';
 

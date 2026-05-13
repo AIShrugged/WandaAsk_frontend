@@ -67,10 +67,12 @@ const goalSchema = z.object({
   tasks: z.array(taskSchema).max(20).optional(),
 });
 
+export const UserRoleSchema = z.enum(['manager', 'employee']);
+
 const teamMemberSchema = z.object({
   name: z.string().min(1).max(255),
   email: z.email().max(255).optional(),
-  role: z.string().max(255).optional(),
+  role: UserRoleSchema.optional(),
 });
 
 export const acceptSchema = z.object({

@@ -20,7 +20,7 @@ export default function Layout({ children }: PropsWithChildren) {
             between its people.&rdquo;
           </blockquote>
           <p className='mt-6 text-[length:var(--fs-sm)] text-[var(--muted-foreground)]'>
-            AI Ask Wanda — HR intelligence platform
+            Tribes — HR intelligence platform
           </p>
         </div>
 

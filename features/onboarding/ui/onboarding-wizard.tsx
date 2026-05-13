@@ -8,6 +8,7 @@ import { ROUTES } from '@/shared/lib/routes';
 
 import { acceptStructure, generateStructure } from '../api/onboarding';
 import { useOnboardingPoll } from '../hooks/use-onboarding-poll';
+import { UserRoleSchema } from '../model/schemas';
 import {
   EMPTY_INPUT,
   buildInitialState,
@@ -135,10 +136,11 @@ export function OnboardingWizard({
         return m.name.trim();
       })
       .map(({ name, email, role }) => {
+        const parsedRole = UserRoleSchema.safeParse(role);
         return {
           name: name.trim(),
           ...(email ? { email } : {}),
-          ...(role ? { role } : {}),
+          ...(parsedRole.success ? { role: parsedRole.data } : {}),
         };
       });
 

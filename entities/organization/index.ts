@@ -1,4 +1,5 @@
 export type {
+  UserRole,
   OrganizationIssueType,
   OrganizationIssueTypePayload,
   OrganizationProps,

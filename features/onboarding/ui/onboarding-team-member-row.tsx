@@ -4,9 +4,16 @@ import { Trash2 } from 'lucide-react';
 
 import { BUTTON_VARIANT } from '@/shared/types/button';
 import { Button } from '@/shared/ui/button/Button';
+import { InputDropdown } from '@/shared/ui/input';
 import Input from '@/shared/ui/input/Input';
 
+import { UserRoleSchema } from '../model/schemas';
+
 import type { EditableTeamMember } from '../model/types';
+
+const ROLE_OPTIONS = UserRoleSchema.options.map((value) => {
+  return { value, label: value };
+});
 
 interface Props {
   member: EditableTeamMember;
@@ -31,11 +38,16 @@ export function OnboardingTeamMemberRow({ member, onUpdate, onRemove }: Props) {
           return onUpdate({ ...member, email: e.target.value || null });
         }}
       />
-      <Input
+      <InputDropdown
         label='Role'
+        options={ROLE_OPTIONS}
         value={member.role ?? ''}
-        onChange={(e) => {
-          return onUpdate({ ...member, role: e.target.value || null });
+        placeholder='Select role'
+        searchable={false}
+        onChange={(val) => {
+          const raw = Array.isArray(val) ? val[0] : val;
+          const parsed = UserRoleSchema.safeParse(raw);
+          onUpdate({ ...member, role: parsed.success ? parsed.data : null });
         }}
       />
       <Button
