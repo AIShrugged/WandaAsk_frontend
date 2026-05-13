@@ -16,30 +16,28 @@ interface Props {
 
 export function OnboardingTeamMemberRow({ member, onUpdate, onRemove }: Props) {
   return (
-    <div className='flex items-center gap-2 rounded-[var(--radius-card)] border border-border bg-surface/40 px-3 pt-4 pb-2'>
-      <div className='grid flex-1 grid-cols-3 gap-2 min-w-0'>
-        <Input
-          label='Name'
-          value={member.name}
-          onChange={(e) => {
-            return onUpdate({ ...member, name: e.target.value });
-          }}
-        />
-        <Input
-          label='Email'
-          value={member.email ?? ''}
-          onChange={(e) => {
-            return onUpdate({ ...member, email: e.target.value || null });
-          }}
-        />
-        <Input
-          label='Role'
-          value={member.role ?? ''}
-          onChange={(e) => {
-            return onUpdate({ ...member, role: e.target.value || null });
-          }}
-        />
-      </div>
+    <div className='grid grid-cols-[1fr_1fr_1fr_auto] items-center gap-2 rounded-[var(--radius-card)] border border-border bg-surface/40 px-3 pt-4 pb-2'>
+      <Input
+        label='Name'
+        value={member.name}
+        onChange={(e) => {
+          return onUpdate({ ...member, name: e.target.value });
+        }}
+      />
+      <Input
+        label='Email'
+        value={member.email ?? ''}
+        onChange={(e) => {
+          return onUpdate({ ...member, email: e.target.value || null });
+        }}
+      />
+      <Input
+        label='Role'
+        value={member.role ?? ''}
+        onChange={(e) => {
+          return onUpdate({ ...member, role: e.target.value || null });
+        }}
+      />
       <Button
         type='button'
         variant={BUTTON_VARIANT.ghost}
