@@ -3,11 +3,9 @@
 import { revalidatePath } from 'next/cache';
 import { notFound } from 'next/navigation';
 
-import { clearSession } from '@/shared/api/session';
 import { parseApiError } from '@/shared/lib/apiError';
 import { API_URL, FILES_URL } from '@/shared/lib/config';
 import { ServerError } from '@/shared/lib/errors';
-import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 import { httpClient, httpClientList } from '@/shared/lib/httpClient';
 
 import type { AgentTaskRun } from '@/features/agents/model/types';
@@ -18,14 +16,7 @@ import type {
   IssueUpsertDTO,
   PersonOption,
 } from '@/features/issues/model/types';
-import type { ApiResponse } from '@/shared/types/common';
 import type { ActionResult } from '@/shared/types/server-action';
-
-type IssueActionError = {
-  data: null;
-  error: string;
-  fieldErrors?: Record<string, string>;
-};
 
 type IssueAttachmentApiResource = IssueAttachment & {
   file_path?: string | null;
@@ -119,32 +110,13 @@ function buildIssuesQuery(filters: IssueFilters = {}) {
  * @returns paginated issues.
  */
 export async function getIssues(filters: IssueFilters = {}) {
-  const authHeaders = await getAuthHeaders();
   const query = buildIssuesQuery({ exclude_archived: true, ...filters });
-  const res = await fetch(`${API_URL}/issues?${query}`, {
-    headers: { ...authHeaders },
-    cache: 'no-store',
-  });
-
-  if (!res.ok) {
-    if (res.status === 401) await clearSession();
-    const text = await res.text();
-
-    throw new Error(parseApiError(text, 'Failed to load issues').message);
-  }
-
-  const json: ApiResponse<Issue[]> = await res.json();
-
-  if (!json.success || !json.data) {
-    throw new Error(json.error ?? 'Invalid API response');
-  }
-
-  const totalCount = Number(res.headers.get('Items-Count') || '0');
+  const result = await httpClientList<Issue>(`${API_URL}/issues?${query}`);
 
   return {
-    data: json.data,
-    totalCount,
-    hasMore: (filters.offset ?? 0) + (filters.limit ?? 10) < totalCount,
+    data: result.data,
+    totalCount: result.totalCount,
+    hasMore: (filters.offset ?? 0) + (filters.limit ?? 10) < result.totalCount,
   };
 }
 
@@ -154,33 +126,14 @@ export async function getIssues(filters: IssueFilters = {}) {
  * @returns paginated chunk.
  */
 export async function loadIssuesChunk(filters: IssueFilters = {}) {
-  const authHeaders = await getAuthHeaders();
-  const query = buildIssuesQuery({ exclude_archived: true, ...filters });
-  const res = await fetch(`${API_URL}/issues?${query}`, {
-    headers: { ...authHeaders },
-    cache: 'no-store',
-  });
-
-  if (!res.ok) {
-    if (res.status === 401) await clearSession();
-    const text = await res.text();
-
-    throw new Error(parseApiError(text, 'Failed to load issues').message);
-  }
-
-  const json: ApiResponse<Issue[]> = await res.json();
-
-  if (!json.success || !json.data) {
-    throw new Error(json.error ?? 'Invalid API response');
-  }
-
-  const totalCount = Number(res.headers.get('Items-Count') || '0');
   const limit = filters.limit ?? 20;
   const offset = filters.offset ?? 0;
+  const query = buildIssuesQuery({ exclude_archived: true, ...filters });
+  const result = await httpClientList<Issue>(`${API_URL}/issues?${query}`);
 
   return {
-    data: json.data,
-    hasMore: offset + limit < totalCount,
+    data: result.data,
+    hasMore: offset + limit < result.totalCount,
   };
 }
 
@@ -193,25 +146,19 @@ export async function loadIssuesChunk(filters: IssueFilters = {}) {
 export async function getArchivedCount(
   filters: IssueFilters = {},
 ): Promise<number> {
-  const authHeaders = await getAuthHeaders();
-  const query = buildIssuesQuery({
-    ...filters,
-    archived: true,
-    limit: 1,
-    offset: 0,
-  });
-  const res = await fetch(`${API_URL}/issues?${query}`, {
-    headers: { ...authHeaders },
-    cache: 'no-store',
-  });
+  try {
+    const query = buildIssuesQuery({
+      ...filters,
+      archived: true,
+      limit: 1,
+      offset: 0,
+    });
+    const result = await httpClientList<Issue>(`${API_URL}/issues?${query}`);
 
-  if (!res.ok) {
-    if (res.status === 401) await clearSession();
-
+    return result.totalCount;
+  } catch {
     return 0;
   }
-
-  return Number(res.headers.get('Items-Count') || '0');
 }
 
 /**
@@ -222,40 +169,14 @@ export async function getArchivedCount(
 export async function loadArchivedChunk(
   filters: IssueFilters = {},
 ): Promise<{ data: Issue[]; hasMore: boolean }> {
-  const authHeaders = await getAuthHeaders();
   const limit = filters.limit ?? 20;
   const offset = filters.offset ?? 0;
-  const query = buildIssuesQuery({
-    ...filters,
-    archived: true,
-    limit,
-    offset,
-  });
-  const res = await fetch(`${API_URL}/issues?${query}`, {
-    headers: { ...authHeaders },
-    cache: 'no-store',
-  });
-
-  if (!res.ok) {
-    if (res.status === 401) await clearSession();
-    const text = await res.text();
-
-    throw new Error(
-      parseApiError(text, 'Failed to load archived issues').message,
-    );
-  }
-
-  const json: ApiResponse<Issue[]> = await res.json();
-
-  if (!json.success || !json.data) {
-    throw new Error(json.error ?? 'Invalid API response');
-  }
-
-  const totalCount = Number(res.headers.get('Items-Count') || '0');
+  const query = buildIssuesQuery({ ...filters, archived: true, limit, offset });
+  const result = await httpClientList<Issue>(`${API_URL}/issues?${query}`);
 
   return {
-    data: json.data,
-    hasMore: offset + limit < totalCount,
+    data: result.data,
+    hasMore: offset + limit < result.totalCount,
   };
 }
 
@@ -265,23 +186,20 @@ export async function loadArchivedChunk(
  * @returns issue resource.
  */
 export async function getIssue(id: number): Promise<Issue> {
-  const authHeaders = await getAuthHeaders();
-  const res = await fetch(`${API_URL}/issues/${id}`, {
-    headers: { ...authHeaders },
-    cache: 'no-store',
-  });
+  try {
+    const { data } = await httpClient<Issue>(`${API_URL}/issues/${id}`);
 
-  if (!res.ok) {
-    if (res.status === 401) await clearSession();
-    if (res.status === 404 || res.status === 403) notFound();
-    const text = await res.text();
+    return data!;
+  } catch (error) {
+    if (
+      error instanceof ServerError &&
+      (error.status === 404 || error.status === 403)
+    ) {
+      notFound();
+    }
 
-    throw new Error(parseApiError(text, 'Failed to load issue').message);
+    throw error;
   }
-
-  const json: ApiResponse<Issue> = await res.json();
-
-  return json.data!;
 }
 
 /**
@@ -291,34 +209,35 @@ export async function getIssue(id: number): Promise<Issue> {
  */
 export async function createIssue(
   payload: IssueUpsertDTO,
-): Promise<Issue | IssueActionError> {
-  const authHeaders = await getAuthHeaders();
-  const res = await fetch(`${API_URL}/issues`, {
-    method: 'POST',
-    headers: { ...authHeaders, 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-    cache: 'no-store',
-  });
+): Promise<ActionResult<Issue>> {
+  try {
+    const { data } = await httpClient<Issue>(`${API_URL}/issues`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: { 'Content-Type': 'application/json' },
+    });
 
-  if (!res.ok) {
-    if (res.status === 401) await clearSession();
-    const text = await res.text();
-    const parsed = parseApiError(text, 'Failed to create issue');
+    revalidatePath('/dashboard/issues', 'layout');
 
-    if (res.status === 422) {
-      return {
-        data: null,
-        error: parsed.message,
-        fieldErrors: parsed.fieldErrors,
-      };
+    return { data: data!, error: null };
+  } catch (error) {
+    if (error instanceof ServerError) {
+      const parsed = parseApiError(
+        error.responseBody ?? '',
+        'Failed to create issue',
+      );
+
+      if (error.status === 422) {
+        return {
+          data: null,
+          error: parsed.message,
+          fieldErrors: parsed.fieldErrors,
+        };
+      }
     }
 
-    throw new Error(parsed.message);
+    throw error;
   }
-
-  const json: ApiResponse<Issue> = await res.json();
-
-  return json.data!;
 }
 
 /**
@@ -330,37 +249,35 @@ export async function createIssue(
 export async function updateIssue(
   id: number,
   payload: IssueUpsertDTO,
-): Promise<Issue | IssueActionError> {
-  const authHeaders = await getAuthHeaders();
-  const res = await fetch(`${API_URL}/issues/${id}`, {
-    method: 'PATCH',
-    headers: { ...authHeaders, 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-    cache: 'no-store',
-  });
+): Promise<ActionResult<Issue>> {
+  try {
+    const { data } = await httpClient<Issue>(`${API_URL}/issues/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(payload),
+      headers: { 'Content-Type': 'application/json' },
+    });
 
-  if (!res.ok) {
-    if (res.status === 401) await clearSession();
-    const text = await res.text();
-    const parsed = parseApiError(text, 'Failed to update issue');
+    revalidatePath('/dashboard/issues', 'layout');
 
-    if (res.status === 422) {
-      return {
-        data: null,
-        error: parsed.message,
-        fieldErrors: parsed.fieldErrors,
-      };
+    return { data: data!, error: null };
+  } catch (error) {
+    if (error instanceof ServerError) {
+      const parsed = parseApiError(
+        error.responseBody ?? '',
+        'Failed to update issue',
+      );
+
+      if (error.status === 422) {
+        return {
+          data: null,
+          error: parsed.message,
+          fieldErrors: parsed.fieldErrors,
+        };
+      }
     }
 
-    throw new Error(parsed.message);
+    throw error;
   }
-
-  const json: ApiResponse<Issue> = await res.json();
-
-  revalidatePath('/dashboard/issues');
-  revalidatePath('/dashboard/kanban');
-
-  return json.data!;
 }
 
 /**
@@ -369,19 +286,8 @@ export async function updateIssue(
  * @returns Promise.
  */
 export async function deleteIssue(id: number): Promise<void> {
-  const authHeaders = await getAuthHeaders();
-  const res = await fetch(`${API_URL}/issues/${id}`, {
-    method: 'DELETE',
-    headers: { ...authHeaders },
-    cache: 'no-store',
-  });
-
-  if (!res.ok) {
-    if (res.status === 401) await clearSession();
-    const text = await res.text();
-
-    throw new Error(parseApiError(text, 'Failed to delete issue').message);
-  }
+  await httpClient(`${API_URL}/issues/${id}`, { method: 'DELETE' });
+  revalidatePath('/dashboard/issues', 'layout');
 }
 
 /**
@@ -392,26 +298,27 @@ export async function deleteIssue(id: number): Promise<void> {
 export async function dispatchIssue(
   id: number,
 ): Promise<{ data: AgentTaskRun | null; error: string | null }> {
-  const authHeaders = await getAuthHeaders();
-  const res = await fetch(`${API_URL}/issues/${id}/dispatch`, {
-    method: 'POST',
-    headers: { ...authHeaders },
-    cache: 'no-store',
-  });
+  try {
+    const { data } = await httpClient<AgentTaskRun>(
+      `${API_URL}/issues/${id}/dispatch`,
+      {
+        method: 'POST',
+      },
+    );
 
-  if (!res.ok) {
-    if (res.status === 401) await clearSession();
-    const text = await res.text();
+    return { data: data ?? null, error: null };
+  } catch (error) {
+    if (error instanceof ServerError) {
+      const parsed = parseApiError(
+        error.responseBody ?? '',
+        'Failed to dispatch agent for issue',
+      );
 
-    return {
-      data: null,
-      error: parseApiError(text, 'Failed to dispatch agent for issue').message,
-    };
+      return { data: null, error: parsed.message };
+    }
+
+    throw error;
   }
-
-  const json: ApiResponse<AgentTaskRun> = await res.json();
-
-  return { data: json.data ?? null, error: null };
 }
 
 /**
@@ -424,24 +331,26 @@ export async function answerAgentFlow(
   id: number,
   answers: string,
 ): Promise<{ error: string | null }> {
-  const authHeaders = await getAuthHeaders();
-  const res = await fetch(`${API_URL}/issues/${id}/agent-flow/answer`, {
-    method: 'POST',
-    headers: { ...authHeaders, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ answers }),
-    cache: 'no-store',
-  });
+  try {
+    await httpClient(`${API_URL}/issues/${id}/agent-flow/answer`, {
+      method: 'POST',
+      body: JSON.stringify({ answers }),
+      headers: { 'Content-Type': 'application/json' },
+    });
 
-  if (!res.ok) {
-    if (res.status === 401) await clearSession();
-    const text = await res.text();
+    return { error: null };
+  } catch (error) {
+    if (error instanceof ServerError) {
+      const parsed = parseApiError(
+        error.responseBody ?? '',
+        'Failed to submit answer',
+      );
 
-    return {
-      error: parseApiError(text, 'Failed to submit answer').message,
-    };
+      return { error: parsed.message };
+    }
+
+    throw error;
   }
-
-  return { error: null };
 }
 
 /**
@@ -452,28 +361,20 @@ export async function answerAgentFlow(
 export async function getEpics(
   organizationId?: number | null,
 ): Promise<Issue[]> {
-  const authHeaders = await getAuthHeaders();
-  const query = buildIssuesQuery({
-    type: 'epic',
-    organization_id: organizationId ?? null,
-    limit: 100,
-    offset: 0,
-    exclude_archived: true,
-  });
-  const res = await fetch(`${API_URL}/issues?${query}`, {
-    headers: { ...authHeaders },
-    cache: 'no-store',
-  });
+  try {
+    const query = buildIssuesQuery({
+      type: 'epic',
+      organization_id: organizationId ?? null,
+      limit: 100,
+      offset: 0,
+      exclude_archived: true,
+    });
+    const result = await httpClientList<Issue>(`${API_URL}/issues?${query}`);
 
-  if (!res.ok) {
-    if (res.status === 401) await clearSession();
-
+    return result.data;
+  } catch {
     return [];
   }
-
-  const json: ApiResponse<Issue[]> = await res.json();
-
-  return json.data ?? [];
 }
 
 /**

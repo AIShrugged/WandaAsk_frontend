@@ -6,24 +6,15 @@ import { useFiltersContext } from '@/features/issues/model/filters-context';
 import { KanbanBoard, fetchKanbanIssues } from '@/features/kanban';
 
 import type { OrganizationProps } from '@/entities/organization';
-import type { PersonOption } from '@/features/issues/model/types';
+import type { IssueStatus, PersonOption } from '@/features/issues/model/types';
 import type { KanbanIssuesResult } from '@/features/kanban/api/kanban';
-import type { IssueStatus, KanbanCard } from '@/features/kanban/model/types';
+import type { KanbanCard } from '@/features/kanban/model/types';
 
 interface IssuesKanbanTabProps {
   initialResult: KanbanIssuesResult;
   organizations: OrganizationProps[];
   persons: PersonOption[];
 }
-
-const EMPTY_COLUMNS: Record<IssueStatus, KanbanCard[]> = {
-  open: [],
-  in_progress: [],
-  paused: [],
-  review: [],
-  reopen: [],
-  done: [],
-};
 
 /**
  * IssuesKanbanTab — client wrapper that reads filter context and renders KanbanBoard.
@@ -34,7 +25,8 @@ export function IssuesKanbanTab({
   organizations,
   persons,
 }: IssuesKanbanTabProps) {
-  const { filters, columnsVersion, setShowArchived } = useFiltersContext();
+  const { filters, filtersVersion, columnsVersion, setShowArchived } =
+    useFiltersContext();
   const [columns, setColumns] = useState<Record<IssueStatus, KanbanCard[]>>(
     initialResult.columns,
   );
@@ -81,14 +73,7 @@ export function IssuesKanbanTab({
     return () => {
       cancelled = true;
     };
-  }, [
-    filters.organization_id,
-    filters.team_id,
-    filters.type,
-    filters.assignee_id,
-    filters.search,
-    columnsVersion,
-  ]);
+  }, [filtersVersion, columnsVersion]);
 
   return (
     <>

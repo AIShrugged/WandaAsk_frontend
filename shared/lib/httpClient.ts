@@ -3,6 +3,7 @@
 // ------------------------------
 import { redirect } from 'next/navigation';
 
+import { clearSession } from '@/shared/api/session';
 import { ServerError } from '@/shared/lib/errors';
 import { getAuthHeaders } from '@/shared/lib/getAuthToken';
 import { ROUTES } from '@/shared/lib/routes';
@@ -38,6 +39,7 @@ export async function httpClient<T>(
 
   if (!res.ok) {
     if (res.status === 401) {
+      await clearSession();
       redirect(ROUTES.AUTH.LOGIN);
     }
 
@@ -84,6 +86,7 @@ export async function httpClientList<T>(
 
   if (!res.ok) {
     if (res.status === 401) {
+      await clearSession();
       redirect(ROUTES.AUTH.LOGIN);
     }
 

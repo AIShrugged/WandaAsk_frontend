@@ -7,9 +7,6 @@ import type { KanbanFilters } from '@/features/kanban';
 
 export const metadata = { title: 'Kanban' };
 
-/**
- * Kanban tab page — fetches initial kanban columns for SSR.
- */
 export default async function IssuesKanbanPage({
   searchParams,
 }: {

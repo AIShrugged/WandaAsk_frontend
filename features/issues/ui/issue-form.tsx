@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
+import { getTeams } from '@/entities/team/api/team';
 import {
   createIssue,
   deleteIssue,
@@ -17,7 +18,6 @@ import {
   issueTypeOptionsFromOrgs,
 } from '@/features/issues/model/types';
 import { PendingAttachmentUploader } from '@/features/issues/ui/pending-attachment-uploader';
-import { getTeams } from '@/features/teams/api/team';
 import { ROUTES } from '@/shared/lib/routes';
 import { BUTTON_VARIANT } from '@/shared/types/button';
 import { Button } from '@/shared/ui/button/Button';
@@ -205,7 +205,7 @@ export function IssueForm({
         ? await updateIssue(issue.id, payload)
         : await createIssue(payload);
 
-      if ('error' in result) {
+      if (result.error !== null) {
         if (result.fieldErrors) {
           for (const [field, message] of Object.entries(result.fieldErrors)) {
             if (
@@ -227,7 +227,7 @@ export function IssueForm({
       if (issue) {
         router.refresh();
       } else {
-        router.push(`${ROUTES.DASHBOARD.ISSUES}/${(result as Issue).id}`);
+        router.push(`${ROUTES.DASHBOARD.ISSUES}/${result.data.id}`);
       }
     });
   };
