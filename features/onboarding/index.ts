@@ -1,4 +1,5 @@
 export { acceptStructure, generateStructure } from './api/onboarding';
+export { OnboardingWizard } from './ui/onboarding-wizard';
 export {
   deletePendingAttachment,
   uploadPendingAttachment,
