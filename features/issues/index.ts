@@ -50,6 +50,7 @@ export { IssueForm } from './ui/issue-form';
 export { IssuesKanbanTab } from './ui/issues-kanban-tab';
 export { IssueProgressPage } from './ui/issue-progress-page';
 export { IssuesTabsNav } from './ui/issues-tabs-nav';
+export { IssuesTabsNavSkeleton } from './ui/issues-tabs-nav-skeleton';
 export { default as IssueCreateButton } from './ui/issue-create-button';
 export { IssuesLayoutClient } from './ui/issues-layout-client';
 export { IssuesListTab } from './ui/issues-list-tab';
