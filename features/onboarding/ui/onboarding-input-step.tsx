@@ -4,6 +4,7 @@ import { Link2, Plus, X } from 'lucide-react';
 
 import { BUTTON_VARIANT } from '@/shared/types/button';
 import { Button } from '@/shared/ui/button/Button';
+import { ButtonIcon } from '@/shared/ui/button/button-icon';
 import Input from '@/shared/ui/input/Input';
 import Textarea from '@/shared/ui/input/textarea';
 
@@ -133,15 +134,15 @@ export function OnboardingInputStep({
                   <Link2 className='h-3.5 w-3.5 text-muted-foreground' />
                 }
                 endAdornment={
-                  <button
-                    type='button'
-                    className='text-muted-foreground hover:text-foreground transition-colors'
-                    onClick={() => {
+                  <ButtonIcon
+                    icon={<X className='h-3.5 w-3.5' />}
+                    aria-label='Remove link'
+                    variant='ghost'
+                    size='sm'
+                    onClickAction={() => {
                       return onLinkRemove(index);
                     }}
-                  >
-                    <X className='h-3.5 w-3.5' />
-                  </button>
+                  />
                 }
                 onChange={(e) => {
                   return onLinkChange(index, e.target.value);

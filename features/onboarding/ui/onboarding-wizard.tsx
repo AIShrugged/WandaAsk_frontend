@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useEffect, useReducer, useState } from 'react';
+import { useReducer, useState } from 'react';
 import { toast } from 'sonner';
 
 import { ROUTES } from '@/shared/lib/routes';
@@ -12,324 +12,55 @@ import {
   skipOnboarding,
 } from '../api/onboarding';
 import { useOnboardingPoll } from '../hooks/use-onboarding-poll';
-import { isNeedsMoreInfo } from '../model/types';
+import {
+  EMPTY_INPUT,
+  buildInitialState,
+  reducer,
+} from '../model/wizard-reducer';
 
 import { OnboardingInputStep } from './onboarding-input-step';
 import { OnboardingPreviewStep } from './onboarding-preview-step';
 import { OnboardingProcessingStep } from './onboarding-processing-step';
 
-import type {
-  EditableGoal,
-  EditableTeamMember,
-  InputState,
-  NeedsInfoData,
-  OnboardingDraftResponse,
-  PreviewData,
-} from '../model/types';
+import type { OnboardingDraftResponse } from '../model/types';
 
-// ─── Reducer ────────────────────────────────────────────────────────────────
+// ─── Local helpers ────────────────────────────────────────────────────────────
 
-type WizardStep =
-  | { step: 'input'; inputState: InputState }
-  | { step: 'processing'; inputState: InputState }
-  | { step: 'preview'; inputState: InputState; previewData: PreviewData }
-  | {
-      step: 'needs_info';
-      inputState: InputState;
-      needsInfoData: NeedsInfoData;
-    }
-  | { step: 'error'; inputState: InputState; message: string }
-  | { step: 'timeout'; inputState: InputState };
-
-type WizardAction =
-  | { type: 'SET_UPLOAD_TOKEN'; token: string }
-  | { type: 'SET_DESCRIPTION'; value: string }
-  | { type: 'LINK_ADD' }
-  | { type: 'LINK_CHANGE'; index: number; value: string }
-  | { type: 'LINK_REMOVE'; index: number }
-  | {
-      type: 'ATTACHMENT_UPLOADED';
-      attachment: InputState['attachments'][number];
-    }
-  | { type: 'ATTACHMENT_DELETED'; id: number }
-  | { type: 'GENERATE_STARTED' }
-  | { type: 'POLL_RESULT'; draft: OnboardingDraftResponse }
-  | { type: 'POLL_TIMEOUT' }
-  | { type: 'BACK_TO_INPUT' }
-  | { type: 'ORG_DESC_CHANGE'; value: string }
-  | { type: 'GOAL_UPDATE'; index: number; goal: EditableGoal }
-  | { type: 'GOAL_REMOVE'; index: number }
-  | { type: 'MEMBER_UPDATE'; id: string; member: EditableTeamMember }
-  | { type: 'MEMBER_REMOVE'; id: string }
-  | { type: 'MEMBER_ADD' };
-
-function emptyInput(): InputState {
-  return { description: '', uploadToken: null, links: [], attachments: [] };
+interface StatusScreenProps {
+  title: string;
+  message: string;
+  primaryAction: { label: string; onClick: () => void };
+  secondaryAction: { label: string; onClick: () => void };
 }
 
-function reducer(state: WizardStep, action: WizardAction): WizardStep {
-  const inputState = 'inputState' in state ? state.inputState : emptyInput();
-
-  switch (action.type) {
-    case 'SET_UPLOAD_TOKEN': {
-      return {
-        ...state,
-        inputState: { ...inputState, uploadToken: action.token },
-      } as WizardStep;
-    }
-
-    case 'SET_DESCRIPTION': {
-      return {
-        ...state,
-        inputState: { ...inputState, description: action.value },
-      } as WizardStep;
-    }
-
-    case 'LINK_ADD': {
-      return {
-        ...state,
-        inputState: {
-          ...inputState,
-          links: [...inputState.links, ''],
-        },
-      } as WizardStep;
-    }
-
-    case 'LINK_CHANGE': {
-      const links = inputState.links.map((l, i) => {
-        return i === action.index ? action.value : l;
-      });
-
-      return { ...state, inputState: { ...inputState, links } } as WizardStep;
-    }
-
-    case 'LINK_REMOVE': {
-      const links = inputState.links.filter((_, i) => {
-        return i !== action.index;
-      });
-
-      return { ...state, inputState: { ...inputState, links } } as WizardStep;
-    }
-
-    case 'ATTACHMENT_UPLOADED': {
-      return {
-        ...state,
-        inputState: {
-          ...inputState,
-          attachments: [...inputState.attachments, action.attachment],
-        },
-      } as WizardStep;
-    }
-
-    case 'ATTACHMENT_DELETED': {
-      return {
-        ...state,
-        inputState: {
-          ...inputState,
-          attachments: inputState.attachments.filter((a) => {
-            return a.id !== action.id;
-          }),
-        },
-      } as WizardStep;
-    }
-
-    case 'GENERATE_STARTED': {
-      return { step: 'processing', inputState };
-    }
-
-    case 'POLL_RESULT': {
-      const draft = action.draft;
-
-      if (draft.status === 'pending' || draft.status === 'processing') {
-        return state;
-      }
-
-      if (draft.status === 'failed' || !draft.result) {
-        return {
-          step: 'error',
-          inputState,
-          message: draft.error ?? 'Generation failed. Please try again.',
-        };
-      }
-
-      const result = draft.result;
-
-      if (isNeedsMoreInfo(result)) {
-        return {
-          step: 'needs_info',
-          inputState,
-          needsInfoData: {
-            message: result.message,
-            questions: result.questions,
-          },
-        };
-      }
-
-      const team: EditableTeamMember[] = result.team.map((m) => {
-        return {
-          _id: crypto.randomUUID(),
-          name: m.name,
-          email: m.email,
-          role: m.role,
-          found_in: m.found_in,
-          already_in_system: m.already_in_system,
-          system_user_id: m.system_user_id,
-        };
-      });
-
-      return {
-        step: 'preview',
-        inputState,
-        previewData: {
-          organization: result.organization,
-          goals: result.goals,
-          team,
-        },
-      };
-    }
-
-    case 'POLL_TIMEOUT': {
-      return { step: 'timeout', inputState };
-    }
-
-    case 'BACK_TO_INPUT': {
-      return { step: 'input', inputState };
-    }
-
-    case 'ORG_DESC_CHANGE': {
-      if (state.step !== 'preview') return state;
-      return {
-        ...state,
-        previewData: {
-          ...state.previewData,
-          organization: {
-            ...state.previewData.organization,
-            description: action.value,
-          },
-        },
-      };
-    }
-
-    case 'GOAL_UPDATE': {
-      if (state.step !== 'preview') return state;
-      return {
-        ...state,
-        previewData: {
-          ...state.previewData,
-          goals: state.previewData.goals.map((g, i) => {
-            return i === action.index ? action.goal : g;
-          }),
-        },
-      };
-    }
-
-    case 'GOAL_REMOVE': {
-      if (state.step !== 'preview') return state;
-      return {
-        ...state,
-        previewData: {
-          ...state.previewData,
-          goals: state.previewData.goals.filter((_, i) => {
-            return i !== action.index;
-          }),
-        },
-      };
-    }
-
-    case 'MEMBER_UPDATE': {
-      if (state.step !== 'preview') return state;
-      return {
-        ...state,
-        previewData: {
-          ...state.previewData,
-          team: state.previewData.team.map((m) => {
-            return m._id === action.id ? action.member : m;
-          }),
-        },
-      };
-    }
-
-    case 'MEMBER_REMOVE': {
-      if (state.step !== 'preview') return state;
-      return {
-        ...state,
-        previewData: {
-          ...state.previewData,
-          team: state.previewData.team.filter((m) => {
-            return m._id !== action.id;
-          }),
-        },
-      };
-    }
-
-    case 'MEMBER_ADD': {
-      if (state.step !== 'preview') return state;
-      return {
-        ...state,
-        previewData: {
-          ...state.previewData,
-          team: [
-            ...state.previewData.team,
-            {
-              _id: crypto.randomUUID(),
-              name: '',
-              email: null,
-              role: null,
-              found_in: [],
-              already_in_system: false,
-              system_user_id: null,
-            },
-          ],
-        },
-      };
-    }
-
-    default: {
-      return state;
-    }
-  }
-}
-
-function buildInitialState(
-  initialDraft: OnboardingDraftResponse | null,
-): WizardStep {
-  if (
-    initialDraft?.status === 'pending' ||
-    initialDraft?.status === 'processing'
-  ) {
-    return { step: 'processing', inputState: emptyInput() };
-  }
-
-  if (
-    initialDraft?.status === 'completed' &&
-    initialDraft.result &&
-    !isNeedsMoreInfo(initialDraft.result)
-  ) {
-    const result = initialDraft.result;
-    const team: EditableTeamMember[] = result.team.map((m) => {
-      return {
-        _id: crypto.randomUUID(),
-        name: m.name,
-        email: m.email,
-        role: m.role,
-        found_in: m.found_in,
-        already_in_system: m.already_in_system,
-        system_user_id: m.system_user_id,
-      };
-    });
-
-    return {
-      step: 'preview',
-      inputState: emptyInput(),
-      previewData: {
-        organization: result.organization,
-        goals: result.goals,
-        team,
-      },
-    };
-  }
-
-  return { step: 'input', inputState: emptyInput() };
+function WizardStatusScreen({
+  title,
+  message,
+  primaryAction,
+  secondaryAction,
+}: StatusScreenProps) {
+  return (
+    <div className='flex flex-col items-center justify-center gap-6 py-16 text-center'>
+      <p className='text-xl font-semibold text-foreground'>{title}</p>
+      <p className='text-sm text-muted-foreground max-w-sm'>{message}</p>
+      <div className='flex gap-3'>
+        <button
+          type='button'
+          className='text-sm text-primary hover:underline focus-visible:outline-none focus-visible:underline'
+          onClick={primaryAction.onClick}
+        >
+          {primaryAction.label}
+        </button>
+        <button
+          type='button'
+          className='text-sm text-muted-foreground hover:underline focus-visible:outline-none focus-visible:underline'
+          onClick={secondaryAction.onClick}
+        >
+          {secondaryAction.label}
+        </button>
+      </div>
+    </div>
+  );
 }
 
 // ─── Component ──────────────────────────────────────────────────────────────
@@ -356,19 +87,11 @@ export function OnboardingWizard({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasFilePending, setHasFilePending] = useState(false);
 
-  const isPolling = state.step === 'processing';
-  const inputState = 'inputState' in state ? state.inputState : emptyInput();
-
-  // Generate upload token client-side to avoid SSR/hydration mismatch
-  useEffect(() => {
-    if (!inputState.uploadToken) {
-      dispatch({ type: 'SET_UPLOAD_TOKEN', token: crypto.randomUUID() });
-    }
-  }, []);
+  const inputState = 'inputState' in state ? state.inputState : EMPTY_INPUT;
 
   useOnboardingPoll(
     orgId,
-    isPolling,
+    state.step === 'processing',
     (draft) => {
       return dispatch({ type: 'POLL_RESULT', draft });
     },
@@ -409,7 +132,6 @@ export function OnboardingWizard({
 
     const { previewData } = state;
 
-    // Strip internal fields before sending to backend
     const teamPayload = previewData.team
       .filter((m) => {
         return m.name.trim();
@@ -480,64 +202,33 @@ export function OnboardingWizard({
 
   if (state.step === 'timeout') {
     return (
-      <div className='flex flex-col items-center justify-center gap-6 py-16 text-center'>
-        <p className='text-xl font-semibold text-foreground'>
-          Generation is taking longer than expected
-        </p>
-        <p className='text-sm text-muted-foreground max-w-sm'>
-          The AI is still working. You can wait or come back later — your draft
-          will be saved automatically.
-        </p>
-        <div className='flex gap-3'>
-          <button
-            type='button'
-            className='text-sm text-primary hover:underline'
-            onClick={() => {
-              return dispatch({ type: 'GENERATE_STARTED' });
-            }}
-          >
-            Keep waiting
-          </button>
-          <button
-            type='button'
-            className='text-sm text-muted-foreground hover:underline'
-            onClick={handleSkip}
-          >
-            Go to dashboard
-          </button>
-        </div>
-      </div>
+      <WizardStatusScreen
+        title='Generation is taking longer than expected'
+        message='The AI is still working. You can wait or come back later — your draft will be saved automatically.'
+        primaryAction={{
+          label: 'Keep waiting',
+          onClick: () => {
+            return dispatch({ type: 'GENERATE_STARTED' });
+          },
+        }}
+        secondaryAction={{ label: 'Go to dashboard', onClick: handleSkip }}
+      />
     );
   }
 
   if (state.step === 'error') {
     return (
-      <div className='flex flex-col items-center justify-center gap-6 py-16 text-center'>
-        <p className='text-xl font-semibold text-foreground'>
-          Something went wrong
-        </p>
-        <p className='text-sm text-muted-foreground max-w-sm'>
-          {state.message}
-        </p>
-        <div className='flex gap-3'>
-          <button
-            type='button'
-            className='text-sm text-primary hover:underline'
-            onClick={() => {
-              return dispatch({ type: 'BACK_TO_INPUT' });
-            }}
-          >
-            Try again
-          </button>
-          <button
-            type='button'
-            className='text-sm text-muted-foreground hover:underline'
-            onClick={handleSkip}
-          >
-            Skip for now
-          </button>
-        </div>
-      </div>
+      <WizardStatusScreen
+        title='Something went wrong'
+        message={state.message}
+        primaryAction={{
+          label: 'Try again',
+          onClick: () => {
+            return dispatch({ type: 'BACK_TO_INPUT' });
+          },
+        }}
+        secondaryAction={{ label: 'Skip for now', onClick: handleSkip }}
+      />
     );
   }
 
