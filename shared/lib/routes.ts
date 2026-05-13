@@ -35,6 +35,7 @@ export const ROUTES = {
     PROFILE_CALENDAR: '/dashboard/profile/calendar',
     PROFILE_MENU: '/dashboard/profile/menu',
     PROFILE_APPEARANCE: '/dashboard/profile/appearance',
+    PROFILE_CONNECTIONS: '/dashboard/profile/connections',
     SUMMARY: '/dashboard/summary',
     KANBAN: '/dashboard/kanban',
     ISSUES_LIST: '/dashboard/issues/list',

@@ -9,6 +9,7 @@ const TABS = [
   { href: ROUTES.DASHBOARD.PROFILE_CALENDAR, label: 'Calendar' },
   { href: ROUTES.DASHBOARD.PROFILE_MENU, label: 'Menu' },
   { href: ROUTES.DASHBOARD.PROFILE_APPEARANCE, label: 'Appearance' },
+  { href: ROUTES.DASHBOARD.PROFILE_CONNECTIONS, label: 'Connections' },
 ] as const;
 
 /**
