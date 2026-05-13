@@ -6,7 +6,11 @@ import { toast } from 'sonner';
 
 import { ROUTES } from '@/shared/lib/routes';
 
-import { acceptStructure, generateStructure } from '../api/onboarding';
+import {
+  acceptStructure,
+  generateStructure,
+  skipOnboarding,
+} from '../api/onboarding';
 import { useOnboardingPoll } from '../hooks/use-onboarding-poll';
 import { isNeedsMoreInfo } from '../model/types';
 
@@ -333,10 +337,16 @@ function buildInitialState(
 interface Props {
   orgId: number;
   orgName: string;
+  orgDescription: string;
   initialDraft: OnboardingDraftResponse | null;
 }
 
-export function OnboardingWizard({ orgId, orgName, initialDraft }: Props) {
+export function OnboardingWizard({
+  orgId,
+  orgName,
+  orgDescription,
+  initialDraft,
+}: Props) {
   const router = useRouter();
   const [state, dispatch] = useReducer(
     reducer,
@@ -448,7 +458,17 @@ export function OnboardingWizard({ orgId, orgName, initialDraft }: Props) {
     router.push(ROUTES.DASHBOARD.TODAY);
   }
 
-  function handleSkip() {
+  async function handleSkip() {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    const result = await skipOnboarding(orgId, orgName, orgDescription);
+    setIsSubmitting(false);
+
+    if (result.error) {
+      toast.error(result.error);
+      return;
+    }
+
     router.push(ROUTES.DASHBOARD.TODAY);
   }
 

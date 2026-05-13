@@ -304,8 +304,8 @@ const InputDropdown = forwardRef<
         }}
         className={cn(
           'px-4 flex items-center rounded-[var(--radius-button)] h-10 w-full',
-          'border border-input bg-background transition-colors cursor-pointer',
-          'focus:border-ring focus:ring-2 focus:ring-ring/30 focus:ring-offset-0 outline-none',
+          'border border-border bg-background transition-colors cursor-pointer',
+          'focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:ring-offset-0 outline-none',
           'overflow-visible',
           error ? 'border-destructive' : '',
           disabled && 'opacity-60 cursor-not-allowed',
@@ -377,7 +377,7 @@ const InputDropdown = forwardRef<
                     setHighlightedIndex(-1);
                   }}
                   placeholder='Search'
-                  className='w-full px-3 h-8 text-sm border border-input rounded-[var(--radius-button)] bg-transparent outline-none focus:border-ring focus:ring-2 focus:ring-ring/30 focus:ring-offset-0'
+                  className='w-full px-3 h-8 text-sm border border-border rounded-[var(--radius-button)] bg-transparent outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:ring-offset-0'
                   onClick={(e) => {
                     return e.stopPropagation();
                   }}
