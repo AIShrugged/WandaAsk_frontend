@@ -26,7 +26,7 @@ export default async function ProfileLayout({ children }: PropsWithChildren) {
       <div className='shrink-0 mb-4'>
         <ProfileTabsNav showOnboarding={showOnboarding} />
       </div>
-      <Card className='h-full flex flex-col'>
+      <Card className='h-full flex flex-col min-h-0'>
         <div className='flex-1 overflow-y-auto p-4'>{children}</div>
       </Card>
     </div>
