@@ -7,6 +7,7 @@ import type {
   InputState,
   NeedsInfoData,
   OnboardingDraftResponse,
+  OnboardingDraftResultComplete,
   PendingAttachment,
   PreviewData,
 } from './types';
@@ -294,23 +295,34 @@ export function buildInitialState(
     return { step: 'processing', inputState: EMPTY_INPUT };
   }
 
-  if (
-    initialDraft?.status === 'completed' &&
-    initialDraft.result &&
-    !isNeedsMoreInfo(initialDraft.result)
-  ) {
+  if (initialDraft?.status !== 'completed' || !initialDraft.result) {
+    return { step: 'input', inputState: EMPTY_INPUT };
+  }
+
+  const { result } = initialDraft;
+
+  if (isNeedsMoreInfo(result)) {
     return {
-      step: 'preview',
+      step: 'needs_info',
       inputState: EMPTY_INPUT,
-      previewData: {
-        organization: initialDraft.result.organization,
-        goals: initialDraft.result.goals,
-        team: initialDraft.result.team.map((m) => {
-          return toEditableTeamMember(m);
-        }),
+      needsInfoData: {
+        message: result.message,
+        questions: result.questions,
       },
     };
   }
 
-  return { step: 'input', inputState: EMPTY_INPUT };
+  const complete = result as OnboardingDraftResultComplete;
+
+  return {
+    step: 'preview',
+    inputState: EMPTY_INPUT,
+    previewData: {
+      organization: complete.organization,
+      goals: complete.goals,
+      team: complete.team.map((m) => {
+        return toEditableTeamMember(m);
+      }),
+    },
+  };
 }
