@@ -12,7 +12,6 @@ import {
   isSortOrder,
   isIssueType,
 } from '@/features/issues/model/types';
-import { IssuesTabsNav } from '@/features/issues/ui/issues-tabs-nav';
 import { SharedFiltersBar } from '@/features/issues/ui/shared-filters-bar';
 import { CollapsibleSection } from '@/shared/ui/layout/collapsible-section';
 
@@ -227,8 +226,6 @@ export function IssuesLayoutClient({
             />
           </CollapsibleSection>
         </div>
-
-        <IssuesTabsNav />
 
         <div>{children}</div>
       </div>

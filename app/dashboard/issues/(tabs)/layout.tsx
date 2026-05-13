@@ -1,6 +1,11 @@
 import { Suspense } from 'react';
 
-import { getPersons, IssuesLayoutClient } from '@/features/issues';
+import {
+  getPersons,
+  IssuesLayoutClient,
+  IssuesTabsNav,
+  IssuesTabsNavSkeleton,
+} from '@/features/issues';
 import { getOrganizations } from '@/features/organization';
 import { getCurrentUserId } from '@/shared/lib/getCurrentUserId';
 import { getOrganizationId } from '@/shared/lib/getOrganizationId';
@@ -21,7 +26,8 @@ export default async function IssuesTabsLayout({
 
   return (
     <Card className='overflow-hidden'>
-      <Suspense>
+      <Suspense fallback={<IssuesTabsNavSkeleton />}>
+        <IssuesTabsNav />
         <IssuesLayoutClient
           organizations={organizationsResponse.data ?? []}
           persons={persons}
