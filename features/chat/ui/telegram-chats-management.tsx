@@ -18,11 +18,11 @@ import {
 } from 'react';
 import { toast } from 'sonner';
 
+import { getTeams } from '@/entities/team/api/team';
 import {
   getTelegramChats,
   issueTelegramAttachCode,
 } from '@/features/chat/api/telegram';
-import { getTeams } from '@/features/teams/api/team';
 import { BUTTON_VARIANT } from '@/shared/types/button';
 import { Badge } from '@/shared/ui/badge';
 import { Button, ButtonLink } from '@/shared/ui/button';

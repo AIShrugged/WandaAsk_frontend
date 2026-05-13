@@ -3,11 +3,11 @@
 import { Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
+import { getTeams } from '@/entities/team/api/team';
 import {
   ISSUE_STATUS_OPTIONS,
   issueTypeOptionsFromOrgs,
 } from '@/features/issues/model/types';
-import { getTeams } from '@/features/teams/api/team';
 import InputDropdown from '@/shared/ui/input/InputDropdown';
 import { TenantScopeFields } from '@/shared/ui/input/tenant-scope-fields';
 

@@ -2,38 +2,16 @@ import {
   getIssues,
   getPersons,
   isIssueStatus,
+  isIssueSortField,
+  isSortOrder,
   isIssueType,
-  type IssueSortField,
-  type SortOrder,
+  IssuesListTab,
 } from '@/features/issues';
-import { IssuesListTab } from '@/features/issues';
 import { getCurrentUserId } from '@/shared/lib/getCurrentUserId';
 import { getOrganizationId } from '@/shared/lib/getOrganizationId';
 
 export const metadata = { title: 'Tasktracker' };
 
-const VALID_SORT_FIELDS = new Set<IssueSortField>([
-  'id',
-  'name',
-  'type',
-  'status',
-  'priority',
-  'due_date',
-  'updated_at',
-  'created_at',
-]);
-
-function isIssueSortField(value: string): value is IssueSortField {
-  return VALID_SORT_FIELDS.has(value as IssueSortField);
-}
-
-function isSortOrder(value: string): value is SortOrder {
-  return value === 'asc' || value === 'desc';
-}
-
-/**
- * Issues list tab page — fetches initial issues for SSR.
- */
 export default async function IssuesListPage({
   searchParams,
 }: {

@@ -364,18 +364,11 @@ export function IssuesPage({
     [filtersVersion, sortField, sortOrder],
   );
 
-  const {
-    items: rawItems,
-    isLoading,
-    hasMore,
-    sentinelRef,
-  } = useInfiniteScroll<Issue>({
+  const { items, isLoading, hasMore, sentinelRef } = useInfiniteScroll<Issue>({
     fetchMore,
     initialItems: scrollInitialItems,
     initialHasMore: firstPage.hasMore,
   });
-
-  const items = rawItems;
 
   const handleSort = useCallback(
     (field: string) => {
@@ -433,7 +426,7 @@ export function IssuesPage({
             priority: issue.priority,
           });
 
-          if ('error' in result) {
+          if (result.error !== null) {
             setUpdatingIssueId(null);
             toast.error(result.error);
 

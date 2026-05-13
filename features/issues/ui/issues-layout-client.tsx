@@ -6,7 +6,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { IssueCreateButton } from '@/features/issues';
 import { FiltersContext } from '@/features/issues/model/filters-context';
-import { isIssueStatus, isIssueType } from '@/features/issues/model/types';
+import {
+  isIssueStatus,
+  isIssueSortField,
+  isSortOrder,
+  isIssueType,
+} from '@/features/issues/model/types';
 import { IssuesTabsNav } from '@/features/issues/ui/issues-tabs-nav';
 import { SharedFiltersBar } from '@/features/issues/ui/shared-filters-bar';
 import { CollapsibleSection } from '@/shared/ui/layout/collapsible-section';
@@ -28,23 +33,6 @@ type IssuesLayoutClientProps = React.PropsWithChildren<{
 
 const KEEP_WHEN_EMPTY = new Set(['assignee_id']);
 const STALE_PARAMS = ['assignee'] as const;
-
-const VALID_SORT_FIELDS = new Set<IssueSortField>([
-  'id',
-  'name',
-  'type',
-  'status',
-  'updated_at',
-  'created_at',
-]);
-
-function isIssueSortField(value: string): value is IssueSortField {
-  return VALID_SORT_FIELDS.has(value as IssueSortField);
-}
-
-function isSortOrder(value: string): value is SortOrder {
-  return value === 'asc' || value === 'desc';
-}
 
 /**
  * IssuesLayoutClient — client component that owns filter state and URL sync

@@ -1,6 +1,7 @@
 import { PRIORITY_LEVELS } from '@/entities/issue/model/types';
 
 import type { IssueStatus, PersonOption } from '@/entities/issue/model/types';
+import type { SortOrder } from '@/shared/ui/table/types';
 
 export type {
   IssueStatus,
@@ -138,8 +139,9 @@ export type IssueSortField =
   | 'due_date'
   | 'updated_at'
   | 'created_at';
-import type { SortOrder } from '@/shared/ui/table/types';
 
+// Single source of truth for sort-field validation.
+// Import from '@/features/issues' — do NOT redefine locally in consumers.
 export const VALID_SORT_FIELDS = new Set<IssueSortField>([
   'id',
   'name',

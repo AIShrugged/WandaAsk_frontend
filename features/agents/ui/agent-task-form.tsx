@@ -5,6 +5,7 @@ import { useMemo, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
+import { getTeams } from '@/entities/team/api/team';
 import {
   createAgentTask,
   updateAgentTask,
@@ -13,7 +14,6 @@ import {
 import { normalizeAllowedTools } from '@/features/agents/lib/format';
 import { parseJsonInput, stringifyJson } from '@/features/agents/lib/json';
 import { isAgentActionError } from '@/features/agents/model/types';
-import { getTeams } from '@/features/teams/api/team';
 import { ROUTES } from '@/shared/lib/routes';
 import { BUTTON_VARIANT } from '@/shared/types/button';
 import { Button } from '@/shared/ui/button/Button';

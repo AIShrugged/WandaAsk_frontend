@@ -41,7 +41,6 @@ export {
   VALID_SORT_FIELDS,
   issueTypeOptionsFromOrgs,
 } from '@/features/issues/model/types';
-export { TasksKanbanClient } from './ui/tasks-kanban-client';
 export { IssueAttachments } from './ui/issue-attachments';
 export { IssueComments } from './ui/issue-comments';
 export { IssueStatusBadge, IssuePriorityBadge } from '@/entities/issue';
