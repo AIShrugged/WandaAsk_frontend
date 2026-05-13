@@ -1,3 +1,5 @@
+export type UserRole = 'manager' | 'employee';
+
 export interface OrganizationIssueType {
   id: number;
   organization_id: number | null;

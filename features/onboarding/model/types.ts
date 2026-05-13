@@ -1,4 +1,5 @@
-import type { IssueAttachment } from '@/features/issues/model/types';
+import type { UserRole } from '@/entities/organization';
+import type { IssueAttachment } from '@/features/issues';
 
 export type DraftStatus = 'pending' | 'processing' | 'completed' | 'failed';
 export type TaskType = 'development' | 'organization';
@@ -110,7 +111,7 @@ export interface AcceptStructurePayload {
   team?: Array<{
     name: string;
     email?: string;
-    role?: string;
+    role?: UserRole;
   }>;
 }
 
