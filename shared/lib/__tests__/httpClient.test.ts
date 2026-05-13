@@ -19,6 +19,10 @@ jest.mock('next/navigation', () => {
   };
 });
 
+jest.mock('@/shared/api/session', () => {
+  return { clearSession: jest.fn().mockResolvedValue() };
+});
+
 const makeResponse = (
   body: unknown,
   options: { status?: number; headers?: Record<string, string> } = {},
