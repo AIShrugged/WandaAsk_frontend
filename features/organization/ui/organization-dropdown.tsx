@@ -111,10 +111,10 @@ export default function OrganizationDropdown({
     getMountedSnapshot,
     getServerMountedSnapshot,
   );
-  const [, action, pending] = useActionState(setActiveOrganization, {
+  const [state, action, pending] = useActionState(setActiveOrganization, {
     ok: false,
   });
-  const { push } = useRouter();
+  const { push, refresh } = useRouter();
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [dropdownPos, setDropdownPos] = useState<{
     top: number;
@@ -143,6 +143,15 @@ export default function OrganizationDropdown({
       action(formData);
     }
   }, []);
+
+  const prevPendingRef = useRef(false);
+  useEffect(() => {
+    if (prevPendingRef.current && !pending && state.ok) {
+      refresh();
+    }
+
+    prevPendingRef.current = pending;
+  }, [pending, state.ok, refresh]);
 
   useEffect(() => {
     if (!open) return;

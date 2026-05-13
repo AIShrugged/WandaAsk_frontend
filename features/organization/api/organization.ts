@@ -194,6 +194,7 @@ export async function setActiveOrganization(
   });
 
   revalidatePath(ROUTES.DASHBOARD.ORGANIZATION);
+  revalidatePath('/dashboard', 'layout');
 
   return { ok: true };
 }
