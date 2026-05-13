@@ -49,6 +49,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   ) => {
     const autoId = useId();
     const textareaId = id ?? `textarea-${autoId}`;
+    const errorId = `${textareaId}-error`;
     const [isFocused, setIsFocused] = useState(false);
     const currentValue = propValue ?? '';
     const hasValue = currentValue.length > 0 || !!placeholder;
@@ -85,11 +86,10 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         <div
           className={cn(
             'relative w-full rounded-[var(--radius-button)] bg-[var(--background)] pl-4 px-1.5 py-3',
-            'transition-shadow',
-            !error &&
-              'shadow-[inset_0_0_0_1px_var(--border)] focus-within:shadow-[inset_0_0_0_1.5px_var(--primary),0_0_0_3px_color-mix(in_oklab,var(--ring)_18%,transparent)]',
-            error &&
-              'shadow-[inset_0_0_0_1.5px_var(--destructive)] focus-within:shadow-[inset_0_0_0_1.5px_var(--destructive),0_0_0_3px_color-mix(in_oklab,var(--destructive)_18%,transparent)]',
+            'transition-shadow [&_textarea]:focus-visible:shadow-none',
+            error
+              ? 'shadow-[inset_0_0_0_1px_var(--destructive)] focus-within:shadow-[0_0_0_3px_color-mix(in_oklab,var(--destructive)_35%,transparent)]'
+              : 'shadow-[inset_0_0_0_1px_var(--border)] focus-within:shadow-[0_0_0_3px_color-mix(in_oklab,var(--ring)_35%,transparent)]',
           )}
           style={height ? { height } : undefined}
         >
@@ -114,6 +114,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
               ...(height && { height: '100%', overflowY: 'auto' }),
             }}
             aria-invalid={!!error}
+            aria-describedby={error ? errorId : undefined}
           />
 
           {label && (
@@ -134,7 +135,9 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         </div>
 
         {typeof error === 'string' && (
-          <span className='mt-1 text-sm text-destructive'>{error}</span>
+          <span id={errorId} className='mt-1 text-sm text-destructive'>
+            {error}
+          </span>
         )}
       </div>
     );

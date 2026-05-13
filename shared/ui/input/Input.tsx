@@ -70,12 +70,10 @@ const Input = forwardRef<HTMLInputElement, Props>(function Input(
       <div
         className={cn(
           'px-4 flex items-center rounded-[var(--radius-button)] h-9 w-full relative',
-          // Inset box-shadow border — no box-model impact, smooth focus transition
-          'bg-[var(--background)] transition-shadow',
-          !error &&
-            'shadow-[inset_0_0_0_1px_var(--border)] focus-within:shadow-[inset_0_0_0_1.5px_var(--primary),0_0_0_3px_color-mix(in_oklab,var(--ring)_18%,transparent)]',
-          error &&
-            'shadow-[inset_0_0_0_1.5px_var(--destructive)] focus-within:shadow-[inset_0_0_0_1.5px_var(--destructive),0_0_0_3px_color-mix(in_oklab,var(--destructive)_18%,transparent)]',
+          'bg-[var(--background)] transition-shadow [&_input]:focus-visible:shadow-none',
+          error
+            ? 'shadow-[inset_0_0_0_1px_var(--destructive)] focus-within:shadow-[0_0_0_3px_color-mix(in_oklab,var(--destructive)_35%,transparent)]'
+            : 'shadow-[inset_0_0_0_1px_var(--border)] focus-within:shadow-[0_0_0_3px_color-mix(in_oklab,var(--ring)_35%,transparent)]',
         )}
       >
         {startAdornment ? (
