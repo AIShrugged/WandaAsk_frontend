@@ -1,7 +1,7 @@
 'use client';
 
 import { Paperclip, Trash2, Upload } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import {
@@ -39,8 +39,16 @@ export function OnboardingFileUpload({
   const [pendingOps, setPendingOps] = useState<Set<string>>(new Set());
   const [fileNames, setFileNames] = useState<Map<number, string>>(new Map());
   const [fileSizes, setFileSizes] = useState<Map<number, number>>(new Map());
+  const isMountedRef = useRef(true);
 
   const isBusy = pendingOps.size > 0;
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   useEffect(() => {
     onPendingChange(isBusy);
@@ -134,6 +142,7 @@ export function OnboardingFileUpload({
               addOp(opId);
               uploadPendingAttachment(file, uploadToken)
                 .then((result) => {
+                  if (!isMountedRef.current) return;
                   if (result.error) {
                     toast.error(result.error);
                     return;
@@ -194,6 +203,7 @@ export function OnboardingFileUpload({
                     addOp(opId);
                     deletePendingAttachment(attachment.id)
                       .then((result) => {
+                        if (!isMountedRef.current) return;
                         if (result.error) {
                           toast.error(result.error);
                           return;

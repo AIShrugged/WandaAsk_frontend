@@ -8,12 +8,33 @@ import { API_URL } from '@/shared/lib/config';
 import { ServerError } from '@/shared/lib/errors';
 import { httpClient } from '@/shared/lib/httpClient';
 
+import { onboardingDraftResponseSchema } from '../model/schemas';
+
 import type {
   AcceptStructurePayload,
   AcceptStructureResponse,
   GenerateStructurePayload,
+  OnboardingDraftResponse,
 } from '../model/types';
 import type { ActionResult } from '@/shared/types/server-action';
+
+export async function getLatestDraft(
+  orgId: string | number,
+): Promise<OnboardingDraftResponse | null> {
+  try {
+    const { data } = await httpClient<OnboardingDraftResponse>(
+      `${API_URL}/organizations/${orgId}/drafts/latest`,
+    );
+
+    const parsed = onboardingDraftResponseSchema.safeParse(data);
+
+    return parsed.success ? parsed.data : null;
+  } catch (error) {
+    if (error instanceof ServerError && error.status === 404) return null;
+
+    return null;
+  }
+}
 
 export async function generateStructure(
   orgId: number,
@@ -44,28 +65,6 @@ export async function generateStructure(
 
     throw error;
   }
-}
-
-export async function skipOnboarding(
-  orgId: number,
-  orgName: string,
-  orgDescription: string,
-): Promise<ActionResult<AcceptStructureResponse>> {
-  const payload: AcceptStructurePayload = {
-    organization: {
-      name: orgName,
-      description:
-        orgDescription || 'Organization set up during onboarding skip.',
-    },
-    goals: [
-      {
-        title: 'Getting started',
-      },
-    ],
-    team: [],
-  };
-
-  return acceptStructure(orgId, payload);
 }
 
 export async function acceptStructure(

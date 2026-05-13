@@ -6,11 +6,7 @@ import { toast } from 'sonner';
 
 import { ROUTES } from '@/shared/lib/routes';
 
-import {
-  acceptStructure,
-  generateStructure,
-  skipOnboarding,
-} from '../api/onboarding';
+import { acceptStructure, generateStructure } from '../api/onboarding';
 import { useOnboardingPoll } from '../hooks/use-onboarding-poll';
 import {
   EMPTY_INPUT,
@@ -68,15 +64,17 @@ function WizardStatusScreen({
 interface Props {
   orgId: number;
   orgName: string;
-  orgDescription: string;
   initialDraft: OnboardingDraftResponse | null;
+  redirectAfterSkip?: string;
+  redirectAfterAccept?: string;
 }
 
 export function OnboardingWizard({
   orgId,
   orgName,
-  orgDescription,
   initialDraft,
+  redirectAfterSkip,
+  redirectAfterAccept,
 }: Props) {
   const router = useRouter();
   const [state, dispatch] = useReducer(
@@ -180,21 +178,11 @@ export function OnboardingWizard({
       description: 'Your goals are ready in the issue tracker.',
       duration: 5000,
     });
-    router.push(ROUTES.DASHBOARD.ISSUES_LIST);
+    router.push(redirectAfterAccept ?? ROUTES.DASHBOARD.ISSUES_LIST);
   }
 
-  async function handleSkip() {
-    if (isSubmitting) return;
-    setIsSubmitting(true);
-    const result = await skipOnboarding(orgId, orgName, orgDescription);
-    setIsSubmitting(false);
-
-    if (result.error) {
-      toast.error(result.error);
-      return;
-    }
-
-    router.push(ROUTES.DASHBOARD.TODAY);
+  function handleSkip() {
+    router.push(redirectAfterSkip ?? ROUTES.DASHBOARD.TODAY);
   }
 
   // ── Render ────────────────────────────────────────────────────────────────

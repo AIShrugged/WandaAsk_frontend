@@ -22,6 +22,7 @@ const nextConfig: NextConfig = {
       'framer-motion',
       '@tanstack/react-query',
       'react-hook-form',
+      'lucide-react',
     ],
   },
 
