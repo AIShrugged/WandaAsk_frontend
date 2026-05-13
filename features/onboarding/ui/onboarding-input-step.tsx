@@ -115,6 +115,7 @@ export function OnboardingInputStep({
             <Button
               type='button'
               variant={BUTTON_VARIANT.secondary}
+              fullWidth={false}
               className='h-7 gap-1 px-2 text-xs'
               onClick={onLinkAdd}
             >

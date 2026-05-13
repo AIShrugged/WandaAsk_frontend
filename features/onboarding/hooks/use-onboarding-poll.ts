@@ -7,6 +7,20 @@ import type { OnboardingDraftResponse } from '../model/types';
 const POLL_INTERVAL_MS = 5000;
 const POLL_MAX_ATTEMPTS = 180;
 
+function isDone(draft: OnboardingDraftResponse): boolean {
+  return draft.status === 'completed' || draft.status === 'failed';
+}
+
+async function fetchDraft(
+  orgId: number,
+): Promise<OnboardingDraftResponse | null> {
+  const res = await fetch(`/api/onboarding/draft?orgId=${orgId}`);
+  if (!res.ok) return null;
+  const data: { status: string } = await res.json();
+  if (data.status === 'not_found') return null;
+  return data as OnboardingDraftResponse;
+}
+
 export function useOnboardingPoll(
   orgId: number,
   enabled: boolean,
@@ -29,13 +43,15 @@ export function useOnboardingPoll(
   useEffect(() => {
     if (!enabled) return;
 
+    let active = true;
     stoppedRef.current = false;
     attemptsRef.current = 0;
 
     async function poll() {
-      if (stoppedRef.current) return;
+      if (!active || stoppedRef.current) return;
 
       if (attemptsRef.current >= POLL_MAX_ATTEMPTS) {
+        stoppedRef.current = true;
         onTimeoutRef.current();
         return;
       }
@@ -43,36 +59,24 @@ export function useOnboardingPoll(
       attemptsRef.current++;
 
       try {
-        const res = await fetch(`/api/onboarding/draft?orgId=${orgId}`);
+        const draft = await fetchDraft(orgId);
+        if (!active || stoppedRef.current) return;
 
-        if (res.ok) {
-          const data: { status: string } = await res.json();
-
-          if (data.status === 'not_found') {
-            // Draft not created yet — keep polling
-          } else {
-            const draft = data as OnboardingDraftResponse;
-
-            onResultRef.current(draft);
-
-            if (draft.status === 'completed' || draft.status === 'failed')
-              return;
-          }
-        } else {
-          // Non-200: keep polling, backend may be temporarily unavailable
+        if (draft !== null) {
+          onResultRef.current(draft);
+          if (isDone(draft)) return;
         }
       } catch {
         // Network error — keep polling
       }
 
-      if (!stoppedRef.current) {
-        setTimeout(poll, POLL_INTERVAL_MS);
-      }
+      setTimeout(poll, POLL_INTERVAL_MS);
     }
 
     setTimeout(poll, POLL_INTERVAL_MS);
 
     return () => {
+      active = false;
       stoppedRef.current = true;
     };
   }, [orgId, enabled]);
