@@ -17,7 +17,7 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-const THEME_COOKIE = 'wanda-theme';
+const THEME_COOKIE = 'tribes-theme';
 const DEFAULT_THEME: Theme = 'dark';
 const ONE_YEAR_SECONDS = 31_536_000;
 

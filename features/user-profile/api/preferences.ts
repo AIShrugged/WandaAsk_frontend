@@ -35,7 +35,7 @@ export async function updateThemePreference(
   theme: Theme,
 ): Promise<ActionResult> {
   const cookieStore = await cookies();
-  cookieStore.set('wanda-theme', theme, {
+  cookieStore.set('tribes-theme', theme, {
     path: '/',
     sameSite: 'lax',
     maxAge: 31_536_000,

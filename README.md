@@ -1,6 +1,6 @@
-# AI Ask Wanda — Frontend
+# Tribes — Frontend
 
-Next.js frontend for the AI Ask Wanda application. Communicates with a separate
+Next.js frontend for the Tribes application. Communicates with a separate
 Laravel backend via REST API.
 
 ## Stack
@@ -112,7 +112,7 @@ The app is containerized and deployed via Docker + Kubernetes (Helm).
 
 ```bash
 # Build image
-docker build -t wanda-frontend .
+docker build -t tribes-frontend .
 
 # Run container
 docker run -p 3000:3000 \
