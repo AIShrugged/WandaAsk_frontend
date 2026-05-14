@@ -15,24 +15,25 @@ import {
 import { getOrganizations } from '@/features/organization';
 import { getUser } from '@/features/user';
 import { ROUTES } from '@/shared/lib/routes';
+import { validateBackHref } from '@/shared/lib/validate-back-href';
 import { Card, CardBody } from '@/shared/ui/card';
 import PageHeader from '@/widgets/layout/ui/page-header';
 
-/**
- * IssueDetailPage component.
- * @param props - page props.
- * @param props.params - route params.
- * @returns JSX element.
- */
+interface IssueDetailPageProps {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ from?: string }>;
+}
+
 export default async function IssueDetailPage({
   params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
+  searchParams,
+}: IssueDetailPageProps) {
+  const [{ id }, { from }] = await Promise.all([params, searchParams]);
   const issueId = Number(id);
 
   if (!Number.isFinite(issueId) || issueId <= 0) notFound();
+
+  const backHref = validateBackHref(from) ?? ROUTES.DASHBOARD.ISSUES_KANBAN;
 
   const [
     issue,
@@ -80,7 +81,7 @@ export default async function IssueDetailPage({
           <Card className='flex flex-col'>
             <PageHeader
               hasButtonBack
-              fallbackHref={ROUTES.DASHBOARD.ISSUES_KANBAN}
+              href={backHref}
               title='Task'
               extraContent={
                 isArchived ? (

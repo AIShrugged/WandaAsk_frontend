@@ -44,6 +44,8 @@ interface IssueFormProps {
   issue?: Issue;
   defaultOrganizationId?: string;
   currentUser?: UserBasicProps | null;
+  /** Back href passed from the page (validated ?from= param). Forwarded to the detail page after creation. */
+  backHref?: string;
 }
 
 interface IssueFormValues {
@@ -77,6 +79,7 @@ export function IssueForm({
   issue,
   defaultOrganizationId = '',
   currentUser,
+  backHref,
 }: IssueFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -227,7 +230,10 @@ export function IssueForm({
       if (issue) {
         router.refresh();
       } else {
-        router.push(`${ROUTES.DASHBOARD.ISSUES}/${result.data.id}`);
+        const detailUrl = backHref
+          ? `${ROUTES.DASHBOARD.ISSUES}/${result.data.id}?from=${encodeURIComponent(backHref)}`
+          : `${ROUTES.DASHBOARD.ISSUES}/${result.data.id}`;
+        router.push(detailUrl);
       }
     });
   };

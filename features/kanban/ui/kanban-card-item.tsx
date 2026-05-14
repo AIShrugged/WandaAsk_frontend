@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { memo } from 'react';
 
 import { IssuePriorityBadge } from '@/entities/issue';
@@ -17,8 +18,14 @@ export const KanbanCardItem = memo(function KanbanCardItem({
   isMoving,
   onCardClick,
 }: KanbanCardItemProps) {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const typeClass =
     TYPE_COLORS[card.type] ?? 'bg-secondary text-secondary-foreground';
+
+  const params = searchParams.toString();
+  const from = encodeURIComponent(params ? `${pathname}?${params}` : pathname);
+  const detailHref = `${ROUTES.DASHBOARD.ISSUES}/${card.id}?from=${from}`;
 
   return (
     <div
@@ -39,7 +46,7 @@ export const KanbanCardItem = memo(function KanbanCardItem({
       ].join(' ')}
     >
       <Link
-        href={`${ROUTES.DASHBOARD.ISSUES}/${card.id}`}
+        href={detailHref}
         className='block text-sm font-medium text-foreground hover:text-primary leading-snug mb-2'
       >
         {card.name}

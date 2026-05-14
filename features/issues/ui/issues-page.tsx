@@ -20,6 +20,7 @@ import {
   loadIssuesChunk,
   updateIssue,
 } from '@/features/issues/api/issues';
+import { useIssueDetailHref } from '@/features/issues/hooks/use-issue-detail-href';
 import { useFiltersContext } from '@/features/issues/model/filters-context';
 import {
   getPriorityLevel,
@@ -148,6 +149,7 @@ export function IssuesPage({
   onShowArchivedChange,
 }: IssuesPageProps) {
   const { bumpColumnsVersion } = useFiltersContext();
+  const issueDetailHref = useIssueDetailHref();
   const [isPending, startTransition] = useTransition();
   const [sortField, setSortField] = useState<IssueSortField>(initialSort);
   const [sortOrder, setSortOrder] = useState<SortOrder>(initialOrder);
@@ -561,7 +563,7 @@ export function IssuesPage({
                       key={issue.id}
                       className='border-t border-border hover:bg-accent/20'
                     >
-                      <td className='p-2 align-top font-mono text-muted-foreground whitespace-nowrap'>
+                      <td className='p-2 align-top font-mono text-muted-foreground whitespace-nowrap text-sm'>
                         #{issue.id}
                       </td>
                       <td className='max-w-0 overflow-hidden p-2 align-top'>
@@ -572,7 +574,7 @@ export function IssuesPage({
                             className='shrink-0'
                           />
                           <Link
-                            href={`${ROUTES.DASHBOARD.ISSUES}/${issue.id}`}
+                            href={issueDetailHref(issue.id)}
                             className='truncate font-medium text-foreground hover:text-primary'
                           >
                             {issue.name}
