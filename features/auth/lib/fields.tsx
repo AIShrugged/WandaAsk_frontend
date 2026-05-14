@@ -2,8 +2,6 @@ import Link from 'next/link';
 
 import { emailField } from '@/shared/lib/fields';
 
-import type { RegisterInput } from '@/features/auth/model/schemas';
-
 const passwordField = {
   variant: 'inputPassword' as const,
   name: 'password',
@@ -42,9 +40,7 @@ export const REGISTER_FIELDS = [
   },
 ];
 
-export const REGISTER_FIELDS_VALUES: Omit<RegisterInput, 'acceptTerms'> & {
-  acceptTerms: boolean;
-} = {
+export const REGISTER_FIELDS_VALUES = {
   name: '',
   email: '',
   password: '',

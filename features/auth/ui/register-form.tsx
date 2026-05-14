@@ -33,7 +33,7 @@ export default function RegisterForm() {
     setError,
     formState: { errors, isValid },
   } = useForm<RegisterInput>({
-    defaultValues: REGISTER_FIELDS_VALUES,
+    defaultValues: REGISTER_FIELDS_VALUES as unknown as RegisterInput,
     resolver: zodResolver(RegisterSchema),
     mode: 'onBlur',
     reValidateMode: 'onChange',
