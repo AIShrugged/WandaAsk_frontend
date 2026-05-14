@@ -5,12 +5,17 @@ import { Link2, Plus, X } from 'lucide-react';
 import { BUTTON_VARIANT } from '@/shared/types/button';
 import { Button } from '@/shared/ui/button/Button';
 import { ButtonIcon } from '@/shared/ui/button/button-icon';
+import { Pill } from '@/shared/ui/common';
 import Input from '@/shared/ui/input/Input';
 import Textarea from '@/shared/ui/input/textarea';
 
 import { OnboardingFileUpload } from './onboarding-file-upload';
 
-import type { InputState, NeedsInfoData } from '../model/types';
+import type { InputState, NeedsInfoData, TemplateValue } from '../model/types';
+
+const TEMPLATE_OPTIONS: Array<{ value: TemplateValue; label: string }> = [
+  { value: 'IT', label: 'IT' },
+];
 
 const MAX_LINKS = 5;
 
@@ -30,6 +35,9 @@ interface Props {
   needsInfoData?: NeedsInfoData;
   isSubmitting: boolean;
   hasFilePending: boolean;
+  template: TemplateValue | null;
+  organizationId: number;
+  onTemplateChange: (value: TemplateValue | null) => void;
   onDescriptionChange: (value: string) => void;
   onLinkAdd: () => void;
   onLinkChange: (index: number, value: string) => void;
@@ -46,6 +54,9 @@ export function OnboardingInputStep({
   needsInfoData,
   isSubmitting,
   hasFilePending,
+  template,
+  organizationId,
+  onTemplateChange,
   onDescriptionChange,
   onLinkAdd,
   onLinkChange,
@@ -101,6 +112,29 @@ export function OnboardingInputStep({
           return onDescriptionChange(e.target.value);
         }}
       />
+
+      <fieldset className='border-none m-0 p-0 flex flex-col gap-2'>
+        <legend className='text-sm font-medium text-foreground mb-2'>
+          Industry template
+        </legend>
+        <div className='flex flex-wrap gap-2'>
+          {TEMPLATE_OPTIONS.map((t) => {
+            return (
+              <Pill
+                key={t.value}
+                active={template === t.value}
+                onClick={() => {
+                  return onTemplateChange(
+                    template === t.value ? null : t.value,
+                  );
+                }}
+              >
+                {t.label}
+              </Pill>
+            );
+          })}
+        </div>
+      </fieldset>
 
       {/* URL slots */}
       <div className='flex flex-col gap-2'>
@@ -158,6 +192,7 @@ export function OnboardingInputStep({
         <OnboardingFileUpload
           uploadToken={state.uploadToken}
           attachments={state.attachments}
+          organizationId={organizationId}
           onUploaded={onUploaded}
           onDeleted={onDeleted}
           onPendingChange={onPendingChange}

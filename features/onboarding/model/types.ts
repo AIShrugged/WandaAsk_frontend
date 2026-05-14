@@ -2,6 +2,7 @@ import type { UserRole } from '@/entities/organization';
 import type { IssueAttachment } from '@/features/issues';
 
 export type DraftStatus = 'pending' | 'processing' | 'completed' | 'failed';
+export type TemplateValue = 'IT';
 export type TaskType = 'development' | 'organization';
 
 export type PendingAttachment = IssueAttachment;
@@ -74,6 +75,7 @@ export interface InputState {
   uploadToken: string | null;
   links: string[];
   attachments: PendingAttachment[];
+  template: TemplateValue | null;
 }
 
 export interface NeedsInfoData {
@@ -91,6 +93,7 @@ export interface GenerateStructurePayload {
   description?: string;
   upload_token?: string;
   links?: string[];
+  template?: TemplateValue;
 }
 
 export interface AcceptStructurePayload {
@@ -113,6 +116,7 @@ export interface AcceptStructurePayload {
     email?: string;
     role?: UserRole;
   }>;
+  template?: TemplateValue;
 }
 
 export interface AcceptStructureResponse {

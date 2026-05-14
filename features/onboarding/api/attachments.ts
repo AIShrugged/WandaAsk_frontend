@@ -11,12 +11,14 @@ import type { ActionResult } from '@/shared/types/server-action';
 export async function uploadPendingAttachment(
   file: File,
   uploadToken: string,
+  organizationId: number,
 ): Promise<ActionResult<IssueAttachment>> {
   try {
     const formData = new FormData();
 
     formData.append('file', file);
     formData.append('upload_token', uploadToken);
+    formData.append('organization_id', String(organizationId));
 
     const { data } = await httpClient<IssueAttachment>(
       `${API_URL}/attachments/pending`,
@@ -44,6 +46,8 @@ export async function uploadPendingAttachment(
   }
 }
 
+// To download an attachment, use GET /api/v1/attachments/{id}/download
+// with Authorization: Bearer <token>. No unauthenticated signed-URL route exists.
 export async function deletePendingAttachment(
   attachmentId: number,
 ): Promise<ActionResult<null>> {
