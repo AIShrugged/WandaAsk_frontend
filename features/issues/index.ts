@@ -47,6 +47,7 @@ export { IssueStatusBadge, IssuePriorityBadge } from '@/entities/issue';
 export { getIssueComments } from './api/comments';
 export type { IssueComment, IssueCommentUser } from './model/types';
 export { IssueForm } from './ui/issue-form';
+export { useIssueDetailHref } from './hooks/use-issue-detail-href';
 export { IssuesKanbanTab } from './ui/issues-kanban-tab';
 export { IssueProgressPage } from './ui/issue-progress-page';
 export { IssuesTabsNav } from './ui/issues-tabs-nav';
