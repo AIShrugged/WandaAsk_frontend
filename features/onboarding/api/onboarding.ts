@@ -78,6 +78,8 @@ export async function skipOnboarding(orgId: number): Promise<void> {
     sameSite: 'lax',
     path: '/',
   });
+
+  revalidatePath('/dashboard', 'layout');
 }
 
 export async function acceptStructure(
