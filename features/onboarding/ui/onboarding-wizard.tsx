@@ -102,14 +102,21 @@ export function OnboardingWizard({
   async function handleGenerate() {
     if (isSubmitting || hasFilePending) return;
 
+    // Snapshot current inputState directly to avoid stale closure when
+    // template chip and generate button are clicked in the same render cycle.
+    const currentInput = 'inputState' in state ? state.inputState : EMPTY_INPUT;
+
     const payload = {
-      description: inputState.description.trim(),
-      ...(inputState.uploadToken &&
-        inputState.attachments.length > 0 && {
-          upload_token: inputState.uploadToken,
+      description: currentInput.description.trim(),
+      ...(currentInput.template !== null && {
+        template: currentInput.template,
+      }),
+      ...(currentInput.uploadToken &&
+        currentInput.attachments.length > 0 && {
+          upload_token: currentInput.uploadToken,
         }),
-      ...(inputState.links.some(Boolean) && {
-        links: inputState.links.filter(Boolean),
+      ...(currentInput.links.some(Boolean) && {
+        links: currentInput.links.filter(Boolean),
       }),
     };
 
@@ -164,6 +171,7 @@ export function OnboardingWizard({
         };
       }),
       team: teamPayload,
+      ...(inputState.template !== null && { template: inputState.template }),
     };
 
     setIsSubmitting(true);
@@ -266,6 +274,11 @@ export function OnboardingWizard({
       needsInfoData={needsInfoData}
       isSubmitting={isSubmitting}
       hasFilePending={hasFilePending}
+      template={inputState.template}
+      organizationId={orgId}
+      onTemplateChange={(value) => {
+        return dispatch({ type: 'SET_TEMPLATE', value });
+      }}
       onDescriptionChange={(value) => {
         return dispatch({ type: 'SET_DESCRIPTION', value });
       }}

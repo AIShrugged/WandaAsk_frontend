@@ -18,6 +18,7 @@ const MAX_SIZE_BYTES = 10 * 1024 * 1024;
 interface Props {
   uploadToken: string;
   attachments: PendingAttachment[];
+  organizationId: number;
   onUploaded: (attachment: PendingAttachment) => void;
   onDeleted: (attachmentId: number) => void;
   onPendingChange: (hasPending: boolean) => void;
@@ -32,6 +33,7 @@ function formatSize(bytes: number): string {
 export function OnboardingFileUpload({
   uploadToken,
   attachments,
+  organizationId,
   onUploaded,
   onDeleted,
   onPendingChange,
@@ -140,7 +142,7 @@ export function OnboardingFileUpload({
               const originalSize = file.size;
 
               addOp(opId);
-              uploadPendingAttachment(file, uploadToken)
+              uploadPendingAttachment(file, uploadToken, organizationId)
                 .then((result) => {
                   if (!isMountedRef.current) return;
                   if (result.error) {

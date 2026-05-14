@@ -28,5 +28,6 @@ export type {
   PendingAttachment,
   PreviewData,
   TaskType,
+  TemplateValue,
 } from './model/types';
 export { isNeedsMoreInfo } from './model/types';

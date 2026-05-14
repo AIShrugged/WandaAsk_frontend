@@ -10,6 +10,7 @@ import type {
   OnboardingDraftResultComplete,
   PendingAttachment,
   PreviewData,
+  TemplateValue,
 } from './types';
 
 // ─── State ───────────────────────────────────────────────────────────────────
@@ -43,7 +44,8 @@ export type WizardAction =
   | { type: 'GOAL_REMOVE'; index: number }
   | { type: 'MEMBER_UPDATE'; id: string; member: EditableTeamMember }
   | { type: 'MEMBER_REMOVE'; id: string }
-  | { type: 'MEMBER_ADD' };
+  | { type: 'MEMBER_ADD' }
+  | { type: 'SET_TEMPLATE'; value: TemplateValue | null };
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -52,6 +54,7 @@ export const EMPTY_INPUT: InputState = {
   uploadToken: crypto.randomUUID(),
   links: [],
   attachments: [],
+  template: null,
 };
 
 export const BLANK_MEMBER: EditableTeamMember = {
@@ -275,6 +278,10 @@ export function reducer(state: WizardStep, action: WizardAction): WizardStep {
           ],
         },
       };
+    }
+
+    case 'SET_TEMPLATE': {
+      return withInputState(state, { ...inputState, template: action.value });
     }
 
     default: {

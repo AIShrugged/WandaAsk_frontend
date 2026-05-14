@@ -34,6 +34,7 @@ export function Pill({
     return (
       <button
         type='button'
+        aria-pressed={active}
         onClick={onClick}
         className={clsx(
           base,
