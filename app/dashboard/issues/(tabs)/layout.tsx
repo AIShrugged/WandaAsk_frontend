@@ -25,18 +25,24 @@ export default async function IssuesTabsLayout({
     ]);
 
   return (
-    <Card className='overflow-hidden'>
-      <Suspense fallback={<IssuesTabsNavSkeleton />}>
+    <div className='flex flex-col h-full overflow-hidden p-2'>
+      <div className='shrink-0 mb-4'>
         <IssuesTabsNav />
-        <IssuesLayoutClient
-          organizations={organizationsResponse.data ?? []}
-          persons={persons}
-          currentUserId={currentUserId ?? null}
-          cookieOrgId={cookieOrgId}
-        >
-          {children}
-        </IssuesLayoutClient>
-      </Suspense>
-    </Card>
+      </div>
+      <div className='flex-1 overflow-y-auto'>
+        <Card className='overflow-hidden'>
+          <Suspense fallback={<IssuesTabsNavSkeleton />}>
+            <IssuesLayoutClient
+              organizations={organizationsResponse.data ?? []}
+              persons={persons}
+              currentUserId={currentUserId ?? null}
+              cookieOrgId={cookieOrgId}
+            >
+              {children}
+            </IssuesLayoutClient>
+          </Suspense>
+        </Card>
+      </div>
+    </div>
   );
 }

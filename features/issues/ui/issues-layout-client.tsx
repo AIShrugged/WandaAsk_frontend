@@ -227,7 +227,7 @@ export function IssuesLayoutClient({
           </CollapsibleSection>
         </div>
 
-        <div>{children}</div>
+        <div className={'mt-4'}>{children}</div>
       </div>
     </FiltersContext.Provider>
   );
