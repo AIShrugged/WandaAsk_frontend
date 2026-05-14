@@ -1,12 +1,16 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useReducer, useState } from 'react';
+import { useReducer, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import { ROUTES } from '@/shared/lib/routes';
 
-import { acceptStructure, generateStructure } from '../api/onboarding';
+import {
+  acceptStructure,
+  generateStructure,
+  skipOnboarding,
+} from '../api/onboarding';
 import { useOnboardingPoll } from '../hooks/use-onboarding-poll';
 import { UserRoleSchema } from '../model/schemas';
 import {
@@ -85,6 +89,7 @@ export function OnboardingWizard({
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasFilePending, setHasFilePending] = useState(false);
+  const isSubmittingRef = useRef(false);
 
   const inputState = 'inputState' in state ? state.inputState : EMPTY_INPUT;
 
@@ -113,21 +118,23 @@ export function OnboardingWizard({
       }),
     };
 
-    setIsSubmitting(true);
     dispatch({ type: 'GENERATE_STARTED' });
 
-    const result = await generateStructure(orgId, payload);
+    try {
+      const result = await generateStructure(orgId, payload);
 
-    setIsSubmitting(false);
-
-    if (result.error) {
-      toast.error(result.error);
+      if (result.error) {
+        toast.error(result.error);
+        dispatch({ type: 'BACK_TO_INPUT' });
+      }
+    } catch (error) {
       dispatch({ type: 'BACK_TO_INPUT' });
+      throw error;
     }
   }
 
   async function handleAccept() {
-    if (state.step !== 'preview' || isSubmitting) return;
+    if (state.step !== 'preview' || isSubmittingRef.current) return;
 
     const { previewData } = state;
 
@@ -166,31 +173,48 @@ export function OnboardingWizard({
       team: teamPayload,
     };
 
+    isSubmittingRef.current = true;
     setIsSubmitting(true);
-    const result = await acceptStructure(orgId, payload);
 
-    setIsSubmitting(false);
+    try {
+      const result = await acceptStructure(orgId, payload);
 
-    if (result.error) {
-      toast.error(result.error);
-      return;
+      if (result.error) {
+        toast.error(result.error);
+        return;
+      }
+
+      toast.success('Organization set up!', {
+        description: 'Your goals are ready in the issue tracker.',
+        duration: 5000,
+      });
+      router.push(redirectAfterAccept ?? ROUTES.DASHBOARD.ISSUES_LIST);
+    } finally {
+      isSubmittingRef.current = false;
+      setIsSubmitting(false);
     }
-
-    toast.success('Organization set up!', {
-      description: 'Your goals are ready in the issue tracker.',
-      duration: 5000,
-    });
-    router.push(redirectAfterAccept ?? ROUTES.DASHBOARD.ISSUES_LIST);
   }
 
-  function handleSkip() {
+  async function handleSkip() {
+    try {
+      await skipOnboarding(orgId);
+    } catch {
+      // Cookie write failed — navigate anyway; user can skip again if redirected back
+    }
     router.push(redirectAfterSkip ?? ROUTES.DASHBOARD.TODAY);
   }
 
   // ── Render ────────────────────────────────────────────────────────────────
 
   if (state.step === 'processing') {
-    return <OnboardingProcessingStep />;
+    return (
+      <OnboardingProcessingStep
+        onCancel={async () => {
+          dispatch({ type: 'CANCEL_GENERATION' });
+          await handleSkip();
+        }}
+      />
+    );
   }
 
   if (state.step === 'timeout') {

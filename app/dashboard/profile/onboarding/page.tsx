@@ -14,14 +14,18 @@ export default async function ProfileOnboardingPage() {
     getLatestDraft(orgId),
   ]);
 
-  if (org?.onboarded_at) {
+  if (!org) {
+    redirect(ROUTES.DASHBOARD.PROFILE_ACCOUNT);
+  }
+
+  if (org.onboarded_at) {
     redirect(ROUTES.DASHBOARD.PROFILE_ACCOUNT);
   }
 
   return (
     <OnboardingWizard
-      orgId={org?.id ?? Number(orgId)}
-      orgName={org?.name ?? ''}
+      orgId={org.id}
+      orgName={org.name}
       initialDraft={initialDraft}
       redirectAfterSkip={ROUTES.DASHBOARD.PROFILE_ACCOUNT}
       redirectAfterAccept={ROUTES.DASHBOARD.PROFILE_ACCOUNT}

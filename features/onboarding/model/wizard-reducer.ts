@@ -43,7 +43,8 @@ export type WizardAction =
   | { type: 'GOAL_REMOVE'; index: number }
   | { type: 'MEMBER_UPDATE'; id: string; member: EditableTeamMember }
   | { type: 'MEMBER_REMOVE'; id: string }
-  | { type: 'MEMBER_ADD' };
+  | { type: 'MEMBER_ADD' }
+  | { type: 'CANCEL_GENERATION' };
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -193,7 +194,8 @@ export function reducer(state: WizardStep, action: WizardAction): WizardStep {
       return { step: 'timeout', inputState };
     }
 
-    case 'BACK_TO_INPUT': {
+    case 'BACK_TO_INPUT':
+    case 'CANCEL_GENERATION': {
       return { step: 'input', inputState };
     }
 
