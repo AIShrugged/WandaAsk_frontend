@@ -315,7 +315,9 @@ const InputDropdown = forwardRef<
         <span
           className={cn(
             'flex-1 truncate py-2 text-sm',
-            hasValue ? 'text-foreground' : 'text-muted-foreground/70',
+            hasValue
+              ? 'text-[var(--primary)] font-bold'
+              : 'text-muted-foreground/70',
           )}
         >
           {hasValue ? displayedLabel : placeholder}
