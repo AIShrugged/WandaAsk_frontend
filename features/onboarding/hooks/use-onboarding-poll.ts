@@ -44,6 +44,7 @@ export function useOnboardingPoll(
     if (!enabled) return;
 
     let active = true;
+    let timerId: ReturnType<typeof setTimeout> | null = null;
     stoppedRef.current = false;
     attemptsRef.current = 0;
 
@@ -70,14 +71,15 @@ export function useOnboardingPoll(
         // Network error — keep polling
       }
 
-      setTimeout(poll, POLL_INTERVAL_MS);
+      timerId = setTimeout(poll, POLL_INTERVAL_MS);
     }
 
-    setTimeout(poll, POLL_INTERVAL_MS);
+    timerId = setTimeout(poll, POLL_INTERVAL_MS);
 
     return () => {
       active = false;
       stoppedRef.current = true;
+      if (timerId !== null) clearTimeout(timerId);
     };
   }, [orgId, enabled]);
 }

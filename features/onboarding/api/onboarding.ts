@@ -67,6 +67,19 @@ export async function generateStructure(
   }
 }
 
+export async function skipOnboarding(orgId: number): Promise<void> {
+  const store = await cookies();
+
+  store.set({
+    name: 'onboarding_skipped',
+    value: String(orgId),
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    path: '/',
+  });
+}
+
 export async function acceptStructure(
   orgId: number,
   payload: AcceptStructurePayload,
