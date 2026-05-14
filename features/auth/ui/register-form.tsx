@@ -3,29 +3,25 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useTransition } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, useWatch } from 'react-hook-form';
 
 import { register } from '@/features/auth/api/auth';
 import {
   REGISTER_FIELDS,
   REGISTER_FIELDS_VALUES,
 } from '@/features/auth/lib/fields';
-import { BUTTON_TEXT } from '@/features/auth/lib/options';
 import {
   RegisterSchema,
   type RegisterInput,
 } from '@/features/auth/model/schemas';
 import AuthFormFooter from '@/features/auth/ui/auth-form-footer';
+import { PasswordStrengthBar } from '@/features/auth/ui/password-strength-bar';
 import { VARIANT_MAPPER, type VariantType } from '@/shared/lib/fieldMapper';
 import { handleFormError } from '@/shared/lib/formErrors';
 import { ROUTES } from '@/shared/lib/routes';
 
 const FORM_ID = 'register-form';
 
-/**
- * RegisterForm component.
- * @returns Result.
- */
 export default function RegisterForm() {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -35,18 +31,16 @@ export default function RegisterForm() {
     control,
     handleSubmit,
     setError,
-    formState: { errors, isDirty },
+    formState: { errors, isValid },
   } = useForm<RegisterInput>({
-    defaultValues: REGISTER_FIELDS_VALUES,
+    defaultValues: REGISTER_FIELDS_VALUES as unknown as RegisterInput,
     resolver: zodResolver(RegisterSchema),
     mode: 'onBlur',
     reValidateMode: 'onChange',
   });
-  /**
-   * onSubmit.
-   * @param data - data.
-   * @returns Result.
-   */
+
+  const password = useWatch({ control, name: 'password' });
+
   const onSubmit = (data: RegisterInput) => {
     startTransition(async () => {
       try {
@@ -74,7 +68,6 @@ export default function RegisterForm() {
           <p
             id='form-error'
             role='alert'
-            aria-live='polite'
             className='text-sm text-destructive text-center'
           >
             {errors.root.message}
@@ -82,34 +75,38 @@ export default function RegisterForm() {
         )}
         {REGISTER_FIELDS.map((field) => {
           return (
-            <Controller
-              key={field.name}
-              name={field.name as keyof RegisterInput}
-              control={control}
-              render={({ field: hookField, fieldState }) => {
-                const variant: VariantType = field.variant;
-                const Component = VARIANT_MAPPER[variant];
+            <React.Fragment key={field.name}>
+              <Controller
+                name={field.name as keyof RegisterInput}
+                control={control}
+                render={({ field: hookField, fieldState }) => {
+                  const variant: VariantType = field.variant;
+                  const Component = VARIANT_MAPPER[variant];
 
-                return (
-                  <Component
-                    field={hookField}
-                    fieldState={fieldState}
-                    config={field}
-                  />
-                );
-              }}
-            />
+                  return (
+                    <Component
+                      field={hookField}
+                      fieldState={fieldState}
+                      config={field}
+                    />
+                  );
+                }}
+              />
+              {field.name === 'password' && (
+                <PasswordStrengthBar password={password} />
+              )}
+            </React.Fragment>
           );
         })}
       </form>
 
       <AuthFormFooter
         loading={isPending}
-        disabled={isPending || !isDirty}
+        disabled={isPending || !isValid}
         formId={FORM_ID}
-        primaryButton={BUTTON_TEXT.GET_STARTED}
-        primaryText={`${BUTTON_TEXT.LOGIN} here`}
-        secondaryText={'Already have an account?'}
+        primaryButton='Get Started'
+        primaryText='Log In here'
+        secondaryText='Already have an account?'
         secondaryRoute={ROUTES.AUTH.LOGIN}
       />
     </>

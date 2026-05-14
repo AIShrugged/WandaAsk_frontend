@@ -3,12 +3,11 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import React, { useTransition } from 'react';
+import { useTransition } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 
 import { login } from '@/features/auth/api/auth';
 import { SIGN_IN_FIELDS, SIGN_IN_VALUES } from '@/features/auth/lib/fields';
-import { BUTTON_TEXT } from '@/features/auth/lib/options';
 import { LoginSchema, type LoginInput } from '@/features/auth/model/schemas';
 import AuthFormFooter from '@/features/auth/ui/auth-form-footer';
 import { VARIANT_MAPPER, type VariantType } from '@/shared/lib/fieldMapper';
@@ -17,10 +16,6 @@ import { ROUTES } from '@/shared/lib/routes';
 
 const FORM_ID = 'login-form';
 
-/**
- * LoginForm component.
- * @returns Result.
- */
 export default function LoginForm() {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -28,18 +23,14 @@ export default function LoginForm() {
     control,
     handleSubmit,
     setError,
-    formState: { errors, isDirty },
+    formState: { errors, isValid },
   } = useForm<LoginInput>({
     defaultValues: SIGN_IN_VALUES,
     resolver: zodResolver(LoginSchema),
     mode: 'onBlur',
     reValidateMode: 'onChange',
   });
-  /**
-   * onSubmit.
-   * @param data - data.
-   * @returns Result.
-   */
+
   const onSubmit = (data: LoginInput) => {
     startTransition(async () => {
       try {
@@ -63,7 +54,6 @@ export default function LoginForm() {
           <p
             id='form-error'
             role='alert'
-            aria-live='polite'
             className='text-sm text-destructive text-center'
           >
             {errors.root.message}
@@ -101,11 +91,11 @@ export default function LoginForm() {
       </div>
       <AuthFormFooter
         loading={isPending}
-        disabled={isPending || !isDirty}
+        disabled={isPending || !isValid}
         formId={FORM_ID}
-        primaryButton={BUTTON_TEXT.LOGIN}
-        primaryText={`${BUTTON_TEXT.REGISTER}`}
-        secondaryText={'Dont have an account?'}
+        primaryButton='Log In'
+        primaryText='Register'
+        secondaryText="Don't have an account?"
         secondaryRoute={ROUTES.AUTH.REGISTER}
       />
     </>
