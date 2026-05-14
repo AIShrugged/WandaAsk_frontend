@@ -24,16 +24,16 @@ export default async function Layout({ children }: PropsWithChildren) {
     rawTheme === 'light' || rawTheme === 'dark' ? rawTheme : 'dark';
 
   const isOnboarded = cookieStore.get('org_onboarded')?.value === '1';
+  const orgIdFromCookie = cookieStore.get('organization_id')?.value;
+  const skippedOrgId = cookieStore.get('onboarding_skipped')?.value;
+  const hasSkipped =
+    skippedOrgId !== undefined && skippedOrgId === orgIdFromCookie;
 
-  if (!isOnboarded) {
-    const orgId = cookieStore.get('organization_id')?.value;
+  if (!isOnboarded && !hasSkipped && orgIdFromCookie) {
+    const { data: org } = await getOrganization(orgIdFromCookie);
 
-    if (orgId) {
-      const { data: org } = await getOrganization(orgId);
-
-      if (!org?.onboarded_at) {
-        redirect(ROUTES.ONBOARDING);
-      }
+    if (!org?.onboarded_at) {
+      redirect(ROUTES.ONBOARDING);
     }
   }
 
