@@ -45,7 +45,7 @@ export type WizardAction =
   | { type: 'MEMBER_UPDATE'; id: string; member: EditableTeamMember }
   | { type: 'MEMBER_REMOVE'; id: string }
   | { type: 'MEMBER_ADD' }
-  | { type: 'SET_TEMPLATE'; value: TemplateValue | null };
+  | { type: 'SET_TEMPLATE'; value: TemplateValue | null }
   | { type: 'CANCEL_GENERATION' };
 
 // ─── Constants ────────────────────────────────────────────────────────────────
