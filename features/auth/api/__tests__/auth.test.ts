@@ -162,7 +162,7 @@ describe('login', () => {
         makeResponse(200, { success: true, data: { token: 'tok' } }),
       );
 
-    await login({ email: 'user@test.com', password: 'pass123' });
+    await login({ email: 'user@test.com', password: 'pass12345' });
 
     const [, options] = (globalThis.fetch as jest.Mock).mock.calls[0] as [
       string,
@@ -171,7 +171,7 @@ describe('login', () => {
     const body = JSON.parse(options.body as string) as Record<string, unknown>;
 
     expect(body.email).toBe('user@test.com');
-    expect(body.password).toBe('pass123');
+    expect(body.password).toBe('pass12345');
   });
 
   it('converts timeout errors into plain login errors', async () => {
@@ -218,6 +218,7 @@ describe('register', () => {
       name: 'Test User',
       email: 'new@example.com',
       password: 'password123',
+      acceptTerms: true as const,
     });
 
     expect(mockCookieSet).toHaveBeenCalledWith(
@@ -239,6 +240,7 @@ describe('register', () => {
       name: 'Test User',
       email: 'new@example.com',
       password: 'password123',
+      acceptTerms: true as const,
     });
 
     expect(mockCookieSet).toHaveBeenCalledWith(
@@ -260,6 +262,7 @@ describe('register', () => {
       name: 'Test User',
       email: 'new@example.com',
       password: 'password123',
+      acceptTerms: true as const,
     });
 
     const orgCookieCall = mockCookieSet.mock.calls.find(
@@ -281,6 +284,7 @@ describe('register', () => {
         name: 'Test User',
         email: 'dup@example.com',
         password: 'password123',
+        acceptTerms: true as const,
       }),
     ).rejects.toThrow('An account with this email already exists');
   });
@@ -295,6 +299,7 @@ describe('register', () => {
         name: 'Test User',
         email: 'test@example.com',
         password: 'xpassword',
+        acceptTerms: true as const,
       }),
     ).rejects.toThrow('Please check your input');
   });
@@ -311,6 +316,7 @@ describe('register', () => {
         name: 'Test User',
         email: 'test@example.com',
         password: 'password123',
+        acceptTerms: true as const,
       }),
     ).rejects.toThrow('Registration failed');
   });
@@ -327,6 +333,7 @@ describe('register', () => {
       name: 'Test Name',
       email: 'name@example.com',
       password: 'password123',
+      acceptTerms: true as const,
     });
 
     expect(globalThis.fetch).toHaveBeenCalledWith(
@@ -354,6 +361,7 @@ describe('register', () => {
         name: 'Test User',
         email: 'new@example.com',
         password: 'password123',
+        acceptTerms: true as const,
       }),
     ).rejects.toThrow(
       'Request timed out during registration. Please check the backend connection and try again.',

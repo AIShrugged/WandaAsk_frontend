@@ -78,7 +78,9 @@ describe('LoginForm', () => {
   it('enables submit button after user types in fields', async () => {
     render(<LoginForm />);
     await userEvent.type(screen.getByLabelText(/email/i), 'user@example.com');
+    await userEvent.tab(); // trigger blur to run validation
     await userEvent.type(screen.getByLabelText(/password/i), 'secret123');
+    await userEvent.tab();
     expect(screen.getByRole('button', { name: /log in/i })).not.toBeDisabled();
   });
 
@@ -94,7 +96,9 @@ describe('LoginForm', () => {
   it('calls login API with email and password on submit', async () => {
     render(<LoginForm />);
     await userEvent.type(screen.getByLabelText(/email/i), 'user@example.com');
+    await userEvent.tab();
     await userEvent.type(screen.getByLabelText(/password/i), 'secret123');
+    await userEvent.tab();
     await userEvent.click(screen.getByRole('button', { name: /log in/i }));
     expect(mockLogin).toHaveBeenCalledWith(
       expect.objectContaining({

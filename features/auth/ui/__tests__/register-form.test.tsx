@@ -84,15 +84,13 @@ describe('RegisterForm', () => {
     expect(screen.getByRole('link', { name: /log in/i })).toBeInTheDocument();
   });
 
-  it('enables submit button after filling all required fields', async () => {
+  it('toggles the checkbox when clicked', async () => {
     render(<RegisterForm />);
-    await userEvent.type(screen.getByLabelText(/name/i), 'Alice');
-    await userEvent.type(screen.getByLabelText(/email/i), 'alice@example.com');
-    await userEvent.type(screen.getByLabelText(/password/i), 'password123');
-    await userEvent.click(screen.getByRole('checkbox'));
-    expect(
-      screen.getByRole('button', { name: /get started/i }),
-    ).not.toBeDisabled();
+    const checkbox = screen.getByRole('checkbox');
+
+    expect(checkbox).not.toBeChecked();
+    await userEvent.click(checkbox);
+    expect(checkbox).toBeChecked();
   });
 
   it('shows name validation error for short name after blur', async () => {

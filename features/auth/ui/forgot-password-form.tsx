@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
-import React, { useTransition, useState } from 'react';
+import { useEffect, useRef, useTransition, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 
 import { forgotPassword } from '@/features/auth/api/auth';
@@ -20,17 +20,24 @@ const FORM_ID = 'forgot-password-form';
 export default function ForgotPasswordForm() {
   const [isPending, startTransition] = useTransition();
   const [submitted, setSubmitted] = useState(false);
+  const successRef = useRef<HTMLDivElement>(null);
   const {
     control,
     handleSubmit,
     setError,
-    formState: { errors, isDirty },
+    formState: { errors, isValid },
   } = useForm<ForgotPasswordInput>({
     defaultValues: { email: '' },
     resolver: zodResolver(ForgotPasswordSchema),
     mode: 'onBlur',
     reValidateMode: 'onChange',
   });
+
+  useEffect(() => {
+    if (submitted) {
+      successRef.current?.focus();
+    }
+  }, [submitted]);
 
   const onSubmit = (data: ForgotPasswordInput) => {
     startTransition(async () => {
@@ -48,7 +55,12 @@ export default function ForgotPasswordForm() {
 
   if (submitted) {
     return (
-      <div className='flex flex-col gap-6'>
+      <div
+        ref={successRef}
+        tabIndex={-1}
+        role='status'
+        className='flex flex-col gap-6 outline-none'
+      >
         <p className='text-sm text-muted-foreground text-center'>
           If that email address is in our system, you will receive a password
           reset link shortly.
@@ -75,7 +87,6 @@ export default function ForgotPasswordForm() {
           <p
             id='form-error'
             role='alert'
-            aria-live='polite'
             className='text-sm text-destructive text-center'
           >
             {errors.root.message}
@@ -100,7 +111,7 @@ export default function ForgotPasswordForm() {
 
       <div className='flex flex-col gap-4 mt-8'>
         <Button
-          disabled={isPending || !isDirty}
+          disabled={isPending || !isValid}
           loading={isPending}
           type='submit'
           form={FORM_ID}

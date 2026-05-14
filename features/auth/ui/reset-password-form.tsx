@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import React, { useTransition } from 'react';
+import { useTransition } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 
 import { resetPassword } from '@/features/auth/api/auth';
@@ -42,7 +42,7 @@ export default function ResetPasswordForm() {
     control,
     handleSubmit,
     setError,
-    formState: { errors, isDirty },
+    formState: { errors, isValid },
   } = useForm<ResetPasswordInput>({
     defaultValues: { password: '', password_confirmation: '' },
     resolver: zodResolver(ResetPasswordSchema),
@@ -84,7 +84,6 @@ export default function ResetPasswordForm() {
           <p
             id='form-error'
             role='alert'
-            aria-live='polite'
             className='text-sm text-destructive text-center'
           >
             {errors.root.message}
@@ -124,7 +123,7 @@ export default function ResetPasswordForm() {
 
       <div className='flex flex-col gap-4 mt-8'>
         <Button
-          disabled={isPending || !isDirty}
+          disabled={isPending || !isValid}
           loading={isPending}
           type='submit'
           form={FORM_ID}

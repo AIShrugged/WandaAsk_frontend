@@ -45,7 +45,7 @@ describe('LoginSchema', () => {
     }
   });
 
-  it('rejects password shorter than 6 chars', () => {
+  it('rejects password shorter than 8 chars', () => {
     const result = LoginSchema.safeParse({
       email: 'user@example.com',
       password: 'abc',
@@ -56,7 +56,7 @@ describe('LoginSchema', () => {
     if (!result.success) {
       expect(
         result.error.issues.some((i) => {
-          return i.path[0] === 'password' && i.message.includes('6');
+          return i.path[0] === 'password' && i.message.includes('8');
         }),
       ).toBe(true);
     }
@@ -74,10 +74,39 @@ describe('RegisterSchema', () => {
     name: 'John Doe',
     email: 'john@example.com',
     password: 'password123',
+    acceptTerms: true as const,
   };
 
   it('accepts valid registration data', () => {
     expect(RegisterSchema.safeParse(validData).success).toBe(true);
+  });
+
+  it('rejects when acceptTerms is false', () => {
+    const result = RegisterSchema.safeParse({
+      ...validData,
+      acceptTerms: false,
+    });
+
+    expect(result.success).toBe(false);
+
+    if (!result.success) {
+      expect(
+        result.error.issues.some((i) => {
+          return i.path[0] === 'acceptTerms';
+        }),
+      ).toBe(true);
+    }
+  });
+
+  it('rejects when acceptTerms is missing', () => {
+    const withoutTerms = {
+      name: validData.name,
+      email: validData.email,
+      password: validData.password,
+    };
+    const result = RegisterSchema.safeParse(withoutTerms);
+
+    expect(result.success).toBe(false);
   });
 
   it('accepts optional invite field', () => {
@@ -141,7 +170,7 @@ describe('RegisterSchema', () => {
     expect(result.success).toBe(false);
   });
 
-  it('rejects short password', () => {
+  it('rejects password shorter than 8 chars', () => {
     const result = RegisterSchema.safeParse({
       ...validData,
       password: '123',

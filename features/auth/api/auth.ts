@@ -16,24 +16,22 @@ import { API_URL } from '@/shared/lib/config';
 
 import type { ActionResult } from '@/shared/types/server-action';
 
+// Auth endpoints use raw fetch because httpClient requires a Bearer token,
+// but these actions run before any token exists (login bootstrap).
 const SESSION_COOKIE_OPTIONS = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === 'production',
+  // Also treat staging (NEXT_PUBLIC_APP_ENV=production) as secure context.
+  secure:
+    process.env.NODE_ENV === 'production' ||
+    process.env.NEXT_PUBLIC_APP_ENV === 'production',
   sameSite: 'lax' as const,
   path: '/',
   maxAge: 60 * 60 * 24 * 7,
 } as const;
 
-/**
- * normalizeAuthRequestError converts DOMException/network failures into plain Error objects.
- * This avoids passing native TimeoutError instances through server actions.
- * @param error - unknown fetch error.
- * @param action - action label.
- * @returns Error.
- */
 function normalizeAuthRequestError(
   error: unknown,
-  action: 'login' | 'registration',
+  action: 'login' | 'registration' | 'password reset' | 'forgot password',
 ): Error {
   if (
     error instanceof Error &&
@@ -53,11 +51,6 @@ function normalizeAuthRequestError(
   return new Error(`Network error during ${action}. Please try again.`);
 }
 
-/**
- * parseJsonResponse.
- * @param res - res.
- * @returns Promise.
- */
 async function parseJsonResponse(
   res: Response,
 ): Promise<Record<string, unknown>> {
@@ -70,11 +63,6 @@ async function parseJsonResponse(
   }
 }
 
-/**
- * login.
- * @param data - data.
- * @returns Promise.
- */
 export async function login(data: LoginInput): Promise<void> {
   const validated = LoginSchema.parse(data);
   let res: Response;
@@ -95,8 +83,9 @@ export async function login(data: LoginInput): Promise<void> {
 
   if (!res.ok) {
     if (res.status === 401) throw new Error('Invalid credentials');
-
     if (res.status === 422) throw new Error('Please check your input');
+    if (res.status === 429)
+      throw new Error('Too many attempts. Please wait a moment and try again.');
     throw new Error('Login failed');
   }
 
@@ -116,21 +105,23 @@ export async function login(data: LoginInput): Promise<void> {
   });
 }
 
-/**
- * register.
- * @param data - data.
- * @returns Promise.
- */
 // eslint-disable-next-line max-statements
 export async function register(data: RegisterInput): Promise<void> {
   const validated = RegisterSchema.parse(data);
+  // Strip UI-only field before sending to backend.
+  const payload = {
+    name: validated.name,
+    email: validated.email,
+    password: validated.password,
+    invite: validated.invite,
+  };
   let res: Response;
 
   try {
     res = await fetch(`${API_URL}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(validated),
+      body: JSON.stringify(payload),
       cache: 'no-store',
       signal: AbortSignal.timeout(10_000),
     });
@@ -143,13 +134,14 @@ export async function register(data: RegisterInput): Promise<void> {
   if (!res.ok) {
     if (res.status === 409)
       throw new Error('An account with this email already exists');
-
     if (res.status === 422) throw new Error('Please check your input');
+    if (res.status === 429)
+      throw new Error('Too many attempts. Please wait a moment and try again.');
     throw new Error('Registration failed');
   }
 
-  const payload = json.data as Record<string, unknown> | null;
-  const token = payload?.token;
+  const responsePayload = json.data as Record<string, unknown> | null;
+  const token = responsePayload?.token;
 
   if (typeof token !== 'string') {
     throw new TypeError('Authentication failed. Please try again.');
@@ -163,7 +155,7 @@ export async function register(data: RegisterInput): Promise<void> {
     ...SESSION_COOKIE_OPTIONS,
   });
 
-  const organizationId = payload?.organization_id;
+  const organizationId = responsePayload?.organization_id;
 
   if (typeof organizationId === 'number') {
     cookieStore.set({
@@ -191,11 +183,18 @@ export async function forgotPassword(
   } catch (error) {
     return {
       data: null,
-      error: normalizeAuthRequestError(error, 'login').message,
+      error: normalizeAuthRequestError(error, 'forgot password').message,
     };
   }
 
   if (!res.ok) {
+    if (res.status === 429) {
+      return {
+        data: null,
+        error: 'Too many attempts. Please wait a moment and try again.',
+      };
+    }
+
     return {
       data: null,
       error: 'Failed to send reset link. Please try again.',
@@ -223,7 +222,7 @@ export async function resetPassword(
   } catch (error) {
     return {
       data: null,
-      error: normalizeAuthRequestError(error, 'login').message,
+      error: normalizeAuthRequestError(error, 'password reset').message,
     };
   }
 
@@ -232,6 +231,13 @@ export async function resetPassword(
       return {
         data: null,
         error: 'This password reset link is invalid or has expired.',
+      };
+    }
+
+    if (res.status === 429) {
+      return {
+        data: null,
+        error: 'Too many attempts. Please wait a moment and try again.',
       };
     }
 

@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 import { emailField } from '@/shared/lib/fields';
 
-import type { RegisterDTO } from '@/features/auth/model/types';
+import type { RegisterInput } from '@/features/auth/model/schemas';
 
 const passwordField = {
   variant: 'inputPassword' as const,
@@ -10,17 +10,6 @@ const passwordField = {
   label: 'Password',
   type: 'input',
   placeholder: 'Enter password',
-  rules: {
-    required: 'Password is required',
-    minLength: {
-      value: 6,
-      message: 'The minimum password length is 6 characters',
-    },
-    /*   pattern: {
-      value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-      message: 'Must contain uppercase, lowercase and number',
-    },*/
-  },
 };
 
 export const SIGN_IN_FIELDS = [emailField, passwordField];
@@ -37,13 +26,6 @@ export const REGISTER_FIELDS = [
     label: 'Name',
     type: 'text',
     placeholder: 'Name',
-    rules: {
-      required: 'Name is required',
-      minLength: {
-        value: 2,
-        message: 'The minimum name length is 2 characters',
-      },
-    },
   },
   emailField,
   passwordField,
@@ -52,18 +34,17 @@ export const REGISTER_FIELDS = [
     name: 'acceptTerms',
     label: 'I agree to',
     labelExtra: (
-      <Link className={'cursor-pointer text-primary'} href={''}>
-        Terms & Privacy Policy
+      <Link className='cursor-pointer text-primary' href='/terms'>
+        Terms &amp; Privacy Policy
       </Link>
     ),
     type: 'checkbox',
-    rules: {
-      required: '',
-    },
   },
 ];
 
-export const REGISTER_FIELDS_VALUES: RegisterDTO = {
+export const REGISTER_FIELDS_VALUES: Omit<RegisterInput, 'acceptTerms'> & {
+  acceptTerms: boolean;
+} = {
   name: '',
   email: '',
   password: '',
