@@ -66,7 +66,7 @@ export async function getMeetingsForThreeDays(): Promise<{
 
 /**
  * Fetch a filtered, paginated list of calendar events.
- * Supports scope (past/upcoming), team_id, and standard offset/limit pagination.
+ * Supports scope (past/upcoming), team_id, user_id, and standard offset/limit pagination.
  */
 export async function getMeetingsList(
   filters: MeetingsListFilters,
@@ -78,6 +78,9 @@ export async function getMeetingsList(
   }
   if (filters.team_id != null) {
     params.set('team_id', String(filters.team_id));
+  }
+  if (filters.user_id != null) {
+    params.set('user_id', String(filters.user_id));
   }
 
   const offset = filters.offset ?? 0;

@@ -51,10 +51,17 @@ export const MEETING_SUMMARY_DEFAULT_SECTIONS: MeetingSummarySection[] = [
   'tasks',
 ];
 
+export const MEETING_SUMMARY_DEFAULT_VISIBLE_SECTIONS: MeetingSummarySection[] = [
+  'key_points',
+];
+
 export interface MeetingSummaryTemplate {
   id: number;
   team_id: number;
   sections: MeetingSummarySection[];
+  visible_sections: MeetingSummarySection[] | null;
+  prompt_override: string | null;
+  version: number;
   created_at: string;
   updated_at: string;
 }
@@ -62,7 +69,25 @@ export interface MeetingSummaryTemplate {
 export interface MeetingSummaryTemplateResolved {
   template: MeetingSummaryTemplate | null;
   sections: MeetingSummarySection[];
+  visibleSections: MeetingSummarySection[];
+  promptOverride: string | null;
+  version: number | null;
   isDefault: boolean;
+}
+
+export interface MeetingSummaryTemplateVersion {
+  id: number;
+  template_id: number;
+  version: number;
+  sections: MeetingSummarySection[];
+  visible_sections: MeetingSummarySection[] | null;
+  prompt_override: string | null;
+  created_at: string;
+}
+
+export interface MeetingSummaryDefaultPrompt {
+  default_prompt: string;
+  placeholders: string[];
 }
 
 // Agenda template (new in Epic 5)

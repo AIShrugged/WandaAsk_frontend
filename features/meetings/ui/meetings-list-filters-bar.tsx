@@ -3,7 +3,7 @@
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState, useTransition } from 'react';
 
-import { getTeams } from '@/features/teams/api/team';
+import { getTeams, getTeamUsers } from '@/features/teams/api/team';
 import InputDropdown from '@/shared/ui/input/InputDropdown';
 
 import {
@@ -13,7 +13,7 @@ import {
 } from '../model/filters';
 
 import type { OrganizationProps } from '@/entities/organization';
-import type { TeamProps } from '@/entities/team';
+import type { TeamProps, TeamUserRecord } from '@/entities/team';
 import type { DropdownOption } from '@/shared/ui/input/InputDropdown';
 
 interface Props {
@@ -37,6 +37,7 @@ export function MeetingsListFiltersBar({ filters, organizations }: Props) {
     organizations[0]?.id != null ? String(organizations[0].id) : '';
   const [organizationId, setOrganizationId] = useState<string>(defaultOrgId);
   const [teams, setTeams] = useState<TeamProps[]>([]);
+  const [teamUsers, setTeamUsers] = useState<TeamUserRecord[]>([]);
 
   useEffect(() => {
     if (!organizationId) {
@@ -61,6 +62,29 @@ export function MeetingsListFiltersBar({ filters, organizations }: Props) {
     };
   }, [organizationId]);
 
+  useEffect(() => {
+    if (filters.team_id == null) {
+      setTeamUsers([]);
+      return;
+    }
+
+    let cancelled = false;
+
+    getTeamUsers(filters.team_id)
+      .then((users) => {
+        if (cancelled) return;
+        setTeamUsers(users);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setTeamUsers([]);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [filters.team_id]);
+
   const updateFilter = (next: Partial<MeetingsListFilters>) => {
     const params = new URLSearchParams(searchParams.toString());
 
@@ -76,6 +100,12 @@ export function MeetingsListFiltersBar({ filters, organizations }: Props) {
       params.delete('team_id');
     } else {
       params.set('team_id', String(merged.team_id));
+    }
+
+    if (merged.user_id == null) {
+      params.delete('user_id');
+    } else {
+      params.set('user_id', String(merged.user_id));
     }
 
     // Drop date param when entering filtered mode — the 3-day window logic
@@ -94,12 +124,23 @@ export function MeetingsListFiltersBar({ filters, organizations }: Props) {
     ...teams.map((t) => ({ value: String(t.id), label: t.name })),
   ];
 
+  const userOptions: DropdownOption[] = [
+    { value: '', label: 'All participants' },
+    ...teamUsers.map((tu) => ({
+      value: String(tu.user.id),
+      label: tu.user.name || tu.user.email,
+    })),
+  ];
+
   const orgOptions: DropdownOption[] = organizations.map((o) => ({
     value: String(o.id),
     label: o.name,
   }));
 
   const showClear = hasActiveFilters(filters);
+
+  const userDropdownDisabled =
+    isPending || filters.team_id == null || teamUsers.length === 0;
 
   return (
     <div className='flex flex-wrap items-end gap-3 px-4 py-3 border-b border-border bg-card'>
@@ -135,9 +176,25 @@ export function MeetingsListFiltersBar({ filters, organizations }: Props) {
           value={filters.team_id != null ? String(filters.team_id) : ''}
           onChange={(value) => {
             const v = value as string;
-            updateFilter({ team_id: v === '' ? null : Number(v) });
+            updateFilter({
+              team_id: v === '' ? null : Number(v),
+              user_id: null,
+            });
           }}
           disabled={isPending || teams.length === 0}
+        />
+      </div>
+
+      <div className='w-56'>
+        <InputDropdown
+          label='Participant'
+          options={userOptions}
+          value={filters.user_id != null ? String(filters.user_id) : ''}
+          onChange={(value) => {
+            const v = value as string;
+            updateFilter({ user_id: v === '' ? null : Number(v) });
+          }}
+          disabled={userDropdownDisabled}
         />
       </div>
 
@@ -148,6 +205,7 @@ export function MeetingsListFiltersBar({ filters, organizations }: Props) {
             const params = new URLSearchParams(searchParams.toString());
             params.delete('scope');
             params.delete('team_id');
+            params.delete('user_id');
             startTransition(() => {
               router.replace(`${pathname}?${params.toString()}`, {
                 scroll: false,

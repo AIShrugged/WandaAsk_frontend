@@ -27,6 +27,7 @@ export {
 export {
   getMeetingSummaryTemplate,
   upsertMeetingSummaryTemplate,
+  getMeetingSummaryDefaultPrompt,
 } from './api/meeting-summary-template';
 export {
   getAgendaTemplate,
@@ -42,12 +43,14 @@ export type {
   MeetingSummarySection,
   MeetingSummaryTemplate,
   MeetingSummaryTemplateResolved,
+  MeetingSummaryDefaultPrompt,
   AgendaSection,
   AgendaTemplate,
   AgendaTemplateResolved,
 } from './model/types';
 export {
   MEETING_SUMMARY_DEFAULT_SECTIONS,
+  MEETING_SUMMARY_DEFAULT_VISIBLE_SECTIONS,
   AGENDA_SECTIONS_PRE_MEETING,
   AGENDA_SECTIONS_UPCOMING,
   AGENDA_DEFAULT_SECTIONS,
