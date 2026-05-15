@@ -100,14 +100,16 @@ export function ChangePasswordForm() {
         autoComplete='new-password'
       />
 
-      <Button
-        type='submit'
-        fullWidth={false}
-        loading={isPending}
-        disabled={isPending || !isDirty}
-      >
-        Change password
-      </Button>
+      <div className='w-full md:w-[170px]'>
+        <Button
+          type='submit'
+          fullWidth={false}
+          loading={isPending}
+          disabled={isPending || !isDirty}
+        >
+          Change password
+        </Button>
+      </div>
     </form>
   );
 }
