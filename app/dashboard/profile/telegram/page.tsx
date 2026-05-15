@@ -1,6 +1,7 @@
 import { getOrganizations } from '@/features/organization';
 import { TelegramChatsManagement } from '@/features/telegram';
 import { getTelegramChats } from '@/features/telegram/api/telegram';
+import { TELEGRAM_BOT_USERNAME } from '@/shared/lib/config';
 
 export default async function TelegramPage() {
   const [{ data: chats }, { data: organizations }] = await Promise.all([
@@ -8,10 +9,19 @@ export default async function TelegramPage() {
     getOrganizations(),
   ]);
 
+  const orgList = organizations ?? [];
+  const orgMap: Record<number, string> = Object.fromEntries(
+    orgList.map((org) => {
+      return [org.id, org.name];
+    }),
+  );
+
   return (
     <TelegramChatsManagement
       initialChats={chats ?? []}
-      organizations={organizations ?? []}
+      organizations={orgList}
+      orgMap={orgMap}
+      botUsername={TELEGRAM_BOT_USERNAME ?? 'your_bot'}
     />
   );
 }

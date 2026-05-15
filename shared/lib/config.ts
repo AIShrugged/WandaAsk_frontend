@@ -17,3 +17,6 @@ export const API_URL = rawApiUrl as string;
  * from API_URL.
  */
 export const FILES_URL = rawFilesUrl ?? null;
+
+export const TELEGRAM_BOT_USERNAME =
+  process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME ?? null;
