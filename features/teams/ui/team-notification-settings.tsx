@@ -24,7 +24,17 @@ import type { ModalContextValue } from '@/shared/types/modal';
 const EVENT_TYPE_LABELS: Record<string, string> = {
   meeting_summary: 'Meeting summary',
   meeting_tasks: 'Meeting tasks',
+  meeting_agenda: 'Meeting agenda',
+  meeting_review: 'Meeting review',
 };
+
+const DEFAULT_MINUTES_BEFORE = 60;
+const MIN_MINUTES_BEFORE = 5;
+const MAX_MINUTES_BEFORE = 1440;
+
+function hasMinutesBefore(eventType: string): boolean {
+  return eventType === 'meeting_agenda';
+}
 
 // ─── Add modal ────────────────────────────────────────────────────────────────
 
@@ -33,13 +43,6 @@ interface AddModalProps extends ModalContextValue {
   availableChats: TelegramChatRegistration[];
 }
 
-/**
- *
- * @param root0
- * @param root0.close
- * @param root0.teamId
- * @param root0.availableChats
- */
 function AddNotificationModal({
   close,
   teamId,
@@ -50,27 +53,58 @@ function AddNotificationModal({
   );
   const [selectedEventType, setSelectedEventType] =
     useState<string>('meeting_summary');
+  const [minutesBefore, setMinutesBefore] = useState<string>('');
   const [isPending, startTransition] = useTransition();
-  /**
-   *
-   */
+
   const handleSubmit = () => {
     if (!selectedChatId) return;
 
+    if (
+      hasMinutesBefore(selectedEventType) &&
+      minutesBefore !== '' &&
+      (Number(minutesBefore) < MIN_MINUTES_BEFORE ||
+        Number(minutesBefore) > MAX_MINUTES_BEFORE)
+    ) {
+      toast.error(
+        `Minutes before must be between ${MIN_MINUTES_BEFORE} and ${MAX_MINUTES_BEFORE}`,
+      );
+      return;
+    }
+
     startTransition(async () => {
-      const result = await createTeamNotificationSetting(teamId, {
+      const createResult = await createTeamNotificationSetting(teamId, {
         event_type: selectedEventType,
         channel_type: 'telegram',
         telegram_chat_registration_id: Number(selectedChatId),
         enabled: true,
       });
 
-      if (result.error) {
-        toast.error(result.error);
-      } else {
-        toast.success('Notification setting added');
-        close();
+      if (createResult.error) {
+        toast.error(createResult.error);
+        return;
       }
+
+      // For meeting_agenda with custom minutes_before, follow up with a PATCH
+      // (POST body doesn't accept minutes_before per backend storeRules).
+      if (
+        hasMinutesBefore(selectedEventType) &&
+        minutesBefore !== '' &&
+        createResult.data
+      ) {
+        const updateResult = await updateTeamNotificationSetting(
+          teamId,
+          createResult.data.id,
+          { enabled: true, minutes_before: Number(minutesBefore) },
+        );
+
+        if (updateResult.error) {
+          toast.error(updateResult.error);
+          return;
+        }
+      }
+
+      toast.success('Notification setting added');
+      close();
     });
   };
 
@@ -89,20 +123,42 @@ function AddNotificationModal({
             <select
               id='event-type-select'
               value={selectedEventType}
-              onChange={(e) => {
-                return setSelectedEventType(e.target.value);
-              }}
+              onChange={(e) => setSelectedEventType(e.target.value)}
               className='w-full h-10 px-3 rounded-[var(--radius-button)] border border-input bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring'
             >
-              {Object.entries(EVENT_TYPE_LABELS).map(([value, label]) => {
-                return (
-                  <option key={value} value={value}>
-                    {label}
-                  </option>
-                );
-              })}
+              {Object.entries(EVENT_TYPE_LABELS).map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
             </select>
           </div>
+
+          {hasMinutesBefore(selectedEventType) && (
+            <div className='flex flex-col gap-1.5'>
+              <label
+                className='text-sm text-muted-foreground'
+                htmlFor='minutes-before-input'
+              >
+                Send agenda this many minutes before the meeting
+              </label>
+              <input
+                id='minutes-before-input'
+                type='number'
+                min={MIN_MINUTES_BEFORE}
+                max={MAX_MINUTES_BEFORE}
+                step={5}
+                placeholder={String(DEFAULT_MINUTES_BEFORE)}
+                value={minutesBefore}
+                onChange={(e) => setMinutesBefore(e.target.value)}
+                className='w-full h-10 px-3 rounded-[var(--radius-button)] border border-input bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring'
+              />
+              <p className='text-xs text-muted-foreground'>
+                Leave empty to use the default ({DEFAULT_MINUTES_BEFORE} min).
+                Range: {MIN_MINUTES_BEFORE}–{MAX_MINUTES_BEFORE} min.
+              </p>
+            </div>
+          )}
 
           <div className='flex flex-col gap-1.5'>
             <p className='text-sm text-muted-foreground'>Channel</p>
@@ -125,18 +181,14 @@ function AddNotificationModal({
               <select
                 id='chat-select'
                 value={selectedChatId}
-                onChange={(e) => {
-                  return setSelectedChatId(e.target.value);
-                }}
+                onChange={(e) => setSelectedChatId(e.target.value)}
                 className='w-full h-10 px-3 rounded-[var(--radius-button)] border border-input bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring'
               >
-                {availableChats.map((chat) => {
-                  return (
-                    <option key={chat.id} value={String(chat.id)}>
-                      {chat.chat_title ?? `Chat #${chat.id}`}
-                    </option>
-                  );
-                })}
+                {availableChats.map((chat) => (
+                  <option key={chat.id} value={String(chat.id)}>
+                    {chat.chat_title ?? `Chat #${chat.id}`}
+                  </option>
+                ))}
               </select>
             )}
           </div>
@@ -169,6 +221,107 @@ function AddNotificationModal({
   );
 }
 
+// ─── Minutes-before inline editor ─────────────────────────────────────────────
+
+interface MinutesBeforeEditorProps {
+  teamId: number;
+  setting: TeamNotificationSetting;
+}
+
+function MinutesBeforeEditor({ teamId, setting }: MinutesBeforeEditorProps) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [value, setValue] = useState(
+    setting.minutes_before != null ? String(setting.minutes_before) : '',
+  );
+  const [isPending, startTransition] = useTransition();
+
+  const displayValue =
+    setting.minutes_before != null
+      ? `${setting.minutes_before} min before`
+      : `Default (${DEFAULT_MINUTES_BEFORE} min)`;
+
+  const handleSave = () => {
+    const next = value === '' ? null : Number(value);
+
+    if (
+      next !== null &&
+      (Number.isNaN(next) || next < MIN_MINUTES_BEFORE || next > MAX_MINUTES_BEFORE)
+    ) {
+      toast.error(
+        `Minutes before must be between ${MIN_MINUTES_BEFORE} and ${MAX_MINUTES_BEFORE}`,
+      );
+      return;
+    }
+
+    startTransition(async () => {
+      const result = await updateTeamNotificationSetting(teamId, setting.id, {
+        enabled: setting.enabled,
+        minutes_before: next,
+      });
+
+      if (result.error) {
+        toast.error(result.error);
+        return;
+      }
+
+      toast.success('Updated');
+      setIsEditing(false);
+    });
+  };
+
+  if (!isEditing) {
+    return (
+      <button
+        type='button'
+        onClick={() => setIsEditing(true)}
+        className='text-xs text-muted-foreground hover:text-foreground transition-colors underline decoration-dotted underline-offset-2'
+      >
+        {displayValue}
+      </button>
+    );
+  }
+
+  return (
+    <div className='flex items-center gap-2'>
+      <input
+        type='number'
+        min={MIN_MINUTES_BEFORE}
+        max={MAX_MINUTES_BEFORE}
+        step={5}
+        placeholder={String(DEFAULT_MINUTES_BEFORE)}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        disabled={isPending}
+        className='w-20 h-7 px-2 rounded-[var(--radius-button)] border border-input bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-ring'
+        autoFocus
+      />
+      <button
+        type='button'
+        onClick={handleSave}
+        disabled={isPending}
+        className='text-xs text-violet-500 hover:text-violet-400 disabled:opacity-50'
+      >
+        Save
+      </button>
+      <button
+        type='button'
+        onClick={() => {
+          setValue(
+            setting.minutes_before != null
+              ? String(setting.minutes_before)
+              : '',
+          );
+          setIsEditing(false);
+        }}
+        disabled={isPending}
+        className='text-xs text-muted-foreground hover:text-foreground disabled:opacity-50'
+      >
+        Cancel
+      </button>
+    </div>
+  );
+}
+
 // ─── Setting row ──────────────────────────────────────────────────────────────
 
 interface SettingRowProps {
@@ -176,35 +329,24 @@ interface SettingRowProps {
   teamId: number;
 }
 
-/**
- *
- * @param root0
- * @param root0.setting
- * @param root0.teamId
- */
 function SettingRow({ setting, teamId }: SettingRowProps) {
   const [isPending, startTransition] = useTransition();
   const chatTitle =
     setting.notifiable?.data?.chat_title ?? `Chat #${setting.notifiable?.id}`;
   const eventLabel =
     EVENT_TYPE_LABELS[setting.event_type] ?? setting.event_type;
-  /**
-   *
-   */
+
   const handleToggle = () => {
     startTransition(async () => {
-      const result = await updateTeamNotificationSetting(
-        teamId,
-        setting.id,
-        !setting.enabled,
-      );
+      const result = await updateTeamNotificationSetting(teamId, setting.id, {
+        enabled: !setting.enabled,
+        minutes_before: setting.minutes_before,
+      });
 
       if (result.error) toast.error(result.error);
     });
   };
-  /**
-   *
-   */
+
   const handleDelete = () => {
     startTransition(async () => {
       const result = await deleteTeamNotificationSetting(teamId, setting.id);
@@ -225,11 +367,15 @@ function SettingRow({ setting, teamId }: SettingRowProps) {
           <p className='text-xs text-muted-foreground truncate'>
             Telegram · {chatTitle}
           </p>
+          {hasMinutesBefore(setting.event_type) && (
+            <div className='mt-1'>
+              <MinutesBeforeEditor teamId={teamId} setting={setting} />
+            </div>
+          )}
         </div>
       </div>
 
       <div className='flex items-center gap-3 flex-shrink-0'>
-        {/* Toggle */}
         <button
           type='button'
           onClick={handleToggle}
@@ -246,7 +392,6 @@ function SettingRow({ setting, teamId }: SettingRowProps) {
           />
         </button>
 
-        {/* Delete */}
         <button
           type='button'
           onClick={handleDelete}
@@ -269,22 +414,13 @@ interface Props {
   availableChats: TelegramChatRegistration[];
 }
 
-/**
- *
- * @param root0
- * @param root0.teamId
- * @param root0.settings
- * @param root0.availableChats
- */
 export default function TeamNotificationSettings({
   teamId,
   settings,
   availableChats,
 }: Props) {
   const { open, close } = useModal();
-  /**
-   *
-   */
+
   const handleAdd = () => {
     if (!open) return;
 
@@ -323,11 +459,9 @@ export default function TeamNotificationSettings({
         </p>
       ) : (
         <div className='flex flex-col gap-2'>
-          {settings.map((setting) => {
-            return (
-              <SettingRow key={setting.id} setting={setting} teamId={teamId} />
-            );
-          })}
+          {settings.map((setting) => (
+            <SettingRow key={setting.id} setting={setting} teamId={teamId} />
+          ))}
         </div>
       )}
     </div>

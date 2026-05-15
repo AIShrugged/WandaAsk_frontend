@@ -2,137 +2,139 @@
 
 import { revalidatePath } from 'next/cache';
 
-import { clearSession } from '@/shared/api/session';
 import { parseApiError } from '@/shared/lib/apiError';
 import { API_URL } from '@/shared/lib/config';
-import { getAuthHeaders } from '@/shared/lib/getAuthToken';
+import { ServerError } from '@/shared/lib/errors';
+import { httpClient } from '@/shared/lib/httpClient';
 
 import type {
   TeamNotificationSetting,
   TeamNotificationSettingCreateDTO,
+  TeamNotificationSettingUpdateDTO,
 } from '@/features/teams/model/types';
-import type { ApiResponse } from '@/shared/types/common';
+import type { ActionResult } from '@/shared/types/server-action';
 
 /**
- *
- * @param teamId
+ * Fetch all notification settings for a team.
  */
 export async function getTeamNotificationSettings(
   teamId: number | string,
 ): Promise<TeamNotificationSetting[]> {
-  const authHeaders = await getAuthHeaders();
-  const res = await fetch(`${API_URL}/teams/${teamId}/notification-settings`, {
-    headers: { ...authHeaders },
-    cache: 'no-store',
-  });
-
-  if (!res.ok) {
-    if (res.status === 401) await clearSession();
-
-    throw new Error('Failed to load notification settings');
-  }
-
-  const json: ApiResponse<TeamNotificationSetting[]> = await res.json();
-
-  if (!json.success || !json.data) throw new Error('Invalid API response');
-
-  return json.data;
+  const { data } = await httpClient<TeamNotificationSetting[]>(
+    `${API_URL}/teams/${teamId}/notification-settings`,
+  );
+  return data ?? [];
 }
 
 /**
- *
- * @param teamId
- * @param data
+ * Create a notification setting for a team.
  */
 export async function createTeamNotificationSetting(
   teamId: number | string,
-  data: TeamNotificationSettingCreateDTO,
-): Promise<{ error?: string; fieldErrors?: Record<string, string> }> {
-  const authHeaders = await getAuthHeaders();
-  const res = await fetch(`${API_URL}/teams/${teamId}/notification-settings`, {
-    method: 'POST',
-    headers: { ...authHeaders, 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-    cache: 'no-store',
-  });
+  payload: TeamNotificationSettingCreateDTO,
+): Promise<ActionResult<TeamNotificationSetting>> {
+  try {
+    const { data } = await httpClient<TeamNotificationSetting>(
+      `${API_URL}/teams/${teamId}/notification-settings`,
+      {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        headers: { 'Content-Type': 'application/json' },
+      },
+    );
 
-  if (!res.ok) {
-    if (res.status === 401) await clearSession();
+    revalidatePath('/dashboard/teams', 'page');
 
-    const text = await res.text();
-    const parsed = parseApiError(text, 'Failed to create notification setting');
-
-    if (res.status === 422) {
-      return { error: parsed.message, fieldErrors: parsed.fieldErrors };
+    if (!data) {
+      return { data: null, error: 'Empty response from server' };
     }
 
-    return { error: parsed.message };
+    return { data, error: null };
+  } catch (err) {
+    if (err instanceof ServerError) {
+      const parsed = parseApiError(
+        err.responseBody ?? '',
+        'Failed to create notification setting',
+      );
+      return {
+        data: null,
+        error: parsed.message,
+        fieldErrors: parsed.fieldErrors,
+      };
+    }
+    throw err;
   }
-
-  revalidatePath(`/dashboard/teams/${teamId}`);
-
-  return {};
 }
 
 /**
- *
- * @param teamId
- * @param settingId
- * @param enabled
+ * Update an existing notification setting (enabled flag and/or minutes_before).
  */
 export async function updateTeamNotificationSetting(
   teamId: number | string,
   settingId: number,
-  enabled: boolean,
-): Promise<{ error?: string }> {
-  const authHeaders = await getAuthHeaders();
-  const res = await fetch(
-    `${API_URL}/teams/${teamId}/notification-settings/${settingId}`,
-    {
-      method: 'PATCH',
-      headers: { ...authHeaders, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ enabled }),
-      cache: 'no-store',
-    },
-  );
+  payload: TeamNotificationSettingUpdateDTO,
+): Promise<ActionResult<TeamNotificationSetting>> {
+  try {
+    const { data } = await httpClient<TeamNotificationSetting>(
+      `${API_URL}/teams/${teamId}/notification-settings/${settingId}`,
+      {
+        method: 'PATCH',
+        body: JSON.stringify(payload),
+        headers: { 'Content-Type': 'application/json' },
+      },
+    );
 
-  if (!res.ok) {
-    if (res.status === 401) await clearSession();
+    revalidatePath('/dashboard/teams', 'page');
 
-    return { error: 'Failed to update notification setting' };
+    if (!data) {
+      return { data: null, error: 'Empty response from server' };
+    }
+
+    return { data, error: null };
+  } catch (err) {
+    if (err instanceof ServerError) {
+      const parsed = parseApiError(
+        err.responseBody ?? '',
+        'Failed to update notification setting',
+      );
+      return {
+        data: null,
+        error: parsed.message,
+        fieldErrors: parsed.fieldErrors,
+      };
+    }
+    throw err;
   }
-
-  revalidatePath(`/dashboard/teams/${teamId}`);
-
-  return {};
 }
 
 /**
- *
- * @param teamId
- * @param settingId
+ * Delete a notification setting.
  */
 export async function deleteTeamNotificationSetting(
   teamId: number | string,
   settingId: number,
-): Promise<{ error?: string }> {
-  const authHeaders = await getAuthHeaders();
-  const res = await fetch(
-    `${API_URL}/teams/${teamId}/notification-settings/${settingId}`,
-    {
-      method: 'DELETE',
-      headers: { ...authHeaders },
-      cache: 'no-store',
-    },
-  );
+): Promise<ActionResult<null>> {
+  try {
+    await httpClient<null>(
+      `${API_URL}/teams/${teamId}/notification-settings/${settingId}`,
+      { method: 'DELETE' },
+    );
 
-  if (!res.ok) {
-    if (res.status === 401) await clearSession();
+    revalidatePath('/dashboard/teams', 'page');
 
-    return { error: 'Failed to delete notification setting' };
+    return { data: null, error: null };
+  } catch (err) {
+    if (err instanceof ServerError) {
+      const parsed = parseApiError(
+        err.responseBody ?? '',
+        'Failed to delete notification setting',
+      );
+      return {
+        data: null,
+        error: parsed.message,
+        fieldErrors: parsed.fieldErrors,
+      };
+    }
+    throw err;
   }
-
-  revalidatePath(`/dashboard/teams/${teamId}`);
-
-  return {};
 }

@@ -8,6 +8,7 @@ import TeamDashboardTabPeople from './team-dashboard-tab-people';
 import TeamDashboardTabReadiness from './team-dashboard-tab-readiness';
 import TeamDashboardTabRisks from './team-dashboard-tab-risks';
 import TeamDashboardTabStatus from './team-dashboard-tab-status';
+import { TemplatesTab } from '../templates/templates-tab';
 
 import type {
   TabHealth,
@@ -27,6 +28,7 @@ const TABS = [
   { key: 'health', label: 'Health' },
   { key: 'risks', label: 'Risks' },
   { key: 'decisions', label: 'Decisions' },
+  { key: 'templates', label: 'Templates' },
 ] as const;
 
 type TabKey = (typeof TABS)[number]['key'];
@@ -155,6 +157,9 @@ export default function TeamDashboardTabs({
         )}
         {activeTab === 'decisions' && (
           <TeamDashboardTabDecisions teamId={teamId} />
+        )}
+        {activeTab === 'templates' && (
+          <TemplatesTab teamId={teamId} isReadOnly={!isManager} />
         )}
       </div>
     </div>

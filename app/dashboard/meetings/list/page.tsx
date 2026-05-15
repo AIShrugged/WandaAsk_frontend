@@ -1,11 +1,26 @@
-import { getMeetingsForDate, MeetingsColumnView } from '@/features/meetings';
+import {
+  getMeetingsForDate,
+  getMeetingsList,
+  MeetingsColumnView,
+} from '@/features/meetings';
+import {
+  hasActiveFilters,
+  parseFilters,
+} from '@/features/meetings/model/filters';
+import { MeetingsListClient } from '@/features/meetings/ui/meetings-list-client';
+import { MeetingsListFiltersBar } from '@/features/meetings/ui/meetings-list-filters-bar';
+import { getOrganizations } from '@/features/organization';
 import { formatDateLabel, toDateParam } from '@/shared/lib/date-nav';
 import { Card } from '@/shared/ui/card';
 
 /**
- * Meetings list tab — shows meetings for yesterday, today, and tomorrow
- * relative to a selected center date. Navigates via ?date=YYYY-MM-DD.
- * Defaults to actual today when no param is provided.
+ * Meetings list page.
+ *
+ * Two render modes:
+ * - No active filters → existing 3-column view (yesterday/today/tomorrow)
+ *   centered on the optional ?date= param.
+ * - Active filters (scope or team_id) → flat paginated list fetched via
+ *   getMeetingsList. Date param is ignored in this mode.
  */
 export default async function MeetingsListPage({
   searchParams,
@@ -13,6 +28,44 @@ export default async function MeetingsListPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const params = await searchParams;
+
+  const spLike = {
+    get(key: string): string | null {
+      const v = params[key];
+      return typeof v === 'string' ? v : null;
+    },
+  };
+  const filters = parseFilters(spLike);
+  const filtersActive = hasActiveFilters(filters);
+
+  const organizationsResponse = await getOrganizations();
+  const organizations = organizationsResponse.data ?? [];
+
+  if (filtersActive) {
+    const initialPage = await getMeetingsList({
+      ...filters,
+      offset: 0,
+      limit: 50,
+    });
+
+    return (
+      <Card className='h-full flex flex-col overflow-hidden'>
+        <MeetingsListFiltersBar
+          filters={filters}
+          organizations={organizations}
+        />
+        <div className='flex-1 overflow-y-auto'>
+          <MeetingsListClient
+            filters={filters}
+            initialItems={initialPage.data}
+            initialTotalCount={initialPage.totalCount}
+            initialHasMore={initialPage.hasMore}
+          />
+        </div>
+      </Card>
+    );
+  }
+
   const raw = typeof params.date === 'string' ? params.date : '';
   const isValid =
     /^\d{4}-\d{2}-\d{2}$/.test(raw) &&
@@ -20,14 +73,12 @@ export default async function MeetingsListPage({
 
   const centerDate = isValid
     ? new Date(raw + 'T00:00:00')
-    : new Date(new Date().toDateString()); // local midnight today
+    : new Date(new Date().toDateString());
 
   const yesterdayDate = new Date(centerDate);
-
   yesterdayDate.setDate(centerDate.getDate() - 1);
 
   const tomorrowDate = new Date(centerDate);
-
   tomorrowDate.setDate(centerDate.getDate() + 1);
 
   const [yesterday, today, tomorrow] = await Promise.all([
@@ -38,6 +89,7 @@ export default async function MeetingsListPage({
 
   return (
     <Card className='h-full flex flex-col'>
+      <MeetingsListFiltersBar filters={filters} organizations={organizations} />
       <MeetingsColumnView
         yesterday={yesterday}
         today={today}

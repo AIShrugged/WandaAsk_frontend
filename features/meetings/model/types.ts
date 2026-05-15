@@ -64,6 +64,29 @@ export type CalendarEventSectionValue =
   | Array<unknown>
   | Record<string, unknown>;
 
+/**
+ * Decision (пункт протокола) на дашборде встречи — со связанными задачами и флагом покрытия.
+ * Бэкенд: CalendarEventDetailResource::buildDecisions().
+ */
+export interface MeetingDecisionLinkedIssue {
+  id: number;
+  name: string;
+  status: string;
+}
+
+export interface MeetingDecision {
+  id: number;
+  text: string;
+  topic: string | null;
+  author_raw_name: string | null;
+  author: {
+    id: number;
+    name: string;
+  } | null;
+  linked_issues: MeetingDecisionLinkedIssue[];
+  is_uncovered: boolean;
+}
+
 export interface CalendarEventDetailResponse {
   event: CalendarEventListItem & Record<string, unknown>;
   participants: CalendarEventParticipant[];
@@ -74,6 +97,7 @@ export interface CalendarEventDetailResponse {
   followup: CalendarEventSectionValue;
   previous_meeting: CalendarEventSectionValue;
   key_takeaways: CalendarEventTakeaway[];
+  decisions?: MeetingDecision[];
   counts: Record<string, number | string | null | undefined>;
   [key: string]: unknown;
 }

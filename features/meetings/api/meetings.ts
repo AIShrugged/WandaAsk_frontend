@@ -4,7 +4,9 @@ import { API_URL } from '@/shared/lib/config';
 import { httpClientList } from '@/shared/lib/httpClient';
 
 import type { EventProps } from '@/entities/event';
+import type { MeetingsListFilters } from '@/features/meetings/model/filters';
 import type { CalendarEventListItem } from '@/features/meetings/model/types';
+import type { PaginatedResult } from '@/shared/types/common';
 
 function toDateParam(date: Date): string {
   const y = date.getFullYear();
@@ -60,6 +62,36 @@ export async function getMeetingsForThreeDays(): Promise<{
     today: todayData,
     tomorrow: tomorrowData,
   };
+}
+
+/**
+ * Fetch a filtered, paginated list of calendar events.
+ * Supports scope (past/upcoming), team_id, user_id, and standard offset/limit pagination.
+ */
+export async function getMeetingsList(
+  filters: MeetingsListFilters,
+): Promise<PaginatedResult<CalendarEventListItem>> {
+  const params = new URLSearchParams();
+
+  if (filters.scope !== 'all') {
+    params.set('scope', filters.scope);
+  }
+  if (filters.team_id != null) {
+    params.set('team_id', String(filters.team_id));
+  }
+  if (filters.user_id != null) {
+    params.set('user_id', String(filters.user_id));
+  }
+
+  const offset = filters.offset ?? 0;
+  const limit = filters.limit ?? 50;
+
+  params.set('offset', String(offset));
+  params.set('limit', String(limit));
+
+  return httpClientList<CalendarEventListItem>(
+    `${API_URL}/calendar-events?${params.toString()}`,
+  );
 }
 
 /**
