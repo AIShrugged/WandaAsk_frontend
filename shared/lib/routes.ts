@@ -30,7 +30,6 @@ export const ROUTES = {
     ORGANIZATION: '/dashboard/organization',
     PROFILE: '/dashboard/profile',
     PROFILE_ACCOUNT: '/dashboard/profile/account',
-    PROFILE_PASSWORD: '/dashboard/profile/password', // eslint-disable-line sonarjs/no-hardcoded-passwords
     PROFILE_CALENDAR: '/dashboard/profile/calendar',
     PROFILE_MENU: '/dashboard/profile/menu',
     PROFILE_APPEARANCE: '/dashboard/profile/appearance',

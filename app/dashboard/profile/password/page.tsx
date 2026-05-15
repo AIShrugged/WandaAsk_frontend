@@ -1,10 +1,7 @@
-import { ChangePasswordForm } from '@/features/user-profile';
+import { redirect } from 'next/navigation';
 
-export const metadata = { title: 'Change Password' };
+import { ROUTES } from '@/shared/lib/routes';
 
-/**
- * Password tab — displays the change password form.
- */
 export default function ProfilePasswordPage() {
-  return <ChangePasswordForm />;
+  redirect(ROUTES.DASHBOARD.PROFILE_ACCOUNT);
 }
