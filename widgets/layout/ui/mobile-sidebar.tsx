@@ -102,7 +102,7 @@ export default function MobileSidebar({ children }: PropsWithChildren) {
                 <div className='flex items-center justify-between h-[var(--topbar-height)] px-6 border-b border-sidebar-border flex-shrink-0'>
                   <TribesLogo />
                   <Link
-                    href={ROUTES.DASHBOARD.PROFILE_MENU}
+                    href={ROUTES.DASHBOARD.PROFILE_PREFERENCES}
                     className='flex items-center justify-center w-9 h-9 rounded-md text-muted-foreground hover:text-foreground hover:bg-sidebar-accent/50 transition-colors'
                     aria-label='Settings'
                   >

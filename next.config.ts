@@ -72,6 +72,21 @@ const nextConfig: NextConfig = {
     ];
   },
 
+  redirects: async () => {
+    return [
+      {
+        source: '/dashboard/profile/menu',
+        destination: '/dashboard/profile/preferences',
+        permanent: true,
+      },
+      {
+        source: '/dashboard/profile/appearance',
+        destination: '/dashboard/profile/preferences',
+        permanent: true,
+      },
+    ];
+  },
+
   productionBrowserSourceMaps: false,
 };
 

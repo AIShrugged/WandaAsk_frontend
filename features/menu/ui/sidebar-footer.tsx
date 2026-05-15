@@ -61,7 +61,7 @@ export function SidebarFooter({
         icon={<Settings className='w-4 h-4' />}
         variant='ghost'
         size='md'
-        href={ROUTES.DASHBOARD.PROFILE_MENU}
+        href={ROUTES.DASHBOARD.PROFILE_PREFERENCES}
       />
     </div>
   );
