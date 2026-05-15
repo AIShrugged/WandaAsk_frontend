@@ -17,7 +17,7 @@ import type {
   TabStatus,
 } from '../../model/dashboard-types';
 import type { TeamInvite, TeamProps } from '@/entities/team';
-import type { TelegramChatRegistration } from '@/features/chat/types';
+import type { TelegramChatRegistration } from '@/entities/telegram';
 import type { TeamNotificationSetting } from '@/features/teams/model/types';
 
 const TABS = [

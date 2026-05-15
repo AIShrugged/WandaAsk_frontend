@@ -1,7 +1,6 @@
 import { redirect } from 'next/navigation';
 import React from 'react';
 
-import { getTelegramChats } from '@/features/chat';
 import {
   getTeamNotificationSettings,
   getTeam,
@@ -11,6 +10,7 @@ import {
   TeamsEmptyState,
   TeamsPageClient,
 } from '@/features/teams';
+import { getTelegramChats } from '@/features/telegram';
 import { getOrganizationId } from '@/shared/lib/getOrganizationId';
 import { ROUTES } from '@/shared/lib/routes';
 import { Card } from '@/shared/ui/card';
@@ -72,7 +72,8 @@ export default async function Page({
 
   const settings =
     settingsResult.status === 'fulfilled' ? settingsResult.value : [];
-  const allChats = chatsResult.status === 'fulfilled' ? chatsResult.value : [];
+  const allChats =
+    chatsResult.status === 'fulfilled' ? (chatsResult.value.data ?? []) : [];
   const teamChats = allChats.filter((c) => {
     return c.team_id === team.id && c.bound_at !== null;
   });

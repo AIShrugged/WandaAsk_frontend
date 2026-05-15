@@ -1,7 +1,6 @@
 'use client';
 
-import { ChevronLeft, MessageSquare, Plus, Send } from 'lucide-react';
-import Link from 'next/link';
+import { ChevronLeft, MessageSquare, Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -184,13 +183,6 @@ export function ChatList({
             <Plus className='w-3.5 h-3.5' />
             New
           </button>
-          <Link
-            href={ROUTES.DASHBOARD.TELEGRAM_CHATS}
-            className='flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors'
-          >
-            <Send className='w-3.5 h-3.5' />
-            Telegram
-          </Link>
           <button
             onClick={() => {
               return setIsCollapsed(true);

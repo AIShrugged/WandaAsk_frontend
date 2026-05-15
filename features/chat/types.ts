@@ -15,6 +15,5 @@ export type {
   TranscriptArtifact,
   Artifact,
   ArtifactsResponse,
-  TelegramChatRegistration,
   PageContext,
 } from '@/features/chat/model/types';

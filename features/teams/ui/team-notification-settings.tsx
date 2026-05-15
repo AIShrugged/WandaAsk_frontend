@@ -15,7 +15,7 @@ import ModalBody from '@/shared/ui/modal/modal-body';
 import ModalFooter from '@/shared/ui/modal/modal-footer';
 import ModalHeader from '@/shared/ui/modal/modal-header';
 
-import type { TelegramChatRegistration } from '@/features/chat/types';
+import type { TelegramChatRegistration } from '@/entities/telegram';
 import type { TeamNotificationSetting } from '@/features/teams/model/types';
 import type { ModalContextValue } from '@/shared/types/modal';
 

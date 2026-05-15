@@ -9,7 +9,7 @@ import TeamDashboardTabs from '@/features/teams/ui/dashboard/team-dashboard-tabs
 import TeamsHeader from '@/features/teams/ui/teams-header';
 
 import type { TeamInvite, TeamProps } from '@/entities/team';
-import type { TelegramChatRegistration } from '@/features/chat/types';
+import type { TelegramChatRegistration } from '@/entities/telegram';
 import type { TeamDashboardData } from '@/features/teams/model/dashboard-types';
 import type { TeamNotificationSetting } from '@/features/teams/model/types';
 

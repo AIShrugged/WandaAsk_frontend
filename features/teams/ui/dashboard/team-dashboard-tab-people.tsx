@@ -15,7 +15,7 @@ import { Button, ButtonIcon } from '@/shared/ui/button';
 import Avatar from '@/shared/ui/common/avatar';
 
 import type { TeamInvite, TeamProps } from '@/entities/team';
-import type { TelegramChatRegistration } from '@/features/chat/types';
+import type { TelegramChatRegistration } from '@/entities/telegram';
 import type {
   PersonMember,
   TabPeople,
