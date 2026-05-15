@@ -41,8 +41,7 @@ const Input = forwardRef<HTMLInputElement, Props>(function Input(
   const inputId = id ?? `input-${autoId}`;
   const errorId = `${inputId}-error`;
   const [isFocused, setIsFocused] = useState(false);
-  const hasValue =
-    (value || rest.placeholder) !== undefined && (value || '').length > 0;
+  const hasValue = (value || '').length > 0 || (floating && !!rest.placeholder);
 
   function handleFocus(e: React.FocusEvent<HTMLInputElement>) {
     setIsFocused(true);
