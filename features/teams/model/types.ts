@@ -5,7 +5,7 @@ export type {
   TeamActionType,
 } from '@/entities/team';
 
-import type { TelegramChatRegistration } from '@/features/chat/types';
+import type { TelegramChatRegistration } from '@/entities/telegram';
 
 export interface TeamNotificationSetting {
   id: number;

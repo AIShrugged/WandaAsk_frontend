@@ -12,10 +12,6 @@ export {
 } from '@/features/chat/api/chats';
 export { getMessages } from '@/features/chat/api/messages';
 export { getArtifacts } from '@/entities/artifact/api/artifacts';
-export {
-  getTelegramChats,
-  issueTelegramAttachCode,
-} from '@/features/chat/api/telegram';
 export type {
   Chat,
   ChatUpsertDTO,
@@ -23,6 +19,4 @@ export type {
   PageContext,
   Artifact,
   ArtifactsResponse,
-  TelegramChatRegistration,
 } from '@/features/chat/types';
-export { TelegramChatsManagement } from './ui/telegram-chats-management';

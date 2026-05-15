@@ -9,6 +9,7 @@ const BASE_TABS = [
   { href: ROUTES.DASHBOARD.PROFILE_CALENDAR, label: 'Calendar' },
   { href: ROUTES.DASHBOARD.PROFILE_MENU, label: 'Menu' },
   { href: ROUTES.DASHBOARD.PROFILE_APPEARANCE, label: 'Appearance' },
+  { href: ROUTES.DASHBOARD.PROFILE_TELEGRAM, label: 'Telegram' },
 ] as const;
 
 const ONBOARDING_TAB = {

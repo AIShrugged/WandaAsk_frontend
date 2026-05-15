@@ -13,6 +13,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
   useTransition,
 } from 'react';
@@ -22,7 +23,7 @@ import { getTeams } from '@/entities/team/api/team';
 import {
   getTelegramChats,
   issueTelegramAttachCode,
-} from '@/features/chat/api/telegram';
+} from '@/features/telegram/api/telegram';
 import { BUTTON_VARIANT } from '@/shared/types/button';
 import { Badge } from '@/shared/ui/badge';
 import { Button, ButtonLink } from '@/shared/ui/button';
@@ -30,7 +31,7 @@ import { Card, CardBody } from '@/shared/ui/card';
 import { TenantScopeFields } from '@/shared/ui/input/tenant-scope-fields';
 
 import type { OrganizationProps } from '@/entities/organization';
-import type { TelegramChatRegistration } from '@/features/chat/types';
+import type { TelegramChatRegistration } from '@/entities/telegram';
 
 interface TelegramChatsManagementProps {
   initialChats: TelegramChatRegistration[];
@@ -44,66 +45,35 @@ type TelegramDisplayStatus =
   | 'code-expired'
   | 'bound';
 
-/**
- * isPrivateTelegramChat.
- * @param chat - telegram registration.
- * @returns Result.
- */
 function isPrivateTelegramChat(chat: TelegramChatRegistration) {
   return chat.chat_type === 'private';
 }
 
-/**
- * isGroupTelegramChat.
- * @param chat - telegram registration.
- * @returns Result.
- */
 function isGroupTelegramChat(chat: TelegramChatRegistration) {
   return chat.chat_type === 'group' || chat.chat_type === 'supergroup';
 }
 
-/**
- * formatDateTime.
- * @param value - iso string.
- * @returns formatted date.
- */
 function formatDateTime(value: string | null) {
   if (!value) return '—';
-
   return format(new Date(value), 'dd.MM.yyyy HH:mm');
 }
 
-/**
- * getTelegramStatus.
- * @param chat - telegram registration.
- * @param now - current date.
- * @returns status.
- */
 function getTelegramStatus(
   chat: TelegramChatRegistration,
   now: Date,
 ): TelegramDisplayStatus {
   if (isPrivateTelegramChat(chat)) return 'private';
-
   if (chat.bound_at) return 'bound';
-
   if (
     chat.attach_code_expires_at &&
     isPast(new Date(chat.attach_code_expires_at))
   ) {
     return 'code-expired';
   }
-
   if (chat.attach_code) return 'code-issued';
-
   return 'pending-binding';
 }
 
-/**
- * statusBadgeProps.
- * @param status - computed status.
- * @returns badge config.
- */
 function statusBadgeProps(status: TelegramDisplayStatus) {
   switch (status) {
     case 'private': {
@@ -124,11 +94,6 @@ function statusBadgeProps(status: TelegramDisplayStatus) {
   }
 }
 
-/**
- *
- * @param chats
- * @param updatedChat
- */
 function replaceTelegramChat(
   chats: TelegramChatRegistration[],
   updatedChat: TelegramChatRegistration,
@@ -138,28 +103,39 @@ function replaceTelegramChat(
   });
 }
 
-/**
- * TelegramChatCard renders one discovered Telegram chat record.
- * @param props - component props.
- * @param props.chat
- * @param props.organizations
- * @param props.now
- * @param props.onRefresh
- * @param props.onUpdate
- * @returns JSX element.
- */
+function mergeRefreshedChats(
+  prev: TelegramChatRegistration[],
+  nextChats: TelegramChatRegistration[],
+  inflightChatIds: Set<number>,
+) {
+  return nextChats.map((fetched) => {
+    if (inflightChatIds.has(fetched.id)) {
+      return (
+        prev.find((p) => {
+          return p.id === fetched.id;
+        }) ?? fetched
+      );
+    }
+    return fetched;
+  });
+}
+
 function TelegramChatCard({
   chat,
   organizations,
   now,
   onRefresh,
   onUpdate,
+  onMutationStart,
+  onMutationEnd,
 }: {
   chat: TelegramChatRegistration;
   organizations: OrganizationProps[];
   now: Date;
   onRefresh: () => void;
   onUpdate: (chat: TelegramChatRegistration) => void;
+  onMutationStart: (id: number) => void;
+  onMutationEnd: (id: number) => void;
 }) {
   const [organizationId, setOrganizationId] = useState(
     chat.organization_id ? String(chat.organization_id) : '',
@@ -169,12 +145,27 @@ function TelegramChatCard({
   );
   const [rootError, setRootError] = useState('');
   const [isPending, startTransition] = useTransition();
+  // Synchronous ref guard prevents double-click from firing two concurrent Server Actions.
+  // useTransition's isPending is not set synchronously, so a rapid second click could
+  // slip through before React registers the transition as pending.
+  const isMutatingRef = useRef(false);
+
+  // Track last committed server values so auto-refresh doesn't wipe an in-progress selection.
+  const lastCommittedOrgId = useRef(chat.organization_id);
+  const lastCommittedTeamId = useRef(chat.team_id);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setOrganizationId(chat.organization_id ? String(chat.organization_id) : '');
+    if (chat.organization_id !== lastCommittedOrgId.current) {
+      lastCommittedOrgId.current = chat.organization_id;
 
-    setTeamId(chat.team_id ? String(chat.team_id) : '');
+      setOrganizationId(
+        chat.organization_id ? String(chat.organization_id) : '',
+      );
+    }
+    if (chat.team_id !== lastCommittedTeamId.current) {
+      lastCommittedTeamId.current = chat.team_id;
+      setTeamId(chat.team_id ? String(chat.team_id) : '');
+    }
   }, [chat.organization_id, chat.team_id]);
 
   const status = getTelegramStatus(chat, now);
@@ -209,51 +200,57 @@ function TelegramChatCard({
       : `Scope: Org #${chat.organization_id}`;
   }
 
-  /**
-   *
-   */
   const handleCopyCommand = () => {
     if (!chat.attach_command) return;
-
-    navigator.clipboard.writeText(chat.attach_command).then(() => {
-      toast.success('Attach command copied');
-    });
+    navigator.clipboard.writeText(chat.attach_command).then(
+      () => {
+        toast.success('Attach command copied');
+      },
+      () => {
+        toast.error('Could not copy — please copy manually');
+      },
+    );
   };
-  /**
-   *
-   */
+
   const handleGenerateCode = () => {
+    if (isMutatingRef.current) return;
+    isMutatingRef.current = true;
     setRootError('');
 
     startTransition(async () => {
-      const organizationNumericId = Number(organizationId);
+      try {
+        const organizationNumericId = Number(organizationId);
 
-      if (!organizationNumericId) {
-        setRootError('Choose an organization before generating a code');
+        if (!organizationNumericId) {
+          setRootError('Choose an organization before generating a code');
+          return;
+        }
 
-        return;
+        onMutationStart(chat.id);
+        const result = await issueTelegramAttachCode(chat.id, {
+          organization_id: organizationNumericId,
+          team_id: teamId ? Number(teamId) : null,
+        });
+
+        if (result.error) {
+          const organizationError = result.fieldErrors?.organization_id;
+          setRootError(
+            organizationError ||
+              result.error.toLowerCase().includes('organization')
+              ? 'Only an organization manager can bind a Telegram chat'
+              : result.error,
+          );
+          return;
+        }
+
+        if (result.data) {
+          toast.success('Attach code generated');
+          onUpdate(result.data);
+        }
+      } finally {
+        isMutatingRef.current = false;
+        onMutationEnd(chat.id);
       }
-
-      const result = await issueTelegramAttachCode(chat.id, {
-        organization_id: organizationNumericId,
-        team_id: teamId ? Number(teamId) : null,
-      });
-
-      if ('error' in result) {
-        const organizationError = result.fieldErrors?.organization_id;
-
-        setRootError(
-          organizationError ||
-            result.error.toLowerCase().includes('organization')
-            ? 'Только менеджер организации может привязать Telegram чат'
-            : result.error,
-        );
-
-        return;
-      }
-
-      toast.success('Attach code generated');
-      onUpdate(result);
     });
   };
 
@@ -359,7 +356,7 @@ function TelegramChatCard({
                 </Button>
               </div>
               <p className='mt-3 text-sm text-muted-foreground'>
-                Откройте Telegram чат и отправьте эту команду:{' '}
+                Open the Telegram chat and send this command:{' '}
                 {chat.attach_command}
               </p>
               <div className='mt-3 flex flex-wrap gap-4 text-sm text-muted-foreground'>
@@ -427,13 +424,6 @@ function TelegramChatCard({
   );
 }
 
-/**
- * TelegramChatsManagement renders discovered Telegram chats list with attach-code flow.
- * @param props - component props.
- * @param props.initialChats
- * @param props.organizations
- * @returns JSX element.
- */
 export function TelegramChatsManagement({
   initialChats,
   organizations,
@@ -442,7 +432,14 @@ export function TelegramChatsManagement({
   const [now, setNow] = useState(() => {
     return new Date();
   });
-  const [isRefreshing, startRefreshTransition] = useTransition();
+  const [, startRefreshTransition] = useTransition();
+  // Prevents concurrent refresh calls from racing on last-write-wins.
+  const isRefreshingRef = useRef(false);
+  // Tracks chat IDs that have an in-flight mutation so auto-refresh doesn't overwrite them.
+  const [inflightChatIds, setInflightChatIds] = useState<Set<number>>(() => {
+    return new Set();
+  });
+
   const shouldAutoRefresh = useMemo(() => {
     return chats.some((chat) => {
       return (
@@ -452,38 +449,65 @@ export function TelegramChatsManagement({
     });
   }, [chats, now]);
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setNow(new Date());
-    }, 1000);
-
-    return () => {
-      clearInterval(timer);
-    };
-  }, []);
-
-  const refresh = useCallback(() => {
-    startRefreshTransition(async () => {
-      try {
-        const nextChats = await getTelegramChats();
-
-        setChats(nextChats);
-      } catch (error) {
-        toast.error((error as Error).message);
-      }
+  const addInflight = useCallback((id: number) => {
+    setInflightChatIds((prev) => {
+      return new Set(prev).add(id);
     });
   }, []);
 
+  const removeInflight = useCallback((id: number) => {
+    setInflightChatIds((prev) => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
+  }, []);
+
+  const refresh = useCallback(() => {
+    if (isRefreshingRef.current) return;
+    isRefreshingRef.current = true;
+
+    startRefreshTransition(async () => {
+      try {
+        const { data: nextChats } = await getTelegramChats();
+        // Preserve local state for chats that have an in-flight mutation — prevents
+        // a 5-second auto-refresh from overwriting optimistic UI with stale server data.
+        setChats((prev) => {
+          return mergeRefreshedChats(prev, nextChats ?? [], inflightChatIds);
+        });
+      } catch (error) {
+        toast.error((error as Error).message);
+      } finally {
+        isRefreshingRef.current = false;
+      }
+    });
+  }, [inflightChatIds]);
+
+  // Gate the 1-second clock on shouldAutoRefresh to avoid re-rendering every card
+  // every second when no code is active.
   useEffect(() => {
     if (!shouldAutoRefresh) return;
-
     const timer = setInterval(() => {
-      refresh();
-    }, 5000);
-
+      setNow(new Date());
+    }, 1000);
     return () => {
       clearInterval(timer);
     };
+  }, [shouldAutoRefresh]);
+
+  useEffect(() => {
+    if (!shouldAutoRefresh) return;
+    const timer = setInterval(() => {
+      // Skip polling when the tab is hidden to avoid unnecessary backend requests.
+      if (document.visibilityState === 'visible') {
+        refresh();
+      }
+    }, 5000);
+    return () => {
+      clearInterval(timer);
+    };
+    // Resetting the interval when inflightChatIds changes is intentional —
+    // it prevents a stale overwrite mid-mutation when the timer fires.
   }, [refresh, shouldAutoRefresh]);
 
   return (
@@ -507,7 +531,6 @@ export function TelegramChatsManagement({
                 variant={BUTTON_VARIANT.secondary}
                 className='w-auto px-4'
                 onClick={refresh}
-                loading={isRefreshing}
               >
                 <RefreshCw className='h-4 w-4' />
                 Refresh
@@ -547,6 +570,8 @@ export function TelegramChatsManagement({
                   return replaceTelegramChat(prev, updatedChat);
                 });
               }}
+              onMutationStart={addInflight}
+              onMutationEnd={removeInflight}
             />
           );
         })
