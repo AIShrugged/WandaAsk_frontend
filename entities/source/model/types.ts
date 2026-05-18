@@ -2,6 +2,7 @@
 export interface Source {
   readonly id: number;
   readonly user_id: number;
+  readonly organization_id: number | null;
   readonly external_id: string;
   readonly identity: string;
   readonly type: string;

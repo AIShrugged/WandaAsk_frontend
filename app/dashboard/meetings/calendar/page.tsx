@@ -7,6 +7,7 @@ import {
   OnboardingTrigger,
 } from '@/features/calendar';
 import { getCalendarEventsForMonth } from '@/features/meetings';
+import { getOrganizationId } from '@/shared/lib/getOrganizationId';
 import SpinLoader from '@/shared/ui/layout/spin-loader';
 import { CalendarPage } from '@/widgets/calendar-view';
 
@@ -24,13 +25,13 @@ export default async function MeetingsCalendarPage({
   const params = await searchParams;
   const justAttached = params.attached === '1';
 
-  const sources = await getSources();
+  const [sources, orgId] = await Promise.all([getSources(), getOrganizationId()]);
   const isCalendarAttached = sources.some((s) => {
     return s.is_connected === '1' || s.is_connected === true;
   });
 
   if (!isCalendarAttached) {
-    return <OnboardingTrigger />;
+    return <OnboardingTrigger organizationId={+orgId} />;
   }
 
   if (!params.month) {

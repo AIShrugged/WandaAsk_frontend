@@ -15,13 +15,19 @@ import PageHeader from '@/widgets/layout/ui/page-header';
 
 import type { TodayBriefing } from '@/features/today-briefing';
 
-export function MeetingsContent({ data }: { data: TodayBriefing }) {
+export function MeetingsContent({
+  data,
+  organizationId,
+}: {
+  data: TodayBriefing;
+  organizationId: number;
+}) {
   const [selectedId, setSelectedId] = useState<number | null>(
     data.events[0]?.id ?? null,
   );
 
   if (data.state === 'empty') {
-    return <EmptyState />;
+    return <EmptyState organizationId={organizationId} />;
   }
 
   const selectedEvent =

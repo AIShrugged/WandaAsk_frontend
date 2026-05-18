@@ -1,4 +1,5 @@
 import { getTodayBriefing } from '@/features/today-briefing';
+import { getOrganizationId } from '@/shared/lib/getOrganizationId';
 import { Card } from '@/shared/ui/card';
 
 import { MeetingsContent } from './meetings-content';
@@ -17,11 +18,14 @@ export default async function TodayMeetingsPage({
   searchParams?: Promise<{ date?: string }>;
 }) {
   const { date } = (await searchParams) ?? {};
-  const data = await getTodayBriefing(date);
+  const [data, orgId] = await Promise.all([
+    getTodayBriefing(date),
+    getOrganizationId(),
+  ]);
 
   return (
     <Card className='h-full flex flex-col'>
-      <MeetingsContent key={data.date} data={data} />
+      <MeetingsContent key={data.date} data={data} organizationId={+orgId} />
     </Card>
   );
 }

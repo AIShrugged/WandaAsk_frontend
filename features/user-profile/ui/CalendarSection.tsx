@@ -5,27 +5,23 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 import { detachCalendarFromProfile } from '@/features/calendar/api/source';
+import { AttachCalendarButton } from '@/features/calendar/ui/attach-calendar-button';
 
 import type { Source } from '@/entities/source';
 
-interface CalendarSectionProps {
+export function CalendarSection({
+  source,
+  organizationId,
+  organizationName,
+}: {
   source: Source | null;
-}
-
-/**
- * CalendarSection — shows connected Google Calendar status on the Profile page.
- * If a calendar is connected, offers an inline-confirmed disconnect button.
- * @param root0 - Component props.
- * @param root0.source - The connected Source, or null if none.
- * @returns JSX element.
- */
-export function CalendarSection({ source }: CalendarSectionProps) {
+  organizationId: number;
+  organizationName?: string | null;
+}) {
   const router = useRouter();
   const [confirming, setConfirming] = useState(false);
   const [isPending, setIsPending] = useState(false);
-  /**
-   *
-   */
+
   const handleDisconnect = async () => {
     if (!source) return;
 
@@ -46,7 +42,15 @@ export function CalendarSection({ source }: CalendarSectionProps) {
 
   if (!source) {
     return (
-      <p className='text-sm text-muted-foreground'>No calendar connected.</p>
+      <div className='flex flex-col gap-3'>
+        <p className='text-sm text-muted-foreground'>No calendar connected.</p>
+        <AttachCalendarButton
+          organizationId={organizationId}
+          className='rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50 self-start'
+        >
+          Connect Google Calendar
+        </AttachCalendarButton>
+      </div>
     );
   }
 
@@ -57,6 +61,11 @@ export function CalendarSection({ source }: CalendarSectionProps) {
           Google Calendar
         </span>
         <span className='text-xs text-muted-foreground'>{source.identity}</span>
+        {organizationName && (
+          <span className='text-xs text-muted-foreground'>
+            Organization: {organizationName}
+          </span>
+        )}
       </div>
 
       {confirming ? (
