@@ -1,12 +1,9 @@
-// Public API for entities/artifact
-// Artifact renderers and data access shared between features/chat and follow-up analysis
-
 export { ArtifactCard } from '@/entities/artifact/ui/artifact-card';
 export { ChartArtifactView } from '@/entities/artifact/ui/chart-artifact';
 export { InsightCard } from '@/entities/artifact/ui/insight-card';
 export { MeetingCard } from '@/entities/artifact/ui/meeting-card';
+export { MethodologyCriteriaArtifactView } from '@/entities/artifact/ui/methodology-criteria-artifact';
 export { PeopleList } from '@/entities/artifact/ui/people-list';
-export { TaskSummaryArtifactView } from '@/entities/artifact/ui/task-summary-artifact';
 export { TaskTable } from '@/entities/artifact/ui/task-table';
 export { TranscriptView } from '@/entities/artifact/ui/transcript-view';
 
@@ -17,6 +14,7 @@ export type {
   ArtifactStatus,
   ArtifactType,
   ArtifactsResponse,
-  TaskSummaryArtifact,
+  MethodologyCriteriaArtifact,
+  MethodologyCriteriaBlock,
   TaskTableArtifact,
 } from '@/entities/artifact/model/types';

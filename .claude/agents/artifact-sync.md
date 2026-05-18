@@ -13,7 +13,7 @@ description:
   type.\"\n</example>\n\n<example>\nContext: User wants to verify frontend
   artifacts match backend schemas.\nuser: \"Check if our artifact types are
   still in sync with the backend\"\nassistant: \"I'll launch the artifact-sync
-  agent to audit all 7 artifact types.\"\n</example>"
+  agent to audit all 8 artifact types.\"\n</example>"
 model: sonnet
 color: orange
 ---
@@ -41,9 +41,12 @@ entities/artifact/ui/
   insight-card.tsx
   chart-artifact.tsx
   transcript-view.tsx
+  decision-log.tsx
+  methodology-criteria-artifact.tsx
 
-features/chat/ui/artifact-panel.tsx   ← type dispatch / routing (imports from entities/artifact)
-entities/artifact/model/types.ts      ← TypeScript interfaces
+entities/artifact/ui/artifact-card.tsx  ← type dispatch / routing (ARTIFACT_RENDERERS map)
+entities/artifact/model/types.ts        ← TypeScript interfaces
+entities/artifact/index.ts              ← public API exports
 ```
 
 ## Your Workflow
@@ -52,39 +55,46 @@ entities/artifact/model/types.ts      ← TypeScript interfaces
    their JSON schemas
 2. **Read the frontend** — `entities/artifact/model/types.ts` and each renderer
    in `entities/artifact/ui/`
-3. **Read `artifact-panel.tsx`** — see which types are dispatched to which
-   renderer
+3. **Read `artifact-card.tsx`** — check the `ARTIFACT_RENDERERS` map and `TYPE_META`
 4. **Identify gaps:**
    - Types in backend but missing frontend renderer
    - Frontend `ArtifactType` union missing new backend types
    - Data field mismatches (backend schema vs frontend TypeScript interface)
 5. **Implement changes** — following FSD, adding new renderer components and
    updating types
-6. **Update `artifact-panel.tsx`** — add dispatch case for new type
+6. **Update `artifact-card.tsx`** — add entry to `ARTIFACT_RENDERERS` and `TYPE_META`
+7. **Update `entities/artifact/index.ts`** — export new renderer and types
 
 ## Artifact Type → Frontend Mapping
 
-| Backend `type`    | Frontend renderer     | TypeScript interface  |
-| ----------------- | --------------------- | --------------------- |
-| `task_table`      | `task-table.tsx`      | `TaskTableArtifact`   |
-| `meeting_card`    | `meeting-card.tsx`    | `MeetingCardArtifact` |
-| `people_list`     | `people-list.tsx`     | `PeopleListArtifact`  |
-| `insight_card`    | `insight-card.tsx`    | `InsightCardArtifact` |
-| `chart`           | `chart-artifact.tsx`  | `ChartArtifact`       |
-| `transcript_view` | `transcript-view.tsx` | `TranscriptArtifact`  |
+| Backend `type`          | Frontend renderer                      | TypeScript interface            |
+| ----------------------- | -------------------------------------- | ------------------------------- |
+| `task_table`            | `task-table.tsx`                       | `TaskTableArtifact`             |
+| `meeting_card`          | `meeting-card.tsx`                     | `MeetingCardArtifact`           |
+| `people_list`           | `people-list.tsx`                      | `PeopleListArtifact`            |
+| `insight_card`          | `insight-card.tsx`                     | `InsightCardArtifact`           |
+| `chart`                 | `chart-artifact.tsx`                   | `ChartArtifact`                 |
+| `transcript_view`       | `transcript-view.tsx`                  | `TranscriptArtifact`            |
+| `decision_log`          | `decision-log.tsx`                     | `DecisionLogArtifact`           |
+| `methodology_criteria`  | `methodology-criteria-artifact.tsx`    | `MethodologyCriteriaArtifact`   |
 
 ## Code Quality Rules
 
 - No `any` — every artifact data shape must be fully typed from the backend JSON
   schema
-- New renderers are `'use client'` (they render dynamic data)
+- New renderers are NOT `'use client'` unless they use browser APIs
+  (exception: `chart-artifact.tsx` uses recharts ResizeObserver — loaded via
+  `next/dynamic` with `ssr: false` in `artifact-card.tsx`)
 - Follow existing renderer patterns (props: `{ data: XxxData }`)
-- TypeScript union type `Artifact` in `entities/artifact/model/types.ts` must
-  include all types
-- `artifact-panel.tsx` `switch` must handle all types with a default fallback
-  for unknown types
+- TypeScript union `Artifact` in `entities/artifact/model/types.ts` must include
+  all types; `ArtifactType` is derived as `Artifact['type']` — never manually
+  maintain a separate union
+- `ARTIFACT_RENDERERS` in `artifact-card.tsx` is typed as
+  `{ [K in ArtifactType]: (a: Extract<Artifact, { type: K }>) => React.ReactNode }`
+  — all entries are required (compile error if any variant is missing)
+- Use `assertNever` in default branch of any switch on `ArtifactType` variants
 
-## Step 7 — Verification (always run after making changes)
+## Step 8 — Verification (always run after making changes)
 
 After implementing any changes, run these checks in order:
 
@@ -93,13 +103,16 @@ After implementing any changes, run these checks in order:
 npx tsc --noEmit --incremental false 2>&1 | head -60
 
 # 2. ESLint — confirm new renderer files pass lint
-npx eslint entities/artifact/ui/ entities/artifact/model/types.ts features/chat/ui/artifact-panel.tsx 2>&1 | head -60
+npx eslint entities/artifact/ui/ entities/artifact/model/types.ts entities/artifact/index.ts 2>&1 | head -60
+
+# 3. Tests — confirm no regressions
+npm test -- --ci --passWithNoTests 2>&1 | tail -10
 ```
 
-If either check fails:
+If any check fails:
 
 1. Read the error output carefully
 2. Fix the root cause in the relevant file
 3. Re-run the failing check before finishing
 
-Only report completion once both TypeScript and ESLint pass clean.
+Only report completion once all three checks pass clean.

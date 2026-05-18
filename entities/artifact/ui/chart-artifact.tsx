@@ -1,14 +1,15 @@
 'use client';
 
 import {
-  Area,
-  AreaChart,
   Bar,
   BarChart,
   CartesianGrid,
+  Cell,
   Legend,
   Line,
   LineChart,
+  Pie,
+  PieChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -25,14 +26,7 @@ const CHART_COLORS = [
   'hsl(280 68% 60%)', // violet
 ];
 
-/**
- * ChartArtifactView component.
- * @param props - Component props.
- * @param props.data - Chart artifact data including type, labels, and datasets.
- * @returns Result.
- */
 export function ChartArtifactView({ data }: { data: ChartArtifact['data'] }) {
-  // Merge labels + datasets into recharts-friendly [{label, ds0, ds1, ...}]
   const chartData = data.labels.map((label, i) => {
     const point: Record<string, string | number> = { label };
 
@@ -94,25 +88,39 @@ export function ChartArtifactView({ data }: { data: ChartArtifact['data'] }) {
     );
   }
 
-  if (data.chart_type === 'area') {
+  if (data.chart_type === 'pie') {
+    const pieData = data.labels.map((label, i) => {
+      return {
+        name: label,
+        value: data.datasets[0]?.data[i] ?? 0,
+      };
+    });
+
     return (
       <ResponsiveContainer width='100%' height={200}>
-        <AreaChart {...sharedProps}>
-          {axes}
-          {data.datasets.map((ds, i) => {
-            return (
-              <Area
-                key={ds.label}
-                type='monotone'
-                dataKey={ds.label}
-                stroke={CHART_COLORS[i % CHART_COLORS.length]}
-                fill={CHART_COLORS[i % CHART_COLORS.length]}
-                fillOpacity={0.15}
-                strokeWidth={2}
-              />
-            );
-          })}
-        </AreaChart>
+        <PieChart>
+          <Pie
+            data={pieData}
+            dataKey='value'
+            nameKey='name'
+            cx='50%'
+            cy='50%'
+            outerRadius={80}
+          >
+            {pieData.map((_, i) => {
+              return <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />;
+            })}
+          </Pie>
+          <Tooltip
+            contentStyle={{
+              background: 'hsl(0 0% 100%)',
+              border: '1px solid hsl(240 5.9% 90%)',
+              borderRadius: '6px',
+              fontSize: 12,
+            }}
+          />
+          <Legend wrapperStyle={{ fontSize: 12, paddingTop: 8 }} />
+        </PieChart>
       </ResponsiveContainer>
     );
   }

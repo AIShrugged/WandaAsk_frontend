@@ -1,18 +1,24 @@
 import { getArtifacts } from '@/entities/artifact/api/artifacts';
+import { ServerError } from '@/shared/lib/errors';
 
 // ---------------------------------------------------------------------------
 // Mocks
 // ---------------------------------------------------------------------------
 const mockClearSession = jest.fn();
+const mockRedirect = jest.fn();
 
 jest.mock('@/shared/api/session', () => {
   return {
-    /**
-     *
-     * @param {...any} args
-     */
     clearSession: (...args: unknown[]) => {
       return mockClearSession(...args);
+    },
+  };
+});
+
+jest.mock('next/navigation', () => {
+  return {
+    redirect: (...args: unknown[]) => {
+      return mockRedirect(...args);
     },
   };
 });
@@ -34,11 +40,6 @@ jest.mock('@/shared/lib/getAuthToken', () => {
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-/**
- *
- * @param status
- * @param body
- */
 function makeResponse(status: number, body: unknown): Response {
   const bodyText = typeof body === 'string' ? body : JSON.stringify(body);
 
@@ -62,10 +63,8 @@ function makeResponse(status: number, body: unknown): Response {
 }
 
 const mockArtifacts = {
-  chart: { type: 'bar', data: [] },
-  people: [],
-  meetings: [],
-  tasks: [],
+  artifacts: {},
+  layout: { items: [] },
 };
 
 // ---------------------------------------------------------------------------
@@ -113,33 +112,31 @@ describe('getArtifacts', () => {
     expect(result).toBeNull();
   });
 
-  it('calls redirect on 401', async () => {
+  it('calls clearSession and redirect on 401', async () => {
     globalThis.fetch = jest
       .fn()
       .mockResolvedValue(makeResponse(401, 'Unauthorized'));
 
-    // getArtifacts calls redirect() then returns null (doesn't throw in test env)
-    await getArtifacts(1);
+    // In test env, redirect() is mocked (doesn't throw), so httpClient continues
+    // and throws ServerError — getArtifacts re-throws it since status !== 404
+    await expect(getArtifacts(1)).rejects.toBeInstanceOf(ServerError);
 
     expect(mockClearSession).toHaveBeenCalled();
+    expect(mockRedirect).toHaveBeenCalled();
   });
 
-  it('returns null on other non-ok status', async () => {
+  it('throws ServerError on other non-ok status', async () => {
     globalThis.fetch = jest.fn().mockResolvedValue(makeResponse(500, 'Error'));
 
-    const result = await getArtifacts(1);
-
-    expect(result).toBeNull();
+    await expect(getArtifacts(1)).rejects.toBeInstanceOf(ServerError);
   });
 
-  it('returns null when success=false in response', async () => {
+  it('throws ServerError when success=false in response', async () => {
     globalThis.fetch = jest
       .fn()
       .mockResolvedValue(makeResponse(200, { success: false, data: null }));
 
-    const result = await getArtifacts(1);
-
-    expect(result).toBeNull();
+    await expect(getArtifacts(1)).rejects.toBeInstanceOf(ServerError);
   });
 
   it('returns null when data is null in response', async () => {

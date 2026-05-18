@@ -13,11 +13,6 @@ const AVATAR_COLORS = [
   'bg-pink-500',
 ];
 
-/**
- * avatarColor.
- * @param name - name.
- * @returns Result.
- */
 function avatarColor(name: string): string {
   let hash = 0;
   for (let i = 0; i < name.length; i++) {
@@ -27,11 +22,6 @@ function avatarColor(name: string): string {
   return AVATAR_COLORS[hash];
 }
 
-/**
- * initials.
- * @param name - name.
- * @returns Result.
- */
 function initials(name: string): string {
   return name
     .split(' ')
@@ -43,12 +33,6 @@ function initials(name: string): string {
     .toUpperCase();
 }
 
-/**
- * PeopleList component.
- * @param props - Component props.
- * @param props.data - People list artifact data.
- * @returns Result.
- */
 export function PeopleList({ data }: { data: PeopleListArtifact['data'] }) {
   const members = data.members ?? [];
 
@@ -65,7 +49,7 @@ export function PeopleList({ data }: { data: PeopleListArtifact['data'] }) {
       {members.map((member) => {
         return (
           <div
-            key={member.user_id}
+            key={member.user_id ?? member.profile_id ?? member.name}
             className='flex items-center gap-3 p-2 rounded-[var(--radius-button)] hover:bg-accent/40 transition-colors'
           >
             <Avatar
@@ -78,9 +62,11 @@ export function PeopleList({ data }: { data: PeopleListArtifact['data'] }) {
               <p className='text-sm font-medium text-foreground truncate'>
                 {member.name}
               </p>
-              <p className='text-xs text-muted-foreground truncate'>
-                {member.role}
-              </p>
+              {member.role != null && (
+                <p className='text-xs text-muted-foreground truncate'>
+                  {member.role}
+                </p>
+              )}
             </div>
           </div>
         );
