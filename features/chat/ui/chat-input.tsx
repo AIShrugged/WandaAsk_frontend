@@ -1,7 +1,11 @@
 'use client';
 
 import { SendHorizontal } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
+
+// field-sizing: content requires Chrome 123+; this detects support at module load time
+const supportsFieldSizing =
+  typeof CSS !== 'undefined' && CSS.supports('field-sizing', 'content');
 
 interface ChatInputProps {
   onSend: (content: string) => void;
@@ -24,15 +28,27 @@ export function ChatInput({
 }: ChatInputProps) {
   const [value, setValue] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Fallback auto-resize for browsers without field-sizing: content (e.g. Firefox).
+  // useLayoutEffect fires synchronously after DOM mutations — prevents height flash.
+  useLayoutEffect(() => {
+    if (supportsFieldSizing || !textareaRef.current) return;
+    const el = textareaRef.current;
+    el.style.height = 'auto';
+    el.style.height = `${Math.min(el.scrollHeight, 160)}px`;
+  }, [value]);
   /**
    * submit.
    * @returns Result.
    */
   const submit = () => {
     const trimmed = value.trim();
-
     if (!trimmed || disabled) return;
     setValue('');
+    // Reset height for browsers using the JS fallback
+    if (!supportsFieldSizing && textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+    }
     onSend(trimmed);
     textareaRef.current?.focus();
   };

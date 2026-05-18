@@ -2,7 +2,7 @@ import { getChats } from '@/features/chat/api/chats';
 import { getMessages } from '@/features/chat/api/messages';
 import { DashboardChatPanel } from '@/widgets/dashboard-chat/ui/DashboardChatPanel';
 
-import type { Message } from '@/features/chat/types';
+import type { Message } from '@/features/chat/model/types';
 
 const INITIAL_MESSAGES_LIMIT = 20;
 
@@ -12,7 +12,7 @@ const INITIAL_MESSAGES_LIMIT = 20;
  * @returns JSX element.
  */
 export async function DashboardChatLoader() {
-  const { chats } = await getChats(0, 20);
+  const { data: chats } = await getChats(0, 20);
 
   const firstChat = chats[0] ?? null;
   let initialMessages: Message[] = [];
@@ -21,7 +21,7 @@ export async function DashboardChatLoader() {
 
   if (firstChat) {
     try {
-      const { messages: oldest, totalCount: msgTotal } = await getMessages(
+      const { data: oldest, totalCount: msgTotal } = await getMessages(
         firstChat.id,
         0,
         INITIAL_MESSAGES_LIMIT,
@@ -31,7 +31,7 @@ export async function DashboardChatLoader() {
 
       if (msgTotal > INITIAL_MESSAGES_LIMIT) {
         startOffset = msgTotal - INITIAL_MESSAGES_LIMIT;
-        const { messages: newest } = await getMessages(
+        const { data: newest } = await getMessages(
           firstChat.id,
           startOffset,
           INITIAL_MESSAGES_LIMIT,

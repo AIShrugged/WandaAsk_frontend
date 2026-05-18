@@ -8,7 +8,7 @@ import { getOrganizations } from '@/features/organization';
  * @returns JSX element.
  */
 export default async function ChatPage() {
-  const [{ chats, totalCount }, { data: organizations }] = await Promise.all([
+  const [{ data: chats, totalCount }, { data: organizations }] = await Promise.all([
     getChats(0, 20),
     getOrganizations(),
   ]);

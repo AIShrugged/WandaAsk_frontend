@@ -58,7 +58,7 @@ jest.mock('lucide-react', () => {
 
 import { ArtifactPanel } from '@/features/chat/ui/artifact-panel';
 
-import type { ArtifactsResponse } from '@/features/chat/types';
+import type { ArtifactsResponse } from '@/features/chat/model/types';
 
 const ARTIFACT_ID = 'a1';
 const ARTIFACT_TITLE = 'My Artifact';

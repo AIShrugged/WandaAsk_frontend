@@ -3,6 +3,7 @@
 import { ChevronLeft, MessageSquare, Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
 
 import { getChats } from '@/features/chat/api/chats';
 import { ChatFormModal } from '@/features/chat/ui/chat-form-modal';
@@ -12,7 +13,7 @@ import { CollapsedSidePanel } from '@/shared/ui/layout/collapsed-side-panel';
 import SpinLoader from '@/shared/ui/layout/spin-loader';
 
 import type { OrganizationProps } from '@/entities/organization';
-import type { Chat } from '@/features/chat/types';
+import type { Chat } from '@/features/chat/model/types';
 
 interface ChatListProps {
   initialChats: Chat[];
@@ -48,8 +49,9 @@ export function ChatList({
   const [hasMore, setHasMore] = useState(initialChats.length < totalCount);
   const [isLoading, setIsLoading] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  // Single modal instance handles both create (editingChat=null) and edit modes
   const [editingChat, setEditingChat] = useState<Chat | null>(null);
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -66,20 +68,17 @@ export function ChatList({
     if (isLoading || !hasMore) return;
     setIsLoading(true);
     try {
-      const { chats: more, totalCount: total } = await getChats(
+      const { data: more, totalCount: total } = await getChats(
         offset,
         PAGE_SIZE,
       );
 
-      setChats((prev) => {
-        return [...prev, ...more];
-      });
-      setOffset((prev) => {
-        return prev + more.length;
-      });
-      setHasMore(offset + more.length < total);
+      setChats((prev) => [...prev, ...more]);
+      setOffset((prev) => prev + more.length);
+      // Guard against infinite loop: if server returns 0 items, stop paginating
+      setHasMore(more.length > 0 && offset + more.length < total);
     } catch {
-      // silently fail
+      toast.error('Failed to load more chats. Try again.');
     } finally {
       setIsLoading(false);
     }
@@ -174,9 +173,8 @@ export function ChatList({
         </div>
         <div className='flex items-center gap-1'>
           <button
-            onClick={() => {
-              return setIsCreateModalOpen(true);
-            }}
+            type='button'
+            onClick={() => { setEditingChat(null); setIsModalOpen(true); }}
             className='flex items-center gap-1 text-xs text-primary hover:opacity-70 transition-opacity cursor-pointer'
             aria-label='New chat'
           >
@@ -184,9 +182,8 @@ export function ChatList({
             New
           </button>
           <button
-            onClick={() => {
-              return setIsCollapsed(true);
-            }}
+            type='button'
+            onClick={() => setIsCollapsed(true)}
             className='p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer'
             aria-label='Collapse chats panel'
           >
@@ -209,7 +206,7 @@ export function ChatList({
               key={chat.id}
               chat={chat}
               isActive={chat.id === activeChatId}
-              onEdit={setEditingChat}
+              onEdit={(chat) => { setEditingChat(chat); setIsModalOpen(true); }}
               onUpdate={handleUpdate}
               onDelete={handleDelete}
             />
@@ -225,23 +222,15 @@ export function ChatList({
           </div>
         )}
       </div>
-      <ChatFormModal
-        isOpen={isCreateModalOpen}
-        onClose={() => {
-          setIsCreateModalOpen(false);
-        }}
-        organizations={organizations}
-        onSaved={handleSavedChat}
-      />
-      <ChatFormModal
-        isOpen={editingChat !== null}
-        onClose={() => {
-          setEditingChat(null);
-        }}
-        organizations={organizations}
-        chat={editingChat}
-        onSaved={handleSavedChat}
-      />
+      {isModalOpen && (
+        <ChatFormModal
+          isOpen={isModalOpen}
+          onClose={() => { setIsModalOpen(false); setEditingChat(null); }}
+          organizations={organizations}
+          chat={editingChat}
+          onSaved={handleSavedChat}
+        />
+      )}
     </div>
   );
 }

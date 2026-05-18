@@ -5,6 +5,14 @@ import { TextDecoder, TextEncoder } from 'node:util';
 globalThis.TextEncoder = TextEncoder;
 globalThis.TextDecoder = TextDecoder;
 
+// jsdom does not implement CSS.supports — provide a no-op stub.
+// Check both typeof and the .supports method since jsdom may define CSS as an
+// empty object without the supports() API.
+if (typeof CSS === 'undefined' || typeof CSS.supports !== 'function') {
+  // eslint-disable-next-line no-undef
+  globalThis.CSS = { supports: () => false };
+}
+
 // Prevent @/shared/lib/config from throwing when API modules are imported via feature indexes
 if (!process.env.API_URL) {
   process.env.API_URL = 'https://test.local';

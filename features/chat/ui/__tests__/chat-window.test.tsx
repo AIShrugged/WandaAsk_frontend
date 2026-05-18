@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 
 import { ChatWindow } from '@/features/chat/ui/chat-window';
 
-import type { Message } from '@/features/chat/types';
+import type { Message } from '@/features/chat/model/types';
 
 jest.mock('next/navigation', () => {
   return {
@@ -220,7 +220,10 @@ describe('ChatWindow', () => {
   });
 
   it('calls sendMessage and addMessage when send button clicked', async () => {
-    mockSendMessage.mockResolvedValueOnce(makeMessage(99, 'assistant'));
+    mockSendMessage.mockResolvedValueOnce({
+      data: makeMessage(99, 'assistant'),
+      error: null,
+    });
 
     const user = userEvent.setup();
 
@@ -252,7 +255,7 @@ describe('ChatWindow', () => {
   it('adds queued assistant message after send', async () => {
     const assistantMsg = makeMessage(99, 'assistant');
 
-    mockSendMessage.mockResolvedValueOnce(assistantMsg);
+    mockSendMessage.mockResolvedValueOnce({ data: assistantMsg, error: null });
 
     const user = userEvent.setup();
 

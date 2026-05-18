@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 
 import { ChatLayout } from '@/features/chat/ui/chat-layout';
 
-import type { Chat, Message } from '@/features/chat/types';
+import type { Chat, Message } from '@/features/chat/model/types';
 
 jest.mock('@/features/chat/ui/chat-list', () => {
   return {

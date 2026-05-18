@@ -130,7 +130,7 @@ describe('ChatListItem', () => {
         onDelete={jest.fn()}
       />,
     );
-    await userEvent.click(screen.getByRole('button', { name: 'Edit chat' }));
+    await userEvent.click(screen.getByRole('button', { name: /edit chat/i }));
     expect(onEdit).toHaveBeenCalledWith(expect.objectContaining({ id: 1 }));
     expect(onUpdate).not.toHaveBeenCalled();
   });
@@ -146,7 +146,7 @@ describe('ChatListItem', () => {
         onDelete={jest.fn()}
       />,
     );
-    await userEvent.click(screen.getByRole('button', { name: 'Edit chat' }));
+    await userEvent.click(screen.getByRole('button', { name: /edit chat/i }));
     expect(onUpdate).toHaveBeenCalledWith(expect.objectContaining({ id: 1 }));
   });
 
@@ -161,7 +161,7 @@ describe('ChatListItem', () => {
         onDelete={jest.fn()}
       />,
     );
-    await userEvent.click(screen.getByRole('button', { name: 'Delete chat' }));
+    await userEvent.click(screen.getByRole('button', { name: /delete chat/i }));
     expect(screen.getByText('Delete?')).toBeInTheDocument();
   });
 
@@ -174,7 +174,7 @@ describe('ChatListItem', () => {
         onDelete={jest.fn()}
       />,
     );
-    await userEvent.click(screen.getByRole('button', { name: 'Delete chat' }));
+    await userEvent.click(screen.getByRole('button', { name: /delete chat/i }));
     await userEvent.click(
       screen.getByRole('button', { name: 'Cancel delete' }),
     );
@@ -193,7 +193,7 @@ describe('ChatListItem', () => {
         onDelete={onDelete}
       />,
     );
-    await userEvent.click(screen.getByRole('button', { name: 'Delete chat' }));
+    await userEvent.click(screen.getByRole('button', { name: /delete chat/i }));
     await userEvent.click(
       screen.getByRole('button', { name: 'Confirm delete' }),
     );

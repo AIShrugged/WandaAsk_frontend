@@ -18,4 +18,5 @@ export type {
   ArtifactType,
   ArtifactsResponse,
   TaskSummaryArtifact,
+  TaskTableArtifact,
 } from '@/entities/artifact/model/types';

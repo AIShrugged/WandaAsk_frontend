@@ -2,7 +2,7 @@
 
 import { ChevronLeft, MessageSquare } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useEffectEvent, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import { pollRun, sendMessage } from '@/features/chat/api/messages';
@@ -19,7 +19,7 @@ import type {
   Message,
   MessageStatus,
   PageContext,
-} from '@/features/chat/types';
+} from '@/features/chat/model/types';
 
 const POLL_INTERVAL_MS = 1500;
 const POLL_MAX_ATTEMPTS = 60; // 90 s timeout
@@ -90,6 +90,12 @@ export function ChatWindow({
   );
   const pollAttemptsRef = useRef(0);
   const pollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Ref guard prevents concurrent sends — synchronized with isSending state
+  const isSendingRef = useRef(isSending);
+  // startPolling is defined inside the polling useEffect; exposed via ref so handleSend can call it
+  const startPollingRef = useRef<(messageId: number, runUuid: string) => void>(
+    () => {},
+  );
 
   // Scroll to bottom on mount
   useEffect(() => {
@@ -98,84 +104,81 @@ export function ChatWindow({
     }
   }, [containerRef]);
 
-  /**
-   * startPolling — begins polling a run until it reaches a terminal state.
-   * @param messageId - The placeholder message ID to update in-place.
-   * @param runUuid - The agent run UUID from the queued message.
-   * @returns Result.
-   */
-  const startPolling = (messageId: number, runUuid: string) => {
-    activeRunRef.current = { messageId, runUuid };
-    pollAttemptsRef.current = 0;
-    setIsSending(true);
-    schedulePoll();
-  };
-  /**
-   * schedulePoll — schedules the next poll tick.
-   * @returns Result.
-   */
-  const schedulePoll = () => {
-    pollTimerRef.current = setTimeout(() => {
-      void doPoll();
-    }, POLL_INTERVAL_MS);
-  };
-  /**
-   * doPoll — performs a single poll request.
-   * @returns Promise.
-   */
-  // eslint-disable-next-line max-statements
-  const doPoll = async () => {
-    const run = activeRunRef.current;
-
-    if (!run) return;
-
-    pollAttemptsRef.current += 1;
-
-    if (pollAttemptsRef.current > POLL_MAX_ATTEMPTS) {
-      updateMessage(run.messageId, {
-        status: 'failed',
-        error_message: 'Response timed out. Please try again.',
-      });
-      activeRunRef.current = null;
-      setIsSending(false);
-
-      return;
-    }
-
-    try {
-      const result = await pollRun(chatId, run.runUuid);
-
-      if (TERMINAL.has(result.status)) {
-        updateMessage(run.messageId, {
-          status: result.status,
-          content: result.message.content,
-          error_message: result.error_message,
-          failure_code: result.failure_code,
-          current_attempt: result.current_attempt,
-          max_attempts: result.max_attempts,
-          completed_at: result.completed_at,
-        });
-        activeRunRef.current = null;
-        setIsSending(false);
-      } else {
-        // Non-terminal — update status label and continue polling
-        updateMessage(run.messageId, {
-          status: result.status,
-          current_attempt: result.current_attempt,
-          max_attempts: result.max_attempts,
-          next_retry_at: result.next_retry_at,
-        });
-        schedulePoll();
-      }
-    } catch {
-      // Network error — keep polling unless max attempts reached
-      schedulePoll();
-    }
-  };
-
   // On mount: resume polling timer for any in-flight run (no setState — isSending
   // is already initialised via lazy useState above to avoid set-state-in-effect)
   useEffect(() => {
+    // Effect-local flag — prevents setState after unmount. Using a ref would
+    // be reset to true by a re-run before old awaits resolve (ghost poll loop).
+    let active = true;
+
+    const schedulePoll = () => {
+      pollTimerRef.current = setTimeout(() => {
+        void doPoll();
+      }, POLL_INTERVAL_MS);
+    };
+
+    // eslint-disable-next-line max-statements
+    const doPoll = async () => {
+      const run = activeRunRef.current;
+      if (!run) return;
+
+      pollAttemptsRef.current += 1;
+
+      if (pollAttemptsRef.current > POLL_MAX_ATTEMPTS) {
+        if (!active) return;
+        updateMessage(run.messageId, {
+          status: 'failed',
+          error_message: 'Response timed out. Please try again.',
+        });
+        activeRunRef.current = null;
+        isSendingRef.current = false;
+        setIsSending(false);
+        return;
+      }
+
+      try {
+        const result = await pollRun(chatId, run.runUuid);
+        if (!active) return; // guard after await — component may have unmounted
+        if (TERMINAL.has(result.status)) {
+          updateMessage(run.messageId, {
+            status: result.status,
+            content: result.message.content,
+            error_message: result.error_message,
+            failure_code: result.failure_code,
+            current_attempt: result.current_attempt,
+            max_attempts: result.max_attempts,
+            completed_at: result.completed_at,
+          });
+          activeRunRef.current = null;
+          isSendingRef.current = false;
+          setIsSending(false);
+        } else {
+          // Non-terminal — update status label and continue polling
+          updateMessage(run.messageId, {
+            status: result.status,
+            current_attempt: result.current_attempt,
+            max_attempts: result.max_attempts,
+            next_retry_at: result.next_retry_at,
+          });
+          schedulePoll();
+        }
+      } catch {
+        // Network error — keep polling unless max attempts reached
+        if (active) schedulePoll();
+      }
+    };
+
+    const startPolling = (messageId: number, runUuid: string) => {
+      activeRunRef.current = { messageId, runUuid };
+      pollAttemptsRef.current = 0;
+      isSendingRef.current = true;
+      setIsSending(true);
+      schedulePoll();
+    };
+
+    // Expose startPolling for handleSend via a stable ref
+    startPollingRef.current = startPolling;
+
     const pending = initialMessages.findLast((m) => {
       return (
         m.role === 'assistant' &&
@@ -194,25 +197,19 @@ export function ChatWindow({
     }
 
     return () => {
+      active = false;
       if (pollTimerRef.current) clearTimeout(pollTimerRef.current);
-
       activeRunRef.current = null;
     };
   }, []);
 
-  /**
-   * handleSend.
-   * @param content - content.
-   * @returns Result.
-   */
   const handleSend = (content: string) => {
-    if (isSending) {
-      return;
-    }
+    // Ref guard is synchronous — prevents concurrent sends under concurrent rendering
+    if (isSendingRef.current) return;
+    isSendingRef.current = true;
 
-    const rawText = document.body?.textContent ?? '';
     const pageContext: PageContext = {
-      page_text: rawText.length > 30_000 ? rawText.slice(0, 30_000) : rawText,
+      page_text: '',
       page_title: document.title,
       page_url: globalThis.location.href,
     };
@@ -241,56 +238,54 @@ export function ChatWindow({
 
     sendMessage(chatId, content, pageContext)
       .then((result) => {
-        const actionResult =
-          typeof result === 'object' &&
-          result !== null &&
-          'error' in result &&
-          'data' in result
-            ? result
-            : { data: result as Message, error: null };
-
-        if (actionResult.error) {
+        if (result.error) {
           removeMessage(optimisticId);
+          isSendingRef.current = false;
           setIsSending(false);
 
-          if (actionResult.fieldErrors?.organization_id) {
+          if (result.fieldErrors?.organization_id) {
             setComposerError(
-              'Выберите организацию в верхнем переключателе, чтобы продолжить работу в нужном контексте.',
+              'Select an organization using the top switcher to continue working in the right context.',
             );
-
             return;
           }
 
-          toast.error(actionResult.error);
-
+          toast.error(result.error);
           return;
         }
 
-        const queuedMessage = actionResult.data;
+        const queuedMessage = result.data;
 
         if (!queuedMessage) {
           removeMessage(optimisticId);
+          isSendingRef.current = false;
           setIsSending(false);
           toast.error('Failed to send message');
-
           return;
         }
 
         addMessage(queuedMessage);
 
         if (queuedMessage.agent_run_uuid) {
-          startPolling(queuedMessage.id, queuedMessage.agent_run_uuid);
+          startPollingRef.current(queuedMessage.id, queuedMessage.agent_run_uuid);
         } else {
+          isSendingRef.current = false;
           setIsSending(false);
         }
       })
       .catch((error) => {
         toast.error((error as Error).message);
+        isSendingRef.current = false;
         setIsSending(false);
       });
   };
   // Auto-send prompt from query param (e.g. ?prompt=...) on empty chat
   const autoPromptFired = useRef(false);
+  // useEffectEvent gives a stable reference that always reads the latest handleSend
+  // without needing handleSend in the deps array (avoids exhaustive-deps lint error)
+  const onAutoPrompt = useEffectEvent((prompt: string) => {
+    handleSend(prompt);
+  });
 
   useEffect(() => {
     const prompt = searchParams.get('prompt');
@@ -303,8 +298,10 @@ export function ChatWindow({
     // Clean URL without triggering navigation
     globalThis.history.replaceState(null, '', globalThis.location.pathname);
 
+    // setTimeout(100): gives the browser one frame to dismiss the keyboard before
+    // the input receives focus from handleSend
     setTimeout(() => {
-      handleSend(prompt);
+      onAutoPrompt(prompt);
     }, 100);
   }, [searchParams]);
 
@@ -380,27 +377,18 @@ export function ChatWindow({
 
       {/* Input area */}
       <div className='flex-shrink-0 px-4 pb-4 pt-2'>
-        {composerError ? (
+        {composerError && (
           <div className='mb-3 rounded-[var(--radius-card)] border border-yellow-500/30 bg-yellow-500/10 p-4'>
             <div className='flex items-start gap-3'>
               <div className='min-w-0 flex-1'>
                 <p className='text-sm font-medium text-foreground'>
                   Select a work context
                 </p>
-                <p className='mt-1 text-sm text-muted-foreground'>
-                  Personal chat doesn't require a permanent link. If the backend
-                  requests an `organization_id`, switch the organization in the
-                  top panel and repeat the action.
-                </p>
-                {composerError ? (
-                  <p className='mt-2 text-sm text-destructive'>
-                    {composerError}
-                  </p>
-                ) : null}
+                <p className='mt-2 text-sm text-destructive'>{composerError}</p>
               </div>
             </div>
           </div>
-        ) : null}
+        )}
         <ChatInput
           onSend={handleSend}
           disabled={isSending}

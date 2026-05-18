@@ -1,220 +1,93 @@
 'use server';
 
-import { clearSession } from '@/shared/api/session';
 import { parseApiError } from '@/shared/lib/apiError';
 import { API_URL } from '@/shared/lib/config';
-import { getAuthHeaders } from '@/shared/lib/getAuthToken';
+import { ServerError } from '@/shared/lib/errors';
+import { httpClient, httpClientList } from '@/shared/lib/httpClient';
 
-import type { Chat, ChatUpsertDTO } from '@/features/chat/types';
-import type { ApiResponse } from '@/shared/types/common';
+import type { Chat, ChatUpsertDTO } from '@/features/chat/model/types';
+import type { ActionResult } from '@/shared/types/server-action';
 
-type ChatActionError = {
-  data: null;
-  error: string;
-  fieldErrors?: Record<string, string>;
-};
-
-/**
- * getChats.
- * @param offset
- * @param limit
- * @returns Promise.
- */
 export async function getChats(
   offset = 0,
   limit = 20,
-): Promise<{ chats: Chat[]; totalCount: number; hasMore: boolean }> {
-  const authHeaders = await getAuthHeaders();
-  const res = await fetch(`${API_URL}/chats?offset=${offset}&limit=${limit}`, {
-    headers: { ...authHeaders },
-    cache: 'no-store',
-  });
-
-  if (!res.ok) {
-    if (res.status === 401) await clearSession();
-    const text = await res.text();
-
-    throw new Error(text || 'Failed to load chats');
-  }
-
-  const json: ApiResponse<Chat[]> = await res.json();
-
-  if (!json.success || !json.data) {
-    throw new Error(json.error ?? 'Invalid API response');
-  }
-
-  const totalCount = Number(res.headers.get('Items-Count') || '0');
-
+): Promise<{ data: Chat[]; totalCount: number; hasMore: boolean }> {
+  const result = await httpClientList<Chat>(
+    `${API_URL}/chats?offset=${offset}&limit=${limit}`,
+  );
+  // Preserve offset-based hasMore formula — httpClientList uses data.length < totalCount
+  // which gives wrong result for partial pages in offset pagination.
   return {
-    chats: json.data,
-    totalCount,
-    hasMore: offset + limit < totalCount,
+    data: result.data,
+    totalCount: result.totalCount,
+    hasMore: offset + result.data.length < result.totalCount,
   };
 }
 
-/**
- * getChat.
- * @param id - chat id.
- * @returns Promise.
- */
 export async function getChat(id: number): Promise<Chat> {
-  const authHeaders = await getAuthHeaders();
-  const res = await fetch(`${API_URL}/chats/${id}`, {
-    headers: { ...authHeaders },
-    cache: 'no-store',
-  });
-
-  if (!res.ok) {
-    if (res.status === 401) await clearSession();
-    const text = await res.text();
-
-    throw new Error(parseApiError(text, 'Failed to load chat').message);
-  }
-
-  const json: ApiResponse<Chat> = await res.json();
-
-  return json.data!;
+  const { data } = await httpClient<Chat>(`${API_URL}/chats/${id}`);
+  return data!;
 }
 
 export async function createChat(
   payloadOrTitle: Partial<ChatUpsertDTO> | string | null = {},
-): Promise<Chat | ChatActionError> {
-  const authHeaders = await getAuthHeaders();
+): Promise<ActionResult<Chat>> {
   const payload =
     typeof payloadOrTitle === 'string' || payloadOrTitle === null
       ? { title: payloadOrTitle }
       : payloadOrTitle;
+
   const body: Record<string, number | string | null> = {};
+  if ('title' in payload) body.title = payload.title ?? null;
+  if ('organization_id' in payload) body.organization_id = payload.organization_id ?? null;
+  if ('team_id' in payload) body.team_id = payload.team_id ?? null;
 
-  if ('title' in payload) {
-    body.title = payload.title ?? null;
-  }
-
-  if ('organization_id' in payload) {
-    body.organization_id = payload.organization_id ?? null;
-  }
-
-  if ('team_id' in payload) {
-    body.team_id = payload.team_id ?? null;
-  }
-
-  const res = await fetch(`${API_URL}/chats`, {
-    method: 'POST',
-    headers: { ...authHeaders, 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-    cache: 'no-store',
-  });
-
-  if (!res.ok) {
-    if (res.status === 401) await clearSession();
-    const text = await res.text();
-
-    const parsed = parseApiError(text, 'Failed to create chat');
-
-    if (res.status === 422) {
-      return {
-        data: null,
-        error: parsed.message,
-        fieldErrors: parsed.fieldErrors,
-      };
+  try {
+    const { data } = await httpClient<Chat>(`${API_URL}/chats`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    return { data: data!, error: null };
+  } catch (error) {
+    if (error instanceof ServerError) {
+      const parsed = parseApiError(error.responseBody ?? '', 'Failed to create chat');
+      return { data: null, error: parsed.message, fieldErrors: parsed.fieldErrors };
     }
-
-    throw new Error(parsed.message);
+    throw error;
   }
-
-  const json: ApiResponse<Chat> = await res.json();
-
-  return json.data!;
 }
 
-/**
- * updateChat.
- * @param id - chat id.
- * @param payload - title and tenant scope payload.
- * @returns ActionResult.
- */
 export async function updateChat(
   id: number,
   payload: Partial<ChatUpsertDTO>,
-): Promise<Chat | ChatActionError> {
-  const authHeaders = await getAuthHeaders();
+): Promise<ActionResult<Chat>> {
   const body: Record<string, number | string | null> = {};
+  if ('title' in payload) body.title = payload.title ?? null;
+  if ('organization_id' in payload) body.organization_id = payload.organization_id ?? null;
+  if ('team_id' in payload) body.team_id = payload.team_id ?? null;
 
-  if ('title' in payload) {
-    body.title = payload.title ?? null;
-  }
-
-  if ('organization_id' in payload) {
-    body.organization_id = payload.organization_id ?? null;
-  }
-
-  if ('team_id' in payload) {
-    body.team_id = payload.team_id ?? null;
-  }
-
-  const res = await fetch(`${API_URL}/chats/${id}`, {
-    method: 'PATCH',
-    headers: { ...authHeaders, 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-    cache: 'no-store',
-  });
-
-  if (!res.ok) {
-    if (res.status === 401) await clearSession();
-    const text = await res.text();
-
-    const parsed = parseApiError(text, 'Failed to update chat');
-
-    if (res.status === 422) {
-      return {
-        data: null,
-        error: parsed.message,
-        fieldErrors: parsed.fieldErrors,
-      };
+  try {
+    const { data } = await httpClient<Chat>(`${API_URL}/chats/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    return { data: data!, error: null };
+  } catch (error) {
+    if (error instanceof ServerError) {
+      const parsed = parseApiError(error.responseBody ?? '', 'Failed to update chat');
+      return { data: null, error: parsed.message, fieldErrors: parsed.fieldErrors };
     }
-
-    throw new Error(parsed.message);
+    throw error;
   }
-
-  const json: ApiResponse<Chat> = await res.json();
-
-  return json.data!;
 }
 
-/**
- * updateChatTitle.
- * @param id - chat id.
- * @param title - new title.
- * @returns Promise.
- */
-export async function updateChatTitle(
-  id: number,
-  title: string,
-): Promise<void> {
+export async function updateChatTitle(id: number, title: string): Promise<void> {
   const result = await updateChat(id, { title });
-
-  if (result && 'error' in result) {
-    throw new Error(result.error);
-  }
+  if (result.error) throw new Error(result.error);
 }
 
-/**
- * deleteChat.
- * @param id - id.
- * @returns Promise.
- */
 export async function deleteChat(id: number): Promise<void> {
-  const authHeaders = await getAuthHeaders();
-  const res = await fetch(`${API_URL}/chats/${id}`, {
-    method: 'DELETE',
-    headers: { ...authHeaders },
-    cache: 'no-store',
-  });
-
-  if (!res.ok) {
-    if (res.status === 401) await clearSession();
-    const text = await res.text();
-
-    throw new Error(parseApiError(text, 'Failed to delete chat').message);
-  }
+  await httpClient(`${API_URL}/chats/${id}`, { method: 'DELETE' });
 }

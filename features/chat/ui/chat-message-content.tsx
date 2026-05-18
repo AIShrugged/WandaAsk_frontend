@@ -5,9 +5,12 @@ import { useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
-import { TaskTable } from '@/entities/artifact/ui/task-table';
+import { TaskTable } from '@/entities/artifact';
 
-import type { TaskTableArtifact } from '@/entities/artifact/model/types';
+import type { TaskTableArtifact } from '@/entities/artifact';
+
+// Module-level constant — prevents array recreation on every render
+const REMARK_PLUGINS = [remarkGfm];
 
 type Segment =
   | { type: 'text'; content: string }
@@ -15,7 +18,7 @@ type Segment =
 
 function splitTaskBlocks(content: string): Segment[] {
   const segments: Segment[] = [];
-  const pattern = /```json\n([\s\S]*?)\n```/g;
+  const pattern = /```json\r?\n([\s\S]*?)\r?\n```/g;
   let lastIndex = 0;
   let match: RegExpExecArray | null;
 
@@ -78,22 +81,28 @@ export function ChatMessageContent({ content }: ChatMessageContentProps) {
     if (segments.length === 1 && segments[0].type === 'text') {
       return (
         <div className='chat-html-content'>
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+          <ReactMarkdown remarkPlugins={REMARK_PLUGINS}>{content}</ReactMarkdown>
         </div>
       );
     }
 
     return (
       <div className='chat-html-content flex flex-col gap-3'>
-        {segments.map((seg, i) => {
-          return seg.type === 'tasks' ? (
-            <TaskTable key={i} data={{ tasks: seg.tasks }} />
+        {segments.map((seg, i) =>
+          seg.type === 'tasks' ? (
+            <TaskTable
+              key={`tasks-${i}-${seg.tasks.length}`}
+              data={{ tasks: seg.tasks }}
+            />
           ) : (
-            <ReactMarkdown key={i} remarkPlugins={[remarkGfm]}>
+            <ReactMarkdown
+              key={`text-${seg.content.slice(0, 32)}`}
+              remarkPlugins={REMARK_PLUGINS}
+            >
               {seg.content}
             </ReactMarkdown>
-          );
-        })}
+          ),
+        )}
       </div>
     );
   }

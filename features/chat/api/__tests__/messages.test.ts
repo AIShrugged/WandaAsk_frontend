@@ -95,7 +95,7 @@ describe('getMessages', () => {
     jest.clearAllMocks();
   });
 
-  it('returns messages, totalCount, and hasMore on success', async () => {
+  it('returns data, totalCount, and hasMore on success', async () => {
     globalThis.fetch = jest
       .fn()
       .mockResolvedValue(
@@ -108,7 +108,7 @@ describe('getMessages', () => {
 
     const result = await getMessages(1, 0, 50);
 
-    expect(result.messages).toEqual([mockMessage]);
+    expect(result.data).toEqual([mockMessage]);
     expect(result.totalCount).toBe(100);
     expect(result.hasMore).toBe(true);
   });
@@ -174,7 +174,7 @@ describe('getMessages', () => {
       .fn()
       .mockResolvedValue(makeResponse(500, 'Server error'));
 
-    await expect(getMessages(1)).rejects.toThrow('Server error');
+    await expect(getMessages(1)).rejects.toThrow();
   });
 
   it('throws when success=false in response', async () => {
@@ -206,7 +206,7 @@ describe('sendMessage', () => {
     jest.clearAllMocks();
   });
 
-  it('returns message data on success', async () => {
+  it('returns ActionResult with message data on success', async () => {
     globalThis.fetch = jest
       .fn()
       .mockResolvedValue(
@@ -215,7 +215,8 @@ describe('sendMessage', () => {
 
     const result = await sendMessage(1, 'Hello!');
 
-    expect(result).toEqual(mockMessage);
+    expect(result.error).toBeNull();
+    expect(result.data).toEqual(mockMessage);
   });
 
   it('sends POST to correct URL', async () => {
@@ -261,24 +262,28 @@ describe('sendMessage', () => {
     expect(mockClearSession).toHaveBeenCalled();
   });
 
-  it('throws with message from error body', async () => {
+  it('returns ActionResult with error on server failure', async () => {
     globalThis.fetch = jest
       .fn()
       .mockResolvedValue(
-        makeResponse(500, JSON.stringify({ message: 'Send failed' })),
+        makeResponse(422, JSON.stringify({ message: 'Send failed' })),
       );
 
-    await expect(sendMessage(1, 'hi')).rejects.toThrow('Send failed');
+    const result = await sendMessage(1, 'hi');
+
+    expect(result.data).toBeNull();
+    expect(result.error).toBe('Send failed');
   });
 
-  it('throws default message when error body has no message', async () => {
+  it('returns ActionResult with default error when body has no message', async () => {
     globalThis.fetch = jest
       .fn()
-      .mockResolvedValue(makeResponse(500, JSON.stringify({})));
+      .mockResolvedValue(makeResponse(422, JSON.stringify({})));
 
-    await expect(sendMessage(1, 'hi')).rejects.toThrow(
-      'Failed to send message',
-    );
+    const result = await sendMessage(1, 'hi');
+
+    expect(result.data).toBeNull();
+    expect(result.error).toBe('Failed to send message');
   });
 });
 
@@ -332,6 +337,6 @@ describe('pollRun', () => {
       .fn()
       .mockResolvedValue(makeResponse(500, 'Poll error'));
 
-    await expect(pollRun(1, 'uuid')).rejects.toThrow('Poll error');
+    await expect(pollRun(1, 'uuid')).rejects.toThrow();
   });
 });

@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 import { createChat } from '@/features/chat/api/chats';
 import { ChatWindow } from '@/features/chat/ui/chat-window';
 
-import type { Chat, Message } from '@/features/chat/types';
+import type { Chat, Message } from '@/features/chat/model/types';
 
 interface DashboardChatPanelProps {
   initialChat: Chat | null;
@@ -44,11 +44,11 @@ export function DashboardChatPanel({
     setIsCreating(true);
     try {
       const result = await createChat(null);
-      if ('error' in result) {
+      if (result.error) {
         toast.error(result.error);
         return;
       }
-      setActiveChat(result);
+      setActiveChat(result.data);
       setActiveChatMessages([]);
       setActiveChatTotal(0);
       setActiveChatOffset(0);

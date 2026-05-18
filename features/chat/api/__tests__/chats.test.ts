@@ -90,7 +90,7 @@ describe('getChats', () => {
     jest.clearAllMocks();
   });
 
-  it('returns chats, totalCount, and hasMore on success', async () => {
+  it('returns data, totalCount, and hasMore on success', async () => {
     globalThis.fetch = jest
       .fn()
       .mockResolvedValue(
@@ -103,19 +103,19 @@ describe('getChats', () => {
 
     const result = await getChats(0, 20);
 
-    expect(result.chats).toEqual([mockChat]);
+    expect(result.data).toEqual([mockChat]);
     expect(result.totalCount).toBe(25);
     expect(result.hasMore).toBe(true);
   });
 
-  it('returns hasMore=false when offset+limit >= totalCount', async () => {
+  it('returns hasMore=false when all chats are loaded', async () => {
     globalThis.fetch = jest
       .fn()
       .mockResolvedValue(
         makeResponse(
           200,
           { success: true, data: [mockChat] },
-          { 'Items-Count': '5' },
+          { 'Items-Count': '1' },
         ),
       );
 
@@ -154,7 +154,7 @@ describe('getChats', () => {
       .fn()
       .mockResolvedValue(makeResponse(500, 'Internal Server Error'));
 
-    await expect(getChats()).rejects.toThrow('Internal Server Error');
+    await expect(getChats()).rejects.toThrow();
   });
 
   it('throws when success=false in response body', async () => {
@@ -186,14 +186,15 @@ describe('createChat', () => {
     jest.clearAllMocks();
   });
 
-  it('returns created chat data on success', async () => {
+  it('returns ActionResult with chat data on success', async () => {
     globalThis.fetch = jest
       .fn()
       .mockResolvedValue(makeResponse(200, { success: true, data: mockChat }));
 
     const result = await createChat('My Chat');
 
-    expect(result).toEqual(mockChat);
+    expect(result.error).toBeNull();
+    expect(result.data).toEqual(mockChat);
   });
 
   it('sends title in request body', async () => {
@@ -251,14 +252,17 @@ describe('createChat', () => {
     expect(mockClearSession).toHaveBeenCalled();
   });
 
-  it('throws on failure with message from body', async () => {
+  it('returns ActionResult with error on server failure', async () => {
     globalThis.fetch = jest
       .fn()
       .mockResolvedValue(
-        makeResponse(500, JSON.stringify({ message: 'Creation failed' })),
+        makeResponse(422, JSON.stringify({ message: 'Creation failed' })),
       );
 
-    await expect(createChat()).rejects.toThrow('Creation failed');
+    const result = await createChat();
+
+    expect(result.data).toBeNull();
+    expect(result.error).toBe('Creation failed');
   });
 });
 
@@ -271,7 +275,9 @@ describe('updateChatTitle', () => {
   });
 
   it('sends PATCH request to correct URL', async () => {
-    globalThis.fetch = jest.fn().mockResolvedValue(makeResponse(200, {}));
+    globalThis.fetch = jest
+      .fn()
+      .mockResolvedValue(makeResponse(200, { success: true, data: mockChat }));
 
     await updateChatTitle(42, 'Updated Title');
 
@@ -282,7 +288,9 @@ describe('updateChatTitle', () => {
   });
 
   it('sends title in request body', async () => {
-    globalThis.fetch = jest.fn().mockResolvedValue(makeResponse(200, {}));
+    globalThis.fetch = jest
+      .fn()
+      .mockResolvedValue(makeResponse(200, { success: true, data: mockChat }));
 
     await updateChatTitle(42, 'My New Title');
 
@@ -305,11 +313,11 @@ describe('updateChatTitle', () => {
     expect(mockClearSession).toHaveBeenCalled();
   });
 
-  it('throws on failure', async () => {
+  it('throws on server failure', async () => {
     globalThis.fetch = jest
       .fn()
       .mockResolvedValue(
-        makeResponse(500, JSON.stringify({ message: 'Update failed' })),
+        makeResponse(422, JSON.stringify({ message: 'Update failed' })),
       );
 
     await expect(updateChatTitle(1, 'title')).rejects.toThrow('Update failed');
@@ -325,7 +333,9 @@ describe('deleteChat', () => {
   });
 
   it('sends DELETE request to correct URL', async () => {
-    globalThis.fetch = jest.fn().mockResolvedValue(makeResponse(200, {}));
+    globalThis.fetch = jest
+      .fn()
+      .mockResolvedValue(makeResponse(200, { success: true, data: null }));
 
     await deleteChat(99);
 
@@ -336,7 +346,9 @@ describe('deleteChat', () => {
   });
 
   it('resolves without error on success', async () => {
-    globalThis.fetch = jest.fn().mockResolvedValue(makeResponse(200, {}));
+    globalThis.fetch = jest
+      .fn()
+      .mockResolvedValue(makeResponse(200, { success: true, data: null }));
 
     await expect(deleteChat(1)).resolves.toBeUndefined();
   });
@@ -358,6 +370,6 @@ describe('deleteChat', () => {
         makeResponse(404, JSON.stringify({ message: 'Chat not found' })),
       );
 
-    await expect(deleteChat(999)).rejects.toThrow('Chat not found');
+    await expect(deleteChat(999)).rejects.toThrow();
   });
 });

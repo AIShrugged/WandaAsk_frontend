@@ -11,7 +11,6 @@ export {
   deleteChat,
 } from '@/features/chat/api/chats';
 export { getMessages } from '@/features/chat/api/messages';
-export { getArtifacts } from '@/entities/artifact/api/artifacts';
 export type {
   Chat,
   ChatUpsertDTO,
@@ -19,4 +18,4 @@ export type {
   PageContext,
   Artifact,
   ArtifactsResponse,
-} from '@/features/chat/types';
+} from '@/features/chat/model/types';

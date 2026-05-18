@@ -1,57 +1,26 @@
 'use server';
 
-import { clearSession } from '@/shared/api/session';
 import { parseApiError } from '@/shared/lib/apiError';
 import { API_URL } from '@/shared/lib/config';
-import { getAuthHeaders } from '@/shared/lib/getAuthToken';
+import { ServerError } from '@/shared/lib/errors';
+import { httpClient, httpClientList } from '@/shared/lib/httpClient';
 
-import type { AgentRun, Message, PageContext } from '@/features/chat/types';
-import type { ApiResponse } from '@/shared/types/common';
+import type { AgentRun, Message, PageContext } from '@/features/chat/model/types';
+import type { ActionResult } from '@/shared/types/server-action';
 
-type MessageActionError = {
-  data: null;
-  error: string;
-  fieldErrors?: Record<string, string>;
-};
-
-/**
- * getMessages.
- * @param chatId
- * @param offset
- * @param limit
- * @returns Promise.
- */
-// eslint-disable-next-line complexity
 export async function getMessages(
   chatId: number,
   offset = 0,
   limit = 50,
-): Promise<{ messages: Message[]; totalCount: number; hasMore: boolean }> {
-  const authHeaders = await getAuthHeaders();
-  const res = await fetch(
+): Promise<{ data: Message[]; totalCount: number; hasMore: boolean }> {
+  const result = await httpClientList<Message>(
     `${API_URL}/chats/${chatId}/messages?offset=${offset}&limit=${limit}`,
-    { headers: { ...authHeaders }, cache: 'no-store' },
   );
-
-  if (!res.ok) {
-    if (res.status === 401) await clearSession();
-    const text = await res.text();
-
-    throw new Error(text || 'Failed to load messages');
-  }
-
-  const json: ApiResponse<Message[]> = await res.json();
-
-  if (!json.success || !json.data) {
-    throw new Error(json.error ?? 'Invalid API response');
-  }
-
-  const totalCount = Number(res.headers.get('Items-Count') || '0');
-
+  // Preserve offset-based hasMore formula
   return {
-    messages: json.data,
-    totalCount,
-    hasMore: offset + limit < totalCount,
+    data: result.data,
+    totalCount: result.totalCount,
+    hasMore: offset + result.data.length < result.totalCount,
   };
 }
 
@@ -59,74 +28,47 @@ export async function sendMessage(
   chatId: number,
   content: string,
   pageContext?: PageContext,
-): Promise<Message | MessageActionError> {
-  const authHeaders = await getAuthHeaders();
-  const res = await fetch(`${API_URL}/chats/${chatId}/messages`, {
-    method: 'POST',
-    headers: { ...authHeaders, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      content,
-      ...(pageContext?.page_text !== undefined && {
-        page_text: pageContext.page_text,
-      }),
-      ...(pageContext?.page_title !== undefined && {
-        page_title: pageContext.page_title,
-      }),
-      ...(pageContext?.page_url !== undefined && {
-        page_url: pageContext.page_url,
-      }),
-    }),
-    cache: 'no-store',
-  });
-
-  if (!res.ok) {
-    if (res.status === 401) await clearSession();
-    const text = await res.text();
-
-    const parsed = parseApiError(text, 'Failed to send message');
-
-    if (res.status === 422) {
-      return {
-        data: null,
-        error: parsed.message,
-        fieldErrors: parsed.fieldErrors,
-      };
+): Promise<ActionResult<Message>> {
+  try {
+    const { data } = await httpClient<Message>(
+      `${API_URL}/chats/${chatId}/messages`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          content,
+          ...(pageContext?.page_text !== undefined && {
+            page_text: pageContext.page_text,
+          }),
+          ...(pageContext?.page_title !== undefined && {
+            page_title: pageContext.page_title,
+          }),
+          ...(pageContext?.page_url !== undefined && {
+            page_url: pageContext.page_url,
+          }),
+        }),
+      },
+    );
+    return { data: data!, error: null };
+  } catch (error) {
+    if (error instanceof ServerError) {
+      const parsed = parseApiError(error.responseBody ?? '', 'Failed to send message');
+      return { data: null, error: parsed.message, fieldErrors: parsed.fieldErrors };
     }
-
-    throw new Error(parsed.message);
+    throw error;
   }
-
-  const json: ApiResponse<Message> = await res.json();
-
-  return json.data!;
 }
 
 /**
  * pollRun.
  * GET /api/v1/chats/{chatId}/runs/{runUuid}
  * Returns the current run status and, when completed, the final message.
- * @param chatId
- * @param runUuid
- * @returns Promise.
+ * Max 60 attempts × 1500ms = 90s timeout. Backend may complete after this point.
+ * Recovery: user can refresh — the mount effect re-polls in-flight runs on load.
  */
-export async function pollRun(
-  chatId: number,
-  runUuid: string,
-): Promise<AgentRun> {
-  const authHeaders = await getAuthHeaders();
-  const res = await fetch(`${API_URL}/chats/${chatId}/runs/${runUuid}`, {
-    headers: { ...authHeaders },
-    cache: 'no-store',
-  });
-
-  if (!res.ok) {
-    if (res.status === 401) await clearSession();
-    const text = await res.text();
-
-    throw new Error(text || 'Failed to poll run status');
-  }
-
-  const json: ApiResponse<AgentRun> = await res.json();
-
-  return json.data!;
+export async function pollRun(chatId: number, runUuid: string): Promise<AgentRun> {
+  const { data } = await httpClient<AgentRun>(
+    `${API_URL}/chats/${chatId}/runs/${runUuid}`,
+  );
+  return data!;
 }

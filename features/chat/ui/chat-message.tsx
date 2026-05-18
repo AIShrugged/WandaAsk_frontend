@@ -2,11 +2,11 @@
 
 import { format } from 'date-fns';
 import { AlertCircle, Check, Copy } from 'lucide-react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 import { ChatMessageContent } from '@/features/chat/ui/chat-message-content';
 
-import type { Message } from '@/features/chat/types';
+import type { Message } from '@/features/chat/model/types';
 
 interface ChatMessageProps {
   message: Message;
@@ -69,14 +69,8 @@ function BubbleContent({
   return <ChatMessageContent content={message.content} />;
 }
 
-/**
- * ChatMessage component.
- * @param props - Component props.
- * @param props.message - The message to display.
- * @returns JSX element.
- */
 // eslint-disable-next-line complexity
-export function ChatMessage({ message }: ChatMessageProps) {
+function ChatMessageComponent({ message }: ChatMessageProps) {
   const isUser = message.role === 'user';
   const isPending =
     message.status === 'queued' ||
@@ -126,6 +120,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
             </time>
             {!isFailed && (
               <button
+                type='button'
                 onClick={copyToClipboard}
                 className='cursor-pointer text-muted-foreground hover:text-foreground transition-colors'
                 aria-label='Copy message'
@@ -144,6 +139,13 @@ export function ChatMessage({ message }: ChatMessageProps) {
     </div>
   );
 }
+
+// Memoize to skip re-renders during polling — only re-render when content or status changes
+export const ChatMessage = React.memo(ChatMessageComponent, (prev, next) => (
+  prev.message.id === next.message.id &&
+  prev.message.content === next.message.content &&
+  prev.message.status === next.message.status
+));
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 

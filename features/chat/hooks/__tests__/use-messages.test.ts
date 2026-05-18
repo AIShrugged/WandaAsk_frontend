@@ -3,7 +3,7 @@ import { act, renderHook } from '@testing-library/react';
 
 import { useMessages } from '@/features/chat/hooks/use-messages';
 
-import type { Message } from '@/features/chat/types';
+import type { Message } from '@/features/chat/model/types';
 
 jest.mock('@/shared/lib/config', () => {
   return { API_URL: 'http://localhost' };

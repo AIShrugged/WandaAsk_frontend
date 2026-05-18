@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { getMessages } from '@/features/chat/api/messages';
 
-import type { Message } from '@/features/chat/types';
+import type { Message } from '@/features/chat/model/types';
 
 const PAGE_SIZE = 10;
 
@@ -49,7 +49,7 @@ export function useMessages(
     try {
       const fetchOffset = Math.max(0, loadedStartOffset - PAGE_SIZE);
       const fetchCount = loadedStartOffset - fetchOffset;
-      const { messages: older } = await getMessages(
+      const { data: older } = await getMessages(
         chatId,
         fetchOffset,
         fetchCount,

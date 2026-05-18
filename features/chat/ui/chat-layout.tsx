@@ -9,7 +9,7 @@ import { ChatWindow } from '@/features/chat/ui/chat-window';
 import { CollapsedSidePanel } from '@/shared/ui/layout/collapsed-side-panel';
 
 import type { OrganizationProps } from '@/entities/organization';
-import type { ArtifactsResponse, Chat, Message } from '@/features/chat/types';
+import type { ArtifactsResponse, Chat, Message } from '@/features/chat/model/types';
 
 type MobileTab = 'chats' | 'artifacts' | 'chat';
 
@@ -115,51 +115,58 @@ export function ChatLayout({
   return (
     <div className='flex flex-col h-full rounded-[var(--radius-card)] overflow-hidden border border-border bg-card'>
       {/* ── Mobile tab bar (< lg): Chats | Artifacts | Chat ── */}
-      <div className='flex lg:hidden border-b border-border flex-shrink-0'>
+      <nav
+        role='tablist'
+        aria-label='Chat navigation'
+        className='flex lg:hidden border-b border-border flex-shrink-0'
+      >
         <button
           type='button'
+          role='tab'
+          aria-selected={mobileTab === 'chats'}
+          aria-controls='mobile-panel-chats'
           className={[
             'flex-1 py-2.5 text-sm font-medium transition-colors',
             mobileTab === 'chats'
               ? 'text-primary border-b-2 border-primary'
               : 'text-muted-foreground hover:text-foreground',
           ].join(' ')}
-          onClick={() => {
-            setMobileTab('chats');
-          }}
+          onClick={() => setMobileTab('chats')}
         >
           Chats
         </button>
         <button
           type='button'
+          role='tab'
+          aria-selected={mobileTab === 'artifacts'}
+          aria-controls='mobile-panel-artifacts'
           className={[
             'flex-1 py-2.5 text-sm font-medium transition-colors flex items-center justify-center gap-1.5',
             mobileTab === 'artifacts'
               ? 'text-primary border-b-2 border-primary'
               : 'text-muted-foreground hover:text-foreground',
           ].join(' ')}
-          onClick={() => {
-            setMobileTab('artifacts');
-          }}
+          onClick={() => setMobileTab('artifacts')}
         >
           <Sparkles className='w-3.5 h-3.5' />
           Artifacts
         </button>
         <button
           type='button'
+          role='tab'
+          aria-selected={mobileTab === 'chat'}
+          aria-controls='mobile-panel-chat'
           className={[
             'flex-1 py-2.5 text-sm font-medium transition-colors',
             mobileTab === 'chat'
               ? 'text-primary border-b-2 border-primary'
               : 'text-muted-foreground hover:text-foreground',
           ].join(' ')}
-          onClick={() => {
-            setMobileTab('chat');
-          }}
+          onClick={() => setMobileTab('chat')}
         >
           Chat
         </button>
-      </div>
+      </nav>
 
       {/* ── Main body ────────────────────────────────────────────────── */}
       <div className='flex flex-1 min-h-0'>
@@ -177,31 +184,37 @@ export function ChatLayout({
         {/* ── Mobile/tablet (< lg): one panel at a time via tabs ── */}
         <div className='flex lg:hidden flex-1 min-w-0 flex-col min-h-0'>
           {mobileTab === 'chats' && (
-            <ChatList
-              initialChats={initialChats}
-              totalCount={totalCount}
-              activeChatId={activeChatId}
-              organizations={organizations}
-              onActiveChatUpdate={(updated) => {
-                setChat(updated);
-                setMobileTab('chat');
-              }}
-            />
+            <div id='mobile-panel-chats' className='flex flex-1 min-h-0'>
+              <ChatList
+                initialChats={initialChats}
+                totalCount={totalCount}
+                activeChatId={activeChatId}
+                organizations={organizations}
+                onActiveChatUpdate={(updated) => {
+                  setChat(updated);
+                  setMobileTab('chat');
+                }}
+              />
+            </div>
           )}
           {mobileTab === 'artifacts' && (
-            <ArtifactPanel
-              chatId={chatId}
-              initialArtifacts={initialArtifacts}
-            />
+            <div id='mobile-panel-artifacts' className='flex flex-1 min-h-0'>
+              <ArtifactPanel
+                chatId={chatId}
+                initialArtifacts={initialArtifacts}
+              />
+            </div>
           )}
           {mobileTab === 'chat' && (
-            <ChatWindow
-              chat={chat}
-              chatId={chatId}
-              initialMessages={initialMessages}
-              totalCount={totalMessagesCount}
-              startOffset={startOffset}
-            />
+            <div id='mobile-panel-chat' className='flex flex-1 min-h-0'>
+              <ChatWindow
+                chat={chat}
+                chatId={chatId}
+                initialMessages={initialMessages}
+                totalCount={totalMessagesCount}
+                startOffset={startOffset}
+              />
+            </div>
           )}
         </div>
 

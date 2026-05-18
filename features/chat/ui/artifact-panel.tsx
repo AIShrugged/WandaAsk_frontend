@@ -1,14 +1,13 @@
 'use client';
 
 import { ChevronLeft, RefreshCw, Sparkles } from 'lucide-react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
-import { ArtifactCard } from '@/entities/artifact';
-import { getArtifacts } from '@/entities/artifact/api/artifacts';
+import { ArtifactCard, getArtifacts } from '@/entities/artifact';
 import { ButtonIcon } from '@/shared/ui/button';
 import { CollapsedSidePanel } from '@/shared/ui/layout/collapsed-side-panel';
 
-import type { Artifact, ArtifactsResponse } from '@/features/chat/types';
+import type { Artifact, ArtifactsResponse } from '@/features/chat/model/types';
 
 const POLLING_INTERVAL_MS = 5000;
 
@@ -17,13 +16,6 @@ interface ArtifactPanelProps {
   initialArtifacts: ArtifactsResponse | null;
 }
 
-/**
- * ArtifactPanel component.
- * @param root0 - Component props.
- * @param root0.chatId - The chat ID to poll artifacts for.
- * @param root0.initialArtifacts - Pre-loaded artifacts response.
- * @returns JSX element.
- */
 export function ArtifactPanel({
   chatId,
   initialArtifacts,
@@ -33,57 +25,44 @@ export function ArtifactPanel({
   );
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const mountedRef = useRef(true);
-  const pollingRef = useRef(false);
 
   useEffect(() => {
-    mountedRef.current = true;
-    pollingRef.current = true;
+    // Effect-local flag — each effect invocation has its own boolean.
+    // A shared useRef would be reset to true by the new effect before the old
+    // in-flight await resolves, causing a ghost poll loop when chatId changes.
+    let active = true;
+    let timerId: ReturnType<typeof setTimeout> | null = null;
 
-    /**
-     * poll.
-     * @returns Promise.
-     */
     const poll = async () => {
-      if (!pollingRef.current || !mountedRef.current) return;
-
+      if (!active) return;
       try {
         const data = await getArtifacts(chatId);
-
-        if (mountedRef.current) setArtifacts(data);
+        if (active) setArtifacts(data);
       } catch {
         /* keep previous data */
       }
-
-      if (pollingRef.current && mountedRef.current) {
-        setTimeout(poll, POLLING_INTERVAL_MS);
-      }
+      if (active) timerId = setTimeout(poll, POLLING_INTERVAL_MS);
     };
-    const timerId = setTimeout(poll, POLLING_INTERVAL_MS);
+
+    timerId = setTimeout(poll, POLLING_INTERVAL_MS);
 
     return () => {
-      mountedRef.current = false;
-      pollingRef.current = false;
-      clearTimeout(timerId);
+      active = false;
+      if (timerId) clearTimeout(timerId);
     };
   }, [chatId]);
 
-  /**
-   * handleRefresh.
-   * @returns Promise.
-   */
-  const handleRefresh = async () => {
+  const handleRefresh = useCallback(async () => {
     setIsRefreshing(true);
     try {
       const data = await getArtifacts(chatId);
-
-      if (mountedRef.current) setArtifacts(data);
+      setArtifacts(data);
     } catch {
       /* keep */
     } finally {
-      if (mountedRef.current) setIsRefreshing(false);
+      setIsRefreshing(false);
     }
-  };
+  }, [chatId]);
   const items = (artifacts?.layout?.items ?? [])
     .map((item) => {
       return artifacts!.artifacts[item.id];
@@ -113,7 +92,10 @@ export function ArtifactPanel({
             Artifacts
           </span>
           {items.length > 0 && (
-            <span className='text-xs bg-primary/10 text-primary font-medium px-1.5 py-0.5 rounded-full'>
+            <span
+              aria-label={`${items.length} artifacts`}
+              className='text-xs bg-primary/10 text-primary font-medium px-1.5 py-0.5 rounded-full'
+            >
               {items.length}
             </span>
           )}

@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 
 import { ChatList } from '@/features/chat/ui/chat-list';
 
-import type { Chat } from '@/features/chat/types';
+import type { Chat } from '@/features/chat/model/types';
 
 // jsdom doesn't implement IntersectionObserver — provide a no-op stub
 beforeAll(() => {
@@ -27,14 +27,12 @@ jest.mock('next/navigation', () => {
 
 const mockCreateChat = jest.fn(() => {
   return Promise.resolve({
-    id: 99,
-    title: null,
-    created_at: '',
-    updated_at: '',
+    data: { id: 99, title: null, created_at: '', updated_at: '' },
+    error: null,
   });
 });
 const mockGetChats = jest.fn(() => {
-  return Promise.resolve({ chats: [], totalCount: 0 });
+  return Promise.resolve({ data: [], totalCount: 0 });
 });
 
 jest.mock('@/features/chat/api/chats', () => {
@@ -101,12 +99,10 @@ describe('ChatList', () => {
   beforeEach(() => {
     mockPush.mockClear();
     mockCreateChat.mockResolvedValue({
-      id: 99,
-      title: null,
-      created_at: '',
-      updated_at: '',
+      data: { id: 99, title: null, created_at: '', updated_at: '' },
+      error: null,
     });
-    mockGetChats.mockResolvedValue({ chats: [], totalCount: 0 });
+    mockGetChats.mockResolvedValue({ data: [], totalCount: 0 });
   });
 
   it('renders a list of initial chats', () => {

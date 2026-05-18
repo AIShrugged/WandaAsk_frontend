@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 
 import { ChatMessage } from '@/features/chat/ui/chat-message';
 
-import type { Message } from '@/features/chat/types';
+import type { Message } from '@/features/chat/model/types';
 
 // Keep ChatMessageContent simple — its own rendering is tested separately
 jest.mock('@/features/chat/ui/chat-message-content', () => {

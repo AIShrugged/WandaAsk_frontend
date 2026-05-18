@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 import { deleteChat } from '@/features/chat/api/chats';
 import { ROUTES } from '@/shared/lib/routes';
 
-import type { Chat } from '@/features/chat/types';
+import type { Chat } from '@/features/chat/model/types';
 
 interface ChatListItemProps {
   chat: Chat;
@@ -99,6 +99,7 @@ export function ChatListItem({
             Delete?
           </span>
           <button
+            type='button'
             onClick={cancelDelete}
             className='p-0.5 text-muted-foreground hover:text-foreground cursor-pointer'
             aria-label='Cancel delete'
@@ -106,6 +107,7 @@ export function ChatListItem({
             Keep
           </button>
           <button
+            type='button'
             onClick={confirmDelete}
             disabled={isPending}
             className='rounded px-2 py-1 text-xs text-destructive hover:bg-destructive/10 disabled:opacity-40 cursor-pointer disabled:cursor-default'
@@ -119,7 +121,11 @@ export function ChatListItem({
       {/* ── Idle ── */}
       {mode === 'idle' && (
         <>
-          <Link href={href} className='flex-1 min-w-0'>
+          <Link
+            href={href}
+            aria-current={isActive ? 'page' : undefined}
+            className='flex-1 min-w-0'
+          >
             <div className='min-w-0 truncate text-sm text-foreground'>
               {displayTitle}
             </div>
@@ -127,28 +133,28 @@ export function ChatListItem({
               {scopeLabel}
             </p>
           </Link>
-          <div className='hidden group-hover:flex items-center gap-0.5 flex-shrink-0'>
+          {/* opacity-based visibility keeps buttons in tab order for keyboard users */}
+          <div className='opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 flex items-center gap-0.5 flex-shrink-0 transition-opacity'>
             <button
+              type='button'
               onClick={(event) => {
                 event.preventDefault();
-
                 if (onEdit) {
                   onEdit(chat);
-
                   return;
                 }
-
                 onUpdate?.(chat);
               }}
               className='p-0.5 text-muted-foreground hover:text-primary cursor-pointer'
-              aria-label='Edit chat'
+              aria-label={`Edit chat "${displayTitle}"`}
             >
               <Pencil className='w-3.5 h-3.5' />
             </button>
             <button
+              type='button'
               onClick={handleDeleteClick}
               className='p-0.5 text-muted-foreground hover:text-destructive cursor-pointer'
-              aria-label='Delete chat'
+              aria-label={`Delete chat "${displayTitle}"`}
             >
               <Trash2 className='w-3.5 h-3.5' />
             </button>

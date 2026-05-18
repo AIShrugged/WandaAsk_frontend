@@ -1,17 +1,25 @@
 'use client';
 
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useMemo, useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import { z } from 'zod';
 
 import { createChat, updateChat } from '@/features/chat/api/chats';
+import { UpdateChatSchema } from '@/features/chat/model/schemas';
 import { BUTTON_VARIANT } from '@/shared/types/button';
 import { Button } from '@/shared/ui/button/Button';
 import Input from '@/shared/ui/input/Input';
 import { Modal } from '@/shared/ui/modal/modal';
 
 import type { OrganizationProps } from '@/entities/organization';
-import type { Chat } from '@/features/chat/types';
+import type { Chat } from '@/features/chat/model/types';
+
+// Create schema uses the same string type but title is optional (nullable on submit)
+const CreateChatFormSchema = z.object({
+  title: z.string().max(255),
+});
 
 interface ChatFormModalProps {
   isOpen: boolean;
@@ -62,6 +70,7 @@ export function ChatFormModal({
       title: chat.title ?? '',
     };
   }, [chat]);
+  const schema = isEdit ? UpdateChatSchema : CreateChatFormSchema;
   const {
     register,
     watch,
@@ -71,6 +80,7 @@ export function ChatFormModal({
     clearErrors,
     formState: { errors },
   } = useForm<ChatFormValues>({
+    resolver: zodResolver(schema),
     defaultValues,
     mode: 'onBlur',
     reValidateMode: 'onChange',
@@ -100,7 +110,7 @@ export function ChatFormModal({
           ? await updateChat(chat.id, payload)
           : await createChat(payload);
 
-        if ('error' in result) {
+        if (result.error) {
           if (result.fieldErrors) {
             for (const [field, message] of Object.entries(result.fieldErrors)) {
               if (field === 'title') {
@@ -115,7 +125,7 @@ export function ChatFormModal({
         }
 
         toast.success(isEdit ? 'Chat updated' : 'Chat created');
-        onSaved(result, isEdit ? 'update' : 'create');
+        onSaved(result.data!, isEdit ? 'update' : 'create');
         onClose();
       } catch (error) {
         const message =
