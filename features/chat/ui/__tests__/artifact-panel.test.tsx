@@ -149,8 +149,8 @@ describe('ArtifactPanel', () => {
     };
 
     render(<ArtifactPanel chatId={1} initialArtifacts={data} />);
-    // Status badge text
-    expect(screen.getByText('Generating\u2026')).toBeInTheDocument();
+    // Status badge text (appears in both badge and card body while generating)
+    expect(screen.getAllByText('Generating\u2026').length).toBeGreaterThan(0);
   });
 
   it('renders failed status card', () => {

@@ -1,44 +1,22 @@
 'use server';
 
-import { clearSession } from '@/shared/api/session';
 import { API_URL } from '@/shared/lib/config';
-import { getAuthHeaders } from '@/shared/lib/getAuthToken';
+import { ServerError } from '@/shared/lib/errors';
+import { httpClient } from '@/shared/lib/httpClient';
 
 import type { ArtifactsResponse } from '@/entities/artifact/model/types';
 
-type ArtifactsApiResponse = {
-  success: boolean;
-  data: ArtifactsResponse | null;
-  message: string;
-  status: number;
-};
-
-/**
- * Fetches all artifacts for the given chat.
- * Returns null if the chat has no artifacts (404) or on error.
- * @param chatId - The chat ID.
- * @returns ArtifactsResponse or null.
- */
 export async function getArtifacts(
   chatId: number,
 ): Promise<ArtifactsResponse | null> {
-  const authHeaders = await getAuthHeaders();
-  const res = await fetch(`${API_URL}/chats/${chatId}/artifacts`, {
-    headers: { ...authHeaders },
-    cache: 'no-store',
-  });
+  try {
+    const { data } = await httpClient<ArtifactsResponse>(
+      `${API_URL}/chats/${chatId}/artifacts`,
+    );
 
-  if (res.status === 404) return null;
-
-  if (!res.ok) {
-    if (res.status === 401) await clearSession();
-
-    return null;
+    return data ?? null;
+  } catch (error) {
+    if (error instanceof ServerError && error.status === 404) return null;
+    throw error;
   }
-
-  const json: ArtifactsApiResponse = await res.json();
-
-  if (!json.success || !json.data) return null;
-
-  return json.data;
 }

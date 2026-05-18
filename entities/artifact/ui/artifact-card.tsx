@@ -5,7 +5,7 @@ import {
   BookMarked,
   ClipboardList,
   FileText,
-  LayoutDashboard,
+  ListChecks,
   Users,
   Video,
   Zap,
@@ -16,8 +16,8 @@ import React from 'react';
 import { DecisionLog } from '@/entities/artifact/ui/decision-log';
 import { InsightCard } from '@/entities/artifact/ui/insight-card';
 import { MeetingCard } from '@/entities/artifact/ui/meeting-card';
+import { MethodologyCriteriaArtifactView } from '@/entities/artifact/ui/methodology-criteria-artifact';
 import { PeopleList } from '@/entities/artifact/ui/people-list';
-import { TaskSummaryArtifactView } from '@/entities/artifact/ui/task-summary-artifact';
 import { TaskTable } from '@/entities/artifact/ui/task-table';
 import { TranscriptView } from '@/entities/artifact/ui/transcript-view';
 import { Skeleton } from '@/shared/ui/layout/skeleton';
@@ -30,8 +30,8 @@ import type {
   DecisionLogArtifact,
   InsightCardArtifact,
   MeetingCardArtifact,
+  MethodologyCriteriaArtifact,
   PeopleListArtifact,
-  TaskSummaryArtifact,
   TaskTableArtifact,
   TranscriptArtifact,
 } from '@/entities/artifact/model/types';
@@ -50,34 +50,45 @@ const ChartArtifactView = dynamic(
     },
   },
 );
-const TYPE_META: Record<
-  ArtifactType,
-  { label: string; icon: React.ReactNode }
-> = {
-  task_table: {
-    label: 'Tasks',
-    icon: <ClipboardList className='w-3.5 h-3.5' />,
-  },
-  meeting_card: { label: 'Meeting', icon: <Video className='w-3.5 h-3.5' /> },
-  people_list: { label: 'People', icon: <Users className='w-3.5 h-3.5' /> },
-  insight_card: { label: 'Insight', icon: <Zap className='w-3.5 h-3.5' /> },
-  chart: { label: 'Chart', icon: <BarChart2 className='w-3.5 h-3.5' /> },
-  transcript_view: {
-    label: 'Transcript',
-    icon: <FileText className='w-3.5 h-3.5' />,
-  },
-  decision_log: {
-    label: 'Decisions',
-    icon: <BookMarked className='w-3.5 h-3.5' />,
-  },
-  task_summary: {
-    label: 'Task Progress',
-    icon: <LayoutDashboard className='w-3.5 h-3.5' />,
-  },
-};
+
+const TYPE_META: Record<ArtifactType, { label: string; icon: React.ReactNode }> =
+  {
+    task_table: {
+      label: 'Tasks',
+      icon: <ClipboardList className='w-3.5 h-3.5' />,
+    },
+    meeting_card: {
+      label: 'Meeting',
+      icon: <Video className='w-3.5 h-3.5' />,
+    },
+    people_list: {
+      label: 'People',
+      icon: <Users className='w-3.5 h-3.5' />,
+    },
+    insight_card: {
+      label: 'Insight',
+      icon: <Zap className='w-3.5 h-3.5' />,
+    },
+    chart: {
+      label: 'Chart',
+      icon: <BarChart2 className='w-3.5 h-3.5' />,
+    },
+    transcript_view: {
+      label: 'Transcript',
+      icon: <FileText className='w-3.5 h-3.5' />,
+    },
+    decision_log: {
+      label: 'Decisions',
+      icon: <BookMarked className='w-3.5 h-3.5' />,
+    },
+    methodology_criteria: {
+      label: 'Methodology',
+      icon: <ListChecks className='w-3.5 h-3.5' />,
+    },
+  };
 
 const ARTIFACT_RENDERERS: {
-  [K in ArtifactType]?: (
+  [K in ArtifactType]: (
     artifact: Extract<Artifact, { type: K }>,
   ) => React.ReactNode;
 } = {
@@ -102,17 +113,11 @@ const ARTIFACT_RENDERERS: {
   decision_log: (a: DecisionLogArtifact) => {
     return <DecisionLog data={a.data} />;
   },
-  task_summary: (a: TaskSummaryArtifact) => {
-    return <TaskSummaryArtifactView data={a.data} />;
+  methodology_criteria: (a: MethodologyCriteriaArtifact) => {
+    return <MethodologyCriteriaArtifactView data={a.data} />;
   },
 };
 
-/**
- * ArtifactContent component.
- * @param root0 - Component props.
- * @param root0.artifact - The artifact to render.
- * @returns JSX element.
- */
 function ArtifactContent({ artifact }: { artifact: Artifact }) {
   const renderer = ARTIFACT_RENDERERS[artifact.type] as
     | ((a: Artifact) => React.ReactNode)
@@ -129,12 +134,6 @@ function ArtifactContent({ artifact }: { artifact: Artifact }) {
   return renderer(artifact);
 }
 
-/**
- * ArtifactCard component.
- * @param root0 - Component props.
- * @param root0.artifact - The artifact to display as a card.
- * @returns JSX element.
- */
 // eslint-disable-next-line max-statements
 export function ArtifactCard({ artifact }: { artifact: Artifact }) {
   const meta = TYPE_META[artifact.type] ?? { label: artifact.type, icon: null };
@@ -151,14 +150,14 @@ export function ArtifactCard({ artifact }: { artifact: Artifact }) {
   }
 
   const nonGeneratingLabel = isFailed ? 'Failed' : meta.label;
-  const statusLabel = isGenerating ? 'Generating\u2026' : nonGeneratingLabel;
+  const statusLabel = isGenerating ? 'Generating…' : nonGeneratingLabel;
   let cardBody: React.ReactNode;
 
   if (isGenerating) {
     cardBody = (
       <div className='flex items-center justify-center gap-2 py-6 text-sm text-muted-foreground'>
         <SpinLoader size='sm' />
-        Generating\u2026
+        Generating…
       </div>
     );
   } else if (isFailed) {
